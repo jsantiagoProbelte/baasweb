@@ -1,0 +1,59 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    label{
+        display:none;
+    }
+    input{
+        border-radius:20px !important;
+        padding:15px !important;
+        width:100% !important;
+    }
+    input[type=submit]{
+        background:var(--custom-blue);
+        border:none !important;
+    }
+    ::placeholder {
+        text-align: center; 
+    }
+    a{
+        color:var(--custom-blue);
+        text-decoration:none !important;
+    }
+    h1{
+        font-size:4rem;
+        font-weight:900;
+    }
+</style>
+<div class="row">
+    <div class="col-md-6 txt-custom-main p-5">
+        <h1 class="fw-bold">Simplify,<br/>Build Loyalty<br/>and Improve!</h1>
+        <p>Baas Web App the Agro Recommendation tool !</p>
+    </div>
+    <div class="col-md-6 p-5 text-center">
+        <div class="card no-border p-4" style="background:#fff; border-radius:20px;">
+            <div class="card-header" style="border:none;">
+                <h2 class="fw-bold">Welcome to Baas Web App !</h2>
+                <p>Please register for full access to all features</p>
+            </div>
+            <div class="card-body">
+                {% crispy formLogin %}
+                
+            </div>
+            <div class="card-body">
+                <div class='mt-3'>
+                    Don't have an account? <a href="mailto:jsantiago@gprobelte.com?subject=baaswebappRegistration&body=PleaseRegisterMe"><strong>register here !</strong></a>
+                </div>
+                <div class='mt-3'>
+                    Forget password? <a href="/forget_password" target="blank"><strong>reset here !</strong></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+

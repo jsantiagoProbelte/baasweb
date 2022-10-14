@@ -1,0 +1,14 @@
+
+# Django related
+django
+applicationinsights
+django-crispy-forms
+psycopg2-binary
+#psycopg2 # On mac needs > brew install postgresql@12
+django-bootstrap-v5
+djangorestframework
+python-dateutil
+django-filter
+django-widget-tweaks
+importlib-metadata
+gunicorn
