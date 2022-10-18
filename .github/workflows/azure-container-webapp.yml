@@ -14,12 +14,10 @@ permissions:
   contents: read
 
 jobs:
-  test_matrix:
+  testing:
     strategy:
       matrix:
         python-version: [3.9]
-        
-  test:
     name: Unitest
     runs-on: ubuntu-latest
     steps:
