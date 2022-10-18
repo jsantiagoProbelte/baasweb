@@ -1,30 +1,27 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
 @font-face {
-  font-family: 'PP Telegraf';
-  src: url('/static/baaswebapp/content/PPTelegraf-UltraBold.woff2') format('woff2'),
-      url('/static/baaswebapp/content/PPTelegraf-UltraBold.woff') format('woff');
+  font-family: 'Rubik';
+  src: url('/static/baaswebapp/content/Rubik-ExtraBold.ttf') format('ttf');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'PP Telegraf';
-  src: url('/static/baaswebapp/content/PPTelegraf-Regular.woff2') format('woff2'),
-      url('/static/baaswebapp/content/PPTelegraf-Regular.woff') format('woff');
+  font-family: 'Rubik';
+  src: url('/static/baaswebapp/content/Rubik-Regular.ttf') format('ttf') ;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'PP Telegraf';
-  src: url('/static/baaswebapp/content/PPTelegraf-UltraLight.woff2') format('woff2'),
-      url('/static/baaswebapp/content/PPTelegraf-UltraLight.woff') format('woff');
+  font-family: 'Rubik';
+  src: url('/static/baaswebapp/content/Rubik-Light.ttf') format('ttf') ;
   font-weight: 200;
   font-style: normal;
   font-display: swap;
-} */
+} 
 
 :root{
   --custom-main-color: #a500a5;
@@ -115,7 +112,7 @@
   font-weight: bold !important;
 }
 .telegraf{
-  font-family: 'PP Telegraf', sans-serif;
+  font-family: 'Rubik', sans-serif;
 }
 .navbar .nav-item .btn-info{
   border-radius:20px;
