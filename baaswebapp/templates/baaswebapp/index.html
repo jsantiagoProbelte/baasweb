@@ -1,0 +1,67 @@
+{% extends "baaswebapp/layout.html" %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+
+<div class="row g-10 text-center mb-4">
+    <h1 class="txt-custom-main fw-bold">Dashboard</h1>
+    <p class="txt-custom-main">A place to manage your products & field trials</p>
+</div>
+<div class="row g-10" style="margin-bottom:120px">
+    <div class="col-md-4">
+        <div class="card no-border">
+            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Products</h4>
+            <div class="card-container">
+                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
+                    <p>{{Products|intcomma}} </p>
+                </div>
+                <div class="card-body text-center txt-custom-main fw-bold subtitle">
+                    <p>products</p>
+                </div>
+            </div>
+            <div class="card-bottom text-center bg-custom-yellow">
+                <a href="{% url 'baaswebapp_index' %}"><span class="btn-large">Compare</span> <span class="btn-small">· field trials.</span></a>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card no-border">
+            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Trends</h4>
+            <div class="card-container">
+                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
+                    <p>{{FieldTrials|intcomma}} </p>
+                </div>
+                <div class="card-body text-center txt-custom-main fw-bold subtitle">
+                    <p>trials</p>
+                </div>
+            </div>
+            <div class="card-bottom bg-custom-green text-center">
+                <a href="{% url 'fieldtrial-list' %}"><span class="btn-large">Analyse</span> <span class="btn-small">· field trials.</span></a>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card no-border">
+            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Configuration</h4>
+            <div class="card-container">
+                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
+                    <p>{{DataPoints|intcomma}} </p>
+                </div>
+                <div class="card-body text-center txt-custom-main fw-bold subtitle">
+                    <p>datapoints reviews</p>
+                </div>
+            </div>
+            <div class="card-bottom text-center bg-custom-blue">
+                <a href="{% url 'baaswebapp_index' %}"><span class="btn-large">Browse</span> <span class="btn-small">· data points.</span></a>
+                
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %}

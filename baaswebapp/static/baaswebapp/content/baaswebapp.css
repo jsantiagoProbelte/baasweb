@@ -1,0 +1,208 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+@font-face {
+  font-family: 'PP Telegraf';
+  src: url('/static/baaswebapp/content/PPTelegraf-UltraBold.woff2') format('woff2'),
+      url('/static/baaswebapp/content/PPTelegraf-UltraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Telegraf';
+  src: url('/static/baaswebapp/content/PPTelegraf-Regular.woff2') format('woff2'),
+      url('/static/baaswebapp/content/PPTelegraf-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Telegraf';
+  src: url('/static/baaswebapp/content/PPTelegraf-UltraLight.woff2') format('woff2'),
+      url('/static/baaswebapp/content/PPTelegraf-UltraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+} */
+
+:root{
+  --custom-main-color: #a500a5;
+  --custom-bg-color: rgba(3,53,104,0.05);
+  --custom-red: #ff6e73;
+  --custom-yellow: #ffd26e;
+  --custom-green: #92eeb9;
+  --custom-blue: #00bdeb;
+  --custom-grey: #F0EEEB;
+  --custom-black: #333333;
+  --custom-bio-morado: #aa4ae4;
+  --custom-morado: #a500a5;
+  --custom-violeta: rgba(207, 201, 255,1);
+}
+
+.bg-custom-main{
+  background: var(--custom-main-color);
+}
+.txt-custom-main{
+  color: var(--custom-main-color);
+}
+.bg-custom-bg{
+  background: var(--custom-bg-color);
+}
+.bg-custom-morado{
+  background: var(--custom-morado );
+}
+.bg-custom-bio-morado{
+  background: var(--custom-bio-morado );
+}
+.bg-custom-violeta{
+  background: var(--custom-violeta);
+}
+.bg-custom-red{
+  background: var(--custom-red);
+}
+.bg-custom-yellow{
+  background: var(--custom-yellow);
+}
+.bg-custom-green{
+  background: var(--custom-green);
+}
+.bg-custom-blue{
+  background: var(--custom-blue);
+}
+.navbar-nav .nav-link{
+  font-size: 1rem !important;
+  text-transform: capitalize !important;
+  color: #fff !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+.no-border{
+  border:none !important;
+}
+.subtitle{
+  font-size:1.25rem;
+}
+.custom-border{
+  border: 1px solid var(--custom-main-color);
+}
+.custom-bottom{
+  border-radius: 2rem;
+  font-size:1.25rem;
+  padding:0.5rem 0.75rem;
+  font-weight:bold;
+  text-transform: capitalize;
+  border: none !important;
+}
+.nav-login{
+  border-radius: 2rem;
+  padding:0.5rem 0.75rem;
+  border: none !important;
+  background: #29abe0 !important;
+	background-size: 200% 200%;
+  color: var(--custom-main-color) !important;
+  font-weight: bold !important;
+}
+
+.nav-gradient{
+  border-radius: 2rem;
+  padding:0.5rem 0.75rem;
+  border: none !important;
+  background: linear-gradient(270deg, #da444f, #fe7965, #f9d400, #c9d222, #3bcf82);
+	background-size: 200% 200%;
+	animation: gradient 4s ease infinite;
+  color: var(--custom-main-color) !important;
+  font-weight: bold !important;
+}
+.telegraf{
+  font-family: 'PP Telegraf', sans-serif;
+}
+.navbar .nav-item .btn-info{
+  border-radius:20px;
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+.navbar .nav-item .btn-info:hover{
+  background:#499ff0;
+}
+.navbar .nav-item .dropdown-menu{
+  text-align:center;
+  left:-50%;
+  padding: 10px;
+}
+.navbar .nav-item .dropdown-menu .dropdown-item{
+  padding: 0.25rem 3rem;
+  border-radius:20px;
+}
+.navbar .nav-item .dropdown-menu .dropdown-item:hover, .navbar .nav-item .dropdown-menu .dropdown-item:focus {
+  color: #8e8c84;
+  background-color: #f4f4f4;
+}
+.navbar .nav-item .dropdown-menu li{
+  margin:10px 0px;
+}
+.navbar .nav-item .dropdown-menu .dropdown-divider{
+  margin: 20px;
+}
+.card{
+  background:transparent;
+}
+.card-container{
+  margin-top:-30px;
+  background:#fff;
+  border-radius:20px !important;
+  padding:40px 0px 60px 0px;
+}
+.card-header{
+  border-radius:20px !important;
+  padding-bottom:40px;
+  padding-top:20px;
+}
+.card-bottom{
+  padding: 20px 0px;
+  border-radius:20px;
+  margin-top:-20px;
+  color:#fff;
+  font-size:1.35rem;
+}
+.card-bottom a{
+  text-decoration: none;
+  vertical-align:middle;
+}
+.card-bottom .btn-large{
+  color:#fff;
+  font-size:1.85rem;
+  font-weight:bold;
+  text-transform: initial !important;
+  text-decoration: none;
+  vertical-align:middle;
+
+}
+.card-bottom .btn-small{
+  font-size:1.35rem;
+  font-weight:normal;
+  color:#fff;
+  text-decoration: none;
+  vertical-align:middle;
+}
+
+select, textarea, input[type=number], input[type=date]{
+  border-radius:10px !important;
+}
+input[type='checkbox'], input[type="radio"] {
+  border-radius:2px !important;
+}
+input[type='submit'], button[type='submit'], .btn-primary {
+  border-radius: 20px !important;
+  background: var(--custom-main-color);
+  color:#fff;
+}
+input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
+  background: #499ff0;
+}
+.btn-step_by_step a{
+  margin: 0 10px;
+  border-radius: 20px !important;
+  padding: 5px 15px !important;
+}
+

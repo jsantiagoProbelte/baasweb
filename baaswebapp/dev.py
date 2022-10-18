@@ -1,9 +1,9 @@
-from baaswebapp import settings
+# from baaswebapp import settings
 # We need to import all the settings, but flake does not like,
 # do we explicitly ignore this errors
 from baaswebapp.settings import *  # noqa: F403, F401
 
-settings.DEBUG = True
+DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

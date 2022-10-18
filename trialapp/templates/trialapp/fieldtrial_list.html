@@ -1,0 +1,21 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    .table > :not(caption) > * > * {
+        padding: 1rem 6rem;
+    }
+</style>
+<h2 class="txt-custom-main">Field Trial List</h2>
+<table class="table">
+{% for item in object_list %}
+    <tr><td>{{ item.name }}</td>
+        <td style="text-align:right">{{ item.count }} Data points</td>
+    </tr>
+{% empty %}
+    <tr>No Field Trial yet.</tr>
+{% endfor %}
+</table>
+{% endblock %}
