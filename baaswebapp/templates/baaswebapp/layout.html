@@ -19,70 +19,72 @@
 
 </head>
 
-<body class="bg-custom-bg">
+<body class="baas-body">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-custom-main">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-custom-main">
     <div class="container-xl">
-    <a class="navbar-brand" href="{% url 'home' %}"><img class="w-50" src="{% static 'baaswebapp/img/probelteLogoHorizontal_small.png' %}"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img class="w-50" src="{% static 'baaswebapp/img/probelteLogoHorizontal_small.png' %}">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <div class="collapse navbar-collapse" id="navbarColor02">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'home' %}">Home
-            <span class="visually-hidden">(current)</span>
-          </a>
-        </li>
+      <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav ms-auto">
+          <!-- <form class="d-flex">
+            <input class="form-control me-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+          </form> -->
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'home' %}">Home
+              <span class="visually-hidden">(current)</span>
+            </a>
+          </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarActionsDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
-            Menu
-          </a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarActionsDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              Menu
+            </a>
 
-          <ul class="dropdown-menu" aria-labelledby="navbarActionsDropdownMenu">
-            <li><a class="dropdown-item" href="{% url 'baaswebapp_index' %}">Start Field Trial</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Configuration</a></li>
-          </ul>
-        </li>
+            <ul class="dropdown-menu" aria-labelledby="navbarActionsDropdownMenu">
+              <li><a class="dropdown-item" href="{% url 'fieldtrial-list' %}">Field Trials</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'admin:index' %}">Configuration</a></li>
+            </ul>
+          </li>
 
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-            <p class="nav-link">Hi {{ user.username }}!</p>
-          {% endif %}
-        </li>
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-            <a class="nav-link btn btn-info" href="{% url 'logout' %}">Logout</a>
-          {% else %}
-            <a class="nav-link btn btn-info" href="{% url 'login' %}">Login</a>
-          {% endif %}
-        </li>
-        
-      </ul>
-      <!--<form class="d-flex">
-        <input class="form-control me-sm-2" type="text" placeholder="Search">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-      </form>-->
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+              <p class="nav-link">Hi {{ user.username }}!</p>
+            {% endif %}
+          </li>
+          
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+              <a class="nav-link btn btn-info" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+              <a class="nav-link btn btn-info" href="{% url 'login' %}">Login</a>
+            {% endif %}
+          </li>
+        </ul>
+
+      </div>
     </div>
+  </nav>
+
+  <div class="container-xl mt-2">
+    {% block content %}{% endblock %}
+    <footer class="fixed-bottom bg-custom-main text-white text-center">
+      <p class="pt-3">&copy; {{ year }} - Baas is a Probelte application</p>
+    </footer>
   </div>
-</nav>
 
-    <div class="container-xl">
-        <br/><br/>
-        {% block content %}{% endblock %}
-        <footer class="fixed-bottom bg-custom-main text-white text-center">
-            <p class="pt-3">&copy; {{ year }} - Baas is a Probelte application</p>
-        </footer>
-    </div>
-
-    <script src="{% static 'baaswebapp/scripts/jquery-1.10.2.js' %}"></script>
-    <script src="{% static 'baaswebapp/scripts/bootstrap.js' %}"></script>
-    <script src="{% static 'baaswebapp/scripts/respond.js' %}"></script>
-    <script src="{% static 'baaswebapp/scripts/chart.min.js' %}"></script>
-    {% block scripts %}{% endblock %}
+  <script src="{% static 'baaswebapp/scripts/jquery-1.10.2.js' %}"></script>
+  <script src="{% static 'baaswebapp/scripts/bootstrap.js' %}"></script>
+  <script src="{% static 'baaswebapp/scripts/respond.js' %}"></script>
+  <script src="{% static 'baaswebapp/scripts/chart.min.js' %}"></script>
+  {% block scripts %}{% endblock %}
 
 </body>
 </html>

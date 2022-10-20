@@ -251,3 +251,13 @@ class TrialDbInitialLoader:
         initialValues = cls.initialTrialModelValues()
         for modelo in initialValues:
             modelo.initValues(initialValues[modelo])
+
+
+class TrialStats:
+    @classmethod
+    def getGeneralStats(cls):
+        return {
+            'products': Product.objects.count(),
+            'field_trials': FieldTrial.objects.count(),
+            'points': RawResult.objects.count()
+        }

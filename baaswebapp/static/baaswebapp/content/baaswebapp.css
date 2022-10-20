@@ -25,7 +25,6 @@
 
 :root{
   --custom-main-color: #a500a5;
-  --custom-bg-color: rgba(3,53,104,0.05);
   --custom-red: #ff6e73;
   --custom-yellow: #ffd26e;
   --custom-green: #92eeb9;
@@ -37,14 +36,35 @@
   --custom-violeta: rgba(207, 201, 255,1);
 }
 
+.bg-project {
+  background: var(--custom-morado );
+}
+.bg-objective{
+  background: var(--custom-blue );
+}
+.bg-plague{
+  background: var(--custom-red );
+}
+.bg-crop{
+  background-color: var(--custom-green );
+}
+.bg-product{
+  background: var(--custom-bio-morado );
+}
+
 .bg-custom-main{
   background: var(--custom-main-color);
 }
 .txt-custom-main{
   color: var(--custom-main-color);
 }
+
+.baas-body{
+  background-color: var(--custom-bg-color);
+}
+
 .bg-custom-bg{
-  background: var(--custom-bg-color);
+  background-color: var(--custom-bg-color);
 }
 .bg-custom-morado{
   background: var(--custom-morado );
@@ -146,18 +166,31 @@
 }
 .card-container{
   margin-top:-30px;
-  background:#fff;
-  border-radius:20px !important;
+  background:var(--custom-bg-color-cards);
+  border-radius:10px !important;
   padding:40px 0px 60px 0px;
 }
+
+.card-body-baas {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 1.5rem 1.5rem;
+  background:var(--custom-bg-color-cards);
+}
+
+.text-big-number{
+
+  font-size: 64px;
+  color: var( --bs-text-color);
+}
+
 .card-header{
-  border-radius:20px !important;
-  padding-bottom:40px;
-  padding-top:20px;
+  border-radius:5px !important;
+  padding :10px 0px;
 }
 .card-bottom{
-  padding: 20px 0px;
-  border-radius:20px;
+  padding: 10px 0px;
+  border-radius:10px;
   margin-top:-20px;
   color:#fff;
   font-size:1.35rem;

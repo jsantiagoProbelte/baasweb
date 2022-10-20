@@ -37,6 +37,10 @@
   --bs-font-sans-serif: 'Rubik', Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: 'Rubik',SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+  --bs-text-color: #f4f4f4;
+  --bs-text-color-table: #fff;
+  --custom-bg-color: #282828; /*rgba(3,53,104,0.05);*/
+  --custom-bg-color-cards:#333333;
 }
 
 *,
@@ -57,7 +61,7 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #767676;
+  color: var(--bs-text-color);
   background-color: #fff;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -1868,7 +1872,7 @@ progress {
 }
 
 .table {
-  --bs-table-bg: transparent;
+  --bs-table-bg: var(--custom-bg-color-cards);
   --bs-table-accent-bg: transparent;
   --bs-table-striped-color: #3e3f3a;
   --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
@@ -1878,7 +1882,7 @@ progress {
   --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
   width: 100%;
   margin-bottom: 1rem;
-  color: #3e3f3a;
+  color: var(--bs-text-color-table);
   vertical-align: top;
   border-color: #dfd7ca;
 }
@@ -3037,7 +3041,7 @@ fieldset:disabled .btn {
 .btn-primary {
   color: #fff;
   background-color: #325d88;
-  border-color: #325d88;
+  /* border-color: #325d88; */
 }
 
 .btn-primary:hover {
@@ -4620,8 +4624,8 @@ fieldset:disabled .btn {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(223, 215, 202, 0.75);
-  border-radius: 0.25rem;
+  /* border: 1px solid rgba(223, 215, 202, 0.75); */
+  border-radius: 0.5rem;
 }
 
 .card > hr {
@@ -11102,7 +11106,7 @@ fieldset:disabled .btn {
 .card-big-number{
   text-align: center;
   font-size: 64px;
-  height: 82px;
-  color:#626262;
+  height: 74px;
+  color: var( --bs-text-color);
 }
 

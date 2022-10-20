@@ -2,63 +2,46 @@
 {% load humanize %}
 {% load static %}
 {% block content %}
-
-<div class="row g-10 text-center mb-4">
-    <h1 class="txt-custom-main fw-bold">Dashboard</h1>
-    <p class="txt-custom-main">A place to manage your products & field trials</p>
+<br/><br/>
+<div class="row g-10 text-center">
+    <h1 class=" fw-bold mt-5 mb-3">BaaS Dashboard</h1>
+    <h3 class=" text-muted mt-4 mb-5">A place to manage your products & field trials <strong>data</strong>.</h3>
 </div>
 <div class="row g-10" style="margin-bottom:120px">
     <div class="col-md-4">
-        <div class="card no-border">
-            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Products</h4>
-            <div class="card-container">
-                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
-                    <p>{{Products|intcomma}} </p>
-                </div>
-                <div class="card-body text-center txt-custom-main fw-bold subtitle">
-                    <p>products</p>
-                </div>
+        <div class="card no-border" >
+            <div class="card-body-baas">
+              <h3 class="card-title">Analyze</h3>
+              <h1 class="mb-2 text-big-number fw-bold">{{Products|intcomma}}</h6>
+              <h1 class="mb-2 card-title fw-bold"> products
+              <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+              <span><a href="{% url 'fieldtrial-list' %}" class="btn btn-info h1">&#8594;</a></span></h1>
             </div>
-            <div class="card-bottom text-center bg-custom-yellow">
-                <a href="{% url 'baaswebapp_index' %}"><span class="btn-large">Compare</span> <span class="btn-small">· field trials.</span></a>
-                
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card no-border">
-            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Trends</h4>
-            <div class="card-container">
-                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
-                    <p>{{FieldTrials|intcomma}} </p>
-                </div>
-                <div class="card-body text-center txt-custom-main fw-bold subtitle">
-                    <p>trials</p>
-                </div>
-            </div>
-            <div class="card-bottom bg-custom-green text-center">
-                <a href="{% url 'fieldtrial-list' %}"><span class="btn-large">Analyse</span> <span class="btn-small">· field trials.</span></a>
-            </div>
-        </div>
+          </div>
     </div>
 
     <div class="col-md-4">
-        <div class="card no-border">
-            <h4 class="card-header bg-custom-main text-white text-center fw-bold">Configuration</h4>
-            <div class="card-container">
-                <div class="card-body card-big-number txt-custom-main fw-bold telegraf">
-                    <p>{{DataPoints|intcomma}} </p>
-                </div>
-                <div class="card-body text-center txt-custom-main fw-bold subtitle">
-                    <p>datapoints reviews</p>
-                </div>
+        <div class="card no-border" >
+            <div class="card-body-baas">
+              <h3 class="card-title">Browse</h3>
+              <h1 class="mb-2 text-big-number fw-bold">{{FieldTrials|intcomma}}</h1>
+              <h1 class="mb-2 card-title "> field trials
+              <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+              <span><a href="{% url 'fieldtrial-list' %}" class="btn btn-info fw-bold">&#8594;</a></span></h1>
             </div>
-            <div class="card-bottom text-center bg-custom-blue">
-                <a href="{% url 'baaswebapp_index' %}"><span class="btn-large">Browse</span> <span class="btn-small">· data points.</span></a>
-                
+          </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card no-border" >
+            <div class="card-body-baas">
+              <h3 class="card-title">Analyze</h3>
+              <h1 class="mb-2 text-big-number fw-bold">{{DataPoints|intcomma}}</h6>
+              <h1 class="mb-2 card-title fw-bold"> datapoints
+              <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+              <span><a href="{% url 'fieldtrial-list' %}" class="btn btn-info h1 fw-bold">&#8594;</a></span></h1>
             </div>
-        </div>
+          </div>
     </div>
     
 </div>

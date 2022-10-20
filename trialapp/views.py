@@ -27,6 +27,8 @@ class FieldTrialListView(ListView):
                 'name': item.name,
                 'crop': item.crop.name,
                 'product': item.product.name,
+                'project': item.project.name,
+                'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
                 'id': item.id,
                 'datapoints': dataPoints})

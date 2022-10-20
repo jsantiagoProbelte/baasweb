@@ -3,39 +3,36 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class='row'>
-    <div class="col-md-10">
-        <h2 class="txt-custom-main">Field Trial List</h2>
-    </div>
-    <div class="col-md-2">
-        <a href="{% url 'fieldtrial-edit' %}" class="btn btn-primary">Add new field trial</a>
-    </div>
-</div>
+<h1 class="fw-bold mt-5 mb-3">Field Trials <a href="{% url 'fieldtrial-edit' %}" class="btn btn-primary">&#43;</a></h1>
+
+<div class="card card-body-baas">
 <table class="table">
     <thead>
         <tr>
-        <th >Name</th>
-        <th >Product</th>
-        <th >Crop</th>
-        <th >Plague</th>
-        <th ># Data</th>
-        <th >Actions</th>
+        <th>Name</th>
+        <th>Keywords</th>
+        <th>Thesis & applications</th>
+        <th >Status</th>
+        <th >Data</th>
         </tr>
     </thead>
     <tbody>
 {% for item in object_list %}
-    <tr><td><a href="{% url 'fieldtrial-edit' item.id%}">{{ item.name }}</a></td>
-        <td>{{ item.product }}</td>
-        <td>{{ item.crop }}</td>
-        <td>{{ item.plague }}</td>
-        <td>{{ item.datapoints }}</td>
-        <td>
-            <a href="{% url 'fieldtrial-edit' %}" class="btn btn-info btn-small">+</a>
+    <tr><td><a class="btn btn-info" href="{% url 'fieldtrial-edit' item.id%}">{{ item.name }}</a></td>
+        <td><span class="badge bg-project">{{ item.project }}</span>
+            <span class="badge bg-objective">{{ item.objective }}</span>
+            <span class="badge bg-plague">{{ item.plague }}</span>
+            <span class="badge bg-crop">{{ item.crop }}</span>
+            <span class="badge bg-product">{{ item.product }}</span>
         </td>
+        <td></td>
+        <td></td>
+        <td>{{ item.datapoints }}</td>
     </tr>
     </tbody>    
 {% empty %}
     <p>No Field Trial yet.</p>
 {% endfor %}
 </table>
+</div>
 {% endblock %}

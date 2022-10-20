@@ -6,21 +6,22 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import BootstrapAuthenticationForm
+from trialapp.models import TrialStats
 
 
 def home(request):
     """Renders the home page."""
     assert isinstance(request, HttpRequest)
-
+    stats = TrialStats.getGeneralStats()
     return render(
         request,
         'baaswebapp/index.html',
         {
             'title': 'Home Page',
             'year': datetime.now().year,
-            'Products': 33,
-            'FieldTrials': 66,
-            'DataPoints': 1000
+            'Products': stats['products'],
+            'FieldTrials': stats['field_trials'],
+            'DataPoints': stats['points']
         }
     )
 
