@@ -1,6 +1,6 @@
 
 # stop the build if there are Python syntax errors or undefined names
-flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --max-line-length=127 --exclude venv_baas
+flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --max-line-length=127 --exclude venv_baas,migrations
 if [ $? -ne 0 ]; then
     echo "========== ERROR FLAKE8 - python syntax error"
     exit 2
@@ -8,7 +8,7 @@ fi
 
 # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
 # --exit-zero ... treats errors as warnings
-flake8 . --count --max-complexity=10 --max-line-length=127 --statistics --exclude venv_baas
+flake8 . --count --max-complexity=10 --max-line-length=127 --statistics --exclude venv_baas,migrations
 if [ $? -ne 0 ]; then
     echo "========== ERROR FLAKE8 -complexity"
     exit 2

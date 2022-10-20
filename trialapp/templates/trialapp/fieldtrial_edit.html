@@ -1,0 +1,13 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2 class="txt-custom-main">{{title}} Field Trial</h2>
+
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+{% crispy create_form %}
+{% endblock %}

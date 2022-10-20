@@ -3,19 +3,39 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<style>
-    .table > :not(caption) > * > * {
-        padding: 1rem 6rem;
-    }
-</style>
-<h2 class="txt-custom-main">Field Trial List</h2>
+<div class='row'>
+    <div class="col-md-10">
+        <h2 class="txt-custom-main">Field Trial List</h2>
+    </div>
+    <div class="col-md-2">
+        <a href="{% url 'fieldtrial-edit' %}" class="btn btn-primary">Add new field trial</a>
+    </div>
+</div>
 <table class="table">
+    <thead>
+        <tr>
+        <th >Name</th>
+        <th >Product</th>
+        <th >Crop</th>
+        <th >Plague</th>
+        <th ># Data</th>
+        <th >Actions</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for item in object_list %}
-    <tr><td>{{ item.name }}</td>
-        <td style="text-align:right">{{ item.count }} Data points</td>
+    <tr><td><a href="{% url 'fieldtrial-edit' item.id%}">{{ item.name }}</a></td>
+        <td>{{ item.product }}</td>
+        <td>{{ item.crop }}</td>
+        <td>{{ item.plague }}</td>
+        <td>{{ item.datapoints }}</td>
+        <td>
+            <a href="{% url 'fieldtrial-edit' %}" class="btn btn-info btn-small">+</a>
+        </td>
     </tr>
+    </tbody>    
 {% empty %}
-    <tr>No Field Trial yet.</tr>
+    <p>No Field Trial yet.</p>
 {% endfor %}
 </table>
 {% endblock %}

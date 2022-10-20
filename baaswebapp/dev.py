@@ -7,7 +7,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'baaswebapp_db.sqlite3',
+        'NAME': 'db_baaswebapp.sqlite3',
         'USER': '',
     }
 }
