@@ -77,16 +77,19 @@ def getValueFromRequestOrArray(request, values, label):
     if label in values:
         return values[label]
     else:
-        return request.POST[label]
+        if label in request.POST:
+            return request.POST[label]
+        else:
+            return None
 
 
-def saveFieldTrial(request, user_review_id=None):
+def saveFieldTrial(request, field_trial_id=None):
     values = {}
     foreignModels = FieldTrial.getForeignModels()
     for model in foreignModels:
         label = foreignModels[model]
         values[label] = model.objects.get(pk=request.POST[label])
-
+    print(values)
     if 'field_trial_id' in request.POST and request.POST['field_trial_id']:
         # This is not a new user review.
         fieldTrial = get_object_or_404(FieldTrial,
@@ -111,12 +114,10 @@ def saveFieldTrial(request, user_review_id=None):
                                                        'farmer')
         fieldTrial.location = getValueFromRequestOrArray(request, values,
                                                          'location')
-        fieldTrial.initiation_date = getValueFromRequestOrArray(
-            request, values,
-            'initiation_date')
-        fieldTrial.completion_date = getValueFromRequestOrArray(
-            request, values,
-            'initiation_date')
+        # fieldTrial.completion_date = getValueFromRequestOrArray(
+        #     request, values,
+        #     'completion_date')
+
     else:
         # This is a new field trial
         fieldTrial = FieldTrial(

@@ -63,7 +63,6 @@ class FieldTrialCreateForm(forms.Form):
                     Field('product', css_class='mb-2'),
                     Field('crop', css_class='mb-2'),
                     Field('plague', css_class='mb-2'),
-                    Field('rating', css_class='mb-2'),
                     Field('project', css_class='mb-2'),
                     Field('objective', css_class='mb-2'),
                     Field('phase', css_class='mb-2'),

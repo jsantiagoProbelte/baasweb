@@ -10,27 +10,33 @@ class FieldAppTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-
         FieldAppTest.VALUES = TrialDbInitialLoader.initialTrialModelValues()
         TrialDbInitialLoader.loadInitialTrialValues()
+        print('Calling homre')
 
         # for itemName in FieldAppTest.FIELD_TEST_LIST:
         #     FieldTrial.objects.create(name=itemName)
 
     def test_ModelHelpers(self):
-        cropValues = FieldAppTest.VALUES[Crop]
+        allInitValues = TrialDbInitialLoader.initialTrialModelValues()
+        cropValues = allInitValues[Crop]
+        print(cropValues)
         len_cropValues = len(cropValues)
         itemsFromObjectsAll = Crop.objects.all()
         len_itemsFromObjectsAll = len(itemsFromObjectsAll)
+        self.assertGreater(len_itemsFromObjectsAll, 0)
         for item in itemsFromObjectsAll:
             self.assertTrue(item.name in cropValues)
 
         itemsGetObjects = Crop.getObjects()
-        len_itemsGetObjects = len(itemsFromObjectsAll)
+        len_itemsGetObjects = len(itemsGetObjects)
+        self.assertGreater(len_itemsGetObjects, 0)
         for item in itemsGetObjects:
             self.assertTrue(item.name in cropValues)
 
         self.assertEqual(len_itemsFromObjectsAll, len_itemsGetObjects)
+        print(itemsGetObjects)
+        print('==================')
         self.assertEqual(len_itemsGetObjects, len_cropValues)
 
         theList = Crop.getSelectList()
