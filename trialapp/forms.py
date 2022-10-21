@@ -28,12 +28,11 @@ class FieldTrialCreateForm(forms.Form):
     responsible = forms.CharField(label="Responsible")
     farmer = forms.CharField(label="Farmer")
 
-    product = forms.ChoiceField(label="Product", required=True, choices=[])
+    product = forms.ChoiceField(label="Main Product", required=True, choices=[])
     crop = forms.ChoiceField(label="Crop", required=True, choices=[])
     plague = forms.ChoiceField(label="Plague", required=False, choices=[])
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
-    completion_date = forms.DateField(widget=MyDateInput(), required=False)
 
     location = forms.CharField(label="City/Area")
 
@@ -57,24 +56,26 @@ class FieldTrialCreateForm(forms.Form):
         self.helper.layout = Layout(
             Div(
                 Field('field_trial_id'),
-                Field('name', css_class='mb-6')),
+                Field('name'),
+                css_class='mb-3'),
             Row(
+                Div(
+                    Field('project', css_class='mb-2'),
+                    Field('objective', css_class='mb-2'),
+                    Field('phase', css_class='mb-2'),
+                    Field('initiation_date', css_class='mb-2'),
+                    css_class='col-md-4'
+                ),
                 Div(
                     Field('product', css_class='mb-2'),
                     Field('crop', css_class='mb-2'),
                     Field('plague', css_class='mb-2'),
-                    Field('project', css_class='mb-2'),
-                    Field('objective', css_class='mb-2'),
-                    Field('phase', css_class='mb-2'),
-                    css_class='col-md-6'),
+                    css_class='col-md-4'),
                 Div(
                     Field('responsible', css_class='mb-2'),
                     Field('farmer', css_class='mb-2'),
                     Field('location', css_class='mb-2'),
-
-                    Field('initiation_date', css_class='mb-2'),
-                    Field('completion_date', css_class='mb-2'),
-                    css_class='col-md-6'),
+                    css_class='col-md-4'),
             ),
             Row(
                 Div(
@@ -82,6 +83,6 @@ class FieldTrialCreateForm(forms.Form):
                         Submit('submit', text,
                                css_class="btn btn-primary "),
                         css_class='float-end'),
-                    css_class='col-md-12 text-right'),
+                    css_class='col-md-12 text-sm-end'),
             )
         )

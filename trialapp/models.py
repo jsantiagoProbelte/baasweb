@@ -4,8 +4,6 @@ from django.db import models
 
 class ModelHelpers:
     NULL_STRING = '------'
-    # Each class should add a list of class:label
-    foreignModelLabels = {}
 
     @classmethod
     def getObjects(cls):
@@ -41,11 +39,11 @@ class ModelHelpers:
 
     @classmethod
     def getForeignModels(cls):
-        return ModelHelpers.foreignModelLabels
+        return cls.foreignModelLabels
 
     @classmethod
     def getForeignModelsLabels(cls):
-        return list(ModelHelpers.foreignModelLabels.values())
+        return list(cls.foreignModelLabels.values())
 
     # @classmethod
     # def addForeignModelLabelPair(cls, foreignClass, label):
@@ -83,43 +81,73 @@ class ModelHelpers:
 class Crop(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Plague(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
     scientific = models.CharField(max_length=200, null=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Project(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Objective(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Vendor(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Phase(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
     # vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 class RateUnit(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class ResultUnit(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class TrialStatus(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class FieldTrial(models.Model, ModelHelpers):
@@ -145,13 +173,16 @@ class FieldTrial(models.Model, ModelHelpers):
 
     report_filename = models.TextField(null=True)
 
-    ModelHelpers.foreignModelLabels = {
+    foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
         Crop: 'crop', Plague: 'plague', Project: 'project'
         }
 
+    def __str__(self):
+        return self.name
 
-class Treatment(models.Model, ModelHelpers):
+
+class Thesis(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
     number = models.IntegerField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
@@ -159,6 +190,19 @@ class Treatment(models.Model, ModelHelpers):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=5, decimal_places=3)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
+
+    foreignModelLabels = {
+        Product: 'product', RateUnit: 'rate_unit'
+        }
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def getObjects(cls, field_trial):
+        return cls.objects \
+                .filter(field_trial=field_trial) \
+                .order_by('name')
 
 
 class Application(models.Model, ModelHelpers):
@@ -168,18 +212,24 @@ class Application(models.Model, ModelHelpers):
     crop_stage_majority = models.IntegerField()
     crop_stage_scale = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.name
+
 
 class Replica(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
     number = models.IntegerField()
-    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
+    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 # This collects the information of other products related with this tests.
 class RelatedProducts(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE,
+    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE,
                                   null=True)
 
 
@@ -187,7 +237,7 @@ class RelatedProducts(models.Model):
 Results aggregation
 * (RawResult) Value at plant
 * (ReplicaResult) Value at Replica (as aggregation of plant' values)
-* (AplicationResult) Value at Application connected with a Treatment
+* (AplicationResult) Value at Application connected with a Thesis
     (as aggregation of replica' values)
 * (ApplicationMeasurement) An application/treatment could have multiple
     measurements. This one connets to the application / treatment together
@@ -197,7 +247,7 @@ Results aggregation
 
 class ApplicationMeasurement(models.Model, ModelHelpers):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
+    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     unit = models.ForeignKey(ResultUnit, on_delete=models.CASCADE)
 
 

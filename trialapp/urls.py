@@ -1,21 +1,29 @@
 from django.urls import path
-from . import views
+from . import fieldtrial_views, thesis_views
 
 urlpatterns = [
     path(
         'fieldtrials',
-        views.FieldTrialListView.as_view(),
+        fieldtrial_views.FieldTrialListView.as_view(),
         name='fieldtrial-list'),
     path(
         'edit_fieldtrial',
-        views.editNewFieldTrial,
+        fieldtrial_views.editNewFieldTrial,
         name='fieldtrial-edit'),
     path(
         'edit_fieldtrial/<int:field_trial_id>/',
-        views.editNewFieldTrial,
+        fieldtrial_views.editNewFieldTrial,
         name='fieldtrial-edit'),
     path(
         'save_fieldtrial',
-        views.saveFieldTrial,
+        fieldtrial_views.saveFieldTrial,
         name='fieldtrial-save'),
+    path(
+        'thesislist/<int:field_trial_id>/',
+        thesis_views.ThesisListView.as_view(),
+        name='thesis-list'),
+    # path(
+    #     'edit_thesis/<int:field_trial_id>//<int:thesis_id>/',
+    #     fieldtrial_views.editThesis,
+    #     name='thesis-edit'),
 ]

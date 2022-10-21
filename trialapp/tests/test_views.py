@@ -3,7 +3,7 @@ from django.urls import reverse
 from trialapp.models import FieldTrial
 from trialapp.tests.tests_models import FieldAppTest
 from django.test import RequestFactory
-from trialapp.views import editNewFieldTrial, saveFieldTrial
+from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial
 
 
 class TrialAppTest(TestCase):

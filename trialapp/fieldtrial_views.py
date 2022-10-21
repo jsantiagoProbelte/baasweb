@@ -1,7 +1,7 @@
 # Create your views here.
 from django.views.generic.list import ListView
 # from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import FieldTrial
+from trialapp.models import Application, FieldTrial, Thesis
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FieldTrialCreateForm
 
@@ -17,12 +17,10 @@ class FieldTrialListView(ListView):
 
         new_list = []
 
-        # for item in FieldTrial.getObjects(self.request.user):
         for item in FieldTrial.getObjects():
-            # applicationCount=5 #To use latter to display number of data
-            # points and applications
-            # To use latter to display number of data points and trails
-            dataPoints = 33
+            applications = Application.objects.filter(field_trial=item).count()
+            thesis = Thesis.objects.filter(field_trial=item).count()
+
             new_list.append({
                 'name': item.name,
                 'crop': item.crop.name,
@@ -31,7 +29,8 @@ class FieldTrialListView(ListView):
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
                 'id': item.id,
-                'datapoints': dataPoints})
+                'applications': applications,
+                'thesis': thesis})
 
         return {'object_list': new_list}
 

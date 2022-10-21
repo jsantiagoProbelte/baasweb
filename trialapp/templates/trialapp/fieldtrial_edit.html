@@ -4,10 +4,14 @@
 
 {% block content %}
 
-<h2>{{title}} Field Trial</h2>
+<h1 class="mt-3 mb-3">{{title}} Field Trial</h2>
 
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
-{% crispy create_form %}
+<div class="card no-border" >
+    <div class="card-body-baas">
+        {% crispy create_form %}
+    </div>
+</div>
 {% endblock %}
