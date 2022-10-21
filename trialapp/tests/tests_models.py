@@ -6,21 +6,13 @@ from trialapp.models import FieldTrial, ModelHelpers, Crop,\
 # Create your tests here.
 class FieldAppTest(TestCase):
 
-    VALUES = {}
-
     @classmethod
     def setUpTestData(cls):
-        FieldAppTest.VALUES = TrialDbInitialLoader.initialTrialModelValues()
         TrialDbInitialLoader.loadInitialTrialValues()
-        print('Calling homre')
-
-        # for itemName in FieldAppTest.FIELD_TEST_LIST:
-        #     FieldTrial.objects.create(name=itemName)
 
     def test_ModelHelpers(self):
         allInitValues = TrialDbInitialLoader.initialTrialModelValues()
         cropValues = allInitValues[Crop]
-        print(cropValues)
         len_cropValues = len(cropValues)
         itemsFromObjectsAll = Crop.objects.all()
         len_itemsFromObjectsAll = len(itemsFromObjectsAll)
@@ -35,8 +27,6 @@ class FieldAppTest(TestCase):
             self.assertTrue(item.name in cropValues)
 
         self.assertEqual(len_itemsFromObjectsAll, len_itemsGetObjects)
-        print(itemsGetObjects)
-        print('==================')
         self.assertEqual(len_itemsGetObjects, len_cropValues)
 
         theList = Crop.getSelectList()

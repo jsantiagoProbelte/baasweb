@@ -89,7 +89,7 @@ def saveFieldTrial(request, field_trial_id=None):
     for model in foreignModels:
         label = foreignModels[model]
         values[label] = model.objects.get(pk=request.POST[label])
-    print(values)
+
     if 'field_trial_id' in request.POST and request.POST['field_trial_id']:
         # This is not a new user review.
         fieldTrial = get_object_or_404(FieldTrial,
