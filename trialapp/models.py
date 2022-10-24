@@ -39,15 +39,17 @@ class ModelHelpers:
 
     @classmethod
     def getForeignModels(cls):
-        return cls.foreignModelLabels
+        if hasattr(cls, 'foreignModelLabels'):
+            return cls.foreignModelLabels
+        else:
+            return {}
 
     @classmethod
     def getForeignModelsLabels(cls):
-        return list(cls.foreignModelLabels.values())
-
-    # @classmethod
-    # def addForeignModelLabelPair(cls, foreignClass, label):
-    #     ModelHelpers.foreignModelLabels[foreignClass] = label
+        if hasattr(cls, 'foreignModelLabels'):
+            return list(cls.foreignModelLabels.values())
+        else:
+            return []
 
     @classmethod
     def generateFormKwargsChoices(cls, initialValues):
@@ -73,6 +75,16 @@ class ModelHelpers:
         else:
             pass  # TODO: Assert !!
         return values
+
+    @classmethod
+    def getValueFromRequestOrArray(cls, request, values, label):
+        if label in values:
+            return values[label]
+        else:
+            if label in request.POST:
+                return request.POST[label]
+            else:
+                return None
 
     def __str__(self):
         return self.name
@@ -187,13 +199,6 @@ class Thesis(models.Model, ModelHelpers):
     number = models.IntegerField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     description = models.TextField(null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.DecimalField(max_digits=5, decimal_places=3)
-    rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-
-    foreignModelLabels = {
-        Product: 'product', RateUnit: 'rate_unit'
-        }
 
     def __str__(self):
         return self.name
@@ -202,7 +207,24 @@ class Thesis(models.Model, ModelHelpers):
     def getObjects(cls, field_trial):
         return cls.objects \
                 .filter(field_trial=field_trial) \
-                .order_by('name')
+                .order_by('number')
+
+
+class ProductThesis(models.Model, ModelHelpers):
+    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rate = models.DecimalField(max_digits=5, decimal_places=3)
+    rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
+
+    foreignModelLabels = {
+        Product: 'product', RateUnit: 'rate_unit'
+        }
+
+    @classmethod
+    def getObjects(cls, thesis):
+        return cls.objects \
+                .filter(thesis=thesis) \
+                .order_by('product.name')
 
 
 class Application(models.Model, ModelHelpers):
@@ -272,6 +294,23 @@ class RawResult(models.Model):
                                         on_delete=models.CASCADE)
 
 
+class TrialStats:
+    @classmethod
+    def getGeneralStats(cls):
+        return {
+            'products': Product.objects.count(),
+            'field_trials': FieldTrial.objects.count(),
+            'points': RawResult.objects.count()
+        }
+
+
+'''
+To create db execute this in python manage.py shell
+from trialapp.models import TrialDbInitialLoader
+TrialDbInitialLoader.loadInitialTrialValues()
+'''
+
+
 class TrialDbInitialLoader:
     @classmethod
     def initialTrialModelValues(cls):
@@ -301,13 +340,3 @@ class TrialDbInitialLoader:
         initialValues = cls.initialTrialModelValues()
         for modelo in initialValues:
             modelo.initValues(initialValues[modelo])
-
-
-class TrialStats:
-    @classmethod
-    def getGeneralStats(cls):
-        return {
-            'products': Product.objects.count(),
-            'field_trials': FieldTrial.objects.count(),
-            'points': RawResult.objects.count()
-        }

@@ -72,16 +72,6 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
                    'errors': errors})
 
 
-def getValueFromRequestOrArray(request, values, label):
-    if label in values:
-        return values[label]
-    else:
-        if label in request.POST:
-            return request.POST[label]
-        else:
-            return None
-
-
 def saveFieldTrial(request, field_trial_id=None):
     values = {}
     foreignModels = FieldTrial.getForeignModels()
@@ -93,46 +83,57 @@ def saveFieldTrial(request, field_trial_id=None):
         # This is not a new user review.
         fieldTrial = get_object_or_404(FieldTrial,
                                        pk=request.POST['field_trial_id'])
-        fieldTrial.name = getValueFromRequestOrArray(request, values, 'name')
-        fieldTrial.phase = getValueFromRequestOrArray(request, values, 'phase')
-        fieldTrial.objective = getValueFromRequestOrArray(request, values,
-                                                          'objective')
-        fieldTrial.responsible = getValueFromRequestOrArray(request, values,
-                                                            'responsible')
-        fieldTrial.product = getValueFromRequestOrArray(request, values,
-                                                        'product')
-        fieldTrial.project = getValueFromRequestOrArray(request, values,
-                                                        'project')
-        fieldTrial.crop = getValueFromRequestOrArray(request, values, 'crop')
-        fieldTrial.plague = getValueFromRequestOrArray(request, values,
-                                                       'plague')
-        fieldTrial.initiation_date = getValueFromRequestOrArray(
-            request, values,
-            'initiation_date')
-        fieldTrial.farmer = getValueFromRequestOrArray(request, values,
-                                                       'farmer')
-        fieldTrial.location = getValueFromRequestOrArray(request, values,
-                                                         'location')
-        # fieldTrial.completion_date = getValueFromRequestOrArray(
+        fieldTrial.name = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'name')
+        fieldTrial.phase = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'phase')
+        fieldTrial.objective = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'objective')
+        fieldTrial.responsible = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'responsible')
+        fieldTrial.product = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'product')
+        fieldTrial.project = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'project')
+        fieldTrial.crop = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'crop')
+        fieldTrial.plague = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'plague')
+        fieldTrial.initiation_date = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'initiation_date')
+        fieldTrial.farmer = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'farmer')
+        fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'location')
+        # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
         #     request, values,
         #     'completion_date')
 
     else:
         # This is a new field trial
         fieldTrial = FieldTrial(
-            name=getValueFromRequestOrArray(request, values, 'name'),
-            phase=getValueFromRequestOrArray(request, values, 'phase'),
-            objective=getValueFromRequestOrArray(request, values, 'objective'),
-            responsible=getValueFromRequestOrArray(request, values,
-                                                   'responsible'),
-            product=getValueFromRequestOrArray(request, values, 'product'),
-            project=getValueFromRequestOrArray(request, values, 'project'),
-            crop=getValueFromRequestOrArray(request, values, 'crop'),
-            plague=getValueFromRequestOrArray(request, values, 'plague'),
-            initiation_date=getValueFromRequestOrArray(request, values,
-                                                       'initiation_date'),
-            farmer=getValueFromRequestOrArray(request, values, 'farmer'),
-            location=getValueFromRequestOrArray(request, values, 'location')
+            name=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'name'),
+            phase=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'phase'),
+            objective=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'objective'),
+            responsible=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'responsible'),
+            product=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'product'),
+            project=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'project'),
+            crop=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'crop'),
+            plague=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'plague'),
+            initiation_date=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'initiation_date'),
+            farmer=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'farmer'),
+            location=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'location')
         )
     fieldTrial.save()
     return redirect('fieldtrial-list')

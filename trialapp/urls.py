@@ -22,8 +22,16 @@ urlpatterns = [
         'thesislist/<int:field_trial_id>/',
         thesis_views.ThesisListView.as_view(),
         name='thesis-list'),
-    # path(
-    #     'edit_thesis/<int:field_trial_id>//<int:thesis_id>/',
-    #     fieldtrial_views.editThesis,
-    #     name='thesis-edit'),
+    path(
+        'edit_thesis/<int:field_trial_id>/',
+        thesis_views.editThesis,
+        name='thesis-edit'),
+    path(
+        'edit_thesis/<int:field_trial_id>/<int:thesis_id>/',
+        thesis_views.editThesis,
+        name='thesis-edit'),
+    path(
+        'thesis-save',
+        thesis_views.saveThesis,
+        name='thesis-save'),
 ]

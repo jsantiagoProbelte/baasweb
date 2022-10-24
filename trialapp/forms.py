@@ -81,8 +81,58 @@ class FieldTrialCreateForm(forms.Form):
                 Div(
                     FormActions(
                         Submit('submit', text,
-                               css_class="btn btn-primary "),
-                        css_class='float-end'),
+                               css_class="btn btn-info")),
                     css_class='col-md-12 text-sm-end'),
             )
         )
+
+
+class ThesisEditForm(forms.Form):
+    field_trial_id = forms.CharField(widget=forms.HiddenInput())
+    thesis_id = forms.CharField(widget=forms.HiddenInput())
+    number = forms.CharField(
+        label='Number', required=True,
+        widget=forms.NumberInput())
+    name = forms.CharField(label='Name', required=True)
+    description = forms.CharField(label="Original Comment", required=False,
+                                  widget=forms.Textarea(attrs={'rows': 3}))
+    product = forms.ChoiceField(label="Main Product", required=True,
+                                choices=[])
+    rate = forms.CharField(
+        label='Rate', required=True,
+        widget=forms.NumberInput())
+    rate_unit = forms.ChoiceField(label="Main Product", required=True,
+                                  choices=[])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-edit-thesis'
+        self.helper.form_class = 'create-thesis'
+        self.helper.form_method = 'post'
+        self.helper.form_action = '/thesis-save'
+
+        text = 'Create Thesis'
+        if 'initial' in kwargs and \
+           'thesis_id' in kwargs['initial'] and \
+           kwargs['initial']['thesis_id'] is not None:
+            text = 'Save'
+
+        self.helper.layout = Layout(
+            Field('field_trial_id'),
+            Field('thesis_id'),
+            Row(
+                Div(
+                    Field('number'),
+                    css_class='col-md-3'),
+                Div(
+                    Field('name'),
+                    css_class='col-md-9'),
+                css_class='mb-2'),
+            Field('description', css_class='mb-2'),
+            Div(
+                FormActions(
+                    Submit('submit', text,
+                           css_class="btn btn-info")),
+                css_class='text-sm-end')
+            )

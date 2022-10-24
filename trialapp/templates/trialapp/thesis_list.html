@@ -5,11 +5,11 @@
 {% block content %}
 <div class="row mt-5 mb-2">
     <div class="col-md-6">
-        <h1 class="fw-bold ">Thesis <a href="{% url 'fieldtrial-edit' %}" class="btn btn-primary fs-4">&#43;</a></h1>
+        <h1 class="fw-bold ">Thesis <a href="{% url 'thesis-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
     </div>
     <div class="col-md-6">
         <h4 class="text-muted text-sm-end">Field Trial 
-            <span><a href="{% url 'fieldtrial-edit' field_trial_id%}" >{{field_trial_name}}</a></span>
+            <span><a href="{% url 'fieldtrial-edit' field_trial_id %}" >{{field_trial_name}}</a></span>
         </h4>
     </div>
 </div>
@@ -22,18 +22,16 @@
             <th>Number</th>
             <th>Name</th>
             <th>description</th>
-            <th>product</th>
-            <th>Rate & Unit</th>
+            <th>Product - Rate & Unit</th>
         </tr>
     </thead>
     <tbody>
 {% for item in object_list %}
     <tr>
         <td>{{item.number}}</td>
-        <td>{{item.name}}</td>
+        <td><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
         <td>{{item.description}}</td>
-        <td>{{item.product}}</td>
-        <td>{{item.rate}} {{item.rate_unit}} </td>
+        <td></td>
     </tr>
     </tbody>    
 {% empty %}
