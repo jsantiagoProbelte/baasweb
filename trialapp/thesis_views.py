@@ -49,6 +49,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
     return render(request, template_name,
                   {'edit_form': edit_form,
                    'field_trial_id': field_trial_id,
+                   'field_trial_name': fieldTrial.name,
                    'thesis_id': thesis_id,
                    'title': title,
                    'product_list': product_list,
