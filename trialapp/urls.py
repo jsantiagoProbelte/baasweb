@@ -34,4 +34,8 @@ urlpatterns = [
         'thesis-save',
         thesis_views.saveThesis,
         name='thesis-save'),
+    path(
+        'add_product_to_thesis_api',
+        thesis_views.AddProductToThesis.as_view(),
+        name='add_product_to_thesis_api')
 ]

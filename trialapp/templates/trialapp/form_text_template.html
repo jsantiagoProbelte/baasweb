@@ -1,0 +1,8 @@
+{% load crispy_forms_tags %}
+<form id="reply-template-{{tag}}-form-{{reply_id}}" class='reply-template-{{tag}}-form mb-4'  method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <textarea type="text" name="{{tag}}" rows="{{rows}}" 
+        id="reply-template-{{tag}}-textarea-{{reply_id}}"
+        class="form-control textarea reply-template-{{tag}}-textarea" placeholder="{{placeholder}}">{{currentValue}}</textarea>
+</form>

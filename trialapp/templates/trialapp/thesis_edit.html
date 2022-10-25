@@ -20,11 +20,65 @@
   <div class="col-md-6">
     <div class="card no-border" >
       <div class="card-body-baas">
-        {% if errors == 'Edit' %}
-            <h4> Define products</h4>
+        {% if thesis_id %}
+            <h4>Products</h4>
+            <table class="table"><tbody id="product_tesis_table">
+            <tr id="product_thesis">
+                {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
+            </tr>
+            {% for item in product_list %}
+                <tr>
+                    <td>{{item.product}}</td>
+                    <td>{{item.rate}}</td>
+                    <td>{{item.rate_unit}}</td>
+                    <td></td>
+                </tr>
+            {% empty %}
+                <p>No products yet.</p>
+            {% endfor %}
+            
+            </tbody></table>
         {% endif %}
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('.thesis-add-product-form').submit( function(){
+    var element=$(this)
+    var appendTable=$('#product_tesis_table')
+    return addProductToThesisCall(element,appendTable)
+});
+
+function addProductToThesisCall(element,appendTable) {
+    var dataJson={}
+    $(element.serializeArray()).each(function(index,obj){
+        dataJson[obj.name]=obj.value;
+    });
+    dataJson['thesis_id']=element.attr('id');
+    $.ajax({
+        type : element.attr('method'), 
+        url: '/add_product_to_thesis_api',
+        data: dataJson,
+        
+        success: function(data){
+            console.log("data");
+            appendTable.append(
+                '<tr><td>'+data.product+'</td>\
+                    <td>'+data.rate+'</td>\
+                    <td>'+data.rate_unit+'</td>\
+                    <td></td>\
+                </tr>'); /* response message */
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
+</script>
 {% endblock %}

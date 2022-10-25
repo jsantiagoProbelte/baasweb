@@ -224,7 +224,7 @@ class ProductThesis(models.Model, ModelHelpers):
     def getObjects(cls, thesis):
         return cls.objects \
                 .filter(thesis=thesis) \
-                .order_by('product.name')
+                .order_by('product__name')
 
 
 class Application(models.Model, ModelHelpers):
@@ -332,7 +332,9 @@ class TrialDbInitialLoader:
                      'Marchitez', 'Minador', 'Mosca blanca', 'N/A',
                      'Nematodo agallador', 'Tizon de la hoja',
                      'Tristeza de los citricos', 'Tristeza del aguacatero',
-                     'Verticiliosis']
+                     'Verticiliosis'],
+            RateUnit: ['Kg/hectare', 'Liters/hectare'],
+            ResultUnit: ['Affected Plants', 'Severity Infection', 'Kg']
         }
 
     @classmethod

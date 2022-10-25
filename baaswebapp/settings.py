@@ -44,7 +44,8 @@ BASE_APPS = [
 
 EXTENDED_APPS = [
     'crispy_forms',
-    'bootstrap5'
+    'bootstrap5',
+    'rest_framework'
 ]
 
 CUSTOM_APPS = [
@@ -170,10 +171,10 @@ logging.config.dictConfig({
     },
 })
 
-# if 'test' in sys.argv or 'test_coverage' in sys.argv:
-#     DEBUG = True
-#     DATABASES = {'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3')
-#         }
-#     }
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ]
+}

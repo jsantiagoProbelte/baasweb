@@ -1,0 +1,18 @@
+
+<select id="input-select-{{tag}}-{{item_id}}" name='{{tag}}' class="form-control input-select-template">
+    
+    {% if currentValue == "" %}
+        <option value selected>------</option>
+    {% else %}
+        {% if addNull %}
+            <option value>------</option>
+        {% endif %}
+    {% endif %}
+    {% for selectOption in selectOptions%}
+        {% if selectOption.value == currentValue %}
+            <option value="{{selectOption.value}}" selected>{{selectOption.name}}</option>
+        {% else %}
+            <option value="{{selectOption.value}}">{{selectOption.name}}</option>
+        {% endif %}
+    {% endfor %}
+</select>
