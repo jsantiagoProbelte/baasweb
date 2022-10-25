@@ -91,9 +91,11 @@ def saveThesis(request, thesis_id=None):
         thesis_id=thesis.id)
 
 
-class AddProductToThesis(APIView):
+class ManageProductToThesis(APIView):
     authentication_classes = []
     permission_classes = []
+    http_method_names = [
+        'delete', 'post']
 
     def post(self, request, format=None):
         thesis_id = request.POST['thesis_id'].split('-')[-1]
@@ -111,7 +113,16 @@ class AddProductToThesis(APIView):
             rate=rate)
         productThesis.save()
         responseData = {
+            'id': productThesis.id,
             'product': product.name,
             'rate_unit': rateUnit.name,
             'rate': rate}
         return Response(responseData)
+
+    def delete(self, request, *args, **kwargs):
+        productThesis = ProductThesis.objects.get(
+            pk=request.POST['product_thesis_id'])
+        productThesis.delete()
+
+        response_data = {'msg': 'Product was deleted.'}
+        return Response(response_data, status=200)

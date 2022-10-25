@@ -94,7 +94,7 @@ class ThesisEditForm(forms.Form):
         label='Number', required=True,
         widget=forms.NumberInput())
     name = forms.CharField(label='Name', required=True)
-    description = forms.CharField(label="Original Comment", required=False,
+    description = forms.CharField(label="Description", required=False,
                                   widget=forms.Textarea(attrs={'rows': 3}))
     product = forms.ChoiceField(label="Main Product", required=True,
                                 choices=[])
@@ -124,12 +124,12 @@ class ThesisEditForm(forms.Form):
             Row(
                 Div(
                     Field('number'),
-                    css_class='col-md-3'),
+                    css_class='col-md-2'),
                 Div(
                     Field('name'),
-                    css_class='col-md-9'),
-                css_class='mb-2'),
-            Field('description', css_class='mb-2'),
+                    css_class='col-md-10'),
+                css_class='mb-4'),
+            Field('description', css_class='mb-4 mt-2'),
             Div(
                 FormActions(
                     Submit('submit', text,
