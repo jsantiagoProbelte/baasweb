@@ -1,8 +1,6 @@
 {% load crispy_forms_tags %}
-<form id="reply-template-{{tag}}-form-{{reply_id}}" class='reply-template-{{tag}}-form mb-4'  method="POST">
+<form id="form-text-template-{{tag}}-{{reply_id}}" class='form-text-template mb-4'  method="POST">
     {% csrf_token %}
     {{ form|crispy }}
-    <textarea type="text" name="{{tag}}" rows="{{rows}}" 
-        id="reply-template-{{tag}}-textarea-{{reply_id}}"
-        class="form-control textarea reply-template-{{tag}}-textarea" placeholder="{{placeholder}}">{{currentValue}}</textarea>
+    {% include "trialapp/input_text_template.html" with tag=tag item_id=item_id  placeholder=placeholder currentValue=currentValue type_input=type_input%}
 </form>
