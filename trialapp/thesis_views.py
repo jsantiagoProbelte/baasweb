@@ -26,7 +26,7 @@ class ThesisListView(ListView):
 
 
 def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
-    initialValues = {'field_trial_id': field_trial_id, 'thesis_id': thesis_id}
+    initialValues = {'field_trial': field_trial_id, 'thesis_id': thesis_id}
     template_name = 'trialapp/thesis_edit.html'
     title = 'New'
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)

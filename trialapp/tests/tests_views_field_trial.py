@@ -1,16 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial
-from trialapp.tests.tests_models import FieldAppTest
+from trialapp.models import FieldTrial, TrialDbInitialLoader
+from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial
 
 
-class TrialAppTest(TestCase):
+class FieldTrialViewsTest(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
-        FieldAppTest.setUpTestData()
+    def setUp(self):
+        TrialDbInitialLoader.loadInitialTrialValues()
 
     def test_trialapp_index(self):
         response = self.client.get(reverse('fieldtrial-list'))
@@ -28,19 +27,7 @@ class TrialAppTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        fieldTrialData = {
-            'name': 'fieldTrial 666',
-            'phase': 1,
-            'objective': 1,
-            'responsible': 'Waldo',
-            'product': 1,
-            'project': 1,
-            'crop': 1,
-            'plague': 1,
-            'initiation_date': '2021-07-01',
-            'farmer': 'Mr Farmer',
-            'location': 'La Finca'
-        }
+        fieldTrialData = TrialAppModelTest.FIELDTRIALS[0]
         request = request_factory.post('/save_fieldtrial', data=fieldTrialData)
         response = saveFieldTrial(request)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])

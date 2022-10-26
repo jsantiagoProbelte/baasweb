@@ -193,6 +193,22 @@ class FieldTrial(models.Model, ModelHelpers):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def create_fieldTrial(cls, **kwargs):
+        return cls.objects.create(
+            name=kwargs['name'],
+            phase=Phase.objects.get(pk=kwargs['phase']),
+            objective=Objective.objects.get(pk=kwargs['objective']),
+            responsible=kwargs['responsible'],
+            product=Product.objects.get(pk=kwargs['product']),
+            project=Project.objects.get(pk=kwargs['project']),
+            crop=Crop.objects.get(pk=kwargs['crop']),
+            plague=Plague.objects.get(pk=kwargs['plague']),
+            initiation_date=kwargs['initiation_date'],
+            farmer=kwargs['farmer'],
+            location=kwargs['location']
+        )
+
 
 class Thesis(models.Model, ModelHelpers):
     name = models.CharField(max_length=100)
@@ -208,6 +224,15 @@ class Thesis(models.Model, ModelHelpers):
         return cls.objects \
                 .filter(field_trial=field_trial) \
                 .order_by('number')
+
+    @classmethod
+    def create_Thesis(cls, **kwargs):
+        return cls.objects.create(
+            name=kwargs['name'],
+            field_trial=FieldTrial.objects.get(pk=kwargs['field_trial_id']),
+            number=kwargs['number'],
+            description=kwargs['description']
+        )
 
 
 class ProductThesis(models.Model, ModelHelpers):
@@ -225,6 +250,15 @@ class ProductThesis(models.Model, ModelHelpers):
         return cls.objects \
                 .filter(thesis=thesis) \
                 .order_by('product__name')
+
+    @classmethod
+    def create_ProductThesis(cls, **kwargs):
+        return cls.objects.create(
+            thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
+            product=Product.objects.get(pk=kwargs['product_id']),
+            rate=kwargs['rate'],
+            rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id'])
+        )
 
 
 class Application(models.Model, ModelHelpers):

@@ -31,7 +31,7 @@ urlpatterns = [
         thesis_views.editThesis,
         name='thesis-edit'),
     path(
-        'thesis-save',
+        'save_thesis',
         thesis_views.saveThesis,
         name='thesis-save'),
     path(

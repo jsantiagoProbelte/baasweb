@@ -63,7 +63,8 @@ class FieldTrialCreateForm(forms.Form):
                     Field('project', css_class='mb-2'),
                     Field('objective', css_class='mb-2'),
                     Field('phase', css_class='mb-2'),
-                    Field('initiation_date', css_class='mb-2'),
+                    Field('initiation_date',
+                          css_class='mb-2'),
                     css_class='col-md-4'
                 ),
                 Div(

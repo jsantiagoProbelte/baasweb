@@ -1,22 +1,54 @@
 from django.test import TestCase
-from trialapp.models import FieldTrial, ModelHelpers, Crop,\
+from trialapp.models import FieldTrial, ModelHelpers, Crop, ProductThesis, Thesis,\
                             TrialDbInitialLoader
 
 
 # Create your tests here.
-class FieldAppTest(TestCase):
+class TrialAppModelTest(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
+    FIELDTRIALS = [{
+            'name': 'fieldTrial 666',
+            'phase': 1,
+            'objective': 1,
+            'responsible': 'Waldo',
+            'product': 1,
+            'project': 1,
+            'crop': 1,
+            'plague': 1,
+            'initiation_date': '2021-07-01',
+            'farmer': 'Mr Farmer',
+            'location': 'La Finca'}
+    ]
+
+    THESIS = [{
+        'name': 'thesis 666',
+        'number': 1,
+        'description': 'Thesis 666 for product 1',
+        'field_trial_id': 1
+        }
+    ]
+
+    PRODUCT_THESIS = [{
+        'thesis_id': 1,
+        'product_id': 1,
+        'rate': 1.5,
+        'rate_unit_id': 1}
+    ]
+
+    def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
 
     def test_ModelHelpers(self):
-        allInitValues = TrialDbInitialLoader.initialTrialModelValues()
-        cropValues = allInitValues[Crop]
-        len_cropValues = len(cropValues)
         itemsFromObjectsAll = Crop.objects.all()
         len_itemsFromObjectsAll = len(itemsFromObjectsAll)
         self.assertGreater(len_itemsFromObjectsAll, 0)
+
+        allInitValues = TrialDbInitialLoader.initialTrialModelValues()
+        cropValues = allInitValues[Crop]
+        len_cropValues = len(cropValues)
+        self.assertEqual(len_itemsFromObjectsAll,
+                         len_cropValues)
+
         for item in itemsFromObjectsAll:
             self.assertTrue(item.name in cropValues)
 
@@ -90,3 +122,19 @@ class FieldAppTest(TestCase):
             self.checkExtract(labelModel, valuesModel,
                               **dictKwargValues)
         self.assertFalse('initial' in modelValues)
+
+    def test_fixtures(self):
+        fieldTrial666 = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+        self.assertEqual(fieldTrial666.name,
+                         TrialAppModelTest.FIELDTRIALS[0]['name'])
+
+        thesis666 = Thesis.create_Thesis(
+            **TrialAppModelTest.THESIS[0])
+        self.assertEqual(thesis666.name,
+                         TrialAppModelTest.THESIS[0]['name'])
+
+        productThesis = ProductThesis.create_ProductThesis(
+            **TrialAppModelTest.PRODUCT_THESIS[0])
+        self.assertEqual(productThesis.rate,
+                         TrialAppModelTest.PRODUCT_THESIS[0]['rate'])
