@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, TrialDbInitialLoader, Thesis
+from trialapp.models import FieldTrial, ProductThesis, TrialDbInitialLoader, Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
-from trialapp.thesis_views import editThesis, saveThesis
+from trialapp.thesis_views import editThesis, saveThesis,\
+    ManageProductToThesis
 # from trialapp.thesis_views import editThesis
 
 
@@ -66,3 +67,30 @@ class ThesisViewsTest(TestCase):
         thesis2 = Thesis.objects.get(name=thesisData['name'])
         self.assertEqual(thesis2.description, newdescription)
         self.assertEqual(response.status_code, 302)
+
+        # Lets add some products
+        productData = {'product': 1, 'rate_unit': 1, 'rate': 6,
+                       'thesis_id': thesis2.id}
+        addProductThesisRequest = request_factory.post(
+            '/manage_product_to_thesis_api',
+            data=productData)
+
+        self.assertEqual(ProductThesis.objects.count(),
+                         0)
+        apiView = ManageProductToThesis()
+        response = apiView.post(addProductThesisRequest)
+        self.assertEqual(response.status_code, 200)
+        thesisProducts = ProductThesis.objects.all()
+        self.assertEqual(len(thesisProducts),
+                         1)
+        self.assertEqual(thesisProducts[0].thesis.name,
+                         thesis2.name)
+
+        deleteData = {'product_thesis_id': thesisProducts[0].id}
+        deleteProductThesisRequest = request_factory.post(
+            '/manage_product_to_thesis_api',
+            data=deleteData)
+        response = apiView.delete(deleteProductThesisRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(ProductThesis.objects.count(),
+                         0)

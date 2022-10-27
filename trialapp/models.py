@@ -90,79 +90,49 @@ class ModelHelpers:
         return self.name
 
 
-class Crop(models.Model, ModelHelpers):
+class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class Plague(models.Model, ModelHelpers):
+class Plague(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     scientific = models.CharField(max_length=200, null=True)
 
-    def __str__(self):
-        return self.name
 
-
-class Project(models.Model, ModelHelpers):
+class Project(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class Objective(models.Model, ModelHelpers):
+class Objective(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class Vendor(models.Model, ModelHelpers):
+class Vendor(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class Phase(models.Model, ModelHelpers):
+class Phase(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class Product(models.Model, ModelHelpers):
+class Product(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     # vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.name
 
-
-class RateUnit(models.Model, ModelHelpers):
+class RateUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class ResultUnit(models.Model, ModelHelpers):
+class ResultUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class TrialStatus(models.Model, ModelHelpers):
+class TrialStatus(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
 
-
-class FieldTrial(models.Model, ModelHelpers):
+class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE, null=True)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
@@ -190,9 +160,6 @@ class FieldTrial(models.Model, ModelHelpers):
         Crop: 'crop', Plague: 'plague', Project: 'project'
         }
 
-    def __str__(self):
-        return self.name
-
     @classmethod
     def create_fieldTrial(cls, **kwargs):
         return cls.objects.create(
@@ -210,14 +177,11 @@ class FieldTrial(models.Model, ModelHelpers):
         )
 
 
-class Thesis(models.Model, ModelHelpers):
+class Thesis(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     number = models.IntegerField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     description = models.TextField(null=True)
-
-    def __str__(self):
-        return self.name
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -235,7 +199,7 @@ class Thesis(models.Model, ModelHelpers):
         )
 
 
-class ProductThesis(models.Model, ModelHelpers):
+class ProductThesis(ModelHelpers, models.Model):
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=5, decimal_places=3)
@@ -261,24 +225,18 @@ class ProductThesis(models.Model, ModelHelpers):
         )
 
 
-class Application(models.Model, ModelHelpers):
+class Application(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     application_date = models.DateField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.IntegerField()
     crop_stage_scale = models.CharField(max_length=10)
 
-    def __str__(self):
-        return self.name
 
-
-class Replica(models.Model, ModelHelpers):
+class Replica(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     number = models.IntegerField()
     treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
 
 
 # This collects the information of other products related with this tests.
@@ -301,7 +259,7 @@ Results aggregation
 """
 
 
-class ApplicationMeasurement(models.Model, ModelHelpers):
+class ApplicationMeasurement(ModelHelpers, models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     unit = models.ForeignKey(ResultUnit, on_delete=models.CASCADE)

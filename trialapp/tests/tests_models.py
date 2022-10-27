@@ -1,6 +1,8 @@
 from django.test import TestCase
-from trialapp.models import FieldTrial, ModelHelpers, Crop, ProductThesis, Thesis,\
+from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
+                            ProductThesis, Thesis,\
                             TrialDbInitialLoader
+from django.test import RequestFactory
 
 
 # Create your tests here.
@@ -138,3 +140,52 @@ class TrialAppModelTest(TestCase):
             **TrialAppModelTest.PRODUCT_THESIS[0])
         self.assertEqual(productThesis.rate,
                          TrialAppModelTest.PRODUCT_THESIS[0]['rate'])
+
+    def checkExtract2(self, this_label, expectedValue, **kwargs):
+        self.assertEqual(
+            ModelHelpers.extractTagsFromKwargs(
+                kwargs, this_label),
+            expectedValue)
+        self.assertTrue(this_label not in kwargs)
+
+    def test_errorcases(self):
+        self.assertEqual(Plague.getForeignModelsLabels(), [])
+        self.assertEqual(Plague.getForeignModels(), {})
+        request_factory = RequestFactory()
+        faultyRequest = request_factory.post(
+            '/manage_product_to_thesis_api',
+            data={'in_post_label': 66})
+
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                faultyRequest, {'other_label': 33},
+                'label'),
+            None)
+
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                faultyRequest, {'other_label': 33},
+                'other_label'),
+            33)
+
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                faultyRequest, {'other_label': 33},
+                'in_post_label'),
+            '66')
+
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                faultyRequest, {'in_post_label': 33},
+                'in_post_label'),
+            33)
+
+        params = {'label': 1, 'other': 2}
+        self.checkExtract2('label', 1, **params)
+        self.checkExtract2('nolabel', None, **params)
+
+    def test_names(self):
+        for model in TrialDbInitialLoader.initialTrialModelValues():
+            instance = model.objects.get(pk=1)
+            self.assertEqual(instance.name,
+                             instance.__str__())
