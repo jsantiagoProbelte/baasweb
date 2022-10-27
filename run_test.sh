@@ -1,4 +1,4 @@
-
+MINIMIN_COVERAGE=95
 # stop the build if there are Python syntax errors or undefined names
 flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --max-line-length=127 --exclude venv_baas,migrations
 if [ $? -ne 0 ]; then
@@ -20,7 +20,7 @@ if [ $? -ne 0 ]; then
     exit 2
 fi
     
-python -m coverage report  --show-missing --fail-under=90
+python -m coverage report  --show-missing --fail-under=$MINIMIN_COVERAGE
 COVERAGE=$?
 if [ $COVERAGE -ne 0 ]; then    
     echo "========== ERROR ON COVERAGE"

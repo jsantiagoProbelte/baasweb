@@ -14,7 +14,14 @@ class FieldTrialViewsTest(TestCase):
     def test_trialapp_index(self):
         response = self.client.get(reverse('fieldtrial-list'))
         self.assertContains(response, 'Field Trials')
-#        self.assertContains(response, FieldAppTest.FIELD_TEST_LIST[0])
+        self.assertContains(response, 'No Field Trial yet.')
+
+        fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+
+        response = self.client.get(reverse('fieldtrial-list'))
+        self.assertNotContains(response, 'No Field Trial yet.')
+        self.assertContains(response, fieldTrial.name)
 
     def test_editfieldtrial(self):
         request_factory = RequestFactory()
