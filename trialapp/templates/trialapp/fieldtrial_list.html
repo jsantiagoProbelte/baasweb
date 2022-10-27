@@ -31,7 +31,11 @@
             <a class="badge btn btn-info fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
         </td>
         <td>
-            <a class="badge btn btn-info fs-5" href="{% url 'thesis-list' item.id%}">{{item.applications}} &#43;</a>
+            {% if item.thesis > 0 %}
+                <a class="badge btn btn-info fs-5" href="{% url 'application-list' item.id%}">{{item.applications}} &#43;</a>
+            {% else %}
+                <small>Please define thesis first</small>
+            {% endif %}
         </td>
     </tr>
     </tbody>    

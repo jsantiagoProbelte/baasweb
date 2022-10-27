@@ -1,0 +1,11 @@
+{% load crispy_forms_tags %}
+
+<form id="application-add-product-form-{{application_id}}" class='application-add-product-form mb-3 mt-1' method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <td>
+        {% include "trialapp/input_select_template.html" with tag="product" item_id='new'  currentValue='' selectOptions=products addNull=True%}
+    </td>
+    <td>
+    <input type="submit" name="submit" value="&#43;" class="btn btn-info btn-sm"/></td>
+</form>

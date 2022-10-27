@@ -10,7 +10,7 @@ class ModelHelpers:
         return cls.objects.all().order_by('name')
 
     @classmethod
-    def returnFormatedItem(self, asDict, id, name):
+    def returnFormatedItem(cls, asDict, id, name):
         if asDict:
             return {'name': name, 'value': id}
         else:
@@ -18,9 +18,16 @@ class ModelHelpers:
 
     @classmethod
     def getSelectList(cls, addNull=False, asDict=False):
+        return cls._getSelectList(cls.getObjects(),
+                                  addNull=addNull,
+                                  asDict=asDict)
+
+    @classmethod
+    def _getSelectList(cls, items, addNull=False, asDict=False):
         theList = []
-        for item in cls.getObjects():
-            theList.append(cls.returnFormatedItem(asDict, item.id, item.name))
+        for item in items:
+            theList.append(cls.returnFormatedItem(
+                asDict, item.id, item.getName()))
 
         if addNull:
             theList.insert(
@@ -86,8 +93,11 @@ class ModelHelpers:
             else:
                 return None
 
-    def __str__(self):
+    def getName(self):
         return self.name
+
+    def __str__(self):
+        return self.getName()
 
 
 class Crop(ModelHelpers, models.Model):
@@ -210,10 +220,26 @@ class ProductThesis(ModelHelpers, models.Model):
         }
 
     @classmethod
-    def getObjects(cls, thesis):
+    def getObjects(cls, thesis: Thesis):
         return cls.objects \
                 .filter(thesis=thesis) \
                 .order_by('product__name')
+
+    @classmethod
+    def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
+        objects = []
+        for thesis in Thesis.getObjects(fieldTrial):
+            for productThesis in ProductThesis.getObjects(thesis):
+                objects.append(productThesis)
+        return objects
+
+    @classmethod
+    def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
+                                addNull=False, asDict=False):
+        return cls._getSelectList(
+            cls.getObjectsPerFieldTrial(fieldTrial),
+            asDict=asDict,
+            addNull=addNull)
 
     @classmethod
     def create_ProductThesis(cls, **kwargs):
@@ -224,6 +250,21 @@ class ProductThesis(ModelHelpers, models.Model):
             rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id'])
         )
 
+    def getName(self):
+        return ('{}-{}-[{}-{}]').format(
+            self.thesis.number,
+            self.product.name,
+            self.rate,
+            self.rate_unit.name)
+
+
+class Replica(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+    number = models.IntegerField()
+    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    pos_x = models.IntegerField(default=0)
+    pos_y = models.IntegerField(default=0)
+
 
 class Application(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -232,19 +273,28 @@ class Application(ModelHelpers, models.Model):
     crop_stage_majority = models.IntegerField()
     crop_stage_scale = models.CharField(max_length=10)
 
-
-class Replica(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    number = models.IntegerField()
-    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    @classmethod
+    def getObjects(cls, field_trial):
+        return cls.objects \
+                .filter(field_trial=field_trial) \
+                .order_by('application_date')
 
 
 # This collects the information of other products related with this tests.
-class RelatedProducts(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE,
-                                  null=True)
+class ProductApplication(models.Model):
+    product_thesis = models.ForeignKey(ProductThesis, on_delete=models.CASCADE)
+    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE,
+                               null=True)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+
+    @classmethod
+    def getObjects(cls, application: Application):
+        return cls.objects \
+                .filter(application=application) \
+                .order_by('thesis__number', 'product_thesis__product__name')
+
+    def getName(self):
+        return self.product_thesis.getName()
 
 
 """

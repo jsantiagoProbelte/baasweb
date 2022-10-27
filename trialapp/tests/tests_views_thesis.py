@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, ProductThesis, TrialDbInitialLoader, Thesis
+from trialapp.models import FieldTrial, ProductThesis, TrialDbInitialLoader,\
+    Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
@@ -38,7 +39,7 @@ class ThesisViewsTest(TestCase):
 
         # Create one field trial
         thesisData = TrialAppModelTest.THESIS[0]
-        request = request_factory.post('/save_thesis',
+        request = request_factory.post('thesis-save',
                                        data=thesisData)
         response = saveThesis(request)
         thesis = Thesis.objects.get(name=thesisData['name'])
@@ -61,9 +62,9 @@ class ThesisViewsTest(TestCase):
         newdescription = 'Thesis new description'
         thesisData['thesis_id'] = thesis.id
         thesisData['description'] = newdescription
-        request = request_factory.post('/save_fieldtrial',
+        request = request_factory.post('thesis-save',
                                        data=thesisData)
-        response = saveThesis(request, thesis_id=thesis.id)
+        response = saveThesis(request)
         thesis2 = Thesis.objects.get(name=thesisData['name'])
         self.assertEqual(thesis2.description, newdescription)
         self.assertEqual(response.status_code, 302)
@@ -88,7 +89,7 @@ class ThesisViewsTest(TestCase):
 
         deleteData = {'product_thesis_id': thesisProducts[0].id}
         deleteProductThesisRequest = request_factory.post(
-            '/manage_product_to_thesis_api',
+            'manage_product_to_thesis_api',
             data=deleteData)
         response = apiView.delete(deleteProductThesisRequest)
         self.assertEqual(response.status_code, 200)

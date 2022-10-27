@@ -1,7 +1,8 @@
 from django.urls import path
-from . import fieldtrial_views, thesis_views
+from . import fieldtrial_views, thesis_views, application_views
 
 urlpatterns = [
+    # Field Trials urls
     path(
         'fieldtrials',
         fieldtrial_views.FieldTrialListView.as_view(),
@@ -18,6 +19,7 @@ urlpatterns = [
         'save_fieldtrial',
         fieldtrial_views.saveFieldTrial,
         name='fieldtrial-save'),
+    # Thesis urls
     path(
         'thesislist/<int:field_trial_id>/',
         thesis_views.ThesisListView.as_view(),
@@ -37,5 +39,26 @@ urlpatterns = [
     path(
         'manage_product_to_thesis_api',
         thesis_views.ManageProductToThesis.as_view(),
-        name='manage_product_to_thesis_api')
+        name='manage_product_to_thesis_api'),
+    # Application urls
+    path(
+        'applicationlist/<int:field_trial_id>/',
+        application_views.ApplicationListView.as_view(),
+        name='application-list'),
+    path(
+        'edit_application/<int:field_trial_id>/',
+        application_views.editApplication,
+        name='application-edit'),
+    path(
+        'edit_application/<int:field_trial_id>/<int:application_id>/',
+        application_views.editApplication,
+        name='application-edit'),
+    path(
+        'save_application',
+        application_views.saveApplication,
+        name='application-save'),
+    path(
+        'manage_product_to_application_api',
+        application_views.ManageProductToApplication.as_view(),
+        name='manage_product_to_application_api')
 ]

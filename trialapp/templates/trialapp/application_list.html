@@ -3,13 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
 <div class="row mt-5 mb-2">
     <div class="col-md-6">
         <h1 class="">
             <span class="mr-4"><a href="{% url 'fieldtrial-edit' field_trial_id %}" >{{field_trial_name}}</a></span>
-            thesis
-            <a href="{% url 'thesis-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
+            applications
+            <a href="{% url 'application-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
     </div>
     <div class="col-md-6">
         <div class="text-sm-end">
@@ -18,25 +17,26 @@
     </div>
 </div>
 
+
 <div class="card card-body-baas">
 <table class="table">
     <thead>
         <tr>
-            <th>Number</th>
             <th>Name</th>
-            <th>description</th>
+            <th>Date</th>
+            <th>Crop Stage</th>
         </tr>
     </thead>
     <tbody>
 {% for item in object_list %}
     <tr>
-        <td>{{item.number}}</td>
-        <td><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
-        <td>{{item.description}}</td>
+        <td>{{item.application_date}}</td>
+        <td><a href="{% url 'application-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
+        <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>
     </tr>
     </tbody>    
 {% empty %}
-    <p>No Thesis yet.</p>
+    <p>No applications yet.</p>
 {% endfor %}
 </table>
 </div>

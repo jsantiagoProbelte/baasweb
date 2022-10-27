@@ -111,7 +111,7 @@ class ThesisEditForm(forms.Form):
         self.helper.form_id = 'id-edit-thesis'
         self.helper.form_class = 'create-thesis'
         self.helper.form_method = 'post'
-        self.helper.form_action = '/thesis-save'
+        self.helper.form_action = '/save_thesis'
 
         text = 'Create Thesis'
         if 'initial' in kwargs and \
@@ -131,6 +131,51 @@ class ThesisEditForm(forms.Form):
                     css_class='col-md-10'),
                 css_class='mb-4'),
             Field('description', css_class='mb-4 mt-2'),
+            Div(
+                FormActions(
+                    Submit('submit', text,
+                           css_class="btn btn-info")),
+                css_class='text-sm-end')
+            )
+
+
+class ApplicationEditForm(forms.Form):
+    field_trial_id = forms.CharField(widget=forms.HiddenInput())
+    application_id = forms.CharField(widget=forms.HiddenInput())
+    name = forms.CharField(label='Name', required=True)
+    application_date = forms.DateField(widget=MyDateInput(), required=True)
+    crop_stage_majority = forms.CharField(
+        label='Crop Stage Majority', required=True,
+        widget=forms.NumberInput())
+    crop_stage_scale = forms.CharField(label='Crop Stage Scale', required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-edit-application'
+        self.helper.form_class = 'create-application'
+        self.helper.form_method = 'post'
+        self.helper.form_action = '/save_application'
+
+        text = 'Create Application'
+        if 'initial' in kwargs and \
+           'application_id' in kwargs['initial'] and \
+           kwargs['initial']['application_id'] is not None:
+            text = 'Save'
+
+        self.helper.layout = Layout(
+            Field('field_trial_id'),
+            Field('application_id'),
+            Row(
+                Div(
+                    Field('application_date', css_class='mb-3'),
+                    Field('crop_stage_majority', css_class='mb-4'),
+                    css_class='col-md-6'),
+                Div(
+                    Field('name', css_class='mb-3'),
+                    Field('crop_stage_scale', css_class='mb-4'),
+                    css_class='col-md-6'),
+                css_class=''),
             Div(
                 FormActions(
                     Submit('submit', text,

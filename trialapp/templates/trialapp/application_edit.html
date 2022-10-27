@@ -1,0 +1,125 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1 class="mt-3 mb-3">{{title}} application 
+            <span><a href="{% url 'fieldtrial-edit' field_trial_id %}" class="h4">{{field_trial_name}}</a></span>
+        </h1>
+    </div>
+    <div class="col-md-6">
+        <div class="text-sm-end">
+            <a href="{% url 'fieldtrial-list'  %}" class="btn btn-secondary btn-sm">Field Trial list</a>
+        </div>
+    </div>
+</div>
+
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card no-border" >
+      <div class="card-body-baas">  
+        {% crispy edit_form %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card no-border" >
+      <div class="card-body-baas">
+        {% if application_id %}
+            <h4>Products to be applied from Thesis</h4>
+            <table class="table"><tbody id="product_application_table">
+            <tr id="product_application">
+                {% include "trialapp/application_add_product.html" with application_id=application_id products=products %}
+            </tr>
+            {% for item in product_list %}
+                <tr id="product-application-{{item.id}}">
+                    <td>{{item.name}}</td>
+                    <td><a id='delete-product-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                </tr>
+            {% empty %}
+                <p>No applied products from thesis defined.</p>
+            {% endfor %}
+            
+            </tbody></table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('.application-add-product-form').submit( function(){
+    var element=$(this)
+    var appendTable=$('#product_application_table')
+    return addProductToapplicationCall(element,appendTable)
+});
+
+var manageProductapplicationEndPoint = '/manage_product_to_application_api';
+
+function addProductToapplicationCall(element,appendTable) {
+    var dataJson={}
+    $(element.serializeArray()).each(function(index,obj){
+        dataJson[obj.name]=obj.value;
+    });
+    dataJson['application_id']=element.attr('id');
+    $.ajax({
+        type : element.attr('method'), 
+        url: manageProductapplicationEndPoint,
+        data: dataJson,
+        
+        success: function(data){
+            console.log("data");
+            appendTable.append(
+                '<tr id="product-application-'+data.id+'"><td>'+data.name+'</td>\
+                <td><a id="delete-product-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                </tr>'); /* response message */
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
+
+// Delete product on click
+$("#product_application_table").on('click', 'a[id^=delete-product-]', function(){
+    var product_application_id = $(this).attr('id').split('-')[2];
+    console.log(product_application_id) // sanity check
+    delete_product(product_application_id);
+});
+
+// AJAX for deleting
+function delete_product(product_application_id){
+    if (confirm('are you sure you want to remove this product?')==true){
+        $.ajax({
+            url : manageProductapplicationEndPoint, // the endpoint
+            type : "DELETE", // http method
+            data : { 'product_application_id' : product_application_id }, // data sent with the delete request
+            success : function(json) {
+                // hide the post
+                $('#product-application-'+product_application_id).hide(); // hide the post on success
+                console.log("post deletion successful");
+            },
+
+            error : function(xhr,errmsg,err) {
+                // Show an error
+                $('#results').html("<div class='alert-box alert radius' data-alert>"+
+                "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    } else {
+        return false;
+    }
+};
+</script>
+{% endblock %}
