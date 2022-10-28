@@ -27,6 +27,11 @@ class TrialAppModelTest(TestCase):
         'number': 1,
         'description': 'Thesis 666 for product 1',
         'field_trial_id': 1
+        }, {
+        'name': 'thesis 777',
+        'number': 2,
+        'description': 'Thesis 777 for product 2',
+        'field_trial_id': 1
         }
     ]
 
@@ -34,8 +39,26 @@ class TrialAppModelTest(TestCase):
         'thesis_id': 1,
         'product_id': 1,
         'rate': 1.5,
+        'rate_unit_id': 1},
+        {
+        'thesis_id': 1,
+        'product_id': 2,
+        'rate': 5,
+        'rate_unit_id': 1},
+        {
+        'thesis_id': 2,
+        'product_id': 1,
+        'rate': 3,
         'rate_unit_id': 1}
     ]
+
+    APPLICATION = [{
+        'field_trial_id': 1,
+        'name': 'Primera aplication',
+        'application_date': '2022-07-01',
+        'crop_stage_majority': 66,
+        'crop_stage_scale': 'BBCH'
+    }]
 
     def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()

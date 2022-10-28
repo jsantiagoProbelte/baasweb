@@ -47,16 +47,6 @@ def editApplication(request, field_trial_id=None, application_id=None,
         initialValues['crop_stage_scale'] = application.crop_stage_scale
         # retrieve the list of the current defined product application
         product_list = ProductApplication.getObjects(application)
-        if len(product_list) == 0:
-            # Create by default a list based on all the thesis
-            # to let the user remove them
-            for item in ProductThesis.getObjectsPerFieldTrial(fieldTrial):
-                ProductApplication.objects.create(
-                    product_thesis=item,
-                    thesis=item.thesis,
-                    application=application
-                )
-            product_list = ProductApplication.getObjects(application)
 
     edit_form = ApplicationEditForm(initial=initialValues)
     product_list_show = [{'id': item.id, 'name': item.getName()}
@@ -92,9 +82,10 @@ def saveApplication(request, application_id=None):
                 request, values, 'crop_stage_majority')
         application.crop_stage_scale = Application.getValueFromRequestOrArray(
             request, values, 'crop_stage_scale')
+        application.save()
     else:
-        # This is a new field trial
-        application = Application(
+        # This is a new application
+        application = Application.objects.create(
             name=Application.getValueFromRequestOrArray(
                 request, values, 'name'),
             field_trial=fieldTrial,
@@ -105,7 +96,16 @@ def saveApplication(request, application_id=None):
             crop_stage_scale=Application.getValueFromRequestOrArray(
                 request, values, 'crop_stage_scale')
         )
-    application.save()
+
+        # Create by default a list based on all the existing thesis
+        # and let the user remove them
+        for item in ProductThesis.getObjectsPerFieldTrial(fieldTrial):
+            ProductApplication.objects.create(
+                product_thesis=item,
+                thesis=item.thesis,
+                application=application
+            )
+
     return redirect(
         'application-edit',
         field_trial_id=fieldTrial.id,

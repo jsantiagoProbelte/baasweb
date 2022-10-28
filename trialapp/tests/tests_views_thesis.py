@@ -12,7 +12,7 @@ from trialapp.thesis_views import editThesis, saveThesis,\
 
 class ThesisViewsTest(TestCase):
 
-    def setUp(cls):
+    def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
         FieldTrial.create_fieldTrial(**TrialAppModelTest.FIELDTRIALS[0])
 
