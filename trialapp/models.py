@@ -251,19 +251,33 @@ class ProductThesis(ModelHelpers, models.Model):
         )
 
     def getName(self):
-        return ('{}-{}-[{}-{}]').format(
+        return ('[{}-{}] <{}, {} {}>').format(
             self.thesis.number,
+            self.thesis.name,
             self.product.name,
             self.rate,
             self.rate_unit.name)
 
 
 class Replica(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
     number = models.IntegerField()
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     pos_x = models.IntegerField(default=0)
     pos_y = models.IntegerField(default=0)
+
+    @classmethod
+    def getObjects(cls, thesis: Thesis):
+        return cls.objects \
+                .filter(thesis=thesis) \
+                .order_by('number')
+
+    def getName(self):
+        return ('[{}-{}] {}-({},{})').format(
+            self.thesis.number,
+            self.thesis.name,
+            self.number,
+            self.pos_x,
+            self.pos_y)
 
 
 class Application(ModelHelpers, models.Model):

@@ -125,10 +125,10 @@ class ThesisEditForm(forms.Form):
             Row(
                 Div(
                     Field('number'),
-                    css_class='col-md-2'),
+                    css_class='col-md-4'),
                 Div(
                     Field('name'),
-                    css_class='col-md-10'),
+                    css_class='col-md-8'),
                 css_class='mb-4'),
             Field('description', css_class='mb-4 mt-2'),
             Div(

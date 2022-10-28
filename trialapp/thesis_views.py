@@ -2,7 +2,7 @@
 from django.views.generic.list import ListView
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from trialapp.models import FieldTrial, Product, ProductThesis, RateUnit,\
-    Thesis
+    Thesis, Replica
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ThesisEditForm
 from rest_framework.views import APIView
@@ -31,6 +31,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
     title = 'New'
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
     product_list = []
+    replica_list = []
 
     if thesis_id is not None:
         title = 'Edit'
@@ -43,6 +44,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
         initialValues['number'] = thesis.number
         initialValues['description'] = thesis.description
         product_list = ProductThesis.getObjects(thesis)
+        replica_list = Replica.getObjects(thesis)
 
     edit_form = ThesisEditForm(initial=initialValues)
 
@@ -53,6 +55,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
                    'thesis_id': thesis_id,
                    'title': title,
                    'product_list': product_list,
+                   'replica_list': replica_list,
                    'products': Product.getSelectList(asDict=True),
                    'rate_units': RateUnit.getSelectList(asDict=True),
                    'errors': errors})
@@ -123,6 +126,39 @@ class ManageProductToThesis(APIView):
         productThesis = ProductThesis.objects.get(
             pk=request.POST['product_thesis_id'])
         productThesis.delete()
+
+        response_data = {'msg': 'Product was deleted.'}
+        return Response(response_data, status=200)
+
+
+class ManageReplicaToThesis(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = [
+        'delete', 'post']
+
+    def post(self, request, format=None):
+        thesis_id = request.POST['thesis_id'].split('-')[-1]
+        thesis = get_object_or_404(Thesis, pk=thesis_id)
+        count = Replica.objects.filter(thesis=thesis).count()
+        replica = Replica.objects.create(
+            thesis=thesis,
+            pos_x=0,
+            pos_y=0,
+            number=count+1)
+
+        responseData = {
+            'id': replica.id,
+            'pos_x': replica.pos_x,
+            'pos_y': replica.pos_y,
+            'number': replica.number}
+
+        return Response(responseData)
+
+    def delete(self, request, *args, **kwargs):
+        replica = Replica.objects.get(
+            pk=request.POST['replica_id'])
+        replica.delete()
 
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)

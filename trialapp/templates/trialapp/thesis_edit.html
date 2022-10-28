@@ -21,19 +21,20 @@
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="card no-border" >
       <div class="card-body-baas">  
         {% crispy edit_form %}
       </div>
     </div>
   </div>
-  <div class="col-md-6">
+
+  <div class="col-md-5">
     <div class="card no-border" >
       <div class="card-body-baas">
         {% if thesis_id %}
             <h4>Products</h4>
-            <table class="table"><tbody id="product_tesis_table">
+            <table class="table"><tbody id="product_thesis_table">
             <tr id="product_thesis">
                 {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
             </tr>
@@ -53,6 +54,31 @@
       </div>
     </div>
   </div>
+  <div class="col-md-3">
+    <div class="card no-border" >
+      <div class="card-body-baas">
+        {% if thesis_id %}
+            <h4>Replicas
+                <span><a id="add-replica-to-thesis-{{thesis_id}}" class="btn btn-primary btn-sm add-replica-to-thesis fs-4">&#43;</a></span>
+            </h4>
+            <table class="table">
+                <thead><th>#</th><th>X</th><th>Y</th></thead>
+                <tbody id="replica_thesis_table">
+                
+                {% for item in replica_list %}
+                    <tr id="replica-thesis-{{item.id}}">
+                        <td>{{item.number}}</td>
+                        <td>{{item.pos_x}}</td>
+                        <td>{{item.pos_y}}</td>
+                        <td><a id='delete-replica-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                    </tr>
+                {% empty %}
+                    <p>No replicas yet.</p>
+                {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -60,7 +86,7 @@
 <script>
 $('.thesis-add-product-form').submit( function(){
     var element=$(this)
-    var appendTable=$('#product_tesis_table')
+    var appendTable=$('#product_thesis_table')
     return addProductToThesisCall(element,appendTable)
 });
 
@@ -95,7 +121,7 @@ function addProductToThesisCall(element,appendTable) {
 };
 
 // Delete product on click
-$("#product_tesis_table").on('click', 'a[id^=delete-product-]', function(){
+$("#product_thesis_table").on('click', 'a[id^=delete-product-]', function(){
     var product_thesis_id = $(this).attr('id').split('-')[2];
     console.log(product_thesis_id) // sanity check
     delete_product(product_thesis_id);
@@ -125,5 +151,76 @@ function delete_product(product_thesis_id){
         return false;
     }
 };
+
+// Functions to manage replica data
+$(".add-replica-to-thesis").on('click', function(){
+    var element=$(this)
+    
+    var appendTable=$('#replica_thesis_table')
+    return addReplicaToThesisCall(element,appendTable)
+});
+
+var manageReplicaThesisEndPoint = '/manage_replica_to_thesis_api';
+
+function addReplicaToThesisCall(element,appendTable) {
+    var dataJson={}
+
+    dataJson['thesis_id']=$(element).attr('id')
+    console.log(dataJson)
+    $.ajax({
+        type : 'POST', 
+        url: manageReplicaThesisEndPoint,
+        data: dataJson,
+        
+        success: function(data){
+
+            console.log("data");
+            appendTable.append(
+                '<tr id="replica-thesis-'+data.id+'"><td>'+data.number+'</td>\
+                    <td>'+data.pos_x+'</td>\
+                    ><td>'+data.pos_y+'</td>\
+                    <td><a id="delete-replica-'+data.id+'" class="btn btn-warning btn-sm">-</a></td>\
+                </tr>'); /* response message */
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
+
+// Delete product on click
+$("#replica_thesis_table").on('click', 'a[id^=delete-replica-]', function(){
+    var replica_thesis_id = $(this).attr('id').split('-')[2];
+    console.log(product_thesis_id) // sanity check
+    delete_product(replica_thesis_id);
+});
+
+// AJAX for deleting
+function delete_replica(replica_thesis_id){
+    if (confirm('are you sure you want to remove this product?')==true){
+        $.ajax({
+            url : manageReplicaThesisEndPoint, // the endpoint
+            type : "DELETE", // http method
+            data : { 'replica_thesis_id' : replica_thesis_id }, // data sent with the delete request
+            success : function(json) {
+                // hide the post
+                $('#replica-thesis-'+replica_thesis_id).hide(); // hide the post on success
+                console.log("post deletion successful");
+            },
+
+            error : function(xhr,errmsg,err) {
+                // Show an error
+                $('#results').html("<div class='alert-box alert radius' data-alert>"+
+                "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    } else {
+        return false;
+    }
+};
+
 </script>
 {% endblock %}
