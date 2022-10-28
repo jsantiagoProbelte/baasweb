@@ -33,8 +33,12 @@ class FieldTrialCreateForm(forms.Form):
     plague = forms.ChoiceField(label="Plague", required=False, choices=[])
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
-
     location = forms.CharField(label="City/Area")
+    rows_layout = forms.CharField(label="Layout. Number of rows",
+                                  widget=forms.NumberInput())
+    replicas_per_thesis = forms.CharField(
+        label="Layout. Number of replicas per thesis",
+        widget=forms.NumberInput())
 
     def __init__(self, *args, **kwargs):
         fieldValues = FieldTrial.extractValueModelChoicesFromKwargs(kwargs)
@@ -54,10 +58,19 @@ class FieldTrialCreateForm(forms.Form):
             text = 'Save'
 
         self.helper.layout = Layout(
-            Div(
-                Field('field_trial_id'),
-                Field('name'),
-                css_class='mb-3'),
+            Row(
+                Div(
+                    Field('field_trial_id'),
+                    Field('name'),
+                    css_class='col-md-6'),
+                Div(
+                    Field('rows_layout'),
+                    css_class='col-md-3'),
+                Div(
+                    Field('replicas_per_thesis'),
+                    css_class='col-md-3'),
+                css_class='mb-2'
+            ),
             Row(
                 Div(
                     Field('project', css_class='mb-2'),

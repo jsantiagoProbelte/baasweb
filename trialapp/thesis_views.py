@@ -76,9 +76,10 @@ def saveThesis(request):
             request, values, 'number')
         thesis.description = Thesis.getValueFromRequestOrArray(
             request, values, 'description')
+        thesis.save()
     else:
         # This is a new field trial
-        thesis = Thesis(
+        thesis = Thesis.objects.create(
             name=Thesis.getValueFromRequestOrArray(
                 request, values, 'name'),
             number=Thesis.getValueFromRequestOrArray(
@@ -87,7 +88,16 @@ def saveThesis(request):
             description=Thesis.getValueFromRequestOrArray(
                 request, values, 'description')
         )
-    thesis.save()
+
+        # create the replicas asociated with this
+        for number in range(0, fieldTrial.replicas_per_thesis):
+            Replica.objects.create(
+                number=number+1,
+                thesis=thesis,
+                pos_x=0,
+                pos_y=0
+            )
+
     return redirect(
         'thesis-edit',
         field_trial_id=fieldTrial.id,

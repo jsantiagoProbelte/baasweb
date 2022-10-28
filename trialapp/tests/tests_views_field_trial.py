@@ -64,6 +64,7 @@ class FieldTrialViewsTest(TestCase):
         fieldTrialData['field_trial_id'] = fieldTrial.id
         fieldTrialData['responsible'] = newresponsible
         request = request_factory.post('/save_fieldtrial', data=fieldTrialData)
+        print(fieldTrialData)
         response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
         self.assertEqual(fieldTrial.responsible, newresponsible)

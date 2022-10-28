@@ -55,6 +55,8 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'completion_date': fieldTrial.completion_date,
             'farmer': fieldTrial.farmer,
             'location': fieldTrial.location,
+            'rows_layout': fieldTrial.rows_layout,
+            'replicas_per_thesis': fieldTrial.replicas_per_thesis
             }
     elif 'name' in request.POST:
         # This is the flow in case of error
@@ -105,13 +107,18 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'farmer')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
             request, values, 'location')
+        fieldTrial.rows_layout = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'rows_layout')
+        fieldTrial.replicas_per_thesis = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'replicas_per_thesis')
         # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
         #     request, values,
         #     'completion_date')
+        fieldTrial.save()
 
     else:
         # This is a new field trial
-        fieldTrial = FieldTrial(
+        fieldTrial = FieldTrial.objects.create(
             name=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'name'),
             phase=FieldTrial.getValueFromRequestOrArray(
@@ -133,7 +140,11 @@ def saveFieldTrial(request, field_trial_id=None):
             farmer=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'farmer'),
             location=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'location')
+                request, values, 'location'),
+            rows_layout=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'rows_layout'),
+            replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'replicas_per_thesis')
         )
-    fieldTrial.save()
+
     return redirect('fieldtrial-list')

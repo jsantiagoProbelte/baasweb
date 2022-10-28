@@ -165,6 +165,9 @@ class FieldTrial(ModelHelpers, models.Model):
 
     report_filename = models.TextField(null=True)
 
+    rows_layout = models.IntegerField()
+    replicas_per_thesis = models.IntegerField()
+
     foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
         Crop: 'crop', Plague: 'plague', Project: 'project'
@@ -183,7 +186,9 @@ class FieldTrial(ModelHelpers, models.Model):
             plague=Plague.objects.get(pk=kwargs['plague']),
             initiation_date=kwargs['initiation_date'],
             farmer=kwargs['farmer'],
-            location=kwargs['location']
+            location=kwargs['location'],
+            replicas_per_thesis=kwargs['replicas_per_thesis'],
+            rows_layout=kwargs['rows_layout']
         )
 
 

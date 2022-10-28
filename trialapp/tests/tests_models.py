@@ -19,7 +19,9 @@ class TrialAppModelTest(TestCase):
             'plague': 1,
             'initiation_date': '2021-07-01',
             'farmer': 'Mr Farmer',
-            'location': 'La Finca'}
+            'location': 'La Finca',
+            'replicas_per_thesis': 4,
+            'rows_layout': 3}
     ]
 
     THESIS = [{

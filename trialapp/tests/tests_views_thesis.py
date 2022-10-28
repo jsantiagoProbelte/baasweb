@@ -102,14 +102,15 @@ class ThesisViewsTest(TestCase):
             '/manage_replica_to_thesis_api',
             data=replicaData)
 
+        expectedReplicas = fieldTrial.replicas_per_thesis
         self.assertEqual(Replica.objects.count(),
-                         0)
+                         expectedReplicas)
         apiView = ManageReplicaToThesis()
         response = apiView.post(addReplicaThesisRequest)
         self.assertEqual(response.status_code, 200)
         thesisReplicas = Replica.objects.all()
         self.assertEqual(len(thesisReplicas),
-                         1)
+                         expectedReplicas+1)
         self.assertEqual(thesisReplicas[0].thesis.name,
                          thesis2.name)
 
@@ -120,4 +121,4 @@ class ThesisViewsTest(TestCase):
         response = apiView.delete(deleteReplicaThesisRequest)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Replica.objects.count(),
-                         0)
+                         expectedReplicas)
