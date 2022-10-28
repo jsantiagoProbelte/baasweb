@@ -1,12 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, ProductThesis, TrialDbInitialLoader,\
+from trialapp.models import FieldTrial, ProductThesis, Replica, TrialDbInitialLoader,\
     Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
 from trialapp.thesis_views import editThesis, saveThesis,\
-    ManageProductToThesis
+    ManageProductToThesis, ManageReplicaToThesis
 # from trialapp.thesis_views import editThesis
 
 
@@ -94,4 +94,30 @@ class ThesisViewsTest(TestCase):
         response = apiView.delete(deleteProductThesisRequest)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ProductThesis.objects.count(),
+                         0)
+
+        # Lets add a replica
+        replicaData = {'thesis_id': thesis2.id}
+        addReplicaThesisRequest = request_factory.post(
+            '/manage_replica_to_thesis_api',
+            data=replicaData)
+
+        self.assertEqual(Replica.objects.count(),
+                         0)
+        apiView = ManageReplicaToThesis()
+        response = apiView.post(addReplicaThesisRequest)
+        self.assertEqual(response.status_code, 200)
+        thesisReplicas = Replica.objects.all()
+        self.assertEqual(len(thesisReplicas),
+                         1)
+        self.assertEqual(thesisReplicas[0].thesis.name,
+                         thesis2.name)
+
+        deleteReplica = {'replica_id': thesisReplicas[0].id}
+        deleteReplicaThesisRequest = request_factory.post(
+            'manage_replica_to_thesis_api',
+            data=deleteReplica)
+        response = apiView.delete(deleteReplicaThesisRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Replica.objects.count(),
                          0)
