@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ThesisEditForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from trialapp.trial_helper import FactoryTrials
+
 
 # class FieldTrialListView(LoginRequiredMixin, ListView):
 #    login_url = '/login'
@@ -78,17 +80,8 @@ def saveThesis(request):
             request, values, 'description')
         thesis.save()
     else:
-        # This is a new field trial
-        thesis = Thesis.create_Thesis(
-            name=Thesis.getValueFromRequestOrArray(
-                request, values, 'name'),
-            number=Thesis.getValueFromRequestOrArray(
-                request, values, 'number'),
-            field_trial_id=fieldTrial.id,
-            description=Thesis.getValueFromRequestOrArray(
-                request, values, 'description')
-        )
-        Replica.createReplicas(thesis, fieldTrial.replicas_per_thesis)
+        thesis = FactoryTrials.createThesisReplicasLayout(
+            request, values, fieldTrial)
 
     return redirect(
         'thesis-edit',
