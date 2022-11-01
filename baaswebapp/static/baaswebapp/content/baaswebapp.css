@@ -161,21 +161,24 @@
 .navbar .nav-item .dropdown-menu .dropdown-divider{
   margin: 20px;
 }
-.card{
-  background:transparent;
-}
-.card-container{
-  margin-top:-30px;
-  background:var(--custom-bg-color-cards);
-  border-radius:10px !important;
-  padding:40px 0px 60px 0px;
+
+
+.card-header-baas {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  background: #8e8c84;
+  border-bottom: 1px solid rgba(223, 215, 202, 0.75);
 }
 
 .card-body-baas {
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  padding: 1.5rem 1.5rem;
   background:var(--custom-bg-color-cards);
+  border-radius:10px !important;
+  padding:20px;
+}
+
+.list-group-item-baas {
+  color: #fff;
+  background-color: var(--custom-bg-color-cards);
 }
 
 .text-big-number{
@@ -236,3 +239,6 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
   padding: 5px 15px !important;
 }
 
+.text-right {
+  text-align: right !important;
+}

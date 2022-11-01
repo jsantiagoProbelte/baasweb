@@ -284,6 +284,24 @@ class Replica(ModelHelpers, models.Model):
             self.pos_x,
             self.pos_y)
 
+    def getShortName(self):
+        return ('{}-[{}] ({},{})').format(
+            self.thesis.name,
+            self.number,
+            self.pos_x,
+            self.pos_y)
+
+    # create the replicas asociated with this
+    @classmethod
+    def createReplicas(cls, thesis, replicas_per_thesis):
+        for number in range(0, replicas_per_thesis):
+            Replica.objects.create(
+                number=number+1,
+                thesis=thesis,
+                pos_x=0,
+                pos_y=0
+            )
+
 
 class Application(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)

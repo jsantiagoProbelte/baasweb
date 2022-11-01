@@ -16,6 +16,10 @@ urlpatterns = [
         fieldtrial_views.editNewFieldTrial,
         name='fieldtrial-edit'),
     path(
+        'show_fieldtrial/<int:field_trial_id>/',
+        fieldtrial_views.showFieldTrial,
+        name='fieldtrial-show'),
+    path(
         'save_fieldtrial',
         fieldtrial_views.saveFieldTrial,
         name='fieldtrial-save'),

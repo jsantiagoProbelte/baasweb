@@ -1,0 +1,106 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h1 class="mt-3 mb-3">{{fieldTrial.name}} <span class="text-muted">Field Trial</span>
+            <span><a href="{% url 'fieldtrial-edit' fieldTrial.id %}" class="btn btn-secondary btn-sm">&#10000;</a></span>
+        </h1>
+    </div>
+    <div class="col-md-6">
+        <div class="text-sm-end">
+            <a href="{% url 'fieldtrial-list'  %}" class="btn btn-secondary btn-sm">Field Trial list</a>
+        </div>
+    </div>
+</div>
+
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card no-border" >
+            <div class="card-header-baas h4">
+                Goal
+            </div>
+            <div class="card-body-bass">
+              <ul class="list-group list-group-flush">
+                {% include "trialapp/item_list_template.html" with field='project' value=fieldTrial.project%}
+                {% include "trialapp/item_list_template.html" with field='objective' value=fieldTrial.objective%}
+                {% include "trialapp/item_list_template.html" with field='main product' value=fieldTrial.product%}
+                {% include "trialapp/item_list_template.html" with field='crop' value=fieldTrial.crop%}
+                {% include "trialapp/item_list_template.html" with field='plague' value=fieldTrial.plague%}
+              </ul>
+            </div>
+        </div>
+        <div class="card no-border mt-3" >
+            <div class="card-header-baas h4">
+                Status
+            </div>
+            <div class="card-body-bass">
+              <ul class="list-group list-group-flush">
+                {% include "trialapp/item_list_template.html" with field='phase' value=fieldTrial.phase%}
+                {% include "trialapp/item_list_template.html" with field='responsible' value=fieldTrial.responsible%}
+                {% include "trialapp/item_list_template.html" with field='started' value=fieldTrial.initiation%}
+                {% include "trialapp/item_list_template.html" with field='completed' value=fieldTrial.completed%}
+              </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card no-border" >
+            <div class="card-header-baas h4">
+                Distribution
+            </div>
+            <div class="card-body-bass">
+              <ul class="list-group list-group-flush">
+                {% include "trialapp/item_list_template.html" with field='# replicas' value=fieldTrial.replicas_per_thesis%}
+                {% include "trialapp/item_list_template.html" with field='# rows' value=fieldTrial.rows_layout%}
+              </ul>
+            </div>
+        </div>
+        <div class="card no-border mt-3" >
+            <div class="card-header-baas h4">
+                Thesis
+                <a class="badge btn btn-info fs-5" href="{% url 'thesis-list' fieldTrial.id%}">&#10000;</a>
+            </div>
+            <div class="card-body-bass">
+              <ul class="list-group list-group-flush">
+                {% for thesis in thesisTrial %}
+                    {% include "trialapp/item_list_template.html" with field=thesis.number value=thesis.name%}
+                {% empty %}
+                <p>No Thesis yet.</p>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>
+        <div class="card no-border mt-3" >
+            <div class="card-header-baas h4">
+                Location
+            </div>
+            <div class="card-body-bass">
+              <ul class="list-group list-group-flush">
+                {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
+                {% include "trialapp/item_list_template.html" with field='farmer' value=fieldTrial.farmer%}
+              </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card no-border" >
+            <div class="card-header-baas h4">
+                Layout
+            </div>
+            <div class="card-body-bass">
+                {% for row in rowsReplicas %}
+                    {% include "trialapp/row_replica_template.html" with row=row%}
+                {% empty %}
+                    <p>No Thesis yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

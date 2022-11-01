@@ -5283,7 +5283,7 @@ fieldset:disabled .btn {
   color: #212529;
   text-decoration: none;
   background-color: #fff;
-  border: 1px solid #dfd7ca;
+  border: 1px solid var(--custom-bg-color);
 }
 
 .list-group-item:first-child {

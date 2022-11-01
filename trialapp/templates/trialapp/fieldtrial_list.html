@@ -20,7 +20,7 @@
 {% for item in object_list %}
     <tr>
         <td>-</td>
-        <td><a class="btn btn-info" href="{% url 'fieldtrial-edit' item.id%}">{{ item.name }}</a></td>
+        <td><a class="btn btn-info" href="{% url 'fieldtrial-show' item.id%}">{{ item.name }}</a></td>
         <td><span class="badge bg-project">{{ item.project }}</span>
             <span class="badge bg-objective">{{ item.objective }}</span>
             <span class="badge bg-plague">{{ item.plague }}</span>
