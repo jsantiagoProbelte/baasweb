@@ -44,10 +44,12 @@ class TrialHelperTest(TestCase):
 
         self.assertEqual(len(self._replicas2),
                          self._fieldTrial.replicas_per_thesis)
-        self.assertTrue(LayoutTrial.isSameThesis(self._replicas1[0],
-                                                 self._replicas1[1]))
-        self.assertFalse(LayoutTrial.isSameThesis(self._replicas1[0],
-                                                  self._replicas2[0]))
+        self.assertTrue(LayoutTrial.isSameThesis({
+            'number': self._replicas1[1].thesis_id},
+            self._replicas1[1]))
+        self.assertFalse(LayoutTrial.isSameThesis({
+            'number': 33},
+             self._replicas2[0]))
         self.assertFalse(LayoutTrial.isSameThesis(None, self._replicas2[0]))
 
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
@@ -59,16 +61,18 @@ class TrialHelperTest(TestCase):
 
         for i in range(0, rows):
             for j in range(0, columns):
-                self.assertEqual(deck[i][j], None)
+                self.assertEqual(deck[i][j], LayoutTrial.setDeckCell(None))
         # before assigning all elements are None
         deckShow = LayoutTrial.showLayout(self._fieldTrial, self._theses)
         for i in range(0, rows):
             for j in range(0, columns):
-                self.assertEqual(deckShow[i][j], None)
+                self.assertEqual(
+                    deckShow[i][j],
+                    LayoutTrial.setDeckCell(None))
 
         # Let's try to assign replicas one by one
         self.assertTrue(LayoutTrial.tryAssign(deck, 0, 0, self._replicas1[0]))
-        self.assertEqual(deck[0][0].id, self._replicas1[0].id)
+        self.assertEqual(deck[0][0]['number'], self._thesis1.id)
         self.assertEqual(self._replicas1[0].pos_x, 1)
         self.assertEqual(self._replicas1[0].pos_y, 1)
 
@@ -85,19 +89,13 @@ class TrialHelperTest(TestCase):
         self.assertEqual(len(listReplicas),
                          self._fieldTrial.replicas_per_thesis - 1)
 
-    def test_layoutTrial2(self):
+    def test_distributeLayout(self):
         deck = LayoutTrial.showLayout(self._fieldTrial, self._theses)
-        listReplicas = [replica for replica in self._replicas1]
         self.assertTrue(LayoutTrial.tryAssign(deck, 0, 0, self._replicas1[0]))
-        self.assertFalse(LayoutTrial.assignReplica(listReplicas, deck, 0, 1))
-        listReplicas = [replica for replica in self._replicas2]
-        self.assertTrue(LayoutTrial.assignReplica(listReplicas, deck, 0, 1))
-        self.assertEqual(deck[0][1].thesis.id, self._thesis2.id)
-        self.assertEqual(deck[0][1].pos_x, 1)
-        self.assertEqual(deck[0][1].pos_y, 2)
+        self.assertEqual(self._replicas1[0].pos_x, 1)
+        self.assertEqual(self._replicas1[0].pos_y, 1)
 
         deck = LayoutTrial.distributeLayout(self._fieldTrial, self._theses)
-
         # We should be able to find all the replicas
         for thesisReplicas in [self._replicas1, self._replicas2]:
             for replica in thesisReplicas:
@@ -107,10 +105,10 @@ class TrialHelperTest(TestCase):
                         if item is None:
                             found = True
                             continue
-                        if replica.id == item.id:
+                        if replica.id == item['replica_id']:
                             found = True
                             break
                     if found:
                         break
-
+                print('[{}] {}'.format(found, replica))
                 self.assertTrue(found)

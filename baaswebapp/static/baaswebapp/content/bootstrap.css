@@ -4622,10 +4622,10 @@ fieldset:disabled .btn {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: #000;
   background-clip: border-box;
   /* border: 1px solid rgba(223, 215, 202, 0.75); */
-  border-radius: 0.5rem;
+  border-radius:10px !important;
 }
 
 .card > hr {

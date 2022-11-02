@@ -285,11 +285,14 @@ class Replica(ModelHelpers, models.Model):
             self.pos_y)
 
     def getShortName(self):
-        return ('{}-[{}] ({},{})').format(
+        return ('{}-[{}]').format(
             self.thesis.name,
-            self.number,
-            self.pos_x,
-            self.pos_y)
+            self.number)
+        # return ('{}-[{}] ({},{})').format(
+        #     self.thesis.name,
+        #     self.number,
+        #     self.pos_x,
+        #     self.pos_y)
 
     # create the replicas asociated with this
     @classmethod

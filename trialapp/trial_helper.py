@@ -1,6 +1,6 @@
 from math import ceil
 import random
-from trialapp.models import Replica, Thesis
+from trialapp.models import FieldTrial, Replica, Thesis
 
 
 class LayoutTrial:
@@ -13,25 +13,35 @@ class LayoutTrial:
 
     @classmethod
     def computeInitialLayout(cls, fieldTrial, numberThesis):
-        deck = []
         rows, columns = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
-        for i in range(0, rows):
-            deck.append([None for j in range(0, columns)])
+        deck = [[LayoutTrial.setDeckCell(None)
+                 for i in range(0, columns)] for i in range(0, rows)]
         return deck, (rows, columns)
 
     @classmethod
-    def showLayout(cls, fieldTrial, thesisTrial):
-        rows, columns = LayoutTrial.calculateLayoutDim(
+    def setDeckCell(cls, replica: Replica):
+        if replica is None:
+            return {'name': 'None',
+                    'replica_id': 0,
+                    'number': 0}
+        else:
+            return {'name': replica.getShortName(),
+                    'replica_id': replica.id,
+                    'number': replica.thesis.number}
+
+    @classmethod
+    def showLayout(cls, fieldTrial: FieldTrial, thesisTrial):
+        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
-        deck = [[None for i in range(0, columns)] for i in range(0, rows)]
 
         # Place the thesis in the deck
         for thesis in thesisTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x == 0) or (replica.pos_y == 0):
                     continue
-                deck[replica.pos_x-1][replica.pos_y-1] = replica.getShortName()
+                deck[replica.pos_x-1][replica.pos_y-1] =\
+                    LayoutTrial.setDeckCell(replica)
         return deck
 
     @classmethod
@@ -49,45 +59,34 @@ class LayoutTrial:
         return current - 1 if current > 0 else None
 
     @classmethod
-    def isSameThesis(cls, deckItem: Replica, item: Replica):
+    def isSameThesis(cls, deckItem, item: Replica):
         if deckItem is None:
             return False
-        return True if deckItem.thesis.id == item.thesis.id else False
+        return True if deckItem['number'] == item.thesis.number else False
 
     @classmethod
     def tryAssign(cls, deck, row, column, item: Replica):
         if item is None:
             return False
-        print('{},{} [{}]'.format(row, column, item.thesis.id))
+        # print('{},{} [{}]'.format(row, column, item.thesis.id))
+        # Check if it is free
+        if deck[row][column]['replica_id'] != 0:
+            return False
+
         p_x = LayoutTrial.rangeToExplore(row)
         p_y = LayoutTrial.rangeToExplore(column)
-        print('p_x is {}'.format(p_x))
-        print('p_y is {}'.format(p_y))
         if p_x is not None and\
            LayoutTrial.isSameThesis(deck[p_x][column], item):
-            print('ARRIBA')
+            # print('ARRIBA')
             return False
         if p_y is not None and LayoutTrial.isSameThesis(deck[row][p_y], item):
-            print('IZQUIERDA')
+            # print('IZQUIERDA')
             return False
         item.pos_x = row+1
         item.pos_y = column+1
-        deck[row][column] = item
+        deck[row][column] = LayoutTrial.setDeckCell(item)
         item.save()
         return True
-
-    @classmethod
-    def assignReplica(cls, toBeAssigned, deck, row, column,
-                      number_tries=3):
-        item = LayoutTrial.randomChooseItem(toBeAssigned)
-        if item is None:
-            return False
-        tried = 0
-        while tried < number_tries:
-            if LayoutTrial.tryAssign(deck, row, column, item):
-                return True
-            tried += 1
-        return False
 
     @classmethod
     def distributeLayout(cls, fieldTrial, thesisTrial):
@@ -104,12 +103,18 @@ class LayoutTrial:
                 foundReplicas += 1
 
         # Assigned each cell of the deck
-        for row in range(0, rows):
+        for replica in toBeAssigned:
+            assigned = False
             for column in range(0, columns):
-                if LayoutTrial.assignReplica(toBeAssigned, deck, row, column):
-                    assignedReplicas += 1
-                if len(toBeAssigned) == 0:
-                    return deck
+                for row in range(0, rows):
+                    if LayoutTrial.tryAssign(deck,
+                                             row, column, replica):
+                        assigned = True
+                        assignedReplicas += 1
+                        break
+                if assigned:
+                    break
+        # print('ALL DONE {}/{}'.format(assignedReplicas, foundReplicas))
         return deck
 
 

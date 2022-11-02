@@ -87,6 +87,53 @@
 .bg-custom-blue{
   background: var(--custom-blue);
 }
+
+.bg-custom-0{
+  background-color: var(--custom-bg-color) !important;
+}
+.bg-custom-1{
+  background-color: var(--custom-morado) !important;
+}
+.bg-custom-2{
+  background: var(--custom-bio-morado ) !important;
+}
+.bg-custom-3{
+  background-color: var(--custom-violeta) !important;
+}
+.bg-custom-4{
+  background: var(--custom-red) !important;
+}
+.bg-custom-5{
+  background: var(--custom-yellow) !important;
+}
+.bg-custom-6{
+  background: var(--custom-green) !important;
+}
+.bg-custom-7{
+  background: var(--custom-blue) !important;
+}
+.bg-custom-8{
+  background: var(--bs-primary) !important;
+}
+.bg-custom-9{
+  background: var(--bs-success) !important;
+}
+.bg-custom-10{
+  background: var(--bs-info) !important;
+}
+.bg-custom-11{
+  background: var(--bs-warning) !important;
+}
+.bg-custom-12{
+  background: var(--bs-danger) !important;
+}
+.bg-custom-13{
+  background: var(--bs-green) !important;
+}
+.bg-custom-14{
+  background: var(--bs-secondary) !important;
+}
+
 .navbar-nav .nav-link{
   font-size: 1rem !important;
   text-transform: capitalize !important;
@@ -166,14 +213,18 @@
 .card-header-baas {
   padding: 0.5rem 1rem;
   margin-bottom: 0;
+  border-top-left-radius:10px !important;
+  border-top-right-radius:10px !important;
   background: #8e8c84;
-  border-bottom: 1px solid rgba(223, 215, 202, 0.75);
+  /* border-bottom: 1px solid rgba(223, 215, 202, 0.75); */
 }
 
 .card-body-baas {
-  background:var(--custom-bg-color-cards);
+  background-color:var(--custom-bg-color-cards);
   border-radius:10px !important;
   padding:20px;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .list-group-item-baas {
