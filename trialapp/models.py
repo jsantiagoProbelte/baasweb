@@ -45,6 +45,11 @@ class ModelHelpers:
             cls.objects.create(name=value)
 
     @classmethod
+    def initKValues(cls, kValues):
+        for item in kValues:
+            cls.objects.create(**item)
+
+    @classmethod
     def getForeignModels(cls):
         if hasattr(cls, 'foreignModelLabels'):
             return cls.foreignModelLabels
@@ -99,9 +104,36 @@ class ModelHelpers:
     def __str__(self):
         return self.getName()
 
+    @classmethod
+    def setDataPoint(cls, reference, evaluation, unit, value):
+        dataPoint = cls.objects.filter(
+            evaluation=evaluation,
+            reference=reference,
+            unit=unit).all()
+        if not dataPoint:
+            cls.objects.create(
+                evaluation=evaluation,
+                reference=reference,
+                unit=unit,
+                value=value)
+        else:
+            dataPoint[0].value = value
+            dataPoint[0].save()
+
+    @classmethod
+    def getDataPoints(cls, evaluation):
+        return cls.objects \
+                  .filter(evaluation=evaluation)
+
 
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+    scientific = models.CharField(max_length=100)
+
+
+class CropVariety(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+    crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
 
 
 class Plague(ModelHelpers, models.Model):
@@ -134,8 +166,14 @@ class RateUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class ResultUnit(ModelHelpers, models.Model):
+class AssessmentUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+
+
+class AssessmentType(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
 
 
 class TrialStatus(ModelHelpers, models.Model):
@@ -167,6 +205,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     rows_layout = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
+    samples_per_replica = models.IntegerField(default=0)
 
     foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
@@ -306,9 +345,10 @@ class Replica(ModelHelpers, models.Model):
             )
 
 
-class Application(ModelHelpers, models.Model):
+# This collects which moments in times, do we evaluate the thesis
+class Evaluation(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
-    application_date = models.DateField()
+    evaluation_date = models.DateField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.IntegerField()
     crop_stage_scale = models.CharField(max_length=10)
@@ -317,20 +357,20 @@ class Application(ModelHelpers, models.Model):
     def getObjects(cls, field_trial):
         return cls.objects \
                 .filter(field_trial=field_trial) \
-                .order_by('application_date')
+                .order_by('evaluation_date')
 
 
-# This collects the information of other products related with this tests.
-class ProductApplication(models.Model):
+# This collects which products are included in each evaluation
+class ProductEvaluation(models.Model):
     product_thesis = models.ForeignKey(ProductThesis, on_delete=models.CASCADE)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE,
                                null=True)
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE)
 
     @classmethod
-    def getObjects(cls, application: Application):
+    def getObjects(cls, evaluation: Evaluation):
         return cls.objects \
-                .filter(application=application) \
+                .filter(evaluation=evaluation) \
                 .order_by('thesis__number', 'product_thesis__product__name')
 
     def getName(self):
@@ -341,39 +381,54 @@ class ProductApplication(models.Model):
 Results aggregation
 * (RawResult) Value at plant
 * (ReplicaResult) Value at Replica (as aggregation of plant' values)
-* (AplicationResult) Value at Application connected with a Thesis
+* (AplicationResult) Value at Evaluation connected with a Thesis
     (as aggregation of replica' values)
-* (ApplicationMeasurement) An application/treatment could have multiple
-    measurements. This one connets to the application / treatment together
+* (EvaluationMeasurement) An evaluation/treatment could have multiple
+    measurements. This one connects to the evaluation / treatment together
     with the unit
 """
 
 
-class ApplicationMeasurement(ModelHelpers, models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    treatment = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-    unit = models.ForeignKey(ResultUnit, on_delete=models.CASCADE)
+# This collects which assessment units are used in each fieldtrial
+class TrialAssessmentSet(ModelHelpers, models.Model):
+    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
+    type = models.ForeignKey(AssessmentType, on_delete=models.CASCADE)
+    unit = models.ForeignKey(AssessmentUnit, on_delete=models.CASCADE)
+
+    @classmethod
+    def getObjects(cls, fieldTrial):
+        return cls.objects \
+                  .filter(field_trial=fieldTrial) \
+                  .order_by('unit__name')
 
 
-class ApplicationResult(models.Model):
+class ThesisData(ModelHelpers, models.Model):
     value = models.DecimalField(max_digits=5, decimal_places=3)
-    result_set = models.ForeignKey(ApplicationMeasurement,
+    evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
+    unit = models.ForeignKey(TrialAssessmentSet,
+                             on_delete=models.CASCADE)
+    reference = models.ForeignKey(Thesis,
+                                  on_delete=models.CASCADE)
 
 
-class ReplicaResult(models.Model):
+class ReplicaData(ModelHelpers, models.Model):
     value = models.DecimalField(max_digits=5, decimal_places=3)
-    application_set = models.ForeignKey(ApplicationMeasurement,
-                                        on_delete=models.CASCADE)
-    replica = models.ForeignKey(Replica,
-                                on_delete=models.CASCADE)
+    evaluation = models.ForeignKey(Evaluation,
+                                   on_delete=models.CASCADE)
+    unit = models.ForeignKey(TrialAssessmentSet,
+                             on_delete=models.CASCADE)
+    reference = models.ForeignKey(Thesis,
+                                  on_delete=models.CASCADE)
 
 
-class RawResult(models.Model):
+class SampleData(ModelHelpers, models.Model):
     value = models.DecimalField(max_digits=5, decimal_places=3)
-    unit = models.ForeignKey(ResultUnit, on_delete=models.CASCADE)
-    application_set = models.ForeignKey(ApplicationMeasurement,
-                                        on_delete=models.CASCADE)
+    evaluation = models.ForeignKey(Evaluation,
+                                   on_delete=models.CASCADE)
+    unit = models.ForeignKey(TrialAssessmentSet,
+                             on_delete=models.CASCADE)
+    reference = models.IntegerField()
 
 
 class TrialStats:
@@ -382,7 +437,7 @@ class TrialStats:
         return {
             'products': Product.objects.count(),
             'field_trials': FieldTrial.objects.count(),
-            'points': RawResult.objects.count()
+            'points': ThesisData.objects.count()
         }
 
 
@@ -408,7 +463,8 @@ class TrialDbInitialLoader:
             Objective: ['Reduce fertilizer', 'Efectividad Biologica'],
             Product: ['Botrybel', 'ExBio', 'Belnatol', 'Belthirul', 'Biopron',
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
-                      'Nemapron', 'Nutrihealth', 'Verticibel'],
+                      'Nemapron', 'Nutrihealth', 'Verticibel',
+                      '-- No Product --'],
             Plague: ['Antracnosis', 'Botrytis', 'Oidio', 'Sphaerotheca',
                      'Cenicilla polvorienta', 'Damping off', 'Gusano soldado',
                      'Marchitez', 'Minador', 'Mosca blanca', 'N/A',
@@ -416,11 +472,13 @@ class TrialDbInitialLoader:
                      'Tristeza de los citricos', 'Tristeza del aguacatero',
                      'Verticiliosis'],
             RateUnit: ['Kg/hectare', 'Liters/hectare'],
-            ResultUnit: ['Affected Plants', 'Severity Infection', 'Kg']
+            AssessmentUnit: ['%; 0; 100', '%UNCK; -; -'],
+            AssessmentType: ['PHYGEN', 'PESSEV', 'PESINC', 'CONTRO']
         }
 
     @classmethod
     def loadInitialTrialValues(cls):
         initialValues = cls.initialTrialModelValues()
         for modelo in initialValues:
-            modelo.initValues(initialValues[modelo])
+            kValues = [{'name': value} for value in initialValues[modelo]]
+            modelo.initKValues(kValues)

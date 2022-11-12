@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, ProductThesis, Replica, TrialDbInitialLoader,\
-    Thesis
+from trialapp.models import FieldTrial, ProductThesis, Replica,\
+                            TrialDbInitialLoader, Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 

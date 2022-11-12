@@ -7,8 +7,8 @@
     <div class="col-md-6">
         <h1 class="">
             <span class="mr-4"><a href="{% url 'fieldtrial-show' field_trial_id %}" >{{field_trial_name}}</a></span>
-            applications
-            <a href="{% url 'application-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
+            evaluations
+            <a href="{% url 'evaluation-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
     </div>
     <div class="col-md-6">
         <div class="text-sm-end">
@@ -25,18 +25,22 @@
             <th>Name</th>
             <th>Date</th>
             <th>Crop Stage</th>
+            <th>Thesis Data</th>
+            <th>Replicas Data</th>
         </tr>
     </thead>
     <tbody>
 {% for item in object_list %}
     <tr>
-        <td>{{item.application_date}}</td>
-        <td><a href="{% url 'application-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
+        <td>{{item.evaluation_date}}</td>
+        <td><a href="{% url 'evaluation-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
         <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>
+        <td><a href="{% url 'data_thesis_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
+        <td><a href="{% url 'data_replica_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
     </tr>
     </tbody>    
 {% empty %}
-    <p>No applications yet.</p>
+    <p>No evaluations yet.</p>
 {% endfor %}
 </table>
 </div>

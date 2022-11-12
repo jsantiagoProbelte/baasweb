@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<form id="application-add-product-form-{{application_id}}" class='application-add-product-form mb-3 mt-1' method="POST">
+<form id="evaluation-add-product-form-{{evaluation_id}}" class='evaluation-add-product-form mb-3 mt-1' method="POST">
     {% csrf_token %}
     {{ form|crispy }}
     <td>

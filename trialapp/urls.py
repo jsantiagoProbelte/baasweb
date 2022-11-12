@@ -1,5 +1,6 @@
 from django.urls import path
-from . import fieldtrial_views, thesis_views, application_views
+from . import fieldtrial_views, thesis_views, evaluation_views,\
+              data_views
 
 urlpatterns = [
     # Field Trials urls
@@ -48,25 +49,54 @@ urlpatterns = [
         'manage_replica_to_thesis_api',
         thesis_views.ManageReplicaToThesis.as_view(),
         name='manage_replica_to_thesis_api'),
-    # Application urls
+    # Evaluation urls
     path(
-        'applicationlist/<int:field_trial_id>/',
-        application_views.ApplicationListView.as_view(),
-        name='application-list'),
+        'evaluationlist/<int:field_trial_id>/',
+        evaluation_views.EvaluationListView.as_view(),
+        name='evaluation-list'),
     path(
-        'edit_application/<int:field_trial_id>/',
-        application_views.editApplication,
-        name='application-edit'),
+        'edit_evaluation/<int:field_trial_id>/',
+        evaluation_views.editEvaluation,
+        name='evaluation-edit'),
     path(
-        'edit_application/<int:field_trial_id>/<int:application_id>/',
-        application_views.editApplication,
-        name='application-edit'),
+        'edit_evaluation/<int:field_trial_id>/<int:evaluation_id>/',
+        evaluation_views.editEvaluation,
+        name='evaluation-edit'),
     path(
-        'save_application',
-        application_views.saveApplication,
-        name='application-save'),
+        'save_evaluation',
+        evaluation_views.saveEvaluation,
+        name='evaluation-save'),
     path(
-        'manage_product_to_application_api',
-        application_views.ManageProductToApplication.as_view(),
-        name='manage_product_to_application_api')
+        'manage_product_to_evaluation_api',
+        evaluation_views.ManageProductToEvaluation.as_view(),
+        name='manage_product_to_evaluation_api'),
+    # Data & measurements apis
+    path(
+        'trial_assessment_set_list/<int:field_trial_id>/',
+        data_views.showTrialAssessmentSetIndex,
+        name='trial-assessment-set-list'),
+    path(
+        'data_thesis_index/<int:evaluation_id>/',
+        data_views.showDataThesisIndex,
+        name='data_thesis_index'),
+    path(
+        'data_replica_index/<int:evaluation_id>/',
+        data_views.showDataReplicaIndex,
+        name='data_replica_index'),
+    path(
+        'manage_trial_assessment_set_api',
+        data_views.ManageTrialAssessmentSet.as_view(),
+        name='manage_trial_assessment_set_api'),
+    path(
+        'set_data_point',
+        data_views.SetDataEvaluation.as_view(),
+        name='set_data_point'),
+    # path(
+    #     'add_data_thesis/<int:thesis_id>/<int:evaluation_id>/',
+    #     data_views.add_data_thesis,
+    #     name='show-data-options'),
+    # path(
+    #     'add_data_replica/<int:replica_id>/<int:evaluation_id>/',
+    #     data_views.add_data_replica,
+    #     name='show-data-options'),
 ]

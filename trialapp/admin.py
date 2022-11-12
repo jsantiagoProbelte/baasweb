@@ -1,7 +1,7 @@
 from django.contrib import admin
 # Register your models here.
 from trialapp.models import FieldTrial, Crop, Phase, Project, Objective,\
-    RateUnit, Product, Plague, TrialStatus, ResultUnit
+    RateUnit, Product, Plague, TrialStatus, AssessmentUnit, AssessmentType
 
 
 class FieldTrialAdmin(admin.ModelAdmin):
@@ -18,4 +18,5 @@ admin.site.register(RateUnit)
 admin.site.register(Product)
 admin.site.register(Plague)
 admin.site.register(TrialStatus)
-admin.site.register(ResultUnit)
+admin.site.register(AssessmentUnit)
+admin.site.register(AssessmentType)

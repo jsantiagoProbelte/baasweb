@@ -1,16 +1,16 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, ProductApplication, ProductThesis, Thesis, TrialDbInitialLoader,\
-    Application
+from trialapp.models import FieldTrial, ProductEvaluation, ProductThesis, Thesis, TrialDbInitialLoader,\
+    Evaluation
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
-from trialapp.application_views import editApplication, saveApplication,\
-    ManageProductToApplication
-# from trialapp.application_views import editApplication
+from trialapp.evaluation_views import editEvaluation, saveEvaluation,\
+    ManageProductToEvaluation
+# from trialapp.evaluation_views import editEvaluation
 
 
-class ApplicationViewsTest(TestCase):
+class EvaluationViewsTest(TestCase):
 
     def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
@@ -20,85 +20,85 @@ class ApplicationViewsTest(TestCase):
         for productThesis in TrialAppModelTest.PRODUCT_THESIS:
             ProductThesis.create_ProductThesis(**productThesis)
 
-    def test_application_emply_list(self):
+    def test_evaluation_emply_list(self):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
         response = self.client.get(reverse(
-            'application-list', args=[fieldTrial.id]))
+            'evaluation-list', args=[fieldTrial.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'applications')
+        self.assertContains(response, 'evaluations')
         self.assertContains(response, fieldTrial.name)
-        self.assertContains(response, 'No applications yet.')
+        self.assertContains(response, 'No evaluations yet.')
 
     def test_editfieldtrial(self):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
         request_factory = RequestFactory()
-        request = request_factory.get('/edit_application')
-        response = editApplication(request, field_trial_id=fieldTrial.id)
-        self.assertContains(response, 'create-application')
-        self.assertContains(response, 'New application')
-        self.assertNotContains(response, 'Edit application')
+        request = request_factory.get('/edit_evaluation')
+        response = editEvaluation(request, field_trial_id=fieldTrial.id)
+        self.assertContains(response, 'create-evaluation')
+        self.assertContains(response, 'New evaluation')
+        self.assertNotContains(response, 'Edit evaluation')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        applicationData = TrialAppModelTest.APPLICATION[0]
-        request = request_factory.post('application-save',
-                                       data=applicationData)
-        response = saveApplication(request)
-        application = Application.objects.get(name=applicationData['name'])
-        self.assertEqual(application.name, applicationData['name'])
+        evaluationData = TrialAppModelTest.APPLICATION[0]
+        request = request_factory.post('evaluation-save',
+                                       data=evaluationData)
+        response = saveEvaluation(request)
+        evaluation = Evaluation.objects.get(name=evaluationData['name'])
+        self.assertEqual(evaluation.name, evaluationData['name'])
         self.assertEqual(response.status_code, 302)
 
-        # We should get some productapplication for free
+        # We should get some productevaluation for free
         # We should have as many as product in thesis
         productsThesis = ProductThesis.getObjectsPerFieldTrial(fieldTrial)
-        productsApplication = ProductApplication.getObjects(application)
+        productsEvaluation = ProductEvaluation.getObjects(evaluation)
         self.assertGreater(len(productsThesis), 0)
-        totalProductApp = len(productsApplication)
+        totalProductApp = len(productsEvaluation)
         self.assertEqual(len(productsThesis), totalProductApp)
 
         # Editar y ver nuevo
         request = request_factory.get(
-            '/edit_application/{}'.format(fieldTrial.id))
-        response = editApplication(
+            '/edit_evaluation/{}'.format(fieldTrial.id))
+        response = editEvaluation(
             request,
             field_trial_id=fieldTrial.id,
-            application_id=application.id)
-        self.assertContains(response, 'create-application')
-        self.assertNotContains(response, 'New application')
-        self.assertContains(response, 'Edit application')
-        self.assertContains(response, applicationData['name'])
+            evaluation_id=evaluation.id)
+        self.assertContains(response, 'create-evaluation')
+        self.assertNotContains(response, 'New evaluation')
+        self.assertContains(response, 'Edit evaluation')
+        self.assertContains(response, evaluationData['name'])
         self.assertEqual(response.status_code, 200)
 
         newscale = 'new name'
-        applicationData['application_id'] = application.id
-        applicationData['crop_stage_scale'] = newscale
-        request = request_factory.post('application-save',
-                                       data=applicationData)
-        response = saveApplication(request)
-        application2 = Application.objects.get(name=application.name)
-        self.assertEqual(application2.crop_stage_scale, newscale)
+        evaluationData['evaluation_id'] = evaluation.id
+        evaluationData['crop_stage_scale'] = newscale
+        request = request_factory.post('evaluation-save',
+                                       data=evaluationData)
+        response = saveEvaluation(request)
+        evaluation2 = Evaluation.objects.get(name=evaluation.name)
+        self.assertEqual(evaluation2.crop_stage_scale, newscale)
         self.assertEqual(response.status_code, 302)
 
         # Lets delete some products
-        deleteData = {'product_application_id': productsApplication[0].id}
-        deleteProductApplicationRequest = request_factory.post(
-            'manage_product_to_application_api',
+        deleteData = {'product_evaluation_id': productsEvaluation[0].id}
+        deleteProductEvaluationRequest = request_factory.post(
+            'manage_product_to_evaluation_api',
             data=deleteData)
-        apiView = ManageProductToApplication()
-        response = apiView.delete(deleteProductApplicationRequest)
+        apiView = ManageProductToEvaluation()
+        response = apiView.delete(deleteProductEvaluationRequest)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(ProductApplication.objects.count(),
+        self.assertEqual(ProductEvaluation.objects.count(),
                          totalProductApp-1)
 
         # lets add it again
         productData = {'product': productsThesis[0].id,
-                       'application_id': application2.id}
-        addProductApplicationRequest = request_factory.post(
-            '/manage_product_to_application_api',
+                       'evaluation_id': evaluation2.id}
+        addProductEvaluationRequest = request_factory.post(
+            '/manage_product_to_evaluation_api',
             data=productData)
-        response = apiView.post(addProductApplicationRequest)
+        response = apiView.post(addProductEvaluationRequest)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(ProductApplication.objects.count(),
+        self.assertEqual(ProductEvaluation.objects.count(),
                          totalProductApp)

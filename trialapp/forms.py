@@ -152,11 +152,11 @@ class ThesisEditForm(forms.Form):
             )
 
 
-class ApplicationEditForm(forms.Form):
+class EvaluationEditForm(forms.Form):
     field_trial_id = forms.CharField(widget=forms.HiddenInput())
-    application_id = forms.CharField(widget=forms.HiddenInput())
+    evaluation_id = forms.CharField(widget=forms.HiddenInput())
     name = forms.CharField(label='Name', required=True)
-    application_date = forms.DateField(widget=MyDateInput(), required=True)
+    evaluation_date = forms.DateField(widget=MyDateInput(), required=True)
     crop_stage_majority = forms.CharField(
         label='Crop Stage Majority', required=True,
         widget=forms.NumberInput())
@@ -165,23 +165,23 @@ class ApplicationEditForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'id-edit-application'
-        self.helper.form_class = 'create-application'
+        self.helper.form_id = 'id-edit-evaluation'
+        self.helper.form_class = 'create-evaluation'
         self.helper.form_method = 'post'
-        self.helper.form_action = '/save_application'
+        self.helper.form_action = '/save_evaluation'
 
-        text = 'Create Application'
+        text = 'Create Evaluation'
         if 'initial' in kwargs and \
-           'application_id' in kwargs['initial'] and \
-           kwargs['initial']['application_id'] is not None:
+           'evaluation_id' in kwargs['initial'] and \
+           kwargs['initial']['evaluation_id'] is not None:
             text = 'Save'
 
         self.helper.layout = Layout(
             Field('field_trial_id'),
-            Field('application_id'),
+            Field('evaluation_id'),
             Row(
                 Div(
-                    Field('application_date', css_class='mb-3'),
+                    Field('evaluation_date', css_class='mb-3'),
                     Field('crop_stage_majority', css_class='mb-4'),
                     css_class='col-md-6'),
                 Div(

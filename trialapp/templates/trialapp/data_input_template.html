@@ -1,0 +1,13 @@
+{% load crispy_forms_tags %}
+<form id="form-data-input-template-{{level}}-{{item_id}}" 
+      class='form-data-input-template mb-4'  method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="number" name="data-point"
+        id="data-input-template-{{level}}-{{item_id}}"
+        class="form-control input data-input-template text-right"
+        value="{{currentValue}}"
+        placeholder="{{placeholder}}"></input>
+</form>
+
+
