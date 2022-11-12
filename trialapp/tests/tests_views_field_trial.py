@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader
+from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader,\
+    TrialAssessmentSet, AssessmentType, AssessmentUnit
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial,\
@@ -30,6 +31,15 @@ class FieldTrialViewsTest(TestCase):
         self.assertNotContains(response, 'No Field Trial yet.')
         self.assertNotContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
+        self.assertContains(
+            response,
+            'Please define assessment types and units')
+
+        TrialAssessmentSet.objects.create(
+            field_trial=fieldTrial,
+            type=AssessmentType.objects.get(pk=1),
+            unit=AssessmentUnit.objects.get(pk=1))
+        response = self.client.get(reverse('fieldtrial-list'))
         self.assertContains(response, '1 &#10000;</a>')  # Number thesis
         self.assertContains(response, '0 &#43;</a>')  # Number applications
         thesis.delete()

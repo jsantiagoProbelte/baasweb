@@ -57,7 +57,7 @@ class TrialAppModelTest(TestCase):
     APPLICATION = [{
         'field_trial_id': 1,
         'name': 'Primera aplication',
-        'application_date': '2022-07-01',
+        'evaluation_date': '2022-07-01',
         'crop_stage_majority': 66,
         'crop_stage_scale': 'BBCH'
     }]
