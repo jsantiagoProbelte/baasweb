@@ -1,7 +1,8 @@
 from django.test import TestCase
 from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
-                            ProductThesis, Thesis,\
-                            TrialDbInitialLoader
+                            ProductThesis, Thesis, Evaluation,\
+                            TrialDbInitialLoader, TrialAssessmentSet,\
+                            AssessmentType, AssessmentUnit, ThesisData
 from django.test import RequestFactory
 
 
@@ -214,3 +215,27 @@ class TrialAppModelTest(TestCase):
             instance = model.objects.get(pk=1)
             self.assertEqual(instance.name,
                              instance.__str__())
+
+    def test_dataPoints(self):
+        fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+        thesis = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
+        assSet = TrialAssessmentSet.objects.create(
+            field_trial=fieldTrial,
+            type=AssessmentType.objects.get(pk=1),
+            unit=AssessmentUnit.objects.get(pk=1))
+        evaluation = Evaluation.objects.create(
+            name='eval1',
+            evaluation_date='2022-12-15',
+            field_trial=fieldTrial,
+            crop_stage_majority=65,
+            crop_stage_scale='BBCH')
+        dataPoints = ThesisData.getDataPoints(evaluation)
+        self.assertEqual(len(dataPoints), 0)
+        ThesisData.setDataPoint(thesis, evaluation, assSet, 33)
+        dataPoints = ThesisData.getDataPoints(evaluation)
+        self.assertEqual(len(dataPoints), 1)
+        ThesisData.setDataPoint(thesis, evaluation, assSet, 66)
+        self.assertEqual(len(dataPoints), 1)
+        assset = TrialAssessmentSet.getObjects(fieldTrial)
+        self.assertEqual(assset[0].unit, assSet.unit)

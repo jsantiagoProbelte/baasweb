@@ -40,11 +40,6 @@ class ModelHelpers:
         return theList
 
     @classmethod
-    def initValues(cls, values):
-        for value in values:
-            cls.objects.create(name=value)
-
-    @classmethod
     def initKValues(cls, kValues):
         for item in kValues:
             cls.objects.create(**item)
