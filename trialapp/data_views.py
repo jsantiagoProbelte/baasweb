@@ -51,7 +51,7 @@ class SetDataEvaluation(APIView):
     http_method_names = ['post']
 
     def post(self, request, format=None):
-        # evaluation-thesis-[evaluation_id]-[reference_id]-[assessment_set_id]
+        # data_point_id-[evaluation_id]-[reference_id]-[assessment_set_id]
         theIds = request.POST['data_point_id'].split('-')
         level = theIds[-4]
         evaluation = get_object_or_404(Evaluation, pk=theIds[-3])
@@ -71,6 +71,11 @@ class SetDataEvaluation(APIView):
             return Response({'success': False})
 
         return Response({'success': True})
+
+    @classmethod
+    def generateId(cls, type_reference, reference, evaluation, unit):
+        return 'data-input-template-{}-{}-{}-{}'.format(
+            type_reference, reference.id, evaluation.id, unit.id)
 
 
 def showTrialAssessmentSetIndex(request, field_trial_id=None,
