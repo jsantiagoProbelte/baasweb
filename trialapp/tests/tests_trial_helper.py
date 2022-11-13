@@ -70,6 +70,8 @@ class TrialHelperTest(TestCase):
                     deckShow[i][j],
                     LayoutTrial.setDeckCell(None))
 
+        self.assertFalse(LayoutTrial.tryAssign(deck, 0, 0, None))
+
         # Let's try to assign replicas one by one
         self.assertTrue(LayoutTrial.tryAssign(deck, 0, 0, self._replicas1[0]))
         self.assertEqual(deck[0][0]['number'], self._thesis1.id)
