@@ -4,8 +4,8 @@
 from baaswebapp.settings import *  # noqa: F403, F401
 # from sshtunnel import SSHTunnelForwarder
 
-# Connect to a server using the ssh keys.
-# See the sshtunnel documentation for using password authentication
+# # Connect to a server using the ssh keys.
+# # See the sshtunnel documentation for using password authentication
 # ssh_tunnel = SSHTunnelForwarder(
 #     '51.137.115.231',
 #     ssh_private_key='/Users/jsantiago/Code/azure/baasweb_server/'
@@ -28,6 +28,6 @@ DATABASES = {
     #     'PORT': ssh_tunnel.local_bind_port,
     #     'NAME': 'baas_db',
     #     'USER': 'baas_admin',
-    #     'PASSWORD': 'b2@s_r#cks',
+    #     'PASSWORD': BREAK ME,
     # },
 }

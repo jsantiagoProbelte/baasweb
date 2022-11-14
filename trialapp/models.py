@@ -40,9 +40,10 @@ class ModelHelpers:
         return theList
 
     @classmethod
-    def initKValues(cls, kValues):
+    def initKValues(cls, kValues, location='default'):
         for item in kValues:
-            cls.objects.create(**item)
+            theObject = cls(**item)
+            theObject.save(using=location)
 
     @classmethod
     def getForeignModels(cls):
@@ -472,8 +473,8 @@ class TrialDbInitialLoader:
         }
 
     @classmethod
-    def loadInitialTrialValues(cls):
+    def loadInitialTrialValues(cls, location='default'):
         initialValues = cls.initialTrialModelValues()
         for modelo in initialValues:
             kValues = [{'name': value} for value in initialValues[modelo]]
-            modelo.initKValues(kValues)
+            modelo.initKValues(kValues, location=location)
