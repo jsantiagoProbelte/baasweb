@@ -42,3 +42,7 @@ This workflow will build and push a Docker container to an Azure Web App when a 
 # For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
 # For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
+
+
+# To make migrations on production:
+# python manage.py migrate --database=shhtunnel_db

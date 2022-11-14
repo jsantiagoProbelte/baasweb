@@ -6,8 +6,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'baas_db',
-        'USER': 'baas_admin@baasweb-server',
-        'PASSWORD': 'blabla',
+        'USER': 'baas_admin',
+        'PASSWORD': 'b2@s_r#cks',
         'HOST': 'baasweb-server.postgres.database.azure.com',
         'PORT': '5432',
     }
