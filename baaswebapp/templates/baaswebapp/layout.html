@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} - BaaS Web App</title>
     {% load static %}
+    <base href="{% static '/' %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'baaswebapp/img/probelte.png' %}"/>
     {% load bootstrap5 %}
 
@@ -14,6 +15,7 @@
 
     {# Display django.contrib.messages as Bootstrap alerts #}
     {% bootstrap_messages %}
+    
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/baaswebapp.css' %}" />
 
