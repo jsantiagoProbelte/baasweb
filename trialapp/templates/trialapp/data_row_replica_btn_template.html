@@ -1,0 +1,10 @@
+<div class="card-group bg-custom-0 mt-2">
+    {% for replicaDataSet in row %}
+      <div class="card no-border me-2" >
+        <div class="btn bg-custom-{{replicaDataSet.number}} card-body-baas replica-selected text-white"
+             id="{{replicaDataSet.replicaId}}">
+            {{replicaDataSet.name}}
+        </div>
+      </div>
+    {% endfor %}
+</div>

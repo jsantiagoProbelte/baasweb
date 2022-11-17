@@ -4,7 +4,7 @@
     {% csrf_token %}
     {{ form|crispy }}
     <input type="number" name="data-point"
-        id="data-input-template-{{level}}-{{item_id}}"
+        id="{{item_id}}"
         class="form-control input data-input-template text-right"
         value="{{currentValue}}"
         placeholder="{{placeholder}}"></input>

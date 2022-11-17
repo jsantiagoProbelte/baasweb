@@ -12,3 +12,4 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+CSRF_TRUSTED_ORIGINS = ['https://baasweb.azurewebsites.net/']

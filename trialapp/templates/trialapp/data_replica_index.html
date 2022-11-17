@@ -19,21 +19,88 @@
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
-<div class="row">
-    <div class="col-md-8">
 
-        <div class="card-body-bass bg-custom-0" >
-            <div class="card-header-baas h4">
-                Select replica to add data:
-            </div>
-            <div class="card-body-bass bg-custom-0" >
-                {% for row in rowsReplicas %}
-                    {% include "trialapp/data_row_replica_template.html" with row=row%}
+<div class="card-body-bass bg-custom-0" >
+    <div class="card-header-baas h4">
+        Input replica to add data:
+    </div>
+    <div class="card-body-bass bg-custom-0" >
+        <table class="table">
+            <thead><tr>
+                <th>Thesis</th>
+                <th>Replica</th>
+                {% for assessmentType in trialAssessmentSets %}
+                    <th>{{assessmentType.type}} ({{assessmentType.unit}})</th>
                 {% empty %}
-                    <p>No Thesis yet.</p>
+                    <p>No result types defined. Go <span>
+                        <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' evaluation.field_trial_id%}">here</a></span></p>
                 {% endfor %}
-            </div>
-        </div>
+            </tr></thead>
+            {% for dataPointReference in dataPoints %}
+            <tr>
+                <td class="bg-custom-{{dataPointReference.color}}">
+                    {{dataPointReference.index}}
+                </td>
+                <td class="bg-custom-{{dataPointReference.color}}">
+                    {{dataPointReference.name}}
+                </td>
+                {% for dataPointValue in dataPointReference.dataPoints %}
+                <td>
+                    {% include "trialapp/data_input_template.html" with item_id=dataPointValue.item_id placeholder='0.0' currentValue=dataPointValue.value%}
+                </td>
+                {% empty %}
+                {% endfor %}
+            </tr>
+            {% empty %}
+                <p>No Replicas yet.</p>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="card-body-bass bg-custom-0" >
+        {% for replicaDataSetRow in replicaDataSets %}
+            {% include "trialapp/data_row_replica_btn_template.html" with row=replicaDataSetRow%}
+        {% empty %}
+            <p>No replicas yet.</p>
+        {% endfor %}
     </div>
 </div>
+
+
 {% endblock %}
+
+{% block scripts %}
+<script>
+var setDataPointAPI = '/set_data_point';
+
+$('.data-input-template').on('blur', function(){
+    var element=$(this)
+    return setDataPoint(element);
+});
+
+function setDataPoint(element) {
+    var formElement=element.parent()
+    var dataJson={}
+    $(element.serializeArray()).each(function(index,obj){
+        dataJson[obj.name]=obj.value;
+    });
+    dataJson['data_point_id']=formElement.attr('id');
+
+    $.ajax({
+        type : formElement.attr('method'), 
+        url: setDataPointAPI,
+        data: dataJson,
+        
+        success: function(data){
+            element.css("background-color", "grey");
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
+
+</script>
+{% endblock %}
+

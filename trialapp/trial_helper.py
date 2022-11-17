@@ -1,6 +1,7 @@
 from math import ceil
 import random
-from trialapp.models import FieldTrial, Replica, Thesis
+from trialapp.models import FieldTrial, Replica, Thesis,\
+                            Evaluation
 
 
 class LayoutTrial:
@@ -15,12 +16,12 @@ class LayoutTrial:
     def computeInitialLayout(cls, fieldTrial, numberThesis):
         rows, columns = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
-        deck = [[LayoutTrial.setDeckCell(None)
+        deck = [[LayoutTrial.setDeckCell(None, None)
                  for i in range(0, columns)] for i in range(0, rows)]
         return deck, (rows, columns)
 
     @classmethod
-    def setDeckCell(cls, replica: Replica):
+    def setDeckCell(cls, replica: Replica, evaluation):
         if replica is None:
             return {'name': 'None',
                     'replica_id': 0,
@@ -28,20 +29,21 @@ class LayoutTrial:
         else:
             return {'name': replica.getShortName(),
                     'replica_id': replica.id,
-                    'number': replica.thesis.number}
+                    'number': replica.thesis.number,
+                    'id': replica.generateReplicaDataSetId(evaluation)}
 
     @classmethod
-    def showLayout(cls, fieldTrial: FieldTrial, thesisTrial):
+    def showLayout(cls, fieldTrial: FieldTrial,
+                   evaluation: Evaluation, thesisTrial):
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
-
         # Place the thesis in the deck
         for thesis in thesisTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x == 0) or (replica.pos_y == 0):
                     continue
                 deck[replica.pos_x-1][replica.pos_y-1] =\
-                    LayoutTrial.setDeckCell(replica)
+                    LayoutTrial.setDeckCell(replica, evaluation)
         return deck
 
     @classmethod
@@ -84,7 +86,7 @@ class LayoutTrial:
             return False
         item.pos_x = row+1
         item.pos_y = column+1
-        deck[row][column] = LayoutTrial.setDeckCell(item)
+        deck[row][column] = LayoutTrial.setDeckCell(item, None)
         item.save()
         return True
 

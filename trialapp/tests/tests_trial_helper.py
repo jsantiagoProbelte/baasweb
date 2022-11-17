@@ -61,14 +61,15 @@ class TrialHelperTest(TestCase):
 
         for i in range(0, rows):
             for j in range(0, columns):
-                self.assertEqual(deck[i][j], LayoutTrial.setDeckCell(None))
+                self.assertEqual(deck[i][j],
+                                 LayoutTrial.setDeckCell(None, None))
         # before assigning all elements are None
-        deckShow = LayoutTrial.showLayout(self._fieldTrial, self._theses)
+        deckShow = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
         for i in range(0, rows):
             for j in range(0, columns):
                 self.assertEqual(
                     deckShow[i][j],
-                    LayoutTrial.setDeckCell(None))
+                    LayoutTrial.setDeckCell(None, None))
 
         self.assertFalse(LayoutTrial.tryAssign(deck, 0, 0, None))
 
@@ -92,7 +93,7 @@ class TrialHelperTest(TestCase):
                          self._fieldTrial.replicas_per_thesis - 1)
 
     def test_distributeLayout(self):
-        deck = LayoutTrial.showLayout(self._fieldTrial, self._theses)
+        deck = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
         self.assertTrue(LayoutTrial.tryAssign(deck, 0, 0, self._replicas1[0]))
         self.assertEqual(self._replicas1[0].pos_x, 1)
         self.assertEqual(self._replicas1[0].pos_y, 1)

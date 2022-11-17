@@ -1,6 +1,7 @@
 from django.test import TestCase
 from trialapp.models import AssessmentType, AssessmentUnit, FieldTrial,\
-    Thesis, TrialAssessmentSet, TrialDbInitialLoader, Evaluation
+    Thesis, TrialAssessmentSet, TrialDbInitialLoader, Evaluation,\
+    ModelHelpers
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
@@ -46,7 +47,7 @@ class DataViewsTest(TestCase):
 
         for thesis in self._theses:
             for unit in self._units:
-                idInput = SetDataEvaluation.generateId(
+                idInput = ModelHelpers.generateDataPointId(
                     'thesis',
                     self._evaluation,
                     thesis,
@@ -55,7 +56,7 @@ class DataViewsTest(TestCase):
 
         # Le's add data
         self.assertEqual(ThesisData.objects.count(), 0)
-        addData = {'data_point_id': SetDataEvaluation.generateId(
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
                     'thesis', self._evaluation,
                     self._theses[0],
                     self._units[0]),
@@ -77,7 +78,7 @@ class DataViewsTest(TestCase):
                          self._units[0])
 
         # modify
-        addData = {'data_point_id': SetDataEvaluation.generateId(
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
                     'thesis', self._evaluation,
                     self._theses[0],
                     self._units[0]),
@@ -91,7 +92,7 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[0].value, 66)
 
         # add new point
-        addData = {'data_point_id': SetDataEvaluation.generateId(
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
             'thesis', self._evaluation,
             self._theses[1],
             self._units[0]),

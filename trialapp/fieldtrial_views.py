@@ -88,6 +88,7 @@ def showFieldTrial(request, field_trial_id=None, errors=None):
                   {'fieldTrial': fieldTrial,
                    'thesisTrial': thesisTrial,
                    'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
+                                                          None,
                                                           thesisTrial),
                    'errors': errors})
 

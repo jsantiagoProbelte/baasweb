@@ -232,6 +232,10 @@
   background-color: var(--custom-bg-color-cards);
 }
 
+.text-white{
+  color: #fff;
+}
+
 .text-big-number{
 
   font-size: 64px;

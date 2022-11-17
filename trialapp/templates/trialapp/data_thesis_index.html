@@ -33,12 +33,12 @@
     </tr></thead>
     {% for dataPointReference in dataPoints %}
     <tr>
-        <td class="bg-custom-{{dataPointReference.number}}">
-            [{{dataPointReference.number}}] {{dataPointReference.name}}
+        <td class="bg-custom-{{dataPointReference.color}}">
+            [{{dataPointReference.index}}] {{dataPointReference.name}}
         </td>
     {% for dataPointValue in dataPointReference.dataPoints %}
         <td>
-            {% include "trialapp/data_input_template.html" with level=level item_id=dataPointValue.item_id placeholder='0.0' currentValue=dataPointValue.value%}
+            {% include "trialapp/data_input_template.html" with item_id=dataPointValue.item_id placeholder='0.0' currentValue=dataPointValue.value%}
         </td>
     {% empty %}
     {% endfor %}

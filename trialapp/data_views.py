@@ -3,7 +3,7 @@
 from trialapp.models import Evaluation, Thesis, AssessmentUnit,\
                             TrialAssessmentSet, FieldTrial, Replica,\
                             ThesisData, ReplicaData, SampleData,\
-                            AssessmentType
+                            AssessmentType, ModelHelpers
 from django.shortcuts import get_object_or_404, render
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
@@ -72,11 +72,6 @@ class SetDataEvaluation(APIView):
 
         return Response({'success': True})
 
-    @classmethod
-    def generateId(cls, type_reference, reference, evaluation, unit):
-        return 'data-input-template-{}-{}-{}-{}'.format(
-            type_reference, reference.id, evaluation.id, unit.id)
-
 
 def showTrialAssessmentSetIndex(request, field_trial_id=None,
                                 errors=None):
@@ -91,22 +86,29 @@ def showTrialAssessmentSetIndex(request, field_trial_id=None,
                   'errors': errors})
 
 
-def sortDataPointsForDisplay(
-        evaluation, references, trialAssessments, dataPoints):
+def sortDataPointsForDisplay(level, evaluation, references,
+                             trialAssessments, dataPoints):
     # This is for diplay purposes. [[,],[,]...]
     # It has to follow the order of references
     # and then trial assessments
     values = []
+    lastIndex = 'Nada'
     for reference in references:
+        thisIndex = reference.getReferenceIndexDataInput()
+        if lastIndex == thisIndex:
+            thisIndex = ''
+        else:
+            lastIndex = thisIndex
         thisRefValues = {
-            'number': reference.number,
-            'name': reference.name,
+            'index': thisIndex,
+            'color': reference.getBackgroundColor(),
+            'name': reference.getName(),
             'dataPoints': []}
         for unit in trialAssessments:
             value = ''
             thisRefValue = {}
-            thisRefValue['item_id'] = '{}-{}-{}'.format(
-                evaluation.id, reference.id, unit.id)
+            thisRefValue['item_id'] = ModelHelpers.generateDataPointId(
+                level, evaluation, reference, unit)
             for dataPoint in dataPoints:
                 if dataPoint.reference.id == reference.id and\
                    unit.id == dataPoint.unit.id:
@@ -126,12 +128,11 @@ def showDataThesisIndex(request, evaluation_id=None,
     trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
     dataPoints = ThesisData.getDataPoints(evaluation)
     dataPointsList = sortDataPointsForDisplay(
-        evaluation, thesisTrial, trialAssessmentSets, dataPoints)
+        'thesis', evaluation, thesisTrial, trialAssessmentSets, dataPoints)
     return render(request, template_name, {
                   'evaluation': evaluation,
                   'dataPoints': dataPointsList,
                   'theses': thesisTrial,
-                  'level': 'thesis',
                   'trialAssessmentSets': trialAssessmentSets,
                   'errors': errors})
 
@@ -140,11 +141,20 @@ def showDataReplicaIndex(request, evaluation_id=None,
                          errors=None):
     template_name = 'trialapp/data_replica_index.html'
     evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+    replicas = Replica.getFieldTrialObjects(evaluation.field_trial)
     thesisTrial = Thesis.getObjects(evaluation.field_trial)
-    return render(request, template_name, {
-                  'rowsReplicas': LayoutTrial.showLayout(
+    trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
+    dataPoints = ReplicaData.getDataPoints(evaluation)
+    dataPointsList = sortDataPointsForDisplay(
+        'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
+    replicaDataSets = LayoutTrial.showLayout(
                         evaluation.field_trial,
-                        thesisTrial),
+                        evaluation,
+                        thesisTrial)
+    return render(request, template_name, {
+                  'trialAssessmentSets': trialAssessmentSets,
+                  'replicaDataSets': replicaDataSets,
+                  'dataPoints': dataPointsList,
                   'evaluation': evaluation,
                   'theses': thesisTrial,
                   'errors': errors})

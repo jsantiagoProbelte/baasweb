@@ -101,6 +101,13 @@ class ModelHelpers:
         return self.getName()
 
     @classmethod
+    def generateDataPointId(cls, level, evaluation,
+                            reference, unit):
+        return 'data-point-{}-{}-{}-{}'.format(
+            level, evaluation.id,
+            reference.id, unit.id)
+
+    @classmethod
     def setDataPoint(cls, reference, evaluation, unit, value):
         dataPoint = cls.objects.filter(
             evaluation=evaluation,
@@ -245,8 +252,13 @@ class Thesis(ModelHelpers, models.Model):
             name=kwargs['name'],
             field_trial=FieldTrial.objects.get(pk=kwargs['field_trial_id']),
             number=kwargs['number'],
-            description=kwargs['description']
-        )
+            description=kwargs['description'])
+
+    def getReferenceIndexDataInput(self):
+        return self.number
+
+    def getBackgroundColor(self):
+        return self.number
 
 
 class ProductThesis(ModelHelpers, models.Model):
@@ -329,6 +341,11 @@ class Replica(ModelHelpers, models.Model):
         #     self.pos_x,
         #     self.pos_y)
 
+    def generateReplicaDataSetId(self, evaluation):
+        evaluationId = evaluation.id if evaluation else 'null'
+        return 'replica-data-set-{}-{}'.format(
+            evaluationId, self.id)
+
     # create the replicas asociated with this
     @classmethod
     def createReplicas(cls, thesis, replicas_per_thesis):
@@ -337,8 +354,23 @@ class Replica(ModelHelpers, models.Model):
                 number=number+1,
                 thesis=thesis,
                 pos_x=0,
-                pos_y=0
-            )
+                pos_y=0)
+
+    @classmethod
+    def getFieldTrialObjects(cls, field_trial):
+        ids = Thesis.objects.filter(
+            field_trial=field_trial
+            ).order_by('number').values_list('id', flat=True)
+
+        return Replica.objects.filter(
+            thesis_id__in=ids
+            ).order_by('thesis__number', 'number')
+
+    def getReferenceIndexDataInput(self):
+        return self.thesis.getName()
+
+    def getBackgroundColor(self):
+        return self.thesis.getBackgroundColor()
 
 
 # This collects which moments in times, do we evaluate the thesis
@@ -414,7 +446,7 @@ class ReplicaData(ModelHelpers, models.Model):
                                    on_delete=models.CASCADE)
     unit = models.ForeignKey(TrialAssessmentSet,
                              on_delete=models.CASCADE)
-    reference = models.ForeignKey(Thesis,
+    reference = models.ForeignKey(Replica,
                                   on_delete=models.CASCADE)
 
 
