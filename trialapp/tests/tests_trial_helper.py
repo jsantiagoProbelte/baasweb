@@ -52,20 +52,20 @@ class TrialHelperTest(TestCase):
              self._replicas2[0]))
         self.assertFalse(LayoutTrial.isSameThesis(None, self._replicas2[0]))
 
-        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
+        deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
             self._fieldTrial,
             len(self._theses))
 
-        self.assertEqual(len(deck), rows)
+        self.assertEqual(len(deck), blocks)
         self.assertEqual(len(deck[0]), columns)
 
-        for i in range(0, rows):
+        for i in range(0, blocks):
             for j in range(0, columns):
                 self.assertEqual(deck[i][j],
                                  LayoutTrial.setDeckCell(None, None))
         # before assigning all elements are None
         deckShow = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
-        for i in range(0, rows):
+        for i in range(0, blocks):
             for j in range(0, columns):
                 self.assertEqual(
                     deckShow[i][j],

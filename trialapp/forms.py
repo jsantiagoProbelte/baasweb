@@ -34,7 +34,7 @@ class FieldTrialCreateForm(forms.Form):
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
     location = forms.CharField(label="City/Area")
-    rows_layout = forms.CharField(label="Layout. Number of rows",
+    rows_layout = forms.CharField(label="Layout. Number of blocks",
                                   widget=forms.NumberInput())
     replicas_per_thesis = forms.CharField(
         label="Layout. Number of replicas per thesis",

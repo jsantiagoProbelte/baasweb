@@ -8,17 +8,17 @@ class LayoutTrial:
 
     @classmethod
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
-        rows = fieldTrial.rows_layout
+        blocks = fieldTrial.rows_layout
         numberReplicas = fieldTrial.replicas_per_thesis
-        return rows, ceil(numberThesis * numberReplicas / rows)
+        return blocks, ceil(numberThesis * numberReplicas / blocks)
 
     @classmethod
     def computeInitialLayout(cls, fieldTrial, numberThesis):
-        rows, columns = LayoutTrial.calculateLayoutDim(
+        blocks, columns = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
         deck = [[LayoutTrial.setDeckCell(None, None)
-                 for i in range(0, columns)] for i in range(0, rows)]
-        return deck, (rows, columns)
+                 for i in range(0, columns)] for i in range(0, blocks)]
+        return deck, (blocks, columns)
 
     @classmethod
     def setDeckCell(cls, replica: Replica, evaluation):
@@ -35,7 +35,7 @@ class LayoutTrial:
     @classmethod
     def showLayout(cls, fieldTrial: FieldTrial,
                    evaluation: Evaluation, thesisTrial):
-        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
+        deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         # Place the thesis in the deck
         for thesis in thesisTrial:
@@ -92,7 +92,7 @@ class LayoutTrial:
 
     @classmethod
     def distributeLayout(cls, fieldTrial, thesisTrial):
-        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
+        deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         foundReplicas = 0
         assignedReplicas = 0
@@ -108,7 +108,7 @@ class LayoutTrial:
         for replica in toBeAssigned:
             assigned = False
             for column in range(0, columns):
-                for row in range(0, rows):
+                for row in range(0, blocks):
                     if LayoutTrial.tryAssign(deck,
                                              row, column, replica):
                         assigned = True
