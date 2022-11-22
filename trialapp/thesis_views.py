@@ -8,6 +8,7 @@ from .forms import ThesisEditForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from trialapp.trial_helper import FactoryTrials
+from trialapp.trial_helper import LayoutTrial
 
 
 # class FieldTrialListView(LoginRequiredMixin, ListView):
@@ -24,6 +25,9 @@ class ThesisListView(ListView):
         new_list = Thesis.getObjects(fieldTrial)
         return {'object_list': new_list,
                 'field_trial_name': fieldTrial.name,
+                'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
+                                                       None,
+                                                       new_list),
                 'field_trial_id': fieldTrial.id}
 
 

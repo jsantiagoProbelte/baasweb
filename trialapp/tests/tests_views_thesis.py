@@ -33,8 +33,8 @@ class ThesisViewsTest(TestCase):
         request = request_factory.get('/edit_thesis')
         response = editThesis(request, field_trial_id=fieldTrial.id)
         self.assertContains(response, 'create-thesis')
-        self.assertContains(response, 'New Thesis')
-        self.assertNotContains(response, 'Edit Thesis')
+        self.assertContains(response, 'New')
+        self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
@@ -54,8 +54,8 @@ class ThesisViewsTest(TestCase):
             field_trial_id=fieldTrial.id,
             thesis_id=thesis.id)
         self.assertContains(response, 'create-thesis')
-        self.assertNotContains(response, 'New Thesis')
-        self.assertContains(response, 'Edit Thesis')
+        self.assertNotContains(response, 'New')
+        self.assertContains(response, 'Edit')
         self.assertContains(response, thesisData['name'])
         self.assertEqual(response.status_code, 200)
 

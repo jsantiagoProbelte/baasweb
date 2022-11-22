@@ -1,4 +1,12 @@
-<h2 class="fw-bold mt-3 mb-3">{{title}}
+<h2 class="fw-bold mt-3 mb-3">
+    {% if go_ref %}
+    <a href="{% url go_ref refId %}" >{{title}}</a>
+    {% else %}
+        {{title}}
+    {% endif %}
+    {% if action %}
+    <span class="ml-2">{{action}}</span>
+    {% endif %}
 <span class="text-muted ml-2">{{subtitle}}</span>
 <span>
 <div class="btn-group float-end " role="group" >
@@ -6,13 +14,20 @@
     <a href="{% url new_href %}" class="btn btn-info fs-4"
         data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
     {% endif %}
+    {% if new_href_id %}
+    <a href="{% url new_href_id refId %}" class="btn btn-info fs-4"
+        data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+    {% endif %}
     {% if edit_href %}
     <a href="{% url edit_href item.id %}" class="btn btn-info fs-4"
         data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
     {% endif %}
+    {% if list_href %}
+    <a href="{% url list_href refId %}" class="btn btn-secondary fs-4"
+        data-toggle="tooltip" data-placement="top" title='List items'>&#9776;</a>
+    {% endif %}
     <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary fs-4"
-        data-toggle="tooltip" data-placement="top" title='Create new item'>&#8679;</a>
-        
+        data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
 </div>
 </span>
 </h2>
