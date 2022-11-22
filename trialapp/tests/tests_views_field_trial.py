@@ -50,8 +50,8 @@ class FieldTrialViewsTest(TestCase):
         request = request_factory.get('/edit_fieldtrial')
         response = editNewFieldTrial(request)
         self.assertContains(response, 'create-field-trial')
-        self.assertContains(response, 'New Field Trial')
-        self.assertNotContains(response, 'Edit Field Trial')
+        self.assertContains(response, 'New')
+        self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
@@ -66,8 +66,8 @@ class FieldTrialViewsTest(TestCase):
             '/edit_fieldtrial/{}'.format(fieldTrial.id))
         response = editNewFieldTrial(request, field_trial_id=fieldTrial.id)
         self.assertContains(response, 'create-field-trial')
-        self.assertNotContains(response, 'New Field Trial')
-        self.assertContains(response, 'Edit Field Trial')
+        self.assertNotContains(response, 'New')
+        self.assertContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         newresponsible = 'Lobo'
