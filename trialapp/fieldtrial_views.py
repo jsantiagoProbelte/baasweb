@@ -58,9 +58,9 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'plague': fieldTrial.plague.id,
             'initiation_date': fieldTrial.initiation_date,
             'completion_date': fieldTrial.completion_date,
-            'farmer': fieldTrial.farmer,
+            'contact': fieldTrial.contact,
             'location': fieldTrial.location,
-            'rows_layout': fieldTrial.rows_layout,
+            'blocks': fieldTrial.blocks,
             'replicas_per_thesis': fieldTrial.replicas_per_thesis
             }
     elif 'name' in request.POST:
@@ -122,12 +122,12 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'plague')
         fieldTrial.initiation_date = FieldTrial.getValueFromRequestOrArray(
             request, values, 'initiation_date')
-        fieldTrial.farmer = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'farmer')
+        fieldTrial.contact = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'contact')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
             request, values, 'location')
-        fieldTrial.rows_layout = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'rows_layout')
+        fieldTrial.blocks = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'blocks')
         fieldTrial.replicas_per_thesis = FieldTrial.getValueFromRequestOrArray(
             request, values, 'replicas_per_thesis')
         # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
@@ -156,12 +156,12 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'plague'),
             initiation_date=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'initiation_date'),
-            farmer=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'farmer'),
+            contact=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'contact'),
             location=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'location'),
-            rows_layout=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'rows_layout'),
+            blocks=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'blocks'),
             replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'replicas_per_thesis')
         )

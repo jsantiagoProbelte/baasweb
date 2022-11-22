@@ -26,7 +26,7 @@ class FieldTrialCreateForm(forms.Form):
     objective = forms.ChoiceField(label="Objective",
                                   required=True, choices=[])
     responsible = forms.CharField(label="Responsible")
-    farmer = forms.CharField(label="Farmer")
+    contact = forms.CharField(label="Farmer")
 
     product = forms.ChoiceField(label="Main Product", required=True, choices=[])
     crop = forms.ChoiceField(label="Crop", required=True, choices=[])
@@ -34,8 +34,8 @@ class FieldTrialCreateForm(forms.Form):
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
     location = forms.CharField(label="City/Area")
-    rows_layout = forms.CharField(label="Layout. Number of blocks",
-                                  widget=forms.NumberInput())
+    blocks = forms.CharField(label="Layout. Number of blocks",
+                             widget=forms.NumberInput())
     replicas_per_thesis = forms.CharField(
         label="Layout. Number of replicas per thesis",
         widget=forms.NumberInput())
@@ -64,7 +64,7 @@ class FieldTrialCreateForm(forms.Form):
                     Field('name'),
                     css_class='col-md-6'),
                 Div(
-                    Field('rows_layout'),
+                    Field('blocks'),
                     css_class='col-md-3'),
                 Div(
                     Field('replicas_per_thesis'),
@@ -87,7 +87,7 @@ class FieldTrialCreateForm(forms.Form):
                     css_class='col-md-4'),
                 Div(
                     Field('responsible', css_class='mb-2'),
-                    Field('farmer', css_class='mb-2'),
+                    Field('contact', css_class='mb-2'),
                     Field('location', css_class='mb-2'),
                     css_class='col-md-4'),
             ),

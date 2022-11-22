@@ -198,7 +198,7 @@ class FieldTrial(ModelHelpers, models.Model):
     completion_date = models.DateField(null=True)
     # trial_status = models.ForeignKey(TrialStatus, on_delete=models.CASCADE)
 
-    farmer = models.CharField(max_length=100, null=True)
+    contact = models.CharField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=True)
     latitude_str = models.CharField(max_length=100, null=True)
     latitude_str = models.CharField(max_length=100, null=True)
@@ -206,7 +206,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     report_filename = models.TextField(null=True)
 
-    rows_layout = models.IntegerField()
+    blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
     samples_per_replica = models.IntegerField(default=0)
 
@@ -227,10 +227,10 @@ class FieldTrial(ModelHelpers, models.Model):
             crop=Crop.objects.get(pk=kwargs['crop']),
             plague=Plague.objects.get(pk=kwargs['plague']),
             initiation_date=kwargs['initiation_date'],
-            farmer=kwargs['farmer'],
+            contact=kwargs['contact'],
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
-            rows_layout=kwargs['rows_layout']
+            blocks=kwargs['blocks']
         )
 
 

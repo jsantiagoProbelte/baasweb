@@ -19,10 +19,10 @@ class TrialAppModelTest(TestCase):
             'crop': 1,
             'plague': 1,
             'initiation_date': '2021-07-01',
-            'farmer': 'Mr Farmer',
+            'contact': 'Mr Farmer',
             'location': 'La Finca',
             'replicas_per_thesis': 4,
-            'rows_layout': 3}
+            'blocks': 3}
     ]
 
     THESIS = [{

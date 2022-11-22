@@ -8,7 +8,7 @@ class LayoutTrial:
 
     @classmethod
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
-        blocks = fieldTrial.rows_layout
+        blocks = fieldTrial.blocks
         numberReplicas = fieldTrial.replicas_per_thesis
         return blocks, ceil(numberThesis * numberReplicas / blocks)
 
