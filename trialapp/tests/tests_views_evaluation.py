@@ -26,7 +26,7 @@ class EvaluationViewsTest(TestCase):
         response = self.client.get(reverse(
             'evaluation-list', args=[fieldTrial.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'evaluations')
+        self.assertContains(response, 'assessments')
         self.assertContains(response, fieldTrial.name)
         self.assertContains(response, 'No assessments yet.')
 
