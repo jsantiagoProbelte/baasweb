@@ -16,7 +16,7 @@
             <div class="card-header-baas h4">
                 Goal
             </div>
-            <div class="card-body-bass">
+            <div class="card-body-baas">
               <ul class="list-group list-group-flush">
                 {% include "trialapp/item_list_template.html" with field='project' value=fieldTrial.project%}
                 {% include "trialapp/item_list_template.html" with field='objective' value=fieldTrial.objective%}
@@ -30,7 +30,7 @@
             <div class="card-header-baas h4">
                 Status
             </div>
-            <div class="card-body-bass">
+            <div class="card-body-baas">
               <ul class="list-group list-group-flush">
                 {% include "trialapp/item_list_template.html" with field='phase' value=fieldTrial.phase%}
                 {% include "trialapp/item_list_template.html" with field='responsible' value=fieldTrial.responsible%}
@@ -45,7 +45,7 @@
             <div class="card-header-baas h4">
                 Distribution
             </div>
-            <div class="card-body-bass">
+            <div class="card-body-baas">
               <ul class="list-group list-group-flush">
                 {% include "trialapp/item_list_template.html" with field='# replicas' value=fieldTrial.replicas_per_thesis%}
                 {% include "trialapp/item_list_template.html" with field='# blocks' value=fieldTrial.blocks%}
@@ -57,7 +57,7 @@
                 Thesis
                 <a class="btn btn-info btn-sm float-end" href="{% url 'thesis-list' fieldTrial.id%}">&#10000;</a>
             </div>
-            <div class="card-body-bass">
+            <div class="card-body-baas">
               <ul class="list-group list-group-flush">
                 {% for thesis in thesisTrial %}
                     {% include "trialapp/item_list_template.html" with field=thesis.number value=thesis.name%}
@@ -71,7 +71,7 @@
             <div class="card-header-baas h4">
                 Location
             </div>
-            <div class="card-body-bass">
+            <div class="card-body-baas">
               <ul class="list-group list-group-flush">
                 {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
                 {% include "trialapp/item_list_template.html" with field='contact' value=fieldTrial.contact%}
@@ -84,7 +84,7 @@
             <div class="card-header-baas h4">
                 Layout
             </div>
-            <div class="card-body-bass bg-custom-0" >
+            <div class="card-body-baas bg-custom-0" >
                 {% for row in rowsReplicas %}
                     {% include "trialapp/data_row_replica_template.html" with row=row%}
                 {% empty %}

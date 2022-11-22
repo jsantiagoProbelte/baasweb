@@ -3,20 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row mt-5 mb-2">
-    <div class="col-md-6">
-        <h1 class="">
-            <span class="mr-4"><a href="{% url 'fieldtrial-show' field_trial_id %}" >{{field_trial_name}}</a></span>
-            evaluations
-            <a href="{% url 'evaluation-edit' field_trial_id %}" class="btn btn-primary fs-4">&#43;</a></h1>
-    </div>
-    <div class="col-md-6">
-        <div class="text-sm-end">
-            <a href="{% url 'fieldtrial-list'  %}" class="btn btn-secondary btn-sm">Field Trial list</a>
-        </div>
-    </div>
-</div>
 
+{% include "trialapp/header.html" with title=field_trial_name subtitle='assessments' go_ref='fieldtrial-show' new_href_id='evaluation-edit' refId=field_trial_id%}
 
 <div class="card card-body-baas">
 <table class="table">
