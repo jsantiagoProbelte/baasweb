@@ -37,8 +37,8 @@ class EvaluationViewsTest(TestCase):
         request = request_factory.get('/edit_evaluation')
         response = editEvaluation(request, field_trial_id=fieldTrial.id)
         self.assertContains(response, 'create-evaluation')
-        self.assertContains(response, 'New evaluation')
-        self.assertNotContains(response, 'Edit evaluation')
+        self.assertContains(response, 'New')
+        self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
@@ -66,8 +66,8 @@ class EvaluationViewsTest(TestCase):
             field_trial_id=fieldTrial.id,
             evaluation_id=evaluation.id)
         self.assertContains(response, 'create-evaluation')
-        self.assertNotContains(response, 'New evaluation')
-        self.assertContains(response, 'Edit evaluation')
+        self.assertNotContains(response, 'New')
+        self.assertContains(response, 'Edit')
         self.assertContains(response, evaluationData['name'])
         self.assertEqual(response.status_code, 200)
 
