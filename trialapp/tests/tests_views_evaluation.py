@@ -28,7 +28,7 @@ class EvaluationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'evaluations')
         self.assertContains(response, fieldTrial.name)
-        self.assertContains(response, 'No evaluations yet.')
+        self.assertContains(response, 'No assessments yet.')
 
     def test_editfieldtrial(self):
         fieldTrial = FieldTrial.objects.get(
