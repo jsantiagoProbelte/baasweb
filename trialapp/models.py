@@ -94,6 +94,9 @@ class ModelHelpers:
             else:
                 return None
 
+    def getKey(self):
+        return self.getName()
+
     def getName(self):
         return self.name
 
@@ -330,6 +333,9 @@ class Replica(ModelHelpers, models.Model):
             self.number,
             self.pos_x,
             self.pos_y)
+
+    def getKey(self):
+        return self.number
 
     def getShortName(self):
         return ('{}-[{}]').format(

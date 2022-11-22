@@ -102,7 +102,7 @@ def sortDataPointsForDisplay(level, evaluation, references,
         thisRefValues = {
             'index': thisIndex,
             'color': reference.getBackgroundColor(),
-            'name': reference.getName(),
+            'name': reference.getKey(),
             'dataPoints': []}
         for unit in trialAssessments:
             value = ''

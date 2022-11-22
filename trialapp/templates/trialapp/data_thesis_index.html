@@ -10,6 +10,7 @@
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 
+<div class="card card-body-baas">
 <table class="table">
     <thead><tr>
         <th class="col-md-4">Thesis</th>
@@ -19,7 +20,6 @@
             <p>No result types defined. Go <span>
                 <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' evaluation.field_trial_id%}">here</a></span></p>
         {% endfor %}
-
     </tr></thead>
     {% for dataPointReference in dataPoints %}
     <tr>
@@ -37,6 +37,7 @@
     <p>No Thesis yet.</p>
 {% endfor %}
 </table>
+</div>
 {% endblock %}
 
 {% block scripts %}
