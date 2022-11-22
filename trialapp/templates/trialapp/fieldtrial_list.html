@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1 class="fw-bold mt-5 mb-3">Field Trials <a href="{% url 'fieldtrial-edit' %}" class="btn btn-primary fs-4">&#43;</a></h1>
+{% include "trialapp/header.html" with title="Field Trials" new_href='fieldtrial-edit' %}
 
 <div class="card card-body-baas">
 <table class="table">

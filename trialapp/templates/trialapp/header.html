@@ -1,0 +1,18 @@
+<h2 class="fw-bold mt-3 mb-3">{{title}}
+<span class="text-muted ml-2">{{subtitle}}</span>
+<span>
+<div class="btn-group float-end " role="group" >
+    {% if new_href %}
+    <a href="{% url new_href %}" class="btn btn-info fs-4"
+        data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+    {% endif %}
+    {% if edit_href %}
+    <a href="{% url edit_href item.id %}" class="btn btn-info fs-4"
+        data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+    {% endif %}
+    <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary fs-4"
+        data-toggle="tooltip" data-placement="top" title='Create new item'>&#8679;</a>
+        
+</div>
+</span>
+</h2>

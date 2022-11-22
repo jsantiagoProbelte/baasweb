@@ -297,3 +297,9 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
 .text-right {
   text-align: right !important;
 }
+
+.btn-header a{
+  margin: 0 10px;
+  border-radius: 20px !important;
+  padding: 5px 15px !important;
+}
