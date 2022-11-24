@@ -136,7 +136,7 @@ class ManageProductToEvaluation(APIView):
 
     def delete(self, request, *args, **kwargs):
         productEvaluation = ProductEvaluation.objects.get(
-            pk=request.POST['product_evaluation_id'])
+            pk=request.POST['item_id'])
         productEvaluation.delete()
 
         response_data = {'msg': 'Product was deleted.'}

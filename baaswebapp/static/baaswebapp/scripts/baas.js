@@ -19,7 +19,7 @@ function delete_item(item_id){
 
             error : function(xhr,errmsg,err) {
                 // Show an error
-                $('#results').html("<div class='alert-box alert radius' data-alert>"+
+                $('#errors').html("<div class='alert-box alert radius' data-alert>"+
                 "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
