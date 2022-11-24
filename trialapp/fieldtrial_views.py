@@ -65,12 +65,6 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'blocks': fieldTrial.blocks,
             'replicas_per_thesis': fieldTrial.replicas_per_thesis
             }
-    elif 'name' in request.POST:
-        # This is the flow in case of error
-        initialValues = {
-            'field_trial_id': field_trial_id,
-            'name': request.POST['name'],
-        }
 
     dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
     newFieldTrial_form = FieldTrialCreateForm(**dictKwargs)
