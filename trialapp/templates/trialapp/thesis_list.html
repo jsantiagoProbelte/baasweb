@@ -24,8 +24,8 @@
             <tr id="item-{{item.id}}">
                 <td class="bg-custom-{{item.number}}">{{item.number}}</td>
                 <td class="bg-custom-{{item.number}}"><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-info">{{item.name}}</a></td>
-                <td class="bg-custom-{{item.number}}"">{{item.description}}</td>
-                <td class="bg-custom-{{item.number}}""><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                <td class="bg-custom-{{item.number}}">{{item.description}}</td>
+                <td class="bg-custom-{{item.number}}"><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
             </tr>
         {% empty %}
             <p>No Thesis yet.</p>
@@ -36,7 +36,7 @@
     </div>
     <div class="col-md-6  mt-3">
         <div class="card no-border" >
-            <div class="card-header-baas h4">
+            <div class="card-header-baas h5">
                 Layout
                 <a class="btn btn-info btn-sm float-end" href="{% url 'reshuffle-blocks' field_trial_id%}">&#10000;</a>
             </div>
