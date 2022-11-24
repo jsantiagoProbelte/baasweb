@@ -36,7 +36,7 @@ class TrialHelperTest(TestCase):
                          LayoutTrial.calculateLayoutDim(self._fieldTrial, 2))
         self.assertEqual((3, 3),
                          LayoutTrial.calculateLayoutDim(self._fieldTrial, 2))
-        self.assertEqual((3, 4),
+        self.assertEqual((4, 3),
                          LayoutTrial.calculateLayoutDim(self._fieldTrial, 3))
 
         self.assertEqual(len(self._replicas1),
