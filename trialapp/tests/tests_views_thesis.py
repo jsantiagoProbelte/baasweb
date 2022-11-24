@@ -128,14 +128,6 @@ class ThesisViewsTest(TestCase):
             **TrialAppModelTest.THESIS[0])
         request_factory = RequestFactory()
 
-        # path = reverse('field_trial_api',
-        #                kwargs={'field_trial_id': fieldTrial.id})
-        # request = request_factory.get(path)
-        # apiView = FieldTrialApi()
-        # response = apiView.get(request)
-        # self.assertEqual(response.status_code, 200)
-        # self.assertContains(response, fieldTrial.name)
-
         deletedId = item.id
         deleteData = {'item_id': deletedId}
         deleteRequest = request_factory.post(
