@@ -9,7 +9,6 @@
 
 {% include "trialapp/header.html" with title=field_trial_name subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' refId=field_trial_id%}
 
-
         <div class="card card-body-baas">
         <table class="table" id="table-items">
             <thead>
@@ -23,22 +22,23 @@
             <tbody>
         {% for item in object_list %}
             <tr id="item-{{item.id}}">
-                <td>{{item.number}}</td>
-                <td><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
-                <td>{{item.description}}</td>
-                <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                <td class="bg-custom-{{item.number}}">{{item.number}}</td>
+                <td class="bg-custom-{{item.number}}"><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-info">{{item.name}}</a></td>
+                <td class="bg-custom-{{item.number}}"">{{item.description}}</td>
+                <td class="bg-custom-{{item.number}}""><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
             </tr>
-            </tbody>    
         {% empty %}
             <p>No Thesis yet.</p>
         {% endfor %}
+            </tbody> 
         </table>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6  mt-3">
         <div class="card no-border" >
             <div class="card-header-baas h4">
                 Layout
+                <a class="btn btn-info btn-sm float-end" href="{% url 'reshuffle-blocks' field_trial_id%}">&#10000;</a>
             </div>
             <div class="card-body-baas bg-custom-0" >
                 {% for row in rowsReplicas %}

@@ -177,3 +177,11 @@ class FieldTrialApi(APIView):
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})
+
+
+def reshuffle_blocks(request, field_trial_id=None):
+    fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+    LayoutTrial.distributeLayout(fieldTrial)
+    return redirect(
+        'thesis-list',
+        field_trial_id=fieldTrial.id)

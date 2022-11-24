@@ -28,6 +28,10 @@ urlpatterns = [
         'save_fieldtrial',
         fieldtrial_views.saveFieldTrial,
         name='fieldtrial-save'),
+    path(
+        'reshuffle_blocks/<int:field_trial_id>/',
+        fieldtrial_views.reshuffle_blocks,
+        name='reshuffle-blocks'),
     # Thesis urls
     path(
         'thesislist/<int:field_trial_id>/',

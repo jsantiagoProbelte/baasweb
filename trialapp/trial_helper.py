@@ -42,7 +42,7 @@ class LayoutTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x == 0) or (replica.pos_y == 0):
                     continue
-                if (replica.pos_x >= rows) or (replica.pos_y >= columns):
+                if (replica.pos_x > rows) or (replica.pos_y > columns):
                     # TODO : Log error
                     continue
                 deck[replica.pos_x-1][replica.pos_y-1] =\
@@ -70,6 +70,13 @@ class LayoutTrial:
         return True if deckItem['number'] == item.thesis.number else False
 
     @classmethod
+    def assignCell(cls, deck, item, row, column):
+        item.pos_x = row+1
+        item.pos_y = column+1
+        deck[row][column] = LayoutTrial.setDeckCell(item, None)
+        item.save()
+
+    @classmethod
     def tryAssign(cls, deck, row, column, item: Replica):
         if item is None:
             return False
@@ -84,42 +91,70 @@ class LayoutTrial:
             return False
         if p_y is not None and LayoutTrial.isSameThesis(deck[row][p_y], item):
             return False
-        item.pos_x = row+1
-        item.pos_y = column+1
-        deck[row][column] = LayoutTrial.setDeckCell(item, None)
-        item.save()
+        LayoutTrial.assignCell(deck, item, row, column)
         return True
+
+    @classmethod
+    def shuffleAndAssigned(cls, deck, toBeAssigned, rows, columns):
+        random.shuffle(toBeAssigned)
+        row = 0
+        column = 0
+        failedAttempts = []
+        while len(toBeAssigned) > 0:
+            replica = toBeAssigned.pop()
+            replica.pos_x = 0
+            replica.pos_y = 0
+            replica.save()
+            success = LayoutTrial.tryAssign(deck, row, column, replica)
+            if success:
+                column = column+1
+                if column >= columns:
+                    column = 0
+                    row = row+1
+                    if row >= rows:
+                        # TODO: we reach the limit of the deck
+                        break
+            else:
+                failedAttempts.append(replica)
+        for item in failedAttempts:
+            LayoutTrial.assignCell(deck, item, row, column)
+            column = column+1
+            if column >= columns:
+                column = 0
+                row = row+1
+                if row >= rows:
+                    # TODO: we reach the limit of the deck
+                    break
+        return deck
 
     @classmethod
     def distributeLayout(cls, fieldTrial):
         thesisTrial = Thesis.getObjects(fieldTrial)
-        if (len(thesisTrial) == 0):
+        numT = len(thesisTrial)
+        if (numT == 0) or (fieldTrial.blocks == 0) or\
+           (fieldTrial.replicas_per_thesis == 0):
             return None
-        deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
-            fieldTrial, len(thesisTrial))
+        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
+            fieldTrial, numT)
         foundReplicas = 0
-        assignedReplicas = 0
-
-        toBeAssigned = []
+        if columns == 0:
+            return None
+        toBeAssignedLists = [[] for i in range(0, rows+1)]
         # Make a vector with all replicas thesis
         for thesis in thesisTrial:
+            i = 0
             for replica in Replica.getObjects(thesis):
-                toBeAssigned.append(replica)
+                toBeAssignedLists[i].append(replica)
+                i = i+1 if i < rows else 0
                 foundReplicas += 1
-
+        toBeAssigned = []
+        for j in range(0, foundReplicas):
+            for i in range(0, rows+1):
+                if len(toBeAssignedLists[i]) > 0:
+                    toBeAssigned.append(toBeAssignedLists[i].pop())
         # Assigned each cell of the deck
-        for replica in toBeAssigned:
-            assigned = False
-            for column in range(0, columns):
-                for row in range(0, blocks):
-                    if LayoutTrial.tryAssign(deck,
-                                             row, column, replica):
-                        assigned = True
-                        assignedReplicas += 1
-                        break
-                if assigned:
-                    break
-        return deck
+        return LayoutTrial.shuffleAndAssigned(deck, toBeAssigned,
+                                              rows, columns)
 
 
 class FactoryTrials:
