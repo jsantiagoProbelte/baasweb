@@ -132,7 +132,7 @@ class DataViewsTest(TestCase):
         deleteUnitId = unitsInTrial[0].unit.id
         deleteTypeId = unitsInTrial[0].type.id
         deleteData = {
-            'trial_assessment_set_id': unitsInTrial[0].id}
+            'item_id': unitsInTrial[0].id}
         deleteDataPoint = request_factory.post(
             'manage_trial_assessment_set_api',
             data=deleteData)

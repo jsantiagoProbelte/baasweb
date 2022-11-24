@@ -17,15 +17,15 @@
     <div class="card no-border" >
       <div class="card-body-baas">
         
-        <table class="table"><tbody id="trial-assessment-set-table">
+        <table class="table"><tbody id="table-items">
         <tr id="product_evaluation">
             {% include "trialapp/trial_assessment_set_add.html" with field_trial_id=fieldTrial.id assessmentUnits=assessmentUnits assessmentTypes=assessmentTypes %}
         </tr>
         {% for item in trialAssessmentSets %}
-            <tr id="trial-assessment-set-{{item.id}}">
+            <tr id="item-{{item.id}}">
                 <td>{{item.type}}</td>
                 <td>{{item.unit}}</td>
-                <td><a id='delete-assessment-set-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
             </tr>
         {% empty %}
             <p>No assessment types defined yet.</p>
@@ -43,14 +43,15 @@
 {% endblock %}
 
 {% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
 $('.trial-assessment-set-form').submit( function(){
     var element=$(this)
-    var appendTable=$('#trial-assessment-set-table')
+    var appendTable=$('#table-items')
     return addItemCall(element,appendTable)
 });
 
-var manageEndPoint = '/manage_trial_assessment_set_api';
+var manageItemEndPoint = '/manage_trial_assessment_set_api';
 
 function addItemCall(element,appendTable) {
     var dataJson={}
@@ -60,13 +61,13 @@ function addItemCall(element,appendTable) {
     dataJson['field_trial_id']=element.attr('id');
     $.ajax({
         type : "POST",
-        url: manageEndPoint,
+        url: manageItemEndPoint,
         data: dataJson,
         
         success: function(data){
             appendTable.append(
-                '<tr id="trial-assessment-set-'+data.id+'"><td>'+data.type+'</td><td>'+data.unit+'</td>\
-                <td><a id="delete-assessment-set-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                '<tr id="item-'+data.id+'"><td>'+data.type+'</td><td>'+data.unit+'</td>\
+                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
                 </tr>'); /* response message */
         },
     
@@ -77,34 +78,5 @@ function addItemCall(element,appendTable) {
     return false;
 };
 
-// Delete item on click
-$("#trial-assessment-set-table").on('click', 'a[id^=delete-assessment-set]', function(){
-    var item_id = $(this).attr('id').split('-')[3];
-    deleteItem(item_id);
-});
-
-// AJAX for deleting
-function deleteItem(item_id){
-    if (confirm('are you sure you want to remove this result type?')==true){
-        $.ajax({
-            url : manageEndPoint, // the endpoint
-            type : "DELETE", // http method
-            data : { 'trial_assessment_set_id' : item_id }, // data sent with the delete request
-            success : function(json) {
-                // hide the post
-                $('#trial-assessment-set-'+item_id).hide(); // hide the post on success
-            },
-
-            error : function(xhr,errmsg,err) {
-                // Show an error
-                $('#results').html("<div class='alert-box alert radius' data-alert>"+
-                "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-    } else {
-        return false;
-    }
-};
 </script>
 {% endblock %}

@@ -38,7 +38,7 @@ class ManageTrialAssessmentSet(APIView):
 
     def delete(self, request, *args, **kwargs):
         item = TrialAssessmentSet.objects.get(
-            pk=request.POST['trial_assessment_set_id'])
+            pk=request.POST['item_id'])
         item.delete()
 
         response_data = {'msg': 'Product was deleted.'}
