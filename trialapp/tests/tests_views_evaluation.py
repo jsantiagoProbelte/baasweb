@@ -82,7 +82,7 @@ class EvaluationViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         # Lets delete some products
-        deleteData = {'product_evaluation_id': productsEvaluation[0].id}
+        deleteData = {'item_id': productsEvaluation[0].id}
         deleteProductEvaluationRequest = request_factory.post(
             'manage_product_to_evaluation_api',
             data=deleteData)
