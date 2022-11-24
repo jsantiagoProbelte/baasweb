@@ -63,6 +63,10 @@ urlpatterns = [
         name='manage_replica_to_thesis_api'),
     # Evaluation urls
     path(
+        'assessment_api',
+        evaluation_views.AssessmentApi.as_view(),
+        name='assessment_api'),
+    path(
         'evaluationlist/<int:field_trial_id>/',
         evaluation_views.EvaluationListView.as_view(),
         name='evaluation-list'),

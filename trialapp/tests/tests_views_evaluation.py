@@ -6,7 +6,7 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
 from trialapp.evaluation_views import editEvaluation, saveEvaluation,\
-    ManageProductToEvaluation
+    ManageProductToEvaluation, AssessmentApi
 # from trialapp.evaluation_views import editEvaluation
 
 
@@ -102,3 +102,21 @@ class EvaluationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ProductEvaluation.objects.count(),
                          totalProductApp)
+
+    def test_AssessmentApi(self):
+        evaluationData = TrialAppModelTest.APPLICATION[0]
+        request_factory = RequestFactory()
+        request = request_factory.post('evaluation-save',
+                                       data=evaluationData)
+        response = saveEvaluation(request)
+        item = Evaluation.objects.get(name=evaluationData['name'])
+        deletedId = item.id
+        deleteData = {'item_id': deletedId}
+        deleteRequest = request_factory.post(
+            'thesis_api',
+            data=deleteData)
+        apiView = AssessmentApi()
+        response = apiView.delete(deleteRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            Evaluation.objects.filter(pk=deletedId).exists())

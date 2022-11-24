@@ -98,7 +98,7 @@ class TrialHelperTest(TestCase):
         self.assertEqual(self._replicas1[0].pos_x, 1)
         self.assertEqual(self._replicas1[0].pos_y, 1)
 
-        deck = LayoutTrial.distributeLayout(self._fieldTrial, self._theses)
+        deck = LayoutTrial.distributeLayout(self._fieldTrial)
         # We should be able to find all the replicas
         for thesisReplicas in [self._replicas1, self._replicas2]:
             for replica in thesisReplicas:

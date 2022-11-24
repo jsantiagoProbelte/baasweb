@@ -35,12 +35,15 @@ class LayoutTrial:
     @classmethod
     def showLayout(cls, fieldTrial: FieldTrial,
                    evaluation: Evaluation, thesisTrial):
-        deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
+        deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         # Place the thesis in the deck
         for thesis in thesisTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x == 0) or (replica.pos_y == 0):
+                    continue
+                if (replica.pos_x >= rows) or (replica.pos_y >= columns):
+                    # TODO : Log error
                     continue
                 deck[replica.pos_x-1][replica.pos_y-1] =\
                     LayoutTrial.setDeckCell(replica, evaluation)
@@ -88,7 +91,10 @@ class LayoutTrial:
         return True
 
     @classmethod
-    def distributeLayout(cls, fieldTrial, thesisTrial):
+    def distributeLayout(cls, fieldTrial):
+        thesisTrial = Thesis.getObjects(fieldTrial)
+        if (len(thesisTrial) == 0):
+            return None
         deck, (blocks, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         foundReplicas = 0
@@ -131,6 +137,5 @@ class FactoryTrials:
         Replica.createReplicas(thesis, fieldTrial.replicas_per_thesis)
 
         # Reassigned all replicas of the same
-        LayoutTrial.distributeLayout(fieldTrial,
-                                     Thesis.getObjects(fieldTrial))
+        LayoutTrial.distributeLayout(fieldTrial)
         return thesis

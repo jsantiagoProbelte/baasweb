@@ -117,9 +117,7 @@ def saveFieldTrial(request, field_trial_id=None):
         #     request, values,
         #     'completion_date')
         fieldTrial.save()
-        thesisTrial = Thesis.getObjects(fieldTrial)
-        if thesisTrial:
-            LayoutTrial.distributeLayout(fieldTrial, thesisTrial)
+        LayoutTrial.distributeLayout(fieldTrial)
     else:
         # This is a new field trial
         fieldTrial = FieldTrial.objects.create(

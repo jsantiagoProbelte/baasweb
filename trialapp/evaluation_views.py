@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .forms import EvaluationEditForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from trialapp.trial_helper import LayoutTrial
 # class FieldTrialListView(LoginRequiredMixin, ListView):
 #    login_url = '/login'
 
@@ -140,4 +140,20 @@ class ManageProductToEvaluation(APIView):
         productEvaluation.delete()
 
         response_data = {'msg': 'Product was deleted.'}
+        return Response(response_data, status=200)
+
+
+class AssessmentApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['delete']
+
+    def delete(self, request, *args, **kwargs):
+        item = Evaluation.objects.get(
+            pk=request.POST['item_id'])
+        fieldTrial = item.field_trial
+        item.delete()
+
+        LayoutTrial.distributeLayout(fieldTrial)
+        response_data = {'msg': 'Thesis was deleted.'}
         return Response(response_data, status=200)
