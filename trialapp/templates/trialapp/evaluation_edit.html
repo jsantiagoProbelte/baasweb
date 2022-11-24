@@ -67,8 +67,8 @@ function addProductToevaluationCall(element,appendTable) {
         success: function(data){
             console.log("data");
             appendTable.append(
-                '<tr id="product-evaluation-'+data.id+'"><td>'+data.name+'</td>\
-                <td><a id="delete-product-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                '<tr id="item-'+data.id+'"><td>'+data.name+'</td>\
+                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
                 </tr>'); /* response message */
         },
     

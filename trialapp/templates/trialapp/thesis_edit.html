@@ -23,16 +23,16 @@
       <div class="card-body-baas">
         {% if thesis_id %}
             <h4>Products</h4>
-            <table class="table"><tbody id="product_thesis_table">
+            <table class="table"><tbody id="table-items">
             <tr id="product_thesis">
                 {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
             </tr>
             {% for item in product_list %}
-                <tr id="product-thesis-{{item.id}}">
+                <tr id="item-{{item.id}}">
                     <td>{{item.product}}</td>
                     <td>{{item.rate}}</td>
                     <td>{{item.rate_unit}}</td>
-                    <td><a id='delete-product-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
                 </tr>
             {% empty %}
                 <p>No products yet.</p>
@@ -72,14 +72,15 @@
 {% endblock %}
 
 {% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
 $('.thesis-add-product-form').submit( function(){
     var element=$(this)
-    var appendTable=$('#product_thesis_table')
+    var appendTable=$('#table-items')
     return addProductToThesisCall(element,appendTable)
 });
 
-var manageProductThesisEndPoint = '/manage_product_to_thesis_api';
+var manageItemEndPoint = '/manage_product_to_thesis_api';
 
 function addProductToThesisCall(element,appendTable) {
     var dataJson={}
@@ -89,16 +90,16 @@ function addProductToThesisCall(element,appendTable) {
     dataJson['thesis_id']=element.attr('id');
     $.ajax({
         type : element.attr('method'), 
-        url: manageProductThesisEndPoint,
+        url: manageItemEndPoint,
         data: dataJson,
         
         success: function(data){
             console.log("data");
             appendTable.append(
-                '<tr id="product-thesis-'+data.id+'"><td>'+data.product+'</td>\
+                '<tr id="item-'+data.id+'"><td>'+data.product+'</td>\
                     <td>'+data.rate+'</td>\
                     <td>'+data.rate_unit+'</td>\
-                    <td><a id="delete-product-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                    <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
                 </tr>'); /* response message */
         },
     
@@ -109,37 +110,6 @@ function addProductToThesisCall(element,appendTable) {
     return false;
 };
 
-// Delete product on click
-$("#product_thesis_table").on('click', 'a[id^=delete-product-]', function(){
-    var product_thesis_id = $(this).attr('id').split('-')[2];
-    console.log(product_thesis_id) // sanity check
-    delete_product(product_thesis_id);
-});
-
-// AJAX for deleting
-function delete_product(product_thesis_id){
-    if (confirm('are you sure you want to remove this product?')==true){
-        $.ajax({
-            url : manageProductThesisEndPoint, // the endpoint
-            type : "DELETE", // http method
-            data : { 'product_thesis_id' : product_thesis_id }, // data sent with the delete request
-            success : function(json) {
-                // hide the post
-                $('#product-thesis-'+product_thesis_id).hide(); // hide the post on success
-                console.log("post deletion successful");
-            },
-
-            error : function(xhr,errmsg,err) {
-                // Show an error
-                $('#results').html("<div class='alert-box alert radius' data-alert>"+
-                "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-    } else {
-        return false;
-    }
-};
 
 // Functions to manage replica data
 $(".add-replica-to-thesis").on('click', function(){

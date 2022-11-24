@@ -87,7 +87,7 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(thesisProducts[0].thesis.name,
                          thesis2.name)
 
-        deleteData = {'product_thesis_id': thesisProducts[0].id}
+        deleteData = {'item_id': thesisProducts[0].id}
         deleteProductThesisRequest = request_factory.post(
             'manage_product_to_thesis_api',
             data=deleteData)

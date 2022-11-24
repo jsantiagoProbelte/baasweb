@@ -123,7 +123,7 @@ class ManageProductToThesis(APIView):
 
     def delete(self, request, *args, **kwargs):
         productThesis = ProductThesis.objects.get(
-            pk=request.POST['product_thesis_id'])
+            pk=request.POST['item_id'])
         productThesis.delete()
 
         response_data = {'msg': 'Product was deleted.'}
