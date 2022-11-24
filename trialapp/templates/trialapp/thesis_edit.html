@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "trialapp/header.html" with title=field_trial_name action=title subtitle='thesis' go_ref='fieldtrial-show' new_href_id='thesis-edit' list_href='thesis-list' refId=field_trial_id%}
+{% include "trialapp/header.html" with title=field_trial_name action=title subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' list_href='thesis-list' refId=field_trial_id%}
 
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>

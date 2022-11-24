@@ -5,7 +5,7 @@ from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader,\
 from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial,\
-    showFieldTrial
+    FieldTrialApi
 
 
 class FieldTrialViewsTest(TestCase):
@@ -84,8 +84,22 @@ class FieldTrialViewsTest(TestCase):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
         request_factory = RequestFactory()
-        request = request_factory.get(
-            '/show_fieldtrial')
-        response = showFieldTrial(request, field_trial_id=fieldTrial.id)
+
+        # path = reverse('field_trial_api',
+        #                kwargs={'field_trial_id': fieldTrial.id})
+        # request = request_factory.get(path)
+        # apiView = FieldTrialApi()
+        # response = apiView.get(request)
+        # self.assertEqual(response.status_code, 200)
+        # self.assertContains(response, fieldTrial.name)
+
+        deletedId = fieldTrial.id
+        deleteData = {'item_id': deletedId}
+        deleteRequest = request_factory.post(
+            'field_trial_api',
+            data=deleteData)
+        apiView = FieldTrialApi()
+        response = apiView.delete(deleteRequest)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, fieldTrial.name)
+        self.assertFalse(
+            FieldTrial.objects.filter(pk=deletedId).exists())

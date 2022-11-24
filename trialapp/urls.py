@@ -17,9 +17,13 @@ urlpatterns = [
         fieldtrial_views.editNewFieldTrial,
         name='fieldtrial-edit'),
     path(
-        'show_fieldtrial/<int:field_trial_id>/',
-        fieldtrial_views.showFieldTrial,
-        name='fieldtrial-show'),
+        'field_trial_api',
+        fieldtrial_views.FieldTrialApi.as_view(),
+        name='field_trial_api'),
+    path(
+        'field_trial_api/<int:field_trial_id>/',
+        fieldtrial_views.FieldTrialApi.as_view(),
+        name='field_trial_api'),
     path(
         'save_fieldtrial',
         fieldtrial_views.saveFieldTrial,

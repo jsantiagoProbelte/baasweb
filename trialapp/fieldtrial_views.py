@@ -6,6 +6,8 @@ from trialapp.models import Evaluation, FieldTrial, Thesis,\
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FieldTrialCreateForm
 from trialapp.trial_helper import LayoutTrial
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 # class FieldTrialListView(LoginRequiredMixin, ListView):
 #    login_url = '/login'
@@ -79,20 +81,6 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
                    'errors': errors})
 
 
-def showFieldTrial(request, field_trial_id=None, errors=None):
-    template_name = 'trialapp/fieldtrial_show.html'
-    fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-    thesisTrial = Thesis.getObjects(fieldTrial)
-
-    return render(request, template_name,
-                  {'fieldTrial': fieldTrial,
-                   'thesisTrial': thesisTrial,
-                   'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
-                                                          None,
-                                                          thesisTrial),
-                   'errors': errors})
-
-
 def saveFieldTrial(request, field_trial_id=None):
     values = {}
     foreignModels = FieldTrial.getForeignModels()
@@ -126,15 +114,18 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'contact')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
             request, values, 'location')
-        fieldTrial.blocks = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'blocks')
-        fieldTrial.replicas_per_thesis = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'replicas_per_thesis')
+        fieldTrial.blocks = int(FieldTrial.getValueFromRequestOrArray(
+            request, values, 'blocks'))
+        fieldTrial.replicas_per_thesis = int(
+            FieldTrial.getValueFromRequestOrArray(
+                request, values, 'replicas_per_thesis'))
         # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
         #     request, values,
         #     'completion_date')
         fieldTrial.save()
-
+        thesisTrial = Thesis.getObjects(fieldTrial)
+        if thesisTrial:
+            LayoutTrial.distributeLayout(fieldTrial, thesisTrial)
     else:
         # This is a new field trial
         fieldTrial = FieldTrial.objects.create(
@@ -167,3 +158,30 @@ def saveFieldTrial(request, field_trial_id=None):
         )
 
     return redirect('fieldtrial-list')
+
+
+class FieldTrialApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['delete', 'get']
+
+    def delete(self, request, *args, **kwargs):
+        item = FieldTrial.objects.get(
+            pk=request.POST['item_id'])
+        item.delete()
+
+        response_data = {'msg': 'Product was deleted.'}
+        return Response(response_data, status=200)
+
+    def get(self, request, *args, **kwargs):
+        template_name = 'trialapp/fieldtrial_show.html'
+        field_trial_id = kwargs['field_trial_id']
+        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+        thesisTrial = Thesis.getObjects(fieldTrial)
+
+        return render(request, template_name,
+                      {'fieldTrial': fieldTrial,
+                       'thesisTrial': thesisTrial,
+                       'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
+                                                              None,
+                                                              thesisTrial)})

@@ -10,15 +10,15 @@ class LayoutTrial:
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
         blocks = fieldTrial.blocks
         numberReplicas = fieldTrial.replicas_per_thesis
-        return blocks, ceil(numberThesis * numberReplicas / blocks)
+        return ceil(numberThesis * numberReplicas / blocks), blocks
 
     @classmethod
     def computeInitialLayout(cls, fieldTrial, numberThesis):
-        blocks, columns = LayoutTrial.calculateLayoutDim(
+        rows, blocks = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
         deck = [[LayoutTrial.setDeckCell(None, None)
-                 for i in range(0, columns)] for i in range(0, blocks)]
-        return deck, (blocks, columns)
+                 for i in range(0, blocks)] for i in range(0, rows)]
+        return deck, (rows, blocks)
 
     @classmethod
     def setDeckCell(cls, replica: Replica, evaluation):
@@ -70,7 +70,6 @@ class LayoutTrial:
     def tryAssign(cls, deck, row, column, item: Replica):
         if item is None:
             return False
-        # print('{},{} [{}]'.format(row, column, item.thesis.id))
         # Check if it is free
         if deck[row][column]['replica_id'] != 0:
             return False
@@ -79,10 +78,8 @@ class LayoutTrial:
         p_y = LayoutTrial.rangeToExplore(column)
         if p_x is not None and\
            LayoutTrial.isSameThesis(deck[p_x][column], item):
-            # print('ARRIBA')
             return False
         if p_y is not None and LayoutTrial.isSameThesis(deck[row][p_y], item):
-            # print('IZQUIERDA')
             return False
         item.pos_x = row+1
         item.pos_y = column+1
@@ -116,7 +113,6 @@ class LayoutTrial:
                         break
                 if assigned:
                     break
-        # print('ALL DONE {}/{}'.format(assignedReplicas, foundReplicas))
         return deck
 
 
