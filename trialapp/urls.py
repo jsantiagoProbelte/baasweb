@@ -34,6 +34,14 @@ urlpatterns = [
         thesis_views.ThesisListView.as_view(),
         name='thesis-list'),
     path(
+        'thesis_api',
+        thesis_views.ThesisApi.as_view(),
+        name='thesis_api'),
+    path(
+        'thesis_api/<int:thesis_id>/',
+        thesis_views.ThesisApi.as_view(),
+        name='thesis_api'),
+    path(
         'edit_thesis/<int:field_trial_id>/',
         thesis_views.editThesis,
         name='thesis-edit'),

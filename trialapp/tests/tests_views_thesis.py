@@ -6,7 +6,7 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from django.test import RequestFactory
 
 from trialapp.thesis_views import editThesis, saveThesis,\
-    ManageProductToThesis, ManageReplicaToThesis
+    ManageProductToThesis, ManageReplicaToThesis, ThesisApi
 # from trialapp.thesis_views import editThesis
 
 
@@ -122,3 +122,27 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Replica.objects.count(),
                          expectedReplicas)
+
+    def test_ThesisApi(self):
+        item = Thesis.create_Thesis(
+            **TrialAppModelTest.THESIS[0])
+        request_factory = RequestFactory()
+
+        # path = reverse('field_trial_api',
+        #                kwargs={'field_trial_id': fieldTrial.id})
+        # request = request_factory.get(path)
+        # apiView = FieldTrialApi()
+        # response = apiView.get(request)
+        # self.assertEqual(response.status_code, 200)
+        # self.assertContains(response, fieldTrial.name)
+
+        deletedId = item.id
+        deleteData = {'item_id': deletedId}
+        deleteRequest = request_factory.post(
+            'thesis_api',
+            data=deleteData)
+        apiView = ThesisApi()
+        response = apiView.delete(deleteRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            Thesis.objects.filter(pk=deletedId).exists())

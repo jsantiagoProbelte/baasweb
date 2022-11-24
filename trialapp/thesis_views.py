@@ -161,3 +161,17 @@ class ManageReplicaToThesis(APIView):
 
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)
+
+
+class ThesisApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['delete']
+
+    def delete(self, request, *args, **kwargs):
+        item = Thesis.objects.get(
+            pk=request.POST['item_id'])
+        item.delete()
+
+        response_data = {'msg': 'Thesis was deleted.'}
+        return Response(response_data, status=200)
