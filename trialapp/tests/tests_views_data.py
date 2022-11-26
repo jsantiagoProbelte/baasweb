@@ -3,12 +3,12 @@ from trialapp.models import AssessmentType, AssessmentUnit, FieldTrial,\
     Thesis, TrialAssessmentSet, TrialDbInitialLoader, Evaluation,\
     ModelHelpers, ReplicaData, Replica
 from trialapp.tests.tests_models import TrialAppModelTest
-from django.test import RequestFactory
 
 from trialapp.data_views import showDataThesisIndex,\
     SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
     showTrialAssessmentSetIndex, showDataReplicaIndex
 # from trialapp.evaluation_views import editEvaluation
+from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
 class DataViewsTest(TestCase):
@@ -18,7 +18,10 @@ class DataViewsTest(TestCase):
     _units = []
     _evaluation = None
 
+    _apiFactory = None
+
     def setUp(self):
+        self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
@@ -42,9 +45,9 @@ class DataViewsTest(TestCase):
             crop_stage_scale='BBCH')
 
     def test_setData(self):
-        request_factory = RequestFactory()
-        request = request_factory.get('data_thesis_index',
-                                      args=[self._evaluation.id])
+        request = self._apiFactory.get('data_thesis_index',
+                                       args=[self._evaluation.id])
+        self._apiFactory.setUser(request)
         response = showDataThesisIndex(
             request,
             evaluation_id=self._evaluation.id)
@@ -66,9 +69,10 @@ class DataViewsTest(TestCase):
                     self._theses[0],
                     self._units[0]),
                    'data-point': 33}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
+        self._apiFactory.setUser(addDataPoint)
         apiView = SetDataEvaluation()
         response = apiView.post(addDataPoint)
         self.assertEqual(response.status_code, 200)
@@ -88,9 +92,10 @@ class DataViewsTest(TestCase):
                     self._theses[0],
                     self._units[0]),
                    'data-point': 66}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
+        self._apiFactory.setUser(addDataPoint)
         response = apiView.post(addDataPoint)
         tPoints = ThesisData.objects.all()
         self.assertEqual(len(tPoints), 1)
@@ -102,7 +107,7 @@ class DataViewsTest(TestCase):
             self._theses[1],
             self._units[0]),
             'data-point': 99}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
         response = apiView.post(addDataPoint)
@@ -111,11 +116,10 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[1].value, 99)
 
     def test_manageEvaluationSet(self):
-        request_factory = RequestFactory()
-        requestIndex = request_factory.get(
+        requestIndex = self._apiFactory.get(
             'trial_assessment_set_list',
             args=[self._fieldTrial.id])
-
+        self._apiFactory.setUser(requestIndex)
         response = showTrialAssessmentSetIndex(
             requestIndex,
             field_trial_id=self._fieldTrial.id)
@@ -133,7 +137,7 @@ class DataViewsTest(TestCase):
         deleteTypeId = unitsInTrial[0].type.id
         deleteData = {
             'item_id': unitsInTrial[0].id}
-        deleteDataPoint = request_factory.post(
+        deleteDataPoint = self._apiFactory.post(
             'manage_trial_assessment_set_api',
             data=deleteData)
         apiView = ManageTrialAssessmentSet()
@@ -142,9 +146,10 @@ class DataViewsTest(TestCase):
         unitsInTrial = TrialAssessmentSet.getObjects(self._fieldTrial)
         self.assertEqual(len(unitsInTrial), initialUnits-1)
 
-        requestIndex = request_factory.get(
+        requestIndex = self._apiFactory.get(
             'trial_assessment_set_list',
             args=[self._fieldTrial.id])
+        self._apiFactory.setUser(requestIndex)
         response = showTrialAssessmentSetIndex(
             requestIndex,
             field_trial_id=self._fieldTrial.id)
@@ -158,7 +163,7 @@ class DataViewsTest(TestCase):
             'assessment_type': deleteTypeId,
             'assessment_unit': deleteUnitId
         }
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'manage_trial_assessment_set_api',
             data=addData)
         response = apiView.post(addDataPoint)
@@ -171,9 +176,9 @@ class DataViewsTest(TestCase):
         self.assertContains(response, deleteName)
 
     def test_setReplicaData(self):
-        request_factory = RequestFactory()
-        request = request_factory.get('data_replica_index',
-                                      args=[self._evaluation.id])
+        request = self._apiFactory.get('data_replica_index',
+                                       args=[self._evaluation.id])
+        self._apiFactory.setUser(request)
         response = showDataReplicaIndex(
             request,
             evaluation_id=self._evaluation.id)
@@ -198,7 +203,7 @@ class DataViewsTest(TestCase):
                     replicas[0],
                     self._units[0]),
                    'data-point': 33}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
         apiView = SetDataEvaluation()
@@ -220,7 +225,7 @@ class DataViewsTest(TestCase):
                     self._theses[0],
                     self._units[0]),
                    'data-point': 66}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
         response = apiView.post(addDataPoint)
@@ -234,7 +239,7 @@ class DataViewsTest(TestCase):
             replicas[1],
             self._units[0]),
             'data-point': 99}
-        addDataPoint = request_factory.post(
+        addDataPoint = self._apiFactory.post(
             'set_data_point',
             data=addData)
         response = apiView.post(addDataPoint)

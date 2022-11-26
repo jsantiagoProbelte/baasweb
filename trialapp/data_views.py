@@ -1,5 +1,7 @@
 # Create your views here.
+from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.mixins import LoginRequiredMixin
+# from rest_framework import permissions
 from trialapp.models import Evaluation, Thesis, AssessmentUnit,\
                             TrialAssessmentSet, FieldTrial, Replica,\
                             ThesisData, ReplicaData, SampleData,\
@@ -8,8 +10,6 @@ from django.shortcuts import get_object_or_404, render
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# class FieldTrialListView(LoginRequiredMixin, ListView):
-#    login_url = '/login'
 
 
 class ManageTrialAssessmentSet(APIView):
@@ -73,6 +73,7 @@ class SetDataEvaluation(APIView):
         return Response({'success': True})
 
 
+@login_required
 def showTrialAssessmentSetIndex(request, field_trial_id=None,
                                 errors=None):
     template_name = 'trialapp/trial_assessment_set_index.html'
@@ -120,6 +121,7 @@ def sortDataPointsForDisplay(level, evaluation, references,
     return values
 
 
+@login_required
 def showDataThesisIndex(request, evaluation_id=None,
                         errors=None):
     template_name = 'trialapp/data_thesis_index.html'
@@ -137,6 +139,7 @@ def showDataThesisIndex(request, evaluation_id=None,
                   'errors': errors})
 
 
+@login_required
 def showDataReplicaIndex(request, evaluation_id=None,
                          errors=None):
     template_name = 'trialapp/data_replica_index.html'

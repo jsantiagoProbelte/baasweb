@@ -1,6 +1,8 @@
 # Create your views here.
 from django.views.generic.list import ListView
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+# from rest_framework import permissions
+from django.contrib.auth.decorators import login_required
 from trialapp.models import Evaluation, FieldTrial, Thesis,\
                             TrialAssessmentSet
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,13 +11,11 @@ from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-# class FieldTrialListView(LoginRequiredMixin, ListView):
-#    login_url = '/login'
 
-
-class FieldTrialListView(ListView):
+class FieldTrialListView(LoginRequiredMixin, ListView):
     model = FieldTrial
     paginate_by = 100  # if pagination is desired
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
 
@@ -42,6 +42,7 @@ class FieldTrialListView(ListView):
         return {'object_list': new_list}
 
 
+@login_required
 def editNewFieldTrial(request, field_trial_id=None, errors=None):
     initialValues = {'field_trial_id': None}
     template_name = 'trialapp/fieldtrial_edit.html'
@@ -75,6 +76,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
                    'errors': errors})
 
 
+@login_required
 def saveFieldTrial(request, field_trial_id=None):
     values = {}
     foreignModels = FieldTrial.getForeignModels()
@@ -167,7 +169,7 @@ class FieldTrialApi(APIView):
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
-        field_trial_id = kwargs['field_trial_id']
+        field_trial_id = request.GET['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
 
@@ -179,6 +181,7 @@ class FieldTrialApi(APIView):
                                                               thesisTrial)})
 
 
+@login_required
 def reshuffle_blocks(request, field_trial_id=None):
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
     LayoutTrial.distributeLayout(fieldTrial)

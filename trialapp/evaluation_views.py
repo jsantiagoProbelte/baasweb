@@ -1,6 +1,8 @@
 # Create your views here.
 from django.views.generic.list import ListView
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+# from rest_framework import permissions
 from trialapp.models import FieldTrial,  ProductEvaluation,\
     ProductThesis, Evaluation
 from django.shortcuts import get_object_or_404, render, redirect
@@ -8,16 +10,15 @@ from .forms import EvaluationEditForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from trialapp.trial_helper import LayoutTrial
-# class FieldTrialListView(LoginRequiredMixin, ListView):
-#    login_url = '/login'
 
 
-class EvaluationListView(ListView):
+class EvaluationListView(LoginRequiredMixin, ListView):
     model = Evaluation
     paginate_by = 100  # if pagination is desired
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
-        field_trial_id = self.kwargs['field_trial_id']
+        field_trial_id = self.request.GET['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Evaluation.getObjects(fieldTrial)
         return {'object_list': new_list,
@@ -25,6 +26,7 @@ class EvaluationListView(ListView):
                 'field_trial_id': fieldTrial.id}
 
 
+@login_required
 def editEvaluation(request, field_trial_id=None, evaluation_id=None,
                    errors=None):
     initialValues = {'field_trial_id': field_trial_id,
@@ -64,6 +66,7 @@ def editEvaluation(request, field_trial_id=None, evaluation_id=None,
                    'errors': errors})
 
 
+@login_required
 def saveEvaluation(request, evaluation_id=None):
     values = {}
     fieldTrial = get_object_or_404(

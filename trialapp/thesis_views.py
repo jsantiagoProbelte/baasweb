@@ -1,6 +1,8 @@
 # Create your views here.
 from django.views.generic.list import ListView
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+# from rest_framework import permissions
 from trialapp.models import FieldTrial, Product, ProductThesis, RateUnit,\
     Thesis, Replica
 from django.shortcuts import get_object_or_404, render, redirect
@@ -11,13 +13,10 @@ from trialapp.trial_helper import FactoryTrials
 from trialapp.trial_helper import LayoutTrial
 
 
-# class FieldTrialListView(LoginRequiredMixin, ListView):
-#    login_url = '/login'
-
-
-class ThesisListView(ListView):
+class ThesisListView(LoginRequiredMixin, ListView):
     model = Thesis
     paginate_by = 100  # if pagination is desired
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
         field_trial_id = self.kwargs['field_trial_id']
@@ -31,6 +30,7 @@ class ThesisListView(ListView):
                 'field_trial_id': fieldTrial.id}
 
 
+@login_required
 def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
     initialValues = {'field_trial_id': field_trial_id, 'thesis_id': thesis_id}
     template_name = 'trialapp/thesis_edit.html'
@@ -67,6 +67,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
                    'errors': errors})
 
 
+@login_required
 def saveThesis(request):
     values = {}
     fieldTrial = get_object_or_404(

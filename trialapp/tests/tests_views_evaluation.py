@@ -1,18 +1,20 @@
 from django.test import TestCase
-from django.urls import reverse
 from trialapp.models import FieldTrial, ProductEvaluation, ProductThesis,\
      Thesis, TrialDbInitialLoader, Evaluation
 from trialapp.tests.tests_models import TrialAppModelTest
-from django.test import RequestFactory
 
 from trialapp.evaluation_views import editEvaluation, saveEvaluation,\
-    ManageProductToEvaluation, AssessmentApi
+    ManageProductToEvaluation, AssessmentApi, EvaluationListView
 # from trialapp.evaluation_views import editEvaluation
+from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
 class EvaluationViewsTest(TestCase):
 
+    _apiFactory = None
+
     def setUp(self):
+        self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         FieldTrial.create_fieldTrial(**TrialAppModelTest.FIELDTRIALS[0])
         for thesis in TrialAppModelTest.THESIS:
@@ -23,8 +25,13 @@ class EvaluationViewsTest(TestCase):
     def test_evaluation_emply_list(self):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
-        response = self.client.get(reverse(
-            'evaluation-list', args=[fieldTrial.id]))
+
+        request = self._apiFactory.get(
+            'evaluation-list',
+            data={'field_trial_id': fieldTrial.id})
+        self._apiFactory.setUser(request)
+        response = EvaluationListView.as_view()(request)
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'assessments')
         self.assertContains(response, fieldTrial.name)
@@ -33,8 +40,8 @@ class EvaluationViewsTest(TestCase):
     def test_editfieldtrial(self):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
-        request_factory = RequestFactory()
-        request = request_factory.get('/edit_evaluation')
+        request = self._apiFactory.get('/edit_evaluation')
+        self._apiFactory.setUser(request)
         response = editEvaluation(request, field_trial_id=fieldTrial.id)
         self.assertContains(response, 'create-evaluation')
         self.assertContains(response, 'New')
@@ -43,8 +50,9 @@ class EvaluationViewsTest(TestCase):
 
         # Create one field trial
         evaluationData = TrialAppModelTest.APPLICATION[0]
-        request = request_factory.post('evaluation-save',
-                                       data=evaluationData)
+        request = self._apiFactory.post('evaluation-save',
+                                        data=evaluationData)
+        self._apiFactory.setUser(request)
         response = saveEvaluation(request)
         evaluation = Evaluation.objects.get(name=evaluationData['name'])
         self.assertEqual(evaluation.name, evaluationData['name'])
@@ -59,8 +67,9 @@ class EvaluationViewsTest(TestCase):
         self.assertEqual(len(productsThesis), totalProductApp)
 
         # Editar y ver nuevo
-        request = request_factory.get(
+        request = self._apiFactory.get(
             '/edit_evaluation/{}'.format(fieldTrial.id))
+        self._apiFactory.setUser(request)
         response = editEvaluation(
             request,
             field_trial_id=fieldTrial.id,
@@ -74,8 +83,9 @@ class EvaluationViewsTest(TestCase):
         newscale = 'new name'
         evaluationData['evaluation_id'] = evaluation.id
         evaluationData['crop_stage_scale'] = newscale
-        request = request_factory.post('evaluation-save',
-                                       data=evaluationData)
+        request = self._apiFactory.post('evaluation-save',
+                                        data=evaluationData)
+        self._apiFactory.setUser(request)
         response = saveEvaluation(request)
         evaluation2 = Evaluation.objects.get(name=evaluation.name)
         self.assertEqual(evaluation2.crop_stage_scale, newscale)
@@ -83,11 +93,12 @@ class EvaluationViewsTest(TestCase):
 
         # Lets delete some products
         deleteData = {'item_id': productsEvaluation[0].id}
-        deleteProductEvaluationRequest = request_factory.post(
+        deleteProductEvaluationRequest = self._apiFactory.post(
             'manage_product_to_evaluation_api',
             data=deleteData)
         apiView = ManageProductToEvaluation()
         response = apiView.delete(deleteProductEvaluationRequest)
+        self._apiFactory.setUser(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ProductEvaluation.objects.count(),
                          totalProductApp-1)
@@ -95,7 +106,7 @@ class EvaluationViewsTest(TestCase):
         # lets add it again
         productData = {'product': productsThesis[0].id,
                        'evaluation_id': evaluation2.id}
-        addProductEvaluationRequest = request_factory.post(
+        addProductEvaluationRequest = self._apiFactory.post(
             '/manage_product_to_evaluation_api',
             data=productData)
         response = apiView.post(addProductEvaluationRequest)
@@ -105,14 +116,14 @@ class EvaluationViewsTest(TestCase):
 
     def test_AssessmentApi(self):
         evaluationData = TrialAppModelTest.APPLICATION[0]
-        request_factory = RequestFactory()
-        request = request_factory.post('evaluation-save',
-                                       data=evaluationData)
+        request = self._apiFactory.post('evaluation-save',
+                                        data=evaluationData)
+        self._apiFactory.setUser(request)
         response = saveEvaluation(request)
         item = Evaluation.objects.get(name=evaluationData['name'])
         deletedId = item.id
         deleteData = {'item_id': deletedId}
-        deleteRequest = request_factory.post(
+        deleteRequest = self._apiFactory.post(
             'thesis_api',
             data=deleteData)
         apiView = AssessmentApi()
