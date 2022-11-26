@@ -16,7 +16,7 @@ class FieldTrialViewsTest(TestCase):
         TrialDbInitialLoader.loadInitialTrialValues()
 
     def test_trialapp_index(self):
-        request = self._apiFactory.get('evaluation-list')
+        request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
 
@@ -26,7 +26,7 @@ class FieldTrialViewsTest(TestCase):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
 
-        request = self._apiFactory.get('evaluation-list')
+        request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Field Trial yet.')
@@ -34,7 +34,7 @@ class FieldTrialViewsTest(TestCase):
         self.assertContains(response, fieldTrial.name)
 
         thesis = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        request = self._apiFactory.get('evaluation-list')
+        request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Field Trial yet.')
@@ -48,7 +48,7 @@ class FieldTrialViewsTest(TestCase):
             field_trial=fieldTrial,
             type=AssessmentType.objects.get(pk=1),
             unit=AssessmentUnit.objects.get(pk=1))
-        request = self._apiFactory.get('evaluation-list')
+        request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertContains(response, '1 &#10000;</a>')  # Number thesis

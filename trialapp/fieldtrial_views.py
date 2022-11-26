@@ -169,7 +169,13 @@ class FieldTrialApi(APIView):
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
-        field_trial_id = request.GET['field_trial_id']
+        field_trial_id = None
+        if 'field_trial_id' in request.GET:
+            # for testing
+            field_trial_id = request.GET['field_trial_id']
+        elif 'field_trial_id' in kwargs:
+            # from call on server
+            field_trial_id = kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
 

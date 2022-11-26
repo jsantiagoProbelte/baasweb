@@ -18,7 +18,13 @@ class EvaluationListView(LoginRequiredMixin, ListView):
     login_url = '/login'
 
     def get_context_data(self, **kwargs):
-        field_trial_id = self.request.GET['field_trial_id']
+        field_trial_id = None
+        if 'field_trial_id' in self.request.GET:
+            # for testing
+            field_trial_id = self.request.GET['field_trial_id']
+        elif 'field_trial_id' in self.kwargs:
+            # from call on server
+            field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Evaluation.getObjects(fieldTrial)
         return {'object_list': new_list,
