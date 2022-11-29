@@ -164,7 +164,7 @@ def needToRedirectToDefineSamples(request, fieldTrial):
         return editNewFieldTrial(
             request,
             field_trial_id=fieldTrial.id,
-            errors='You need to define how many samples are in each replica')
+            errors='You need to define the number of samples per replica')
     return None
 
 
@@ -208,8 +208,7 @@ def showDataSamplesIndex(request, evaluation_id=None,
         pass
     else:
         replica = get_object_or_404(Replica, pk=selected_replica_id)
-        selectedReplicaName = "Thesis {} - Replica {}".format(
-            replica.thesis.name, replica.number)
+        selectedReplicaName = replica.getTitle()
         redirection, samples = needToCreateSamples(
             request, replica)
         if redirection:

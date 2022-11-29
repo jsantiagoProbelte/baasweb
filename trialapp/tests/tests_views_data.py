@@ -1,12 +1,13 @@
 from django.test import TestCase
 from trialapp.models import AssessmentType, AssessmentUnit, FieldTrial,\
     Thesis, TrialAssessmentSet, TrialDbInitialLoader, Evaluation,\
-    ModelHelpers, ReplicaData, Replica
+    ModelHelpers, ReplicaData, Replica, Sample, SampleData
 from trialapp.tests.tests_models import TrialAppModelTest
 
 from trialapp.data_views import showDataThesisIndex,\
     SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
-    showTrialAssessmentSetIndex, showDataReplicaIndex
+    showTrialAssessmentSetIndex, showDataReplicaIndex,\
+    showDataSamplesIndex
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -160,8 +161,7 @@ class DataViewsTest(TestCase):
         addData = {
             'field_trial_id': self._fieldTrial.id,
             'assessment_type': deleteTypeId,
-            'assessment_unit': deleteUnitId
-        }
+            'assessment_unit': deleteUnitId}
         addDataPoint = self._apiFactory.post(
             'manage_trial_assessment_set_api',
             data=addData)
@@ -182,7 +182,7 @@ class DataViewsTest(TestCase):
             request,
             evaluation_id=self._evaluation.id)
         self.assertEqual(response.status_code, 200)
-
+        # self.assertContains(response, 'assessment, add data per thesis')
         replicas = Replica.getFieldTrialObjects(
             self._fieldTrial)
         self.assertGreater(len(replicas), 0)
@@ -221,7 +221,7 @@ class DataViewsTest(TestCase):
         # modify
         addData = {'data_point_id': ModelHelpers.generateDataPointId(
                     'replica', self._evaluation,
-                    self._theses[0],
+                    replicas[0],
                     self._units[0]),
                    'data-point': 66}
         addDataPoint = self._apiFactory.post(
@@ -243,5 +243,117 @@ class DataViewsTest(TestCase):
             data=addData)
         response = apiView.post(addDataPoint)
         tPoints = ReplicaData.objects.all()
+        self.assertEqual(len(tPoints), 2)
+        self.assertEqual(tPoints[1].value, 99)
+
+    def test_setSampleData(self):
+        request = self._apiFactory.get('data_sample_index',
+                                       args=[self._evaluation.id])
+        self._apiFactory.setUser(request)
+        response = showDataSamplesIndex(
+            request,
+            evaluation_id=self._evaluation.id)
+        self.assertEqual(response.status_code, 200)
+
+        # we expect a redirect to define a samples per replica,
+        # since the associated field trial has not defined
+        for expectedToken in [
+                'You need to define the number of samples per replica',
+                'field trial',
+                'Edit',
+                self._fieldTrial.name]:
+            self.assertContains(response, expectedToken)
+
+        # let's set it manually and try again
+        self._fieldTrial.samples_per_replica = 25
+        self._fieldTrial.save()
+        response = showDataSamplesIndex(
+            request,
+            evaluation_id=self._evaluation.id)
+        # we should have know the page to select replicas
+        self.assertContains(response, 'assessment, add data per sample')
+
+        # Now, the user should have select a replica and then
+        # she should get a page to input data per sample, even
+        # if samples are not created yet. Le's check that
+        replicas = Replica.getFieldTrialObjects(
+            self._fieldTrial)
+        selectedReplica = replicas[0]
+        samples = Sample.getObjects(selectedReplica)
+        self.assertEqual(len(samples), 0)
+        # let's simluate the selection of that replica
+        request = self._apiFactory.get(
+            'data_sample_index',
+            args=[self._evaluation.id, selectedReplica.id])
+        self._apiFactory.setUser(request)
+        response = showDataSamplesIndex(
+            request,
+            evaluation_id=self._evaluation.id,
+            selected_replica_id=selectedReplica.id)
+        print(response.content)
+        self.assertContains(response, 'Insert data for')
+        self.assertContains(response, selectedReplica.getTitle())
+
+        # During this call, the samples are created
+        samples = Sample.getObjects(selectedReplica)
+        self.assertTrue(len(samples), self._fieldTrial.samples_per_replica)
+
+        for item in samples:
+            for unit in self._units:
+                idInput = ModelHelpers.generateDataPointId(
+                    'sample',
+                    self._evaluation,
+                    item,
+                    unit)
+                self.assertContains(response, idInput)
+
+        # Le's add data
+        self.assertEqual(ThesisData.objects.count(), 0)
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
+                    'sample', self._evaluation,
+                    samples[0],
+                    self._units[0]),
+                   'data-point': 33}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        apiView = SetDataEvaluation()
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 1)
+        self.assertEqual(tPoints[0].value, 33)
+        self.assertEqual(tPoints[0].evaluation.id,
+                         self._evaluation.id)
+        self.assertEqual(tPoints[0].reference.id,
+                         samples[0].id)
+        self.assertEqual(tPoints[0].unit,
+                         self._units[0])
+
+        # modify
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
+                    'sample', self._evaluation,
+                    samples[0],
+                    self._units[0]),
+                   'data-point': 66}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        response = apiView.post(addDataPoint)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 1)
+        self.assertEqual(tPoints[0].value, 66)
+
+        # add new point
+        addData = {'data_point_id': ModelHelpers.generateDataPointId(
+            'sample', self._evaluation,
+            samples[1],
+            self._units[0]),
+            'data-point': 99}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        response = apiView.post(addDataPoint)
+        tPoints = SampleData.objects.all()
         self.assertEqual(len(tPoints), 2)
         self.assertEqual(tPoints[1].value, 99)

@@ -341,11 +341,10 @@ class Replica(ModelHelpers, models.Model):
         return ('{}-[{}]').format(
             self.thesis.name,
             self.number)
-        # return ('{}-[{}] ({},{})').format(
-        #     self.thesis.name,
-        #     self.number,
-        #     self.pos_x,
-        #     self.pos_y)
+
+    def getTitle(self):
+        return "Thesis {} - Replica {}".format(
+            self.thesis.name, self.number)
 
     def generateReplicaDataSetId(self, evaluation):
         evaluationId = evaluation.id if evaluation else 'null'

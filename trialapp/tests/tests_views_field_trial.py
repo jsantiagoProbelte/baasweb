@@ -67,7 +67,8 @@ class FieldTrialViewsTest(TestCase):
 
         # Create one field trial
         fieldTrialData = TrialAppModelTest.FIELDTRIALS[0]
-        request = self._apiFactory.post('/save_fieldtrial', data=fieldTrialData)
+        request = self._apiFactory.post(
+            '/save_fieldtrial', data=fieldTrialData)
         self._apiFactory.setUser(request)
         response = saveFieldTrial(request)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
@@ -86,7 +87,8 @@ class FieldTrialViewsTest(TestCase):
         newresponsible = 'Lobo'
         fieldTrialData['field_trial_id'] = fieldTrial.id
         fieldTrialData['responsible'] = newresponsible
-        request = self._apiFactory.post('/save_fieldtrial', data=fieldTrialData)
+        request = self._apiFactory.post(
+            '/save_fieldtrial', data=fieldTrialData)
         self._apiFactory.setUser(request)
         response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
