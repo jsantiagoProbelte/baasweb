@@ -211,7 +211,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
-    samples_per_replica = models.IntegerField(default=0)
+    samples_per_replica = models.IntegerField(default=0, null=True)
 
     foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
@@ -379,6 +379,46 @@ class Replica(ModelHelpers, models.Model):
         return self.thesis.getBackgroundColor()
 
 
+class Sample(ModelHelpers, models.Model):
+    number = models.IntegerField()
+    replica = models.ForeignKey(Replica, on_delete=models.CASCADE)
+
+    @classmethod
+    def getObjects(cls, replica: Replica):
+        return cls.objects \
+                .filter(replica=replica) \
+                .order_by('number')
+
+    def getName(self):
+        return ('[{}-{}] {}-({})').format(
+            self.replica.thesis.number,
+            self.replica.thesis.name,
+            self.replica.number,
+            self.number)
+
+    def getKey(self):
+        return self.number
+
+    def getShortName(self):
+        return ('{}-[{}]-{}').format(
+            self.replica.thesis.name,
+            self.replica.number,
+            self.number)
+
+    def getReferenceIndexDataInput(self):
+        return self.replica.getName()
+
+    def getBackgroundColor(self):
+        return self.replica.getBackgroundColor()
+
+    @classmethod
+    def createSamples(cls, replica, samples_per_replica):
+        for number in range(0, samples_per_replica):
+            Sample.objects.create(
+                number=number+1,
+                replica=replica)
+
+
 # This collects which moments in times, do we evaluate the thesis
 class Evaluation(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -462,7 +502,20 @@ class SampleData(ModelHelpers, models.Model):
                                    on_delete=models.CASCADE)
     unit = models.ForeignKey(TrialAssessmentSet,
                              on_delete=models.CASCADE)
-    reference = models.IntegerField()
+    reference = models.ForeignKey(Sample,
+                                  on_delete=models.CASCADE)
+
+    @classmethod
+    def getDataPoints(cls, evaluation, replica):
+        items = []
+        for sample in Sample.getObjects(replica):
+            dataPoints = SampleData.objects.filter(
+                    evaluation=evaluation,
+                    reference=sample).\
+                order_by('reference__number')
+            for dataPoint in dataPoints:
+                items.append(dataPoint)
+        return items
 
 
 class TrialStats:

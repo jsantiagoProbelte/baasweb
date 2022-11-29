@@ -103,8 +103,7 @@ def saveEvaluation(request, evaluation_id=None):
             crop_stage_majority=Evaluation.getValueFromRequestOrArray(
                 request, values, 'crop_stage_majority'),
             crop_stage_scale=Evaluation.getValueFromRequestOrArray(
-                request, values, 'crop_stage_scale')
-        )
+                request, values, 'crop_stage_scale'))
 
         # Create by default a list based on all the existing thesis
         # and let the user remove them
@@ -112,8 +111,7 @@ def saveEvaluation(request, evaluation_id=None):
             ProductEvaluation.objects.create(
                 product_thesis=item,
                 thesis=item.thesis,
-                evaluation=evaluation
-            )
+                evaluation=evaluation)
 
     return redirect(
         'evaluation-edit',
@@ -124,8 +122,7 @@ def saveEvaluation(request, evaluation_id=None):
 class ManageProductToEvaluation(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = [
-        'delete', 'post']
+    http_method_names = ['delete', 'post']
 
     def post(self, request, format=None):
         evaluation_id = request.POST['evaluation_id'].split('-')[-1]

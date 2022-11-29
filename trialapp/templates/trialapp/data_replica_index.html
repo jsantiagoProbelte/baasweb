@@ -41,14 +41,6 @@
         {% endfor %}
     </table>
 </div>
-<div class="card-body-baas bg-custom-0" >
-    {% for replicaDataSetRow in replicaDataSets %}
-        {% include "trialapp/data_row_replica_btn_template.html" with row=replicaDataSetRow%}
-    {% empty %}
-        <p>No replicas yet.</p>
-    {% endfor %}
-</div>
-
 
 {% endblock %}
 

@@ -5,11 +5,11 @@ from django.contrib.auth.decorators import login_required
 from trialapp.models import Evaluation, Thesis, AssessmentUnit,\
                             TrialAssessmentSet, FieldTrial, Replica,\
                             ThesisData, ReplicaData, SampleData,\
-                            AssessmentType, ModelHelpers
+                            AssessmentType, ModelHelpers, Sample
 from django.shortcuts import get_object_or_404, render
-from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from trialapp.fieldtrial_views import editNewFieldTrial
 
 
 class ManageTrialAssessmentSet(APIView):
@@ -40,7 +40,6 @@ class ManageTrialAssessmentSet(APIView):
         item = TrialAssessmentSet.objects.get(
             pk=request.POST['item_id'])
         item.delete()
-
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)
 
@@ -66,7 +65,8 @@ class SetDataEvaluation(APIView):
             item = get_object_or_404(Replica, pk=theIds[-2])
             ReplicaData.setDataPoint(item, evaluation, unit, value)
         elif level == 'sample':
-            SampleData.setDataPoint(theIds[-2], evaluation, unit, value)
+            item = get_object_or_404(Sample, pk=theIds[-2])
+            SampleData.setDataPoint(item, evaluation, unit, value)
         else:
             return Response({'success': False})
 
@@ -104,6 +104,7 @@ def sortDataPointsForDisplay(level, evaluation, references,
             'index': thisIndex,
             'color': reference.getBackgroundColor(),
             'name': reference.getKey(),
+            'id': reference.id,
             'dataPoints': []}
         for unit in trialAssessments:
             value = ''
@@ -150,14 +151,84 @@ def showDataReplicaIndex(request, evaluation_id=None,
     dataPoints = ReplicaData.getDataPoints(evaluation)
     dataPointsList = sortDataPointsForDisplay(
         'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
-    replicaDataSets = LayoutTrial.showLayout(
-                        evaluation.field_trial,
-                        evaluation,
-                        thesisTrial)
     return render(request, template_name, {
                   'trialAssessmentSets': trialAssessmentSets,
-                  'replicaDataSets': replicaDataSets,
                   'dataPoints': dataPointsList,
                   'evaluation': evaluation,
                   'theses': thesisTrial,
+                  'errors': errors})
+
+
+def needToRedirectToDefineSamples(request, fieldTrial):
+    if fieldTrial.samples_per_replica == 0:
+        return editNewFieldTrial(
+            request,
+            field_trial_id=fieldTrial.id,
+            errors='You need to define how many samples are in each replica')
+    return None
+
+
+def needToCreateSamples(request, replica):
+    fieldTrial = replica.thesis.field_trial
+    samples = Sample.getObjects(replica)
+    if len(samples) > 0:
+        # If there are samples, we are good to go
+        return None, samples
+
+    redirection = needToRedirectToDefineSamples(
+        request, fieldTrial)
+    if redirection:
+        # if there are no samples because they are not defined
+        # in the field trial, we will ask to define such number
+        return redirection, None
+
+    # If there were not created we do it in the spot
+    Sample.createSamples(replica, fieldTrial.samples_per_replica)
+    samples = Sample.getObjects(replica)
+    return None, samples
+
+
+@login_required
+def showDataSamplesIndex(request, evaluation_id=None,
+                         selected_replica_id=None, errors=None):
+    template_name = 'trialapp/data_samples_index.html'
+    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+    redirection = needToRedirectToDefineSamples(
+        request, evaluation.field_trial)
+    if redirection:
+        return redirection
+    replicas = Replica.getFieldTrialObjects(evaluation.field_trial)
+
+    thesisTrial = Thesis.getObjects(evaluation.field_trial)
+    trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
+    dataPointsList = []
+    selectedReplicaName = None
+    missing_samples = False
+    if selected_replica_id is None or selected_replica_id == 0:
+        pass
+    else:
+        replica = get_object_or_404(Replica, pk=selected_replica_id)
+        selectedReplicaName = "Thesis {} - Replica {}".format(
+            replica.thesis.name, replica.number)
+        redirection, samples = needToCreateSamples(
+            request, replica)
+        if redirection:
+            return redirection
+
+        dataPoints = SampleData.getDataPoints(evaluation, replica)
+        dataPointsList = sortDataPointsForDisplay(
+            'sample', evaluation, samples,
+            trialAssessmentSets, dataPoints)
+
+    replicaReferences = sortDataPointsForDisplay(
+        'replicas', evaluation, replicas, trialAssessmentSets, [])
+
+    return render(request, template_name, {
+                  'replicaReferences': replicaReferences,
+                  'selectedReplicaName': selectedReplicaName,
+                  'trialAssessmentSets': trialAssessmentSets,
+                  'dataPoints': dataPointsList,
+                  'evaluation': evaluation,
+                  'theses': thesisTrial,
+                  'missing_samples': missing_samples,
                   'errors': errors})

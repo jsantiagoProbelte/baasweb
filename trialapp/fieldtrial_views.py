@@ -64,7 +64,8 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'contact': fieldTrial.contact,
             'location': fieldTrial.location,
             'blocks': fieldTrial.blocks,
-            'replicas_per_thesis': fieldTrial.replicas_per_thesis
+            'replicas_per_thesis': fieldTrial.replicas_per_thesis,
+            'samples_per_replica': fieldTrial.samples_per_replica
             }
 
     dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
@@ -115,6 +116,10 @@ def saveFieldTrial(request, field_trial_id=None):
         fieldTrial.replicas_per_thesis = int(
             FieldTrial.getValueFromRequestOrArray(
                 request, values, 'replicas_per_thesis'))
+        samples_per_replica = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'samples_per_replica')
+        if samples_per_replica:
+            fieldTrial.samples_per_replica = int(samples_per_replica)
         # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
         #     request, values,
         #     'completion_date')
@@ -148,7 +153,9 @@ def saveFieldTrial(request, field_trial_id=None):
             blocks=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'blocks'),
             replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'replicas_per_thesis')
+                request, values, 'replicas_per_thesis'),
+            samples_per_replica=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'samples_per_replica'),
         )
 
     return redirect('fieldtrial-list')

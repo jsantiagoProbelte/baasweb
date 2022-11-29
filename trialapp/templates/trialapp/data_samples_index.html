@@ -1,0 +1,111 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include "trialapp/header.html" with title=evaluation.name action=evaluation.evaluation_date subtitle='assessment, add data per sample' list_href='evaluation-list' refId=evaluation.field_trial_id%}
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card card-body-baas">
+            <table class="table">
+                <thead><tr>
+                    <th>Thesis</th>
+                    <th>Replica</th>
+                </tr></thead><tbody>
+                {% for replica in replicaReferences %}
+                <tr>
+                    <td class="bg-custom-{{dataPointReference.color}}">
+                        {{replica.index}}
+                    </td>
+                    <td class="bg-custom-{{dataPointReference.color}}">
+                        <a class="badge btn btn-info fs-5" 
+                           href="{% url 'data_samples_index' evaluation.field_trial_id replica.id %}">
+                           {{replica.name}}</a>
+                    </td>
+                </tr></tbody>
+                {% empty %}
+                    <p>No Replicas yet.</p>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card card-body-baas">
+            {% if selectedReplicaName %}
+            <h5><span class="text-muted">Insert data for </span>{{selectedReplicaName}}</h5>
+            <table class="table">
+                <thead><tr>
+                    <th>Sample</th>
+                    {% for assessmentType in trialAssessmentSets %}
+                        <th>{{assessmentType.type}} ({{assessmentType.unit}})</th>
+                    {% empty %}
+                        <p>No result types defined. Go <span>
+                            <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' evaluation.field_trial_id%}">here</a></span></p>
+                    {% endfor %}
+                </tr></thead><tbody>
+                {% for dataPointReference in dataPoints %}
+                <tr>
+                    <td>
+                        {{dataPointReference.name}}
+                    </td>
+                    {% for dataPointValue in dataPointReference.dataPoints %}
+                        <td>
+                            {% include "trialapp/data_input_template.html" with item_id=dataPointValue.item_id placeholder='0.0' currentValue=dataPointValue.value%}
+                        </td>
+                    {% empty %}
+                    {% endfor %}
+                </tr>
+                {% empty %}
+                    <p>No Replicas yet.</p>
+                {% endfor %}
+            </tbody></table>
+            {% else %}
+            <h5>Select replica to input data</h5>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+var setDataPointAPI = '/set_data_point';
+
+$('.data-input-template').on('blur', function(){
+    var element=$(this)
+    return setDataPoint(element);
+});
+
+function setDataPoint(element) {
+    var formElement=element.parent()
+    var dataJson={}
+    $(element.serializeArray()).each(function(index,obj){
+        dataJson[obj.name]=obj.value;
+    });
+    dataJson['data_point_id']=formElement.attr('id');
+
+    $.ajax({
+        type : formElement.attr('method'), 
+        url: setDataPointAPI,
+        data: dataJson,
+        
+        success: function(data){
+            element.css("background-color", "grey");
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
+
+</script>
+{% endblock %}
+

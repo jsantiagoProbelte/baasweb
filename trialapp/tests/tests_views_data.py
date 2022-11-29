@@ -7,7 +7,6 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_views import showDataThesisIndex,\
     SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
     showTrialAssessmentSetIndex, showDataReplicaIndex
-# from trialapp.evaluation_views import editEvaluation
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 

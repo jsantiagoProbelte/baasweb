@@ -34,10 +34,13 @@ class FieldTrialCreateForm(forms.Form):
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
     location = forms.CharField(label="City/Area")
-    blocks = forms.CharField(label="Layout. Number of blocks",
+    blocks = forms.CharField(label="Layout. # blocks",
                              widget=forms.NumberInput())
     replicas_per_thesis = forms.CharField(
-        label="Layout. Number of replicas per thesis",
+        label="# replicas",
+        widget=forms.NumberInput())
+    samples_per_replica = forms.CharField(
+        label="# samples", required=False,
         widget=forms.NumberInput())
 
     def __init__(self, *args, **kwargs):
@@ -65,10 +68,13 @@ class FieldTrialCreateForm(forms.Form):
                     css_class='col-md-6'),
                 Div(
                     Field('blocks'),
-                    css_class='col-md-3'),
+                    css_class='col-md-2'),
                 Div(
                     Field('replicas_per_thesis'),
-                    css_class='col-md-3'),
+                    css_class='col-md-2'),
+                Div(
+                    Field('samples_per_replica'),
+                    css_class='col-md-2'),
                 css_class='mb-2'
             ),
             Row(

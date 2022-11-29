@@ -104,6 +104,10 @@ urlpatterns = [
         data_views.showDataReplicaIndex,
         name='data_replica_index'),
     path(
+        'data_samples_index/<int:evaluation_id>/<int:selected_replica_id>',
+        data_views.showDataSamplesIndex,
+        name='data_samples_index'),
+    path(
         'manage_trial_assessment_set_api',
         data_views.ManageTrialAssessmentSet.as_view(),
         name='manage_trial_assessment_set_api'),
@@ -111,12 +115,4 @@ urlpatterns = [
         'set_data_point',
         data_views.SetDataEvaluation.as_view(),
         name='set_data_point'),
-    # path(
-    #     'add_data_thesis/<int:thesis_id>/<int:evaluation_id>/',
-    #     data_views.add_data_thesis,
-    #     name='show-data-options'),
-    # path(
-    #     'add_data_replica/<int:replica_id>/<int:evaluation_id>/',
-    #     data_views.add_data_replica,
-    #     name='show-data-options'),
 ]
