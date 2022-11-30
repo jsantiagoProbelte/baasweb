@@ -1,7 +1,9 @@
 from django.test import TestCase
 from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader, Replica
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.fieldtrial_views import LayoutTrial
+from trialapp.trial_helper import LayoutTrial
+from trialapp.fieldtrial_views import reshuffle_blocks
+from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
 class TrialHelperTest(TestCase):
@@ -11,8 +13,10 @@ class TrialHelperTest(TestCase):
     _thesis2 = None
     _replicas1 = None
     _replicas2 = None
+    _apiFactory = None
 
     def setUp(self):
+        self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
@@ -79,18 +83,13 @@ class TrialHelperTest(TestCase):
         self.assertEqual(self._replicas1[0].pos_x, 1)
         self.assertEqual(self._replicas1[0].pos_y, 1)
 
+        # let try to assign the same
+        self.assertFalse(LayoutTrial.tryAssign(deck, 0, 0, self._replicas1[1]))
+
         self.assertFalse(LayoutTrial.tryAssign(deck, 0, 1, self._replicas1[1]))
         self.assertFalse(LayoutTrial.tryAssign(deck, 1, 0, self._replicas1[1]))
         self.assertTrue(LayoutTrial.tryAssign(deck, 1, 1, self._replicas1[1]))
         self.assertTrue(LayoutTrial.tryAssign(deck, 2, 2, self._replicas1[1]))
-
-        self.assertEqual(LayoutTrial.randomChooseItem([]), None)
-
-        listReplicas = [replica for replica in self._replicas1]
-        randomItem = LayoutTrial.randomChooseItem(listReplicas)
-        self.assertEqual(randomItem.thesis.id, self._thesis1.id)
-        self.assertEqual(len(listReplicas),
-                         self._fieldTrial.replicas_per_thesis - 1)
 
     def test_distributeLayout(self):
         deck = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
@@ -113,5 +112,60 @@ class TrialHelperTest(TestCase):
                             break
                     if found:
                         break
-                print('[{}] {}'.format(found, replica))
                 self.assertTrue(found)
+
+        # Try with a small set
+        self._fieldTrial.replicas_per_thesis = 0
+        self.assertEqual(
+            LayoutTrial.distributeLayout(self._fieldTrial), None)
+
+    def test_distributeLayout2(self):
+        # let´s mess it and arrange it
+        deck = LayoutTrial.distributeLayout(self._fieldTrial)
+
+        replicaM = Replica.objects.get(pk=self._replicas1[0].id)
+        self.assertNotEqual(replicaM.pos_x, 0)
+        self.assertNotEqual(replicaM.pos_y, 0)
+        replicaM.pos_x = 0
+        replicaM.pos_y = 0
+        replicaM.save()
+
+        deck = LayoutTrial.showLayout(
+            self._fieldTrial, None, self._theses)
+
+        for row in deck:
+            for item in row:
+                self.assertNotEqual(
+                    item['replica_id'],
+                    replicaM.id)
+
+        rows, columns = LayoutTrial.calculateLayoutDim(
+            self._fieldTrial, len(self._theses))
+
+        replicaZ = Replica.objects.get(pk=self._replicas1[1].id)
+        self.assertNotEqual(replicaZ, rows+1)
+        self.assertNotEqual(replicaZ, columns+1)
+        replicaZ.pos_x = rows+1
+        replicaZ.pos_y = columns+1
+        replicaZ.save()
+        deck = LayoutTrial.showLayout(
+            self._fieldTrial, None, self._theses)
+        for row in deck:
+            for item in row:
+                self.assertNotEqual(
+                    item['replica_id'],
+                    replicaZ.id)
+
+        # let´s change it
+        request = self._apiFactory.get(
+            'field_trial_api',
+            data={'field_trial_id': self._fieldTrial.id})
+        self._apiFactory.setUser(request)
+        response = reshuffle_blocks(
+            request, field_trial_id=self._fieldTrial.id)
+        self.assertTrue(response.status_code, 200)
+        _replicas1 = Replica.getObjects(self._thesis1)
+        self.assertNotEqual(_replicas1[0].pos_x, 0)
+        self.assertNotEqual(_replicas1[0].pos_y, 0)
+        self.assertNotEqual(_replicas1[1].pos_x, rows+1)
+        self.assertNotEqual(_replicas1[1].pos_y, columns+1)

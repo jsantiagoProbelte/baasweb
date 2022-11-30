@@ -40,24 +40,16 @@ class LayoutTrial:
         # Place the thesis in the deck
         for thesis in thesisTrial:
             for replica in Replica.getObjects(thesis):
-                if (replica.pos_x == 0) or (replica.pos_y == 0):
-                    continue
-                if (replica.pos_x > rows) or (replica.pos_y > columns):
-                    # TODO : Log error
-                    continue
-                deck[replica.pos_x-1][replica.pos_y-1] =\
-                    LayoutTrial.setDeckCell(replica, evaluation)
+                if (replica.pos_x > 0) and (replica.pos_y > 0) and\
+                   (replica.pos_x <= rows) and (replica.pos_y <= columns):
+                    print('adding {}-{},{}'.format(
+                        replica.id, replica.pos_x, replica.pos_y))
+                    deck[replica.pos_x-1][replica.pos_y-1] =\
+                        LayoutTrial.setDeckCell(replica, evaluation)
+                else:
+                    print('not adding {}-{},{}'.format(
+                        replica.id, replica.pos_x, replica.pos_y))
         return deck
-
-    @classmethod
-    def randomChooseItem(cls, toBeAssigned):
-        lenghtList = len(toBeAssigned)
-        if lenghtList == 0:
-            return None
-        # randowm pick one
-        position = random.randrange(lenghtList)
-        # pop it from the vector
-        return toBeAssigned.pop(position)
 
     @classmethod
     def rangeToExplore(cls, current):
@@ -137,8 +129,6 @@ class LayoutTrial:
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, numT)
         foundReplicas = 0
-        if columns == 0:
-            return None
         toBeAssignedLists = [[] for i in range(0, rows+1)]
         # Make a vector with all replicas thesis
         for thesis in thesisTrial:

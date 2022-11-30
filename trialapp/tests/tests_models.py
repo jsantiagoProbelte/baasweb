@@ -2,7 +2,8 @@ from django.test import TestCase
 from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
                             ProductThesis, Thesis, Evaluation,\
                             TrialDbInitialLoader, TrialAssessmentSet,\
-                            AssessmentType, AssessmentUnit, ThesisData
+                            AssessmentType, AssessmentUnit, ThesisData,\
+                            Sample, SampleData, Replica
 from django.test import RequestFactory
 
 
@@ -239,3 +240,39 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(len(dataPoints), 1)
         assset = TrialAssessmentSet.getObjects(fieldTrial)
         self.assertEqual(assset[0].unit, assSet.unit)
+
+        toCreate = 4
+        Replica.createReplicas(thesis, toCreate)
+        replicas = Replica.getObjects(thesis)
+        self.assertEqual(len(replicas), toCreate)
+
+        selectedReplica = replicas[0]
+        toCreate = 4
+        Sample.createSamples(selectedReplica, toCreate)
+        samples = Sample.getObjects(selectedReplica)
+        self.assertEqual(len(samples), toCreate)
+        selectedSample = samples[0]
+
+        self.assertEqual(
+            selectedSample.getName(),
+            '[{}-{}] {}-({})'.format(
+                selectedSample.replica.thesis.number,
+                selectedSample.replica.thesis.name,
+                selectedSample.replica.number,
+                selectedSample.number))
+
+        self.assertEqual(
+            selectedSample.getShortName(),
+            '{}-[{}]-{}'.format(
+                selectedSample.replica.thesis.name,
+                selectedSample.replica.number,
+                selectedSample.number))
+
+        SampleData.objects.create(
+            evaluation=evaluation,
+            reference=selectedSample,
+            unit=assset[0],
+            value=66)
+
+        sampleData = SampleData.getDataPoints(evaluation, selectedReplica)
+        self.assertEqual(len(sampleData), 1)

@@ -68,7 +68,7 @@ class SetDataEvaluation(APIView):
             item = get_object_or_404(Sample, pk=theIds[-2])
             SampleData.setDataPoint(item, evaluation, unit, value)
         else:
-            return Response({'success': False})
+            return Response({'success': False}, status='500')
 
         return Response({'success': True})
 

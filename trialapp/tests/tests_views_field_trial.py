@@ -87,12 +87,24 @@ class FieldTrialViewsTest(TestCase):
         newresponsible = 'Lobo'
         fieldTrialData['field_trial_id'] = fieldTrial.id
         fieldTrialData['responsible'] = newresponsible
+
         request = self._apiFactory.post(
             '/save_fieldtrial', data=fieldTrialData)
         self._apiFactory.setUser(request)
         response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
         self.assertEqual(fieldTrial.responsible, newresponsible)
+        self.assertEqual(response.status_code, 302)
+
+        fieldTrialData['field_trial_id'] = fieldTrial.id
+        fieldTrialData['samples_per_replica'] = '3'
+        self.assertEqual(fieldTrial.samples_per_replica, None)
+        request = self._apiFactory.post(
+            '/save_fieldtrial', data=fieldTrialData)
+        self._apiFactory.setUser(request)
+        response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
+        fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
+        self.assertEqual(fieldTrial.samples_per_replica, 3)
         self.assertEqual(response.status_code, 302)
 
     def test_showFieldTrial(self):

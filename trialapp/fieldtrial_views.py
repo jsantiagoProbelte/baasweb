@@ -120,9 +120,6 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'samples_per_replica')
         if samples_per_replica:
             fieldTrial.samples_per_replica = int(samples_per_replica)
-        # fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
-        #     request, values,
-        #     'completion_date')
         fieldTrial.save()
         LayoutTrial.distributeLayout(fieldTrial)
     else:

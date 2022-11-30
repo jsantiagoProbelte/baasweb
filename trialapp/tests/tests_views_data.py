@@ -7,7 +7,7 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_views import showDataThesisIndex,\
     SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
     showTrialAssessmentSetIndex, showDataReplicaIndex,\
-    showDataSamplesIndex
+    showDataSamplesIndex, sortDataPointsForDisplay
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -17,7 +17,6 @@ class DataViewsTest(TestCase):
     _theses = []
     _units = []
     _evaluation = None
-
     _apiFactory = None
 
     def setUp(self):
@@ -290,7 +289,6 @@ class DataViewsTest(TestCase):
             request,
             evaluation_id=self._evaluation.id,
             selected_replica_id=selectedReplica.id)
-        print(response.content)
         self.assertContains(response, 'Insert data for')
         self.assertContains(response, selectedReplica.getTitle())
 
@@ -330,6 +328,19 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[0].unit,
                          self._units[0])
 
+        # add bad values
+        self.assertEqual(ThesisData.objects.count(), 0)
+        addBadData = {'data_point_id': ModelHelpers.generateDataPointId(
+                    'badboy', self._evaluation,
+                    samples[0],
+                    self._units[0]),
+                   'data-point': 33}
+        addBadDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addBadData)
+        response = apiView.post(addBadDataPoint)
+        self.assertEqual(response.status_code, 500)
+
         # modify
         addData = {'data_point_id': ModelHelpers.generateDataPointId(
                     'sample', self._evaluation,
@@ -357,3 +368,48 @@ class DataViewsTest(TestCase):
         tPoints = SampleData.objects.all()
         self.assertEqual(len(tPoints), 2)
         self.assertEqual(tPoints[1].value, 99)
+
+    def test_sortDataPointsForDisplay(self):
+        replicas = Replica.getFieldTrialObjects(
+            self._fieldTrial)
+        dataPoints = ReplicaData.getDataPoints(self._evaluation)
+        self.assertEqual(len(dataPoints), 0)
+        dataPointsList = sortDataPointsForDisplay(
+            'replica', self._evaluation,
+            replicas, self._units, dataPoints)
+        self.assertEqual(len(dataPointsList), len(replicas))
+        selectedReplica = replicas[0]
+        self.assertEqual(selectedReplica.getKey(),
+                         dataPointsList[0]['name'])
+        self.assertEqual(
+            ModelHelpers.generateDataPointId(
+                'replica', self._evaluation,
+                selectedReplica, self._units[0]),
+            dataPointsList[0]['dataPoints'][0]['item_id'])
+        self.assertEqual(
+            '',
+            dataPointsList[0]['dataPoints'][0]['value'])
+
+        # let generate dataPoint
+        ReplicaData.objects.create(
+            reference=selectedReplica,
+            unit=self._units[0],
+            value=33,
+            evaluation=self._evaluation)
+        dataPoints = ReplicaData.getDataPoints(self._evaluation)
+        self.assertEqual(len(dataPoints), 1)
+        dataPointsList = sortDataPointsForDisplay(
+            'replica', self._evaluation,
+            replicas, self._units, dataPoints)
+        self.assertEqual(len(dataPointsList), len(replicas))
+        selectedReplica = replicas[0]
+        self.assertEqual(selectedReplica.getKey(),
+                         dataPointsList[0]['name'])
+        self.assertEqual(
+            33,
+            dataPointsList[0]['dataPoints'][0]['value'])
+        self.assertEqual(
+            ModelHelpers.generateDataPointId(
+                'replica', self._evaluation,
+                selectedReplica, self._units[0]),
+            dataPointsList[0]['dataPoints'][0]['item_id'])
