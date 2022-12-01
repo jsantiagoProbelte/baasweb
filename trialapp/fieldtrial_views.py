@@ -18,15 +18,12 @@ class FieldTrialListView(LoginRequiredMixin, ListView):
     login_url = '/login'
 
     def get_context_data(self, **kwargs):
-
         new_list = []
-
         for item in FieldTrial.getObjects():
             evaluations = Evaluation.objects.filter(field_trial=item).count()
             thesis = Thesis.objects.filter(field_trial=item).count()
             results = TrialAssessmentSet.objects.\
                 filter(field_trial=item).count()
-
             new_list.append({
                 'name': item.name,
                 'crop': item.crop.name,
@@ -38,7 +35,6 @@ class FieldTrialListView(LoginRequiredMixin, ListView):
                 'results': results,
                 'evaluations': evaluations,
                 'thesis': thesis})
-
         return {'object_list': new_list}
 
 
@@ -65,12 +61,9 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'location': fieldTrial.location,
             'blocks': fieldTrial.blocks,
             'replicas_per_thesis': fieldTrial.replicas_per_thesis,
-            'samples_per_replica': fieldTrial.samples_per_replica
-            }
-
+            'samples_per_replica': fieldTrial.samples_per_replica}
     dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
     newFieldTrial_form = FieldTrialCreateForm(**dictKwargs)
-
     return render(request, template_name,
                   {'create_form': newFieldTrial_form,
                    'title': title,
@@ -153,7 +146,6 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'replicas_per_thesis'),
             samples_per_replica=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'samples_per_replica'))
-
     return redirect('field_trial_api', field_trial_id=fieldTrial.id)
 
 
@@ -198,6 +190,7 @@ class FieldTrialApi(APIView):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
         assessments = Evaluation.getObjects(fieldTrial)
+        trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
         assessmentsData = [{'name': item.getName(),
                             'id': item.id,
                             'date': item.evaluation_date}
@@ -207,6 +200,7 @@ class FieldTrialApi(APIView):
                       {'fieldTrial': fieldTrial,
                        'thesisTrialRows': self.orderItemsInRows(thesisTrial),
                        'assessments': assessmentsData,
+                       'units': trialAssessmentSets,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})
