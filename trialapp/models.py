@@ -338,9 +338,7 @@ class Replica(ModelHelpers, models.Model):
         return self.number
 
     def getShortName(self):
-        return ('{}-[{}]').format(
-            self.thesis.name,
-            self.number)
+        return self.number
 
     def getTitle(self):
         return "Thesis {} - Replica {}".format(
@@ -431,6 +429,11 @@ class Evaluation(ModelHelpers, models.Model):
         return cls.objects \
                 .filter(field_trial=field_trial) \
                 .order_by('evaluation_date')
+
+    def getName(self):
+        return "{}-{}".format(
+            self.crop_stage_majority,
+            self.crop_stage_scale)
 
 
 # This collects which products are included in each evaluation

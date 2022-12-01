@@ -258,7 +258,6 @@ class DataViewsTest(TestCase):
         # since the associated field trial has not defined
         for expectedToken in [
                 'You need to define the number of samples per replica',
-                'field trial',
                 'Edit',
                 self._fieldTrial.name]:
             self.assertContains(response, expectedToken)

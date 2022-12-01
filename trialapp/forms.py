@@ -1,7 +1,7 @@
 
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit, Row, Field
+from crispy_forms.layout import Layout, Div, Submit, Row, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from .models import FieldTrial
 
@@ -15,9 +15,7 @@ class MyDateInput(forms.widgets.DateInput):
 
 
 class FieldTrialCreateForm(forms.Form):
-
     field_trial_id = forms.CharField(widget=forms.HiddenInput())
-
     name = forms.CharField(label="Field Trial Name")
     phase = forms.ChoiceField(label="Phase",
                               required=True, choices=[])
@@ -34,7 +32,7 @@ class FieldTrialCreateForm(forms.Form):
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
     location = forms.CharField(label="City/Area")
-    blocks = forms.CharField(label="Layout. # blocks",
+    blocks = forms.CharField(label="# blocks",
                              widget=forms.NumberInput())
     replicas_per_thesis = forms.CharField(
         label="# replicas",
@@ -55,56 +53,51 @@ class FieldTrialCreateForm(forms.Form):
         self.helper.form_action = 'fieldtrial-save'
 
         text = 'Create Field Trial'
+        title = 'New'
         if 'initial' in kwargs and \
            'field_trial_id' in kwargs['initial'] and \
            kwargs['initial']['field_trial_id'] is not None:
             text = 'Save'
+            title = 'Edit'
 
         self.helper.layout = Layout(
-            Row(
-                Div(
-                    Field('field_trial_id'),
+            Row(Div(HTML(title),
+                    css_class='col-md-1 h2'),
+                Div(Field('field_trial_id'),
                     Field('name'),
-                    css_class='col-md-6'),
-                Div(
-                    Field('blocks'),
-                    css_class='col-md-2'),
-                Div(
-                    Field('replicas_per_thesis'),
-                    css_class='col-md-2'),
-                Div(
-                    Field('samples_per_replica'),
-                    css_class='col-md-2'),
-                css_class='mb-2'
-            ),
-            Row(
-                Div(
-                    Field('project', css_class='mb-2'),
-                    Field('objective', css_class='mb-2'),
-                    Field('phase', css_class='mb-2'),
-                    Field('initiation_date',
-                          css_class='mb-2'),
-                    css_class='col-md-4'
-                ),
-                Div(
-                    Field('product', css_class='mb-2'),
-                    Field('crop', css_class='mb-2'),
-                    Field('plague', css_class='mb-2'),
+                    css_class='col-md-9'),
+                Div(FormActions(
+                        Submit('submit', text, css_class="btn btn-info")),
+                    css_class='col-md-2 text-sm-end'),
+                css_class='mt-3 mb-3'),
+            Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
+                    Div(Div(Field('project', css_class='mb-2'),
+                            Field('objective', css_class='mb-2'),
+                            Field('product', css_class='mb-2'),
+                            Field('crop', css_class='mb-2'),
+                            Field('plague', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
                     css_class='col-md-4'),
-                Div(
-                    Field('responsible', css_class='mb-2'),
-                    Field('contact', css_class='mb-2'),
-                    Field('location', css_class='mb-2'),
+                Div(Div(HTML('Status'), css_class="card-header-baas h4"),
+                    Div(Div(Field('phase', css_class='mb-2'),
+                            Field('responsible', css_class='mb-2'),
+                            Field('initiation_date', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
                     css_class='col-md-4'),
-            ),
-            Row(
-                Div(
-                    FormActions(
-                        Submit('submit', text,
-                               css_class="btn btn-info")),
-                    css_class='col-md-12 text-sm-end'),
-            )
-        )
+                Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
+                    Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
+                                Div(Field('replicas_per_thesis'),
+                                    css_class='col-md-4'),
+                                Div(Field('samples_per_replica'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Field('contact', css_class='mb-2'),
+                            Field('location', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    css_class='col-md-4')))
 
 
 class ThesisEditForm(forms.Form):
@@ -154,8 +147,7 @@ class ThesisEditForm(forms.Form):
                 FormActions(
                     Submit('submit', text,
                            css_class="btn btn-info")),
-                css_class='text-sm-end')
-            )
+                css_class='text-sm-end'))
 
 
 class EvaluationEditForm(forms.Form):
@@ -199,5 +191,4 @@ class EvaluationEditForm(forms.Form):
                 FormActions(
                     Submit('submit', text,
                            css_class="btn btn-info")),
-                css_class='text-sm-end')
-            )
+                css_class='text-sm-end'))

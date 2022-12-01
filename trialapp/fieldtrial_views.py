@@ -152,10 +152,9 @@ def saveFieldTrial(request, field_trial_id=None):
             replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'replicas_per_thesis'),
             samples_per_replica=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'samples_per_replica'),
-        )
+                request, values, 'samples_per_replica'))
 
-    return redirect('fieldtrial-list')
+    return redirect('field_trial_api', field_trial_id=fieldTrial.id)
 
 
 class FieldTrialApi(APIView):
@@ -171,6 +170,22 @@ class FieldTrialApi(APIView):
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)
 
+    def orderItemsInRows(self, items):
+        thesisTrialRows = []
+        thesisTrialRow = []
+        index = 1
+        for thesis in items:
+            thesisTrialRow.append(thesis)
+            if index % 4 == 0:
+                index = 0
+                thesisTrialRows.append(thesisTrialRow)
+                thesisTrialRow = []
+            else:
+                index += 1
+        if thesisTrialRow:
+            thesisTrialRows.append(thesisTrialRow)
+        return thesisTrialRows
+
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
         field_trial_id = None
@@ -182,10 +197,16 @@ class FieldTrialApi(APIView):
             field_trial_id = kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
+        assessments = Evaluation.getObjects(fieldTrial)
+        assessmentsData = [{'name': item.getName(),
+                            'id': item.id,
+                            'date': item.evaluation_date}
+                           for item in assessments]
 
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,
-                       'thesisTrial': thesisTrial,
+                       'thesisTrialRows': self.orderItemsInRows(thesisTrial),
+                       'assessments': assessmentsData,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})

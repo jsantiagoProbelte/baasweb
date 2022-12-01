@@ -4,13 +4,8 @@
 
 {% block content %}
 
-{% include "trialapp/header.html" with title=title subtitle=' field trial'%}
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
-<div class="card no-border" >
-    <div class="card-body-baas">
-        {% crispy create_form %}
-    </div>
-</div>
+{% crispy create_form %}
 {% endblock %}

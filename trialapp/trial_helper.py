@@ -42,13 +42,8 @@ class LayoutTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x > 0) and (replica.pos_y > 0) and\
                    (replica.pos_x <= rows) and (replica.pos_y <= columns):
-                    print('adding {}-{},{}'.format(
-                        replica.id, replica.pos_x, replica.pos_y))
                     deck[replica.pos_x-1][replica.pos_y-1] =\
                         LayoutTrial.setDeckCell(replica, evaluation)
-                else:
-                    print('not adding {}-{},{}'.format(
-                        replica.id, replica.pos_x, replica.pos_y))
         return deck
 
     @classmethod
