@@ -10,8 +10,9 @@
 <table class="table" id="table-items">
     <thead>
         <tr>
-            <th>Name</th>
+            <th></th>
             <th>Date</th>
+            <th>Name</th>
             <th>Crop Stage</th>
             <th>Thesis Data</th>
             <th>Replicas Data</th>
@@ -22,8 +23,9 @@
     <tbody>
 {% for item in object_list %}
     <tr id="item-{{item.id}}">
+        <td><a href="{% url 'evaluation-edit' field_trial_id item.id %}" class="btn btn-sm btn-info">&#10000;</a></td>
         <td>{{item.evaluation_date}}</td>
-        <td><a href="{% url 'evaluation-edit' field_trial_id item.id %}" class="btn btn-primary">{{item.name}}</a></td>
+        <td>{{item.name}}</td>
         <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>
         <td><a href="{% url 'data_thesis_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
         <td><a href="{% url 'data_replica_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
