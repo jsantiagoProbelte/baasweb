@@ -10,7 +10,9 @@ class LayoutTrial:
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
         blocks = fieldTrial.blocks
         numberReplicas = fieldTrial.replicas_per_thesis
-        return ceil(numberThesis * numberReplicas / blocks), blocks
+        rows = 0 if blocks == 0 else\
+            ceil(numberThesis * numberReplicas / blocks)
+        return rows, blocks
 
     @classmethod
     def computeInitialLayout(cls, fieldTrial, numberThesis):

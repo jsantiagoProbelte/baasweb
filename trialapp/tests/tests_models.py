@@ -23,6 +23,7 @@ class TrialAppModelTest(TestCase):
             'contact': 'Mr Farmer',
             'location': 'La Finca',
             'replicas_per_thesis': 4,
+            'report_filename': '',
             'blocks': 3}
     ]
 
@@ -72,8 +73,8 @@ class TrialAppModelTest(TestCase):
         len_itemsFromObjectsAll = len(itemsFromObjectsAll)
         self.assertGreater(len_itemsFromObjectsAll, 0)
 
-        allInitValues = TrialDbInitialLoader.initialTrialModelValues()
-        cropValues = allInitValues[Crop]
+        initValues = TrialDbInitialLoader.initialTrialModelComplexValues()
+        cropValues = list(initValues[Crop].keys())
         len_cropValues = len(cropValues)
         self.assertEqual(len_itemsFromObjectsAll,
                          len_cropValues)

@@ -1,5 +1,6 @@
 # Create your views here.
-from django.views.generic.list import ListView
+import django_filters
+from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from django.contrib.auth.decorators import login_required
@@ -12,14 +13,40 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-class FieldTrialListView(LoginRequiredMixin, ListView):
+class FieldTrialFilter(django_filters.FilterSet):
+    class Meta:
+        model = FieldTrial
+        fields = ['objective', 'product', 'crop', 'plague']
+
+
+class FieldTrialListView(LoginRequiredMixin, FilterView):
     model = FieldTrial
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
+    filterset_class = FieldTrialFilter
+    template_name = 'trialapp/fieldtrial_list.html'
+
+    def getAttrValue(self, label):
+        if label in self.request.GET:
+            if self.request.GET[label] != '':
+                return self.request.GET[label]
+        return None
 
     def get_context_data(self, **kwargs):
+        filter_kwargs = {}
+        paramsReplyTemplate = FieldTrialFilter.Meta.fields
+        for paramIdName in paramsReplyTemplate:
+            paramId = self.getAttrValue(paramIdName)
+            if paramId:
+                filter_kwargs['{}__id'.format(paramIdName)] = paramId
         new_list = []
-        for item in FieldTrial.getObjects():
+        orderBy = paramsReplyTemplate.copy()
+        orderBy.append('name')
+        objectList = FieldTrial.objects.filter(
+            **filter_kwargs).order_by(
+            'objective', 'product', 'crop', 'plague')
+        filter = FieldTrialFilter(self.request.GET)
+        for item in objectList:
             evaluations = Evaluation.objects.filter(field_trial=item).count()
             thesis = Thesis.objects.filter(field_trial=item).count()
             results = TrialAssessmentSet.objects.\
@@ -35,7 +62,9 @@ class FieldTrialListView(LoginRequiredMixin, ListView):
                 'results': results,
                 'evaluations': evaluations,
                 'thesis': thesis})
-        return {'object_list': new_list}
+        return {'object_list': new_list,
+                'titleList': '({}) Field trials'.format(len(objectList)),
+                'filter': filter}
 
 
 @login_required

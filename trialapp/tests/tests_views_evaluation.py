@@ -121,6 +121,7 @@ class EvaluationViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = saveEvaluation(request)
         item = Evaluation.objects.get(name=evaluationData['name'])
+        self.assertEqual(item.getName(), '66-BBCH')
         deletedId = item.id
         deleteData = {'item_id': deletedId}
         deleteRequest = self._apiFactory.post(

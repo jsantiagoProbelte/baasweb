@@ -26,6 +26,13 @@
             ],
             "django": true,
             "justMyCode": true
+        },
+        {
+            "name": "Import reports",
+            "type": "python",
+            "request": "launch",
+            "module": "trialapp.report_finder",
+            "justMyCode": true,
         }
     ]
 }

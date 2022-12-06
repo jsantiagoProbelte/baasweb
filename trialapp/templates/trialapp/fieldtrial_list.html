@@ -1,9 +1,37 @@
 {% extends "baaswebapp/layout.html" %}
 
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
 {% block content %}
-{% include "trialapp/header.html" with title="Field Trials" new_href='fieldtrial-edit' %}
+{% include "trialapp/header.html" with title=titleList new_href='fieldtrial-edit' %}
+
+<div class='card-body-baas mb-3'>
+    <form method="get" class="">
+        <div class="row">
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.objective.label_tag }}
+                {% render_field filter.form.objective class="form-control" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.product.label_tag }}
+                {% render_field filter.form.product class="form-control" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.crop.label_tag }}
+                {% render_field filter.form.crop class="form-control" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.plague.label_tag }}
+                {% render_field filter.form.plague class="form-control" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-2">
+                <button type="submit" class="btn btn-primary mt-4">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 
 <div class="card card-body-baas">
 <table class="table" id="table-items">

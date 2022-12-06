@@ -1,0 +1,5 @@
+# Django related
+PyPDF2
+docx2txt
+# textract
+# nltk

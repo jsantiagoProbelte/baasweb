@@ -45,7 +45,8 @@ BASE_APPS = [
 EXTENDED_APPS = [
     'crispy_forms',
     'bootstrap5',
-    'rest_framework'
+    'rest_framework',
+    'widget_tweaks'
 ]
 
 CUSTOM_APPS = [

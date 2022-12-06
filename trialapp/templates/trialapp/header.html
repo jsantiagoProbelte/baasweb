@@ -14,6 +14,10 @@
     <a href="{% url new_href %}" class="btn btn-info fs-4"
         data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
     {% endif %}
+    {% if action_href %}
+    <a href="action_href" target="_blank" rel="noopener noreferrer" class="btn btn-warning fs-4"
+        data-toggle="tooltip" data-placement="top" title='Inspect item'>&#10066;</a>
+    {% endif %}
     {% if new_href_id %}
     <a href="{% url new_href_id refId %}" class="btn btn-info fs-4"
         data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>

@@ -4,10 +4,19 @@ from django.db import models
 
 class ModelHelpers:
     NULL_STRING = '------'
+    UNKNOWN = ' Unknown'
 
     @classmethod
     def getObjects(cls):
         return cls.objects.all().order_by('name')
+
+    @classmethod
+    def getDictObjectsId(cls):
+        return {item.name.lower(): item.id for item in cls.getObjects()}
+
+    @classmethod
+    def getUnknownKey(cls):
+        return cls.objects.get(name=ModelHelpers.UNKNOWN)
 
     @classmethod
     def returnFormatedItem(cls, asDict, id, name):
@@ -135,6 +144,16 @@ class ModelHelpers:
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     scientific = models.CharField(max_length=100)
+    other = models.CharField(max_length=100, null=True)
+
+    @classmethod
+    def getDictObjectsId(cls):
+        theDict = {}
+        for item in cls.getObjects():
+            theDict[item.name.lower()] = item.id
+            if item.other:
+                theDict[item.other.lower()] = item.id
+        return theDict
 
 
 class CropVariety(ModelHelpers, models.Model):
@@ -207,16 +226,15 @@ class FieldTrial(ModelHelpers, models.Model):
     latitude_str = models.CharField(max_length=100, null=True)
     altitude = models.IntegerField(null=True)
 
-    report_filename = models.TextField(null=True)
-
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
     samples_per_replica = models.IntegerField(default=0, null=True)
 
+    report_filename = models.TextField(null=True)
+
     foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
-        Crop: 'crop', Plague: 'plague', Project: 'project'
-        }
+        Crop: 'crop', Plague: 'plague', Project: 'project'}
 
     @classmethod
     def create_fieldTrial(cls, **kwargs):
@@ -230,11 +248,11 @@ class FieldTrial(ModelHelpers, models.Model):
             crop=Crop.objects.get(pk=kwargs['crop']),
             plague=Plague.objects.get(pk=kwargs['plague']),
             initiation_date=kwargs['initiation_date'],
+            report_filename=kwargs['report_filename'],
             contact=kwargs['contact'],
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
-            blocks=kwargs['blocks']
-        )
+            blocks=kwargs['blocks'])
 
 
 class Thesis(ModelHelpers, models.Model):
@@ -541,29 +559,72 @@ class TrialDbInitialLoader:
     @classmethod
     def initialTrialModelValues(cls):
         return {
-            Crop: ['Agave', 'Avocado', 'Strawberry', 'Melon', 'Watermelon',
-                   'Tomato', 'Potato', 'Cotton', 'Blackberry', 'Corn',
-                   'Brocoli', 'Citrics', 'Onion', 'Raspberry', 'Banan',
-                   'Jitomate', 'Chili', 'Pumkin', 'Cucumber', 'Carrot'],
-            Phase: ['Positioning', 'Development', 'Registry'],
-            Project: ['Botrybel', 'ExBio', 'Belnatol', 'Belthirul', 'Biopron',
+            Phase: [ModelHelpers.UNKNOWN, 'Positioning', 'Development',
+                    'Registry'],
+            Project: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',
+                      'Belthirul',
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
                       'Nemapron', 'Nutrihealth', 'Verticibel'],
-            Objective: ['Reduce fertilizer', 'Efectividad Biologica'],
-            Product: ['Botrybel', 'ExBio', 'Belnatol', 'Belthirul', 'Biopron',
+            Objective: [ModelHelpers.UNKNOWN, 'Fertilizer Reduction',
+                        'Biological effectiveness'],
+            Product: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',
+                      'Belthirul',
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
                       'Nemapron', 'Nutrihealth', 'Verticibel',
                       '-- No Product --'],
-            Plague: ['Antracnosis', 'Botrytis', 'Oidio', 'Sphaerotheca',
+            Plague: [ModelHelpers.UNKNOWN,
+                     'Antracnosis', 'Botrytis', 'Oidio', 'Sphaerotheca',
                      'Cenicilla polvorienta', 'Damping off', 'Gusano soldado',
                      'Marchitez', 'Minador', 'Mosca blanca', 'N/A',
                      'Nematodo agallador', 'Tizon de la hoja',
                      'Tristeza de los citricos', 'Tristeza del aguacatero',
                      'Verticiliosis'],
             RateUnit: ['Kg/hectare', 'Liters/hectare'],
-            AssessmentUnit: ['%; 0; 100', '%UNCK; -; -'],
-            AssessmentType: ['PHYGEN', 'PESSEV', 'PESINC', 'CONTRO']
+            AssessmentUnit: [
+                '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
+                'Number', 'SPAD', 'Kilograms', 'Meters',
+                'EWRS;1;9', 'Severity;0;5'],
+            AssessmentType: [
+                '# Galls', '# Nematodes', 'P-phosphate',
+                'K-Potassium', 'Fruit firmness', '°Brix',
+                'Fruit size', 'Yield', 'Fruit weight',
+                'N-Nitrogen', 'Greenness', 'Plant height',
+                'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN']
         }
+
+    @classmethod
+    def initialTrialModelComplexValues(cls):
+        return {
+            Crop: {
+                ModelHelpers.UNKNOWN: {'other': None},
+                'Agave': {'other': None},
+                'Avocado': {'other': 'Aguacate'},
+                'Strawberry': {'other': 'Fresa'},
+                'Melon': {'other': None},
+                'Watermelon': {'other': 'Sandia'},
+                'Tomato': {'other': 'Tomate'},
+                'Potato': {'other': 'Patata'},
+                'Cotton': {'other': 'Algodon'},
+                'Blackberry': {'other': 'Arandano'},
+                'Corn': {'other': 'Maiz'},
+                'Brocoli': {'other': None},
+                'Citrics': {'other': 'Arandano'},
+                'Onion': {'other': 'Cebolla'},
+                'Raspberry': {'other': 'Frambuesa'},
+                'Banan': {'other': 'Platano'},
+                'Jitomate': {'other': None},
+                'Chili': {'other': 'Chile'},
+                'Pepper': {'other': 'Pimiento'},
+                'Pumkin': {'other': 'Calabaza'},
+                'Cucumber': {'other': 'Pepino'},
+                'Cucurbit': {'other': 'Cucurbetacea'},
+                'Grape': {'other': 'Uva'},
+                'Olive': {'other': 'Olivo'},
+                'Cauliflower': {'other': 'Coliflor'},
+                'Lettuce': {'other': 'Lechuga'},
+                'Apple': {'other': 'Manzana'},
+                'Peach': {'other': 'Melocoton'},
+                'Carrot': {'other': 'Zanahoria'}}}
 
     @classmethod
     def loadInitialTrialValues(cls, location='default'):
@@ -571,3 +632,16 @@ class TrialDbInitialLoader:
         for modelo in initialValues:
             kValues = [{'name': value} for value in initialValues[modelo]]
             modelo.initKValues(kValues, location=location)
+
+        initialValues = cls.initialTrialModelComplexValues()
+        for modelo in initialValues:
+            for name in initialValues[modelo]:
+                if modelo.objects.filter(name=name).exists():
+                    print('{} already in DB'.format(name))
+                    continue
+                values = initialValues[modelo][name]
+                thisObj = {key: values[key] for key in values}
+                thisObj['name'] = name
+
+                theObject = modelo(**thisObj)
+                theObject.save(using=location)
