@@ -31,8 +31,8 @@
         <ul class="list-group list-group-flush">
           {% include "trialapp/item_list_template.html" with field='phase' value=fieldTrial.phase%}
           {% include "trialapp/item_list_template.html" with field='responsible' value=fieldTrial.responsible%}
-          {% include "trialapp/item_list_template.html" with field='started' value=fieldTrial.initiation%}
-          {% include "trialapp/item_list_template.html" with field='completed' value=fieldTrial.completed%}
+          {% include "trialapp/item_list_template.html" with field='started' value=fieldTrial.initiation_date%}
+          {% include "trialapp/item_list_template.html" with field='completed' value=fieldTrial.completion_date%}
         </ul>
       </div>
     </div>
