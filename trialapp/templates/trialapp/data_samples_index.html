@@ -19,12 +19,12 @@
                 </tr></thead><tbody>
                 {% for replica in replicaReferences %}
                 <tr>
-                    <td class="bg-custom-{{dataPointReference.color}}">
+                    <td class="bg-custom-{{replica.color}}">
                         {{replica.index}}
                     </td>
-                    <td class="bg-custom-{{dataPointReference.color}}">
+                    <td class="bg-custom-{{replica.color}}">
                         <a class="badge btn btn-info fs-5" 
-                           href="{% url 'data_samples_index' evaluation.field_trial_id replica.id %}">
+                           href="{% url 'data-samples-index' evaluation.field_trial_id replica.id %}">
                            {{replica.name}}</a>
                     </td>
                 </tr></tbody>

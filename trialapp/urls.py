@@ -104,9 +104,9 @@ urlpatterns = [
         data_views.showDataReplicaIndex,
         name='data_replica_index'),
     path(
-        'data_samples_index/<int:evaluation_id>/<int:selected_replica_id>',
+        'data_samples_index/<int:evaluation_id>/<int:selected_replica_id>/',
         data_views.showDataSamplesIndex,
-        name='data_samples_index'),
+        name='data-samples-index'),
     path(
         'manage_trial_assessment_set_api',
         data_views.ManageTrialAssessmentSet.as_view(),
@@ -114,5 +114,4 @@ urlpatterns = [
     path(
         'set_data_point',
         data_views.SetDataEvaluation.as_view(),
-        name='set_data_point'),
-]
+        name='set_data_point')]

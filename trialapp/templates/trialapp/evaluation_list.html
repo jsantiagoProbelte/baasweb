@@ -29,7 +29,7 @@
         <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>
         <td><a href="{% url 'data_thesis_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
         <td><a href="{% url 'data_replica_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
-        <td><a href="{% url 'data_samples_index' item.id 0 %}" class="btn btn-primary fs-4">&#43;</a></td>
+        <td><a href="{% url 'data-samples-index' item.id 0 %}" class="btn btn-primary fs-4">&#43;</a></td>
         <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
     </tr>
     </tbody>    
