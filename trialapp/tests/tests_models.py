@@ -30,12 +30,10 @@ class TrialAppModelTest(TestCase):
 
     THESIS = [{
         'name': 'thesis 666',
-        'number': 1,
         'description': 'Thesis 666 for product 1',
         'field_trial_id': 1
         }, {
         'name': 'thesis 777',
-        'number': 2,
         'description': 'Thesis 777 for product 2',
         'field_trial_id': 1
         }
@@ -279,7 +277,7 @@ class TrialAppModelTest(TestCase):
         sampleData = SampleData.getDataPoints(evaluation, selectedReplica)
         self.assertEqual(len(sampleData), 1)
 
-    def test_code(self):
+    def test_code_fieldTrial(self):
         hoy = datetime.date.today()
         year = hoy.year
         month = hoy.month
@@ -297,3 +295,18 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(counts, 1)
         expectedCode = FieldTrial.formatCode(year, month, counts)
         self.assertEqual(fieldTrial.code, expectedCode)
+
+    def test_thesis_extras(self):
+        fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+        code = Thesis.computeNumber(fieldTrial, True)
+        counts = Thesis.objects.count()
+        self.assertEqual(counts, 0)
+        self.assertEqual(code, counts + 1)
+        code = Thesis.computeNumber(fieldTrial, False)
+        self.assertEqual(code, 0)
+        thesis = Thesis.create_Thesis(
+            **TrialAppModelTest.THESIS[0])
+        counts = Thesis.objects.count()
+        self.assertEqual(counts, 1)
+        self.assertEqual(thesis.number, counts)

@@ -257,7 +257,6 @@ class FieldTrial(ModelHelpers, models.Model):
             created__lte=end).count()
         if increment:
             # The object maybe already created or is new
-            # For that
             counts += 1
         return FieldTrial.formatCode(year, month, counts)
 
@@ -303,10 +302,11 @@ class Thesis(ModelHelpers, models.Model):
 
     @classmethod
     def create_Thesis(cls, **kwargs):
+        fieldTrial = FieldTrial.objects.get(pk=kwargs['field_trial_id'])
         return cls.objects.create(
             name=kwargs['name'],
-            field_trial=FieldTrial.objects.get(pk=kwargs['field_trial_id']),
-            number=kwargs['number'],
+            field_trial=fieldTrial,
+            number=cls.computeNumber(fieldTrial, True),
             description=kwargs['description'])
 
     def getReferenceIndexDataInput(self):
@@ -314,6 +314,15 @@ class Thesis(ModelHelpers, models.Model):
 
     def getBackgroundColor(self):
         return self.number
+
+    @classmethod
+    def computeNumber(cls, fieldTrial, increment):
+        counts = Thesis.objects.filter(
+            field_trial=fieldTrial).count()
+        if increment:
+            # The object maybe already created or is new
+            counts += 1
+        return counts
 
 
 class ProductThesis(ModelHelpers, models.Model):

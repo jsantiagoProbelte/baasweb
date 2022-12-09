@@ -32,10 +32,12 @@ class ThesisListView(LoginRequiredMixin, ListView):
 
 @login_required
 def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
-    initialValues = {'field_trial_id': field_trial_id, 'thesis_id': thesis_id}
     template_name = 'trialapp/thesis_edit.html'
     title = 'New'
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+    initialValues = {'field_trial_id': field_trial_id,
+                     'thesis_id': thesis_id,
+                     'number': Thesis.computeNumber(fieldTrial, True)}
     product_list = []
     replica_list = []
 
@@ -69,9 +71,9 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
 
 @login_required
 def saveThesis(request):
-    values = {}
     fieldTrial = get_object_or_404(
         FieldTrial, pk=request.POST['field_trial_id'])
+    values = {}
     if 'thesis_id' in request.POST and request.POST['thesis_id']:
         # This is not a new user review.
         thesis = get_object_or_404(
@@ -88,10 +90,9 @@ def saveThesis(request):
         thesis = FactoryTrials.createThesisReplicasLayout(
             request, values, fieldTrial)
 
-    return redirect(
-        'thesis-edit',
-        field_trial_id=fieldTrial.id,
-        thesis_id=thesis.id)
+    return redirect('thesis-edit',
+                    field_trial_id=fieldTrial.id,
+                    thesis_id=thesis.id)
 
 
 class ManageProductToThesis(APIView):

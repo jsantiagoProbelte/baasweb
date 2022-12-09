@@ -58,6 +58,7 @@ class ThesisViewsTest(TestCase):
         newdescription = 'Thesis new description'
         thesisData['thesis_id'] = thesis.id
         thesisData['description'] = newdescription
+        thesisData['number'] = thesis.number
         request = self._apiFactory.post('thesis-save',
                                         data=thesisData)
         self._apiFactory.setUser(request)
