@@ -5,7 +5,7 @@
 {% block content %}
 
 
-{% include "trialapp/header.html" with title=fieldTrial.name subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
+{% include "trialapp/header.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
 {{fieldTrial.filename}}
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>

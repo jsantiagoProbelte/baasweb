@@ -16,7 +16,9 @@ class MyDateInput(forms.widgets.DateInput):
 
 class FieldTrialCreateForm(forms.Form):
     field_trial_id = forms.CharField(widget=forms.HiddenInput())
-    name = forms.CharField(label="Field Trial Name")
+    code = forms.CharField(label=False)
+    name = forms.CharField(label=False, widget=forms.TextInput(
+        attrs={'placeholder': 'Field Trial name'}))
     phase = forms.ChoiceField(label="Phase",
                               required=True, choices=[])
     project = forms.ChoiceField(label="Project",
@@ -26,7 +28,8 @@ class FieldTrialCreateForm(forms.Form):
     responsible = forms.CharField(label="Responsible")
     contact = forms.CharField(label="Farmer")
 
-    product = forms.ChoiceField(label="Main Product", required=True, choices=[])
+    product = forms.ChoiceField(label="Main Product",
+                                required=True, choices=[])
     crop = forms.ChoiceField(label="Crop", required=True, choices=[])
     plague = forms.ChoiceField(label="Plague", required=False, choices=[])
 
@@ -63,9 +66,11 @@ class FieldTrialCreateForm(forms.Form):
         self.helper.layout = Layout(
             Row(Div(HTML(title),
                     css_class='col-md-1 h2'),
+                Div(Field('code'),
+                    css_class='col-md-2'),
                 Div(Field('field_trial_id'),
                     Field('name'),
-                    css_class='col-md-9'),
+                    css_class='col-md-7'),
                 Div(FormActions(
                         Submit('submit', text, css_class="btn btn-info")),
                     css_class='col-md-2 text-sm-end'),

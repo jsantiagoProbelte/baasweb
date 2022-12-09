@@ -1,5 +1,7 @@
 # Create your models here.
 from django.db import models
+import datetime as dt
+from dateutil import relativedelta
 
 
 class ModelHelpers:
@@ -218,6 +220,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     initiation_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
+    created = models.DateTimeField(auto_now_add=True)
     # trial_status = models.ForeignKey(TrialStatus, on_delete=models.CASCADE)
 
     contact = models.CharField(max_length=100, null=True)
@@ -231,14 +234,40 @@ class FieldTrial(ModelHelpers, models.Model):
     samples_per_replica = models.IntegerField(default=0, null=True)
 
     report_filename = models.TextField(null=True)
+    code = models.CharField(max_length=10, null=True)
 
     foreignModelLabels = {
         Phase: 'phase', Objective: 'objective', Product: 'product',
         Crop: 'crop', Plague: 'plague', Project: 'project'}
 
     @classmethod
+    def formatCode(cls, year, month, counts):
+        return '{}{}{}'.format(year,
+                               str(month).zfill(2),
+                               str(counts).zfill(2))
+
+    @classmethod
+    def getCode(cls, theDate, increment):
+        year = theDate.year
+        month = theDate.month
+        start = dt.datetime(year, month, 1)
+        end = start + relativedelta.relativedelta(months=+1)
+        counts = FieldTrial.objects.filter(
+            created__gte=start).filter(
+            created__lte=end).count()
+        if increment:
+            # The object maybe already created or is new
+            # For that
+            counts += 1
+        return FieldTrial.formatCode(year, month, counts)
+
+    def setCode(self, increment):
+        self.code = self.getCode(self.created, increment)
+        self.save()
+
+    @classmethod
     def create_fieldTrial(cls, **kwargs):
-        return cls.objects.create(
+        trial = cls.objects.create(
             name=kwargs['name'],
             phase=Phase.objects.get(pk=kwargs['phase']),
             objective=Objective.objects.get(pk=kwargs['objective']),
@@ -253,6 +282,11 @@ class FieldTrial(ModelHelpers, models.Model):
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
             blocks=kwargs['blocks'])
+        trial.setCode(increment=False)
+        return trial
+
+    def getName(self):
+        return '{} {}'.format(self.code, self.name)
 
 
 class Thesis(ModelHelpers, models.Model):
@@ -287,10 +321,7 @@ class ProductThesis(ModelHelpers, models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=5, decimal_places=3)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-
-    foreignModelLabels = {
-        Product: 'product', RateUnit: 'rate_unit'
-        }
+    foreignModelLabels = {Product: 'product', RateUnit: 'rate_unit'}
 
     @classmethod
     def getObjects(cls, thesis: Thesis):
@@ -320,8 +351,7 @@ class ProductThesis(ModelHelpers, models.Model):
             thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
             product=Product.objects.get(pk=kwargs['product_id']),
             rate=kwargs['rate'],
-            rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id'])
-        )
+            rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id']))
 
     def getName(self):
         return ('[{}-{}] <{}, {} {}>').format(
@@ -544,8 +574,7 @@ class TrialStats:
         return {
             'products': Product.objects.count(),
             'field_trials': FieldTrial.objects.count(),
-            'points': ThesisData.objects.count()
-        }
+            'points': ThesisData.objects.count()}
 
 
 '''

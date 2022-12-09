@@ -241,9 +241,11 @@ class ReportFinder:
         return datetime.date.fromtimestamp(tiempo).isoformat()
 
     def setFieldTrialDefaultValues(self, filename, filepath):
+        initDate = self.dateIso(filepath, True)
         return {
             'name': filename.split('.')[0],
-            'initiation_date': self.dateIso(filepath, True),
+            'initiation_date': initDate,
+            'created': initDate,
             'completion_date': self.dateIso(filepath, False),
             'responsible': ModelHelpers.UNKNOWN,
             'contact': ModelHelpers.UNKNOWN,

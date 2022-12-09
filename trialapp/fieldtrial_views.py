@@ -11,6 +11,7 @@ from .forms import FieldTrialCreateForm
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import datetime
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -69,7 +70,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
 @login_required
 def editNewFieldTrial(request, field_trial_id=None, errors=None):
-    initialValues = {'field_trial_id': None}
+    initialValues = {
+        'field_trial_id': None,
+        'code': FieldTrial.getCode(datetime.date.today(), True)}
     template_name = 'trialapp/fieldtrial_edit.html'
     title = 'New'
     if field_trial_id is not None:
@@ -77,11 +80,13 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         initialValues = {
             'field_trial_id': fieldTrial.id,
+            'code': fieldTrial.code,
             'name': fieldTrial.name,
             'phase': fieldTrial.phase.id,
             'objective': fieldTrial.objective.id,
             'responsible': fieldTrial.responsible,
             'product': fieldTrial.product.id,
+            'project': fieldTrial.project.id,
             'crop': fieldTrial.crop.id,
             'plague': fieldTrial.plague.id,
             'initiation_date': fieldTrial.initiation_date,
@@ -113,6 +118,8 @@ def saveFieldTrial(request, field_trial_id=None):
                                        pk=request.POST['field_trial_id'])
         fieldTrial.name = FieldTrial.getValueFromRequestOrArray(
             request, values, 'name')
+        fieldTrial.code = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'code')
         fieldTrial.phase = FieldTrial.getValueFromRequestOrArray(
             request, values, 'phase')
         fieldTrial.objective = FieldTrial.getValueFromRequestOrArray(
@@ -227,6 +234,7 @@ class FieldTrialApi(APIView):
 
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,
+                       'titleView': fieldTrial.getName(),
                        'thesisTrialRows': self.orderItemsInRows(thesisTrial),
                        'assessments': assessmentsData,
                        'units': trialAssessmentSets,

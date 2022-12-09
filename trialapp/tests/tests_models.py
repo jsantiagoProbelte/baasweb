@@ -5,6 +5,7 @@ from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
                             AssessmentType, AssessmentUnit, ThesisData,\
                             Sample, SampleData, Replica
 from django.test import RequestFactory
+import datetime
 
 
 # Create your tests here.
@@ -277,3 +278,22 @@ class TrialAppModelTest(TestCase):
 
         sampleData = SampleData.getDataPoints(evaluation, selectedReplica)
         self.assertEqual(len(sampleData), 1)
+
+    def test_code(self):
+        hoy = datetime.date.today()
+        year = hoy.year
+        month = hoy.month
+        code = FieldTrial.getCode(hoy, True)
+        counts = FieldTrial.objects.count()
+        self.assertEqual(counts, 0)
+        expectedCode = FieldTrial.formatCode(year, month, counts + 1)
+        self.assertEqual(code, expectedCode)
+        code = FieldTrial.getCode(hoy, False)
+        expectedCode = FieldTrial.formatCode(year, month, counts)
+        self.assertEqual(code, expectedCode)
+        fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+        counts = FieldTrial.objects.count()
+        self.assertEqual(counts, 1)
+        expectedCode = FieldTrial.formatCode(year, month, counts)
+        self.assertEqual(fieldTrial.code, expectedCode)
