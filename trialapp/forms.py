@@ -3,7 +3,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Row, Field, HTML
 from crispy_forms.bootstrap import FormActions
-from .models import FieldTrial
+from .models import FieldTrial, Thesis
 
 
 class MyDateInput(forms.widgets.DateInput):
@@ -114,16 +114,24 @@ class ThesisEditForm(forms.Form):
     name = forms.CharField(label='Name', required=True)
     description = forms.CharField(label="Description", required=False,
                                   widget=forms.Textarea(attrs={'rows': 3}))
-    product = forms.ChoiceField(label="Main Product", required=True,
-                                choices=[])
-    rate = forms.CharField(
-        label='Rate', required=True,
+
+    number_applications = forms.CharField(
+        label='Number Applications', required=False,
         widget=forms.NumberInput())
-    rate_unit = forms.ChoiceField(label="Main Product", required=True,
-                                  choices=[])
+    interval = forms.CharField(
+        label='Days between applications', required=False,
+        widget=forms.NumberInput())
+    first_application = forms.CharField(
+        label='First application date',
+        widget=MyDateInput(), required=False)
+    mode = forms.ChoiceField(
+        label="Mode", required=False, choices=[])
 
     def __init__(self, *args, **kwargs):
+        fieldValues = Thesis.extractValueModelChoicesFromKwargs(kwargs)
         super().__init__(*args, **kwargs)
+        for label in fieldValues:
+            self.fields[label].choices = fieldValues[label]
         self.helper = FormHelper()
         self.helper.form_id = 'id-edit-thesis'
         self.helper.form_class = 'create-thesis'
@@ -148,6 +156,10 @@ class ThesisEditForm(forms.Form):
                     css_class='col-md-8'),
                 css_class='mb-4'),
             Field('description', css_class='mb-4 mt-2'),
+            Field('number_applications', css_class='mb-3'),
+            Field('interval', css_class='mb-3'),
+            Field('first_application', css_class='mb-3'),
+            Field('mode', css_class='mb-3'),
             Div(
                 FormActions(
                     Submit('submit', text,
@@ -190,8 +202,7 @@ class EvaluationEditForm(forms.Form):
                 Div(
                     Field('name', css_class='mb-3'),
                     Field('crop_stage_scale', css_class='mb-4'),
-                    css_class='col-md-6'),
-                css_class=''),
+                    css_class='col-md-6')),
             Div(
                 FormActions(
                     Submit('submit', text,

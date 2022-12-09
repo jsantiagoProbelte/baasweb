@@ -51,12 +51,6 @@ class ModelHelpers:
         return theList
 
     @classmethod
-    def initKValues(cls, kValues, location='default'):
-        for item in kValues:
-            theObject = cls(**item)
-            theObject.save(using=location)
-
-    @classmethod
     def getForeignModels(cls):
         if hasattr(cls, 'foreignModelLabels'):
             return cls.foreignModelLabels
@@ -96,14 +90,35 @@ class ModelHelpers:
         return values
 
     @classmethod
-    def getValueFromRequestOrArray(cls, request, values, label):
+    def getValueFromRequestOrArray(cls, request, values,
+                                   label, intValue=False,
+                                   returnNoneIfEmpty=False):
         if label in values:
             return values[label]
         else:
             if label in request.POST:
-                return request.POST[label]
+                value = request.POST.get(label, None)
+                returnNoneIfEmpty = True if intValue else returnNoneIfEmpty
+                if returnNoneIfEmpty and value == '':
+                    return None
+                if intValue:
+                    return int(value)
+                return value
             else:
                 return None
+
+    @classmethod
+    def preloadValues(cls, requestValues):
+        values = {}
+        foreignModels = cls.getForeignModels()
+        for model in foreignModels:
+            label = foreignModels[model]
+            id = requestValues.get(label, None)
+            if id:
+                values[label] = model.objects.get(pk=requestValues[label])
+            else:
+                values[label] = None
+        return values
 
     def getKey(self):
         return self.getName()
@@ -190,6 +205,10 @@ class Product(ModelHelpers, models.Model):
 
 
 class RateUnit(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+
+
+class ApplicationMode(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
@@ -294,6 +313,13 @@ class Thesis(ModelHelpers, models.Model):
     number = models.IntegerField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     description = models.TextField(null=True)
+    number_applications = models.IntegerField(null=True)
+    interval = models.IntegerField(null=True)
+    first_application = models.DateField(null=True)
+    mode = models.ForeignKey(ApplicationMode,
+                             on_delete=models.CASCADE, null=True)
+
+    foreignModelLabels = {ApplicationMode: 'mode'}
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -304,11 +330,19 @@ class Thesis(ModelHelpers, models.Model):
     @classmethod
     def create_Thesis(cls, **kwargs):
         fieldTrial = FieldTrial.objects.get(pk=kwargs['field_trial_id'])
-        return cls.objects.create(
+
+        thesis = cls.objects.create(
             name=kwargs['name'],
             field_trial=fieldTrial,
             number=cls.computeNumber(fieldTrial, True),
-            description=kwargs['description'])
+            description=kwargs['description'],
+            number_applications=kwargs['number_applications'],
+            interval=kwargs['interval'],
+            first_application=kwargs['first_application'])
+        if 'mode' in kwargs:
+            thesis.mode = kwargs['mode']
+            thesis.save()
+        return thesis
 
     def getReferenceIndexDataInput(self):
         return self.number
@@ -600,6 +634,10 @@ class TrialDbInitialLoader:
         return {
             Phase: [ModelHelpers.UNKNOWN, 'Positioning', 'Development',
                     'Registry'],
+            ApplicationMode: [
+                ModelHelpers.UNKNOWN, 'Foliar', 'Foliar Spray', 'Drench',
+                'Fertigation', 'Seeder', 'Fertiliser', 'Specific',
+                'Irrigation', 'Drip Irrigation'],
             Project: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',
                       'Belthirul',
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
@@ -669,8 +707,13 @@ class TrialDbInitialLoader:
     def loadInitialTrialValues(cls, location='default'):
         initialValues = cls.initialTrialModelValues()
         for modelo in initialValues:
-            kValues = [{'name': value} for value in initialValues[modelo]]
-            modelo.initKValues(kValues, location=location)
+            for value in initialValues[modelo]:
+                if modelo.objects.filter(name=value).exists():
+                    print('{} already in DB'.format(value))
+                    continue
+                thisObj = {'name': value}
+                theObject = modelo(**thisObj)
+                theObject.save(using=location)
 
         initialValues = cls.initialTrialModelComplexValues()
         for modelo in initialValues:

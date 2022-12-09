@@ -31,11 +31,18 @@ class TrialAppModelTest(TestCase):
     THESIS = [{
         'name': 'thesis 666',
         'description': 'Thesis 666 for product 1',
-        'field_trial_id': 1
+        'field_trial_id': 1,
+        'number_applications': 5,
+        'interval': 14,
+        'first_application': '2021-01-01'
         }, {
         'name': 'thesis 777',
         'description': 'Thesis 777 for product 2',
-        'field_trial_id': 1
+        'field_trial_id': 1,
+        'number_applications': 5,
+        'interval': 7,
+        'first_application': '2021-01-01',
+        'mode_id': 2
         }
     ]
 

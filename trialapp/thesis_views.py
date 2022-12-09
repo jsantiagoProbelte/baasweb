@@ -51,10 +51,15 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
         initialValues['name'] = thesis.name
         initialValues['number'] = thesis.number
         initialValues['description'] = thesis.description
+        initialValues['number_applications'] = thesis.number_applications
+        initialValues['interval'] = thesis.interval
+        initialValues['first_application'] = thesis.first_application
+        initialValues['mode'] = thesis.mode.id if thesis.mode else None
         product_list = ProductThesis.getObjects(thesis)
         replica_list = Replica.getObjects(thesis)
 
-    edit_form = ThesisEditForm(initial=initialValues)
+    dictKwargs = Thesis.generateFormKwargsChoices(initialValues)
+    edit_form = ThesisEditForm(**dictKwargs)
 
     return render(request, template_name,
                   {'edit_form': edit_form,
@@ -73,11 +78,11 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
 def saveThesis(request):
     fieldTrial = get_object_or_404(
         FieldTrial, pk=request.POST['field_trial_id'])
-    values = {}
+    values = Thesis.preloadValues(request.POST)
     if 'thesis_id' in request.POST and request.POST['thesis_id']:
         # This is not a new user review.
         thesis = get_object_or_404(
-            Thesis, pk=request.POST['field_trial_id'])
+            Thesis, pk=request.POST['thesis_id'])
         thesis.field_trial = fieldTrial
         thesis.name = Thesis.getValueFromRequestOrArray(
             request, values, 'name')
@@ -85,6 +90,18 @@ def saveThesis(request):
             request, values, 'number')
         thesis.description = Thesis.getValueFromRequestOrArray(
             request, values, 'description')
+
+        thesis.number_applications = Thesis.getValueFromRequestOrArray(
+            request, values, 'number_applications', intValue=True)
+
+        thesis.interval = Thesis.getValueFromRequestOrArray(
+            request, values, 'interval', intValue=True)
+
+        thesis.first_application = Thesis.getValueFromRequestOrArray(
+            request, values, 'first_application', returnNoneIfEmpty=True)
+
+        thesis.mode = Thesis.getValueFromRequestOrArray(
+            request, values, 'mode', returnNoneIfEmpty=True)
         thesis.save()
     else:
         thesis = FactoryTrials.createThesisReplicasLayout(

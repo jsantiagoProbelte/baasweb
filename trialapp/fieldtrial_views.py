@@ -106,11 +106,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
 
 @login_required
 def saveFieldTrial(request, field_trial_id=None):
-    values = {}
-    foreignModels = FieldTrial.getForeignModels()
-    for model in foreignModels:
-        label = foreignModels[model]
-        values[label] = model.objects.get(pk=request.POST[label])
+    values = FieldTrial.preloadValues(request.POST)
 
     if 'field_trial_id' in request.POST and request.POST['field_trial_id']:
         # This is not a new user review.
@@ -142,13 +138,10 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'location')
         fieldTrial.blocks = int(FieldTrial.getValueFromRequestOrArray(
             request, values, 'blocks'))
-        fieldTrial.replicas_per_thesis = int(
-            FieldTrial.getValueFromRequestOrArray(
-                request, values, 'replicas_per_thesis'))
-        samples_per_replica = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'samples_per_replica')
-        if samples_per_replica:
-            fieldTrial.samples_per_replica = int(samples_per_replica)
+        fieldTrial.replicas_per_thesis = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'replicas_per_thesis', intValue=True)
+        fieldTrial.samples_per_replica = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'samples_per_replica', intValue=True)
         fieldTrial.save()
         LayoutTrial.distributeLayout(fieldTrial)
     else:

@@ -155,7 +155,15 @@ class FactoryTrials:
                 request, values, 'number'),
             field_trial_id=fieldTrial.id,
             description=Thesis.getValueFromRequestOrArray(
-                request, values, 'description'))
+                request, values, 'description'),
+            number_applications=Thesis.getValueFromRequestOrArray(
+                request, values, 'number_applications', intValue=True),
+            interval=Thesis.getValueFromRequestOrArray(
+                request, values, 'interval', intValue=True),
+            first_application=Thesis.getValueFromRequestOrArray(
+                request, values, 'first_application', returnNoneIfEmpty=True),
+            mode=Thesis.getValueFromRequestOrArray(
+                request, values, 'mode', returnNoneIfEmpty=True))
         Replica.createReplicas(thesis, fieldTrial.replicas_per_thesis)
 
         # Reassigned all replicas of the same
