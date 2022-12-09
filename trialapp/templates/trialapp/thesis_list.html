@@ -4,11 +4,10 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-6">
-
 {% include "trialapp/header.html" with title=field_trial_name subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' refId=field_trial_id%}
 
+<div class="row">
+    <div class="col-md-6">
         <div class="card card-body-baas">
         <table class="table" id="table-items">
             <thead>
@@ -34,7 +33,7 @@
         </table>
         </div>
     </div>
-    <div class="col-md-6  mt-3">
+    <div class="col-md-6">
         <div class="card no-border" >
             <div class="card-header-baas h5">
                 Layout

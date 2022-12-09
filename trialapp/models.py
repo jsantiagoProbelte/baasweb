@@ -285,7 +285,8 @@ class FieldTrial(ModelHelpers, models.Model):
         return trial
 
     def getName(self):
-        return '{} {}'.format(self.code, self.name)
+        code = self.code if self.code else '[undefined]'
+        return '{} {}'.format(code, self.name)
 
 
 class Thesis(ModelHelpers, models.Model):
