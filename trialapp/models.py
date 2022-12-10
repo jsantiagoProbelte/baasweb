@@ -91,7 +91,7 @@ class ModelHelpers:
 
     @classmethod
     def getValueFromRequestOrArray(cls, request, values,
-                                   label, intValue=False,
+                                   label, intValue=False, floatValue=False,
                                    returnNoneIfEmpty=False):
         if label in values:
             return values[label]
@@ -99,10 +99,13 @@ class ModelHelpers:
             if label in request.POST:
                 value = request.POST.get(label, None)
                 returnNoneIfEmpty = True if intValue else returnNoneIfEmpty
+                returnNoneIfEmpty = True if floatValue else returnNoneIfEmpty
                 if returnNoneIfEmpty and value == '':
                     return None
                 if intValue:
                     return int(value)
+                if floatValue:
+                    return float(value)
                 return value
             else:
                 return None
@@ -251,6 +254,17 @@ class FieldTrial(ModelHelpers, models.Model):
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
     samples_per_replica = models.IntegerField(default=0, null=True)
+    distance_between_plants = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True)
+    distance_between_rows = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True)
+    number_rows = models.IntegerField(default=0, null=True)
+    lenght_row = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True)
+    net_surface = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True)
+    gross_surface = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True)
 
     report_filename = models.TextField(null=True)
     code = models.CharField(max_length=10, null=True)
@@ -703,6 +717,7 @@ class TrialDbInitialLoader:
                 'Peach': {'other': 'Melocoton'},
                 'Carrot': {'other': 'Zanahoria'}}}
 
+    # Use location='shhtunnel_db'
     @classmethod
     def loadInitialTrialValues(cls, location='default'):
         initialValues = cls.initialTrialModelValues()

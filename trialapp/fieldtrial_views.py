@@ -95,7 +95,14 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'location': fieldTrial.location,
             'blocks': fieldTrial.blocks,
             'replicas_per_thesis': fieldTrial.replicas_per_thesis,
-            'samples_per_replica': fieldTrial.samples_per_replica}
+            'samples_per_replica': fieldTrial.samples_per_replica,
+            'distance_between_plants': fieldTrial.distance_between_plants,
+            'distance_between_rows': fieldTrial.distance_between_rows,
+            'number_rows': fieldTrial.number_rows,
+            'lenght_row': fieldTrial.lenght_row,
+            'net_surface': fieldTrial.net_surface,
+            'gross_surface': fieldTrial.gross_surface
+            }
     dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
     newFieldTrial_form = FieldTrialCreateForm(**dictKwargs)
     return render(request, template_name,
@@ -142,6 +149,20 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'replicas_per_thesis', intValue=True)
         fieldTrial.samples_per_replica = FieldTrial.getValueFromRequestOrArray(
                 request, values, 'samples_per_replica', intValue=True)
+        fieldTrial.distance_between_plants = FieldTrial.\
+            getValueFromRequestOrArray(
+                request, values, 'distance_between_plants', floatValue=True)
+        fieldTrial.distance_between_rows = FieldTrial.\
+            getValueFromRequestOrArray(
+                request, values, 'distance_between_rows', floatValue=True)
+        fieldTrial.number_rows = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'number_rows', intValue=True)
+        fieldTrial.lenght_row = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'lenght_row', floatValue=True)
+        fieldTrial.net_surface = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'net_surface', floatValue=True)
+        fieldTrial.gross_surface = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'gross_surface', floatValue=True)
         fieldTrial.save()
         LayoutTrial.distributeLayout(fieldTrial)
     else:
@@ -174,7 +195,19 @@ def saveFieldTrial(request, field_trial_id=None):
             replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'replicas_per_thesis'),
             samples_per_replica=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'samples_per_replica'))
+                request, values, 'samples_per_replica'),
+            distance_between_plants=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'distance_between_plants', floatValue=True),
+            distance_between_rows=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'distance_between_rows', floatValue=True),
+            number_rows=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'number_rows', intValue=True),
+            lenght_row=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'lenght_row', floatValue=True),
+            net_surface=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'net_surface', floatValue=True),
+            gross_surface=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'gross_surface', floatValue=True))
     return redirect('field_trial_api', field_trial_id=fieldTrial.id)
 
 

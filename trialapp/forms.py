@@ -43,6 +43,18 @@ class FieldTrialCreateForm(forms.Form):
     samples_per_replica = forms.CharField(
         label="# samples", required=False,
         widget=forms.NumberInput())
+    distance_between_plants = forms.CharField(
+        label="Distance between plants", required=False)
+    distance_between_rows = forms.CharField(
+        label="Distance between rows", required=False)
+    number_rows = forms.CharField(
+        label="# rows", required=False)
+    lenght_row = forms.CharField(
+        label="Row length(m)", required=False)
+    net_surface = forms.CharField(
+        label="Net surface (m2)", required=False)
+    gross_surface = forms.CharField(
+        label="Gross surface (m2)", required=False)
 
     def __init__(self, *args, **kwargs):
         fieldValues = FieldTrial.extractValueModelChoicesFromKwargs(kwargs)
@@ -96,6 +108,20 @@ class FieldTrialCreateForm(forms.Form):
                                 Div(Field('replicas_per_thesis'),
                                     css_class='col-md-4'),
                                 Div(Field('samples_per_replica'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Row(Div(Field('number_rows'),
+                                    css_class='col-md-4'),
+                                Div(Field('distance_between_rows'),
+                                    css_class='col-md-4'),
+                                Div(Field('distance_between_plants'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Row(Div(Field('lenght_row'),
+                                    css_class='col-md-4'),
+                                Div(Field('gross_surface'),
+                                    css_class='col-md-4'),
+                                Div(Field('net_surface'),
                                     css_class='col-md-4'),
                                 css_class='mb-2'),
                             Field('contact', css_class='mb-2'),
