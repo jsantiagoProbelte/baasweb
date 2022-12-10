@@ -38,18 +38,6 @@
     </div>
     <div class="col-md-3">
       <div class="card no-border mb-3" >
-        <div class="card-header-baas h4">
-          Layout
-        </div>
-        <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='# replicas' value=fieldTrial.replicas_per_thesis%}
-          {% include "trialapp/item_list_template.html" with field='# blocks' value=fieldTrial.blocks%}
-          {% include "trialapp/item_list_template.html" with field='# samples' value=fieldTrial.samples_per_replica%}
-          {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
-          {% include "trialapp/item_list_template.html" with field='contact' value=fieldTrial.contact%}
-        </ul>
-      </div>
-      <div class="card no-border mb-3" >
         <div class="card-header-baas h5">
             Units
             <a class="btn btn-info btn-sm float-end" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">&#10000;</a>
@@ -73,6 +61,24 @@
           {% empty %}
             <p>No Assessments yet.</p>
           {% endfor %}
+        </ul>
+      </div>
+      <div class="card no-border mb-3" >
+        <div class="card-header-baas h4">
+          Layout
+        </div>
+        <ul class="list-group list-group-flush">
+          {% include "trialapp/item_list_template.html" with field='# replicas' value=fieldTrial.replicas_per_thesis%}
+          {% include "trialapp/item_list_template.html" with field='# blocks' value=fieldTrial.blocks%}
+          {% include "trialapp/item_list_template.html" with field='# samples' value=fieldTrial.samples_per_replica%}
+          {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
+          {% include "trialapp/item_list_template.html" with field='contact' value=fieldTrial.contact%}
+          {% include "trialapp/item_list_template.html" with field='# rows' value=fieldTrial.number_rows%}
+          {% include "trialapp/item_list_template.html" with field='Distance between plants' value=fieldTrial.distance_between_plants%}
+          {% include "trialapp/item_list_template.html" with field='Distance between rows' value=fieldTrial.distance_between_rows%}
+          {% include "trialapp/item_list_template.html" with field='Row length(m)' value=fieldTrial.lenght_row%}
+          {% include "trialapp/item_list_template.html" with field='Gross surface (m2)' value=fieldTrial.gross_surface%}
+          {% include "trialapp/item_list_template.html" with field='Net surface (m2)' value=fieldTrial.net_surface%}
         </ul>
       </div>
     </div>
