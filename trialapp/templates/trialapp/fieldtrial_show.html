@@ -67,18 +67,17 @@
         <div class="card-header-baas h4">
           Layout
         </div>
+        <table class="table">
+          <thead><tr><td># replicas</td><td># blocks</td><td># samples</td></tr></thead>
+          <tbody><tr><td>{{fieldTrial.replicas_per_thesis}}</td><td>{{fieldTrial.blocks}}</td><td>{{fieldTrial.samples_per_replica}}</td></tr></tbody>
+          <thead><tr><td># rows</td><td>Distance between rows</td><td>Distance between plants</td></tr></thead>
+          <tbody><tr><td>{{fieldTrial.number_rows}}</td><td>{{ieldTrial.distance_between_rows}}</td><td>{{fieldTrial.distance_between_plants}}</td></tr></tbody>
+          <thead><tr><td>Row length(m)</td><td>Gross surface (m2)</td><td>Net surface (m2)</td></tr></thead>
+          <tbody><tr><td>{{fieldTrial.lenght_row}}</td><td></td>{{fieldTrial.gross_surface}}<td>{{fieldTrial.net_surface}}</td></tr></tbody>
+        </table>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='# replicas' value=fieldTrial.replicas_per_thesis%}
-          {% include "trialapp/item_list_template.html" with field='# blocks' value=fieldTrial.blocks%}
-          {% include "trialapp/item_list_template.html" with field='# samples' value=fieldTrial.samples_per_replica%}
           {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
           {% include "trialapp/item_list_template.html" with field='contact' value=fieldTrial.contact%}
-          {% include "trialapp/item_list_template.html" with field='# rows' value=fieldTrial.number_rows%}
-          {% include "trialapp/item_list_template.html" with field='Distance between plants' value=fieldTrial.distance_between_plants%}
-          {% include "trialapp/item_list_template.html" with field='Distance between rows' value=fieldTrial.distance_between_rows%}
-          {% include "trialapp/item_list_template.html" with field='Row length(m)' value=fieldTrial.lenght_row%}
-          {% include "trialapp/item_list_template.html" with field='Gross surface (m2)' value=fieldTrial.gross_surface%}
-          {% include "trialapp/item_list_template.html" with field='Net surface (m2)' value=fieldTrial.net_surface%}
         </ul>
       </div>
     </div>
