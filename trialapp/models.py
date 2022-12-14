@@ -198,7 +198,7 @@ class Vendor(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class Phase(ModelHelpers, models.Model):
+class TrialType(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
@@ -231,7 +231,8 @@ class TrialStatus(ModelHelpers, models.Model):
 
 class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
-    phase = models.ForeignKey(Phase, on_delete=models.CASCADE, null=True)
+    trial_type = models.ForeignKey(TrialType,
+                                   on_delete=models.CASCADE, null=True)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     responsible = models.CharField(max_length=100)
 
@@ -243,7 +244,8 @@ class FieldTrial(ModelHelpers, models.Model):
     initiation_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    # trial_status = models.ForeignKey(TrialStatus, on_delete=models.CASCADE)
+    trial_status = models.ForeignKey(TrialStatus,
+                                     on_delete=models.CASCADE, null=True)
 
     contact = models.CharField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=True)
@@ -270,8 +272,9 @@ class FieldTrial(ModelHelpers, models.Model):
     code = models.CharField(max_length=10, null=True)
 
     foreignModelLabels = {
-        Phase: 'phase', Objective: 'objective', Product: 'product',
-        Crop: 'crop', Plague: 'plague', Project: 'project'}
+        TrialType: 'trial_type', Objective: 'objective', Product: 'product',
+        Crop: 'crop', Plague: 'plague', Project: 'project',
+        TrialStatus: 'trial_status'}
 
     @classmethod
     def formatCode(cls, year, month, counts):
@@ -301,7 +304,8 @@ class FieldTrial(ModelHelpers, models.Model):
     def create_fieldTrial(cls, **kwargs):
         trial = cls.objects.create(
             name=kwargs['name'],
-            phase=Phase.objects.get(pk=kwargs['phase']),
+            trial_type=TrialType.objects.get(pk=kwargs['trial_type']),
+            trial_status=TrialStatus.objects.get(pk=kwargs['trial_status']),
             objective=Objective.objects.get(pk=kwargs['objective']),
             responsible=kwargs['responsible'],
             product=Product.objects.get(pk=kwargs['product']),
@@ -646,8 +650,10 @@ class TrialDbInitialLoader:
     @classmethod
     def initialTrialModelValues(cls):
         return {
-            Phase: [ModelHelpers.UNKNOWN, 'Positioning', 'Development',
-                    'Registry'],
+            TrialType: [ModelHelpers.UNKNOWN, 'Positioning', 'Development',
+                        'Demo', 'Registry'],
+            TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
+                          'Anual Recurrence', 'Close'],
             ApplicationMode: [
                 ModelHelpers.UNKNOWN, 'Foliar', 'Foliar Spray', 'Drench',
                 'Fertigation', 'Seeder', 'Fertiliser', 'Specific',

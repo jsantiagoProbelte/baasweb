@@ -56,6 +56,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'name': item.name,
                 'crop': item.crop.name,
                 'product': item.product.name,
+                'trial_status': item.trial_status if item.trial_status else '',
                 'project': item.project.name,
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
@@ -82,7 +83,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'field_trial_id': fieldTrial.id,
             'code': fieldTrial.code,
             'name': fieldTrial.name,
-            'phase': fieldTrial.phase.id,
+            'trial_type': fieldTrial.trial_type.id,
             'objective': fieldTrial.objective.id,
             'responsible': fieldTrial.responsible,
             'product': fieldTrial.product.id,
@@ -123,8 +124,10 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'name')
         fieldTrial.code = FieldTrial.getValueFromRequestOrArray(
             request, values, 'code')
-        fieldTrial.phase = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'phase')
+        fieldTrial.trial_type = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'trial_type')
+        fieldTrial.trial_status = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'trial_status')
         fieldTrial.objective = FieldTrial.getValueFromRequestOrArray(
             request, values, 'objective')
         fieldTrial.responsible = FieldTrial.getValueFromRequestOrArray(
@@ -170,8 +173,10 @@ def saveFieldTrial(request, field_trial_id=None):
         fieldTrial = FieldTrial.objects.create(
             name=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'name'),
-            phase=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'phase'),
+            trial_type=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'trial_type'),
+            trial_status=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'trial_status'),
             objective=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'objective'),
             responsible=FieldTrial.getValueFromRequestOrArray(

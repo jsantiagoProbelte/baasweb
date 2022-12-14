@@ -13,7 +13,8 @@ class TrialAppModelTest(TestCase):
 
     FIELDTRIALS = [{
             'name': 'fieldTrial 666',
-            'phase': 1,
+            'trial_type': 1,
+            'trial_status': 1,
             'objective': 1,
             'responsible': 'Waldo',
             'product': 1,

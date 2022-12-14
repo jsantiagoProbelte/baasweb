@@ -29,7 +29,8 @@
           Status
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='phase' value=fieldTrial.phase%}
+          {% include "trialapp/item_list_template.html" with field='type' value=fieldTrial.trial_type%}
+          {% include "trialapp/item_list_template.html" with field='status' value=fieldTrial.trial_status %}
           {% include "trialapp/item_list_template.html" with field='responsible' value=fieldTrial.responsible%}
           {% include "trialapp/item_list_template.html" with field='started' value=fieldTrial.initiation_date%}
           {% include "trialapp/item_list_template.html" with field='completed' value=fieldTrial.completion_date%}

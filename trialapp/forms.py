@@ -19,8 +19,10 @@ class FieldTrialCreateForm(forms.Form):
     code = forms.CharField(label=False)
     name = forms.CharField(label=False, widget=forms.TextInput(
         attrs={'placeholder': 'Field Trial name'}))
-    phase = forms.ChoiceField(label="Phase",
-                              required=True, choices=[])
+    trial_type = forms.ChoiceField(label="Type",
+                                   required=True, choices=[])
+    trial_status = forms.ChoiceField(label="Status",
+                                     required=True, choices=[])
     project = forms.ChoiceField(label="Project",
                                 required=True, choices=[])
     objective = forms.ChoiceField(label="Objective",
@@ -97,7 +99,8 @@ class FieldTrialCreateForm(forms.Form):
                         css_class="card no-border"),
                     css_class='col-md-4'),
                 Div(Div(HTML('Status'), css_class="card-header-baas h4"),
-                    Div(Div(Field('phase', css_class='mb-2'),
+                    Div(Div(Field('trial_type', css_class='mb-2'),
+                            Field('trial_status', css_class='mb-2'),
                             Field('responsible', css_class='mb-2'),
                             Field('initiation_date', css_class='mb-2'),
                             css_class="card-body-baas"),
