@@ -49,7 +49,7 @@
     <tbody>
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td>-</td>
+        <td><span class="badge">{{ item.trial_status }}</span></td>
         <td><a class="btn btn-info" href="{% url 'field_trial_api' item.id%}">{{ item.name }}</a></td>
         <td>
             <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' item.id%}">{{item.results}} &#10000;</a>
