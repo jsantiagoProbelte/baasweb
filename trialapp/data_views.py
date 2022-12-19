@@ -158,11 +158,16 @@ def showDataReplicaIndex(request, evaluation_id=None,
     dataPoints = ReplicaData.getDataPoints(evaluation)
     dataPointsList = sortDataPointsForDisplay(
         'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
+
+    graph = Graph('replica', trialAssessmentSets, dataPoints)
+    graphPlots, classGraph = graph.scatter()
+
     return render(request, template_name, {
                   'trialAssessmentSets': trialAssessmentSets,
                   'dataPoints': dataPointsList,
                   'evaluation': evaluation,
                   'theses': thesisTrial,
+                  'graphPlots': graphPlots, 'classGraph': classGraph,
                   'errors': errors})
 
 

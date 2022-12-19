@@ -8,6 +8,9 @@ class Graph:
     SCATTER = 'scatter'
     BAR = 'bar'
 
+    L_THESIS = 'thesis'
+    L_REPLICA = 'replica'
+
     def __init__(self, level,
                  trialAssessments, dataPoints):
         self._graphData = self.buildData(level,
@@ -36,7 +39,8 @@ class Graph:
             data = go.Bar(orientation=orientation,
                           name=name, x=theY, y=theX)
         elif typeFigure == Graph.SCATTER:
-            data = go.Scatter(name=name, x=theY, y=theX)
+            data = go.Scatter(name=name, x=theX, y=theY,
+                              mode='markers', marker_size=15)
         fig = go.Figure(data)
         # Update layout for graph object Figure
         fig.update_layout(
@@ -85,7 +89,12 @@ class Graph:
             theY = []
             for dataPoint in dataPoints:
                 if unit.id == dataPoint.unit.id:
-                    theX.append(dataPoint.reference.name)
+                    xValue = None
+                    if level == Graph.L_THESIS:
+                        xValue = dataPoint.reference.name
+                    elif level == Graph.L_REPLICA:
+                        xValue = dataPoint.reference.thesis.name
+                    theX.append(xValue)
                     theY.append(dataPoint.value)
             thisGraph['x'] = theX
             thisGraph['y'] = theY
