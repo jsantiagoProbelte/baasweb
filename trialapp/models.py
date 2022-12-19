@@ -166,15 +166,6 @@ class Crop(ModelHelpers, models.Model):
     scientific = models.CharField(max_length=100)
     other = models.CharField(max_length=100, null=True)
 
-    @classmethod
-    def getDictObjectsId(cls):
-        theDict = {}
-        for item in cls.getObjects():
-            theDict[item.name.lower()] = item.id
-            if item.other:
-                theDict[item.other.lower()] = item.id
-        return theDict
-
 
 class CropVariety(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)

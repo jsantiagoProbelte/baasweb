@@ -3,7 +3,7 @@ from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
                             ProductThesis, Thesis, Evaluation,\
                             TrialDbInitialLoader, TrialAssessmentSet,\
                             AssessmentType, AssessmentUnit, ThesisData,\
-                            Sample, SampleData, Replica
+                            Sample, SampleData, Replica, TrialType
 from django.test import RequestFactory
 import datetime
 
@@ -74,6 +74,17 @@ class TrialAppModelTest(TestCase):
 
     def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
+
+    def test_avoidduplicates(self):
+        crops = Crop.objects.count()
+        self.assertTrue(crops > 0)
+        types = TrialType.objects.count()
+        self.assertTrue(types > 0)
+        TrialDbInitialLoader.loadInitialTrialValues()
+        crops2 = Crop.objects.count()
+        self.assertEqual(crops, crops2)
+        types2 = TrialType.objects.count()
+        self.assertEqual(types, types2)
 
     def test_ModelHelpers(self):
         itemsFromObjectsAll = Crop.objects.all()
