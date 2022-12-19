@@ -1,6 +1,6 @@
 <h2 class="fw-bold mt-3 mb-3">
     {% if go_ref %}
-    <a href="{% url go_ref refId %}" >{{title}}</a>
+    <a href="{% url go_ref refId %}" class="btn btn-dark fs-4">{{title}}</a>
     {% else %}
         {{title}}
     {% endif %}
@@ -35,3 +35,6 @@
 </div>
 </span>
 </h2>
+{% if subheader %}
+<h4 class="mt-3 mb-3 text-muted">{{subheader}}</h4>
+{% endif %}

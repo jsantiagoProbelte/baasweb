@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "trialapp/header.html" with title=field_trial_name subtitle='assessments' go_ref='field_trial_api' new_href_id='evaluation-edit' refId=field_trial_id%}
+{% include "trialapp/header.html" with title=fieldTrial.code subheader=fieldTrial.name action='assessments' go_ref='field_trial_api' new_href_id='evaluation-edit' refId=fieldTrial.id%}
 
 <div class="card card-body-baas">
 <table class="table" id="table-items">
@@ -23,7 +23,7 @@
     <tbody>
 {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td><a href="{% url 'evaluation-edit' field_trial_id item.id %}" class="btn btn-sm btn-info">&#10000;</a></td>
+        <td><a href="{% url 'evaluation-edit' fieldTrial.id item.id %}" class="btn btn-sm btn-info">&#10000;</a></td>
         <td>{{item.evaluation_date}}</td>
         <td>{{item.name}}</td>
         <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>

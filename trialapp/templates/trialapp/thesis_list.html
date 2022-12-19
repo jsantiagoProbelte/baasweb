@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "trialapp/header.html" with title=field_trial_name subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' refId=field_trial_id%}
+{% include "trialapp/header.html" with title=fieldTrial.code subheader=fieldTrial.name action='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' refId=fieldTrial.id%}
 
 <div class="row">
     <div class="col-md-6">
@@ -22,7 +22,7 @@
         {% for item in object_list %}
             <tr id="item-{{item.id}}">
                 <td class="bg-custom-{{item.number}}">{{item.number}}</td>
-                <td class="bg-custom-{{item.number}}"><a href="{% url 'thesis-edit' field_trial_id item.id %}" class="btn btn-info">{{item.name}}</a></td>
+                <td class="bg-custom-{{item.number}}"><a href="{% url 'thesis-edit' fieldTrial.id item.id %}" class="btn btn-info">{{item.name}}</a></td>
                 <td class="bg-custom-{{item.number}}">{{item.description}}</td>
                 <td class="bg-custom-{{item.number}}"><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
             </tr>
@@ -37,7 +37,7 @@
         <div class="card no-border" >
             <div class="card-header-baas h5">
                 Layout
-                <a class="btn btn-info btn-sm float-end" href="{% url 'reshuffle-blocks' field_trial_id%}">&#10000;</a>
+                <a class="btn btn-info btn-sm float-end" href="{% url 'reshuffle-blocks' fieldTrial.id%}">&#10000;</a>
             </div>
             <div class="card-body-baas bg-custom-0" >
                 {% for row in rowsReplicas %}

@@ -23,11 +23,10 @@ class ThesisListView(LoginRequiredMixin, ListView):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Thesis.getObjects(fieldTrial)
         return {'object_list': new_list,
-                'field_trial_name': fieldTrial.name,
+                'fieldTrial': fieldTrial,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
-                                                       new_list),
-                'field_trial_id': fieldTrial.id}
+                                                       new_list)}
 
 
 @login_required
@@ -63,8 +62,7 @@ def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
 
     return render(request, template_name,
                   {'edit_form': edit_form,
-                   'field_trial_id': field_trial_id,
-                   'field_trial_name': fieldTrial.name,
+                   'fieldTrial': fieldTrial,
                    'thesis_id': thesis_id,
                    'title': title,
                    'product_list': product_list,
