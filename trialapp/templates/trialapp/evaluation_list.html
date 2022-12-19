@@ -38,6 +38,8 @@
 {% endfor %}
 </table>
 </div>
+
+{% include 'trialapp/data_graphs.html' with graphPlots=graphPlots classGraph=classGraph %}
 {% endblock %}
 
 {% block scripts %}

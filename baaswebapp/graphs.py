@@ -110,7 +110,7 @@ class Graph:
     def groupOnRows(self, graphs, columns=4):
         numGraphs = len(graphs)
         if numGraphs == 0:
-            return []
+            return [], 'col-md-12'
         classGroup = 'col-md-{}'.format(int(12 / (numGraphs % columns)))
         mgraphs = []
         count = 0
@@ -149,11 +149,10 @@ class Graph:
                         color = Graph.COLOR_LIST[
                             dataPoint.reference.number]
                     elif level == Graph.L_REPLICA:
-                        symbol = Graph.SYMBOL_LIST.get(
-                            dataPoint.reference.number, 'star')
-                        color = Graph.COLOR_LIST.get(
-                            dataPoint.reference.thesis.number,
-                            COLOR_main_color)
+                        symbol = Graph.SYMBOL_LIST[
+                            dataPoint.reference.number]
+                        color = Graph.COLOR_LIST[
+                            dataPoint.reference.thesis.number]
                         xValue = dataPoint.reference.thesis.name
                     theX.append(xValue)
                     theY.append(dataPoint.value)

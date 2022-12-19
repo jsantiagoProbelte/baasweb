@@ -4,12 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import FieldTrial,  ProductEvaluation,\
-    ProductThesis, Evaluation
+    ProductThesis, Evaluation, TrialAssessmentSet, ReplicaData
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import EvaluationEditForm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from trialapp.trial_helper import LayoutTrial
+from baaswebapp.graphs import Graph
 
 
 class EvaluationListView(LoginRequiredMixin, ListView):
@@ -27,8 +28,14 @@ class EvaluationListView(LoginRequiredMixin, ListView):
             field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Evaluation.getObjects(fieldTrial)
+
+        trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
+        dataPoints = ReplicaData.getDataPointsFieldTrial(fieldTrial)
+        graph = Graph('replica', trialAssessmentSets, dataPoints)
+        graphPlots, classGraph = graph.scatter()
         return {'object_list': new_list,
-                'fieldTrial': fieldTrial}
+                'fieldTrial': fieldTrial,
+                'graphPlots': graphPlots, 'classGraph': classGraph}
 
 
 @login_required

@@ -160,6 +160,12 @@ class ModelHelpers:
         return cls.objects \
                   .filter(evaluation=evaluation)
 
+    @classmethod
+    def getDataPointsFieldTrial(cls, fieldTrial):
+        evaluationIds = [item.id for item in Evaluation.getObjects(fieldTrial)]
+        return cls.objects \
+                  .filter(evaluation_id__in=evaluationIds)
+
 
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
