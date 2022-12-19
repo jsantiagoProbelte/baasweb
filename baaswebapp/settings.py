@@ -46,7 +46,8 @@ EXTENDED_APPS = [
     'crispy_forms',
     'bootstrap5',
     'rest_framework',
-    'widget_tweaks'
+    'widget_tweaks',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
 ]
 
 CUSTOM_APPS = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',
 ]
 
 ROOT_URLCONF = 'baaswebapp.urls'
@@ -179,3 +181,5 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'

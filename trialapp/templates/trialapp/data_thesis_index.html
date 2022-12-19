@@ -10,6 +10,8 @@
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 
+
+
 <div class="card card-body-baas">
 <table class="table">
     <thead><tr>
@@ -38,8 +40,23 @@
 {% endfor %}
 </table>
 </div>
-{% endblock %}
 
+<div class="card card-body-baas mt-4">
+    {% for graphRow in graphPlots%}
+    <div class="row">
+        {% for graph in graphRow %}
+        <div class="{{classGraph}}">
+            {{graph|safe}}
+        </div>
+        {% endfor %}
+    </div>
+    {% empty %}
+        <small>add data to view graphs</small>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
 {% block scripts %}
 
 <script>

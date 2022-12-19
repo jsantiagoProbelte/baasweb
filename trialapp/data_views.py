@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from trialapp.fieldtrial_views import editNewFieldTrial
+from baaswebapp.graphs import Graph
 
 
 class ManageTrialAssessmentSet(APIView):
@@ -69,7 +70,6 @@ class SetDataEvaluation(APIView):
             SampleData.setDataPoint(item, evaluation, unit, value)
         else:
             return Response({'success': False}, status='500')
-
         return Response({'success': True})
 
 
@@ -130,12 +130,19 @@ def showDataThesisIndex(request, evaluation_id=None,
     thesisTrial = Thesis.getObjects(evaluation.field_trial)
     trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
     dataPoints = ThesisData.getDataPoints(evaluation)
+
     dataPointsList = sortDataPointsForDisplay(
         'thesis', evaluation, thesisTrial, trialAssessmentSets, dataPoints)
+
+    graph = Graph('thesis', trialAssessmentSets, dataPoints)
+    graphPlots, classGraph = graph.bar()
+
     return render(request, template_name, {
                   'evaluation': evaluation,
                   'dataPoints': dataPointsList,
                   'theses': thesisTrial,
+                  'graphPlots': graphPlots,
+                  'classGraph': classGraph,
                   'trialAssessmentSets': trialAssessmentSets,
                   'errors': errors})
 

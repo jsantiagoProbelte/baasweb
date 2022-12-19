@@ -4,6 +4,7 @@ from trialapp.models import AssessmentType, AssessmentUnit, FieldTrial,\
     ModelHelpers, ReplicaData, Replica, Sample, SampleData
 from trialapp.tests.tests_models import TrialAppModelTest
 
+from baaswebapp.graphs import Graph
 from trialapp.data_views import showDataThesisIndex,\
     SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
     showTrialAssessmentSetIndex, showDataReplicaIndex,\
@@ -113,6 +114,15 @@ class DataViewsTest(TestCase):
         tPoints = ThesisData.objects.all()
         self.assertEqual(len(tPoints), 2)
         self.assertEqual(tPoints[1].value, 99)
+
+        dataPoints = ThesisData.getDataPoints(self._evaluation)
+        graph = Graph('thesis', self._units, dataPoints)
+        graphToDisplay, classGraph = graph.bar()
+        self.assertEqual(len(graphToDisplay), 1)
+        self.assertEqual(classGraph, 'col-md-6')
+        graphToDisplay, classGraph = graph.scatter()
+        self.assertEqual(len(graphToDisplay), 1)
+        self.assertEqual(classGraph, 'col-md-6')
 
     def test_manageEvaluationSet(self):
         requestIndex = self._apiFactory.get(
