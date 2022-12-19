@@ -12,3 +12,4 @@ django-filter
 django-widget-tweaks
 importlib-metadata
 gunicorn
+django_plotly_dash
