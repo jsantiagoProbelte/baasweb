@@ -39,3 +39,7 @@
 {% if subheader %}
 <h5 class="mt-1 mb-3 text-muted">{{subheader}}</h5>
 {% endif %}
+
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}

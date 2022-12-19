@@ -7,9 +7,7 @@
 
 {% include "trialapp/header.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
 {{fieldTrial.filename}}
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
+
 <div class="row">
     <div class="col-md-4">
       <div class="card no-border mb-3" >

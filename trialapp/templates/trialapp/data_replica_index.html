@@ -5,9 +5,8 @@
 {% block content %}
 
 {% include "trialapp/header.html" with title=evaluation.name action=evaluation.evaluation_date subtitle='assessment, add data per replica' list_href='evaluation-list' refId=evaluation.field_trial_id%}
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
+
+{% include 'trialapp/data_graphs.html' with graphPlots=graphPlots classGraph=classGraph %}
 
 <div class="card card-body-baas">
     <table class="table">

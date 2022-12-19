@@ -6,9 +6,6 @@
 
 {% include "trialapp/header.html" with title=fieldTrial.code subheader=fieldTrial.name action='add types and units for this trial' go_ref='field_trial_api' refId=fieldTrial.id%}
 
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
 <div class="row">
   <div class="col-md-2">
     

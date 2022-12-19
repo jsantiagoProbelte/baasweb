@@ -5,9 +5,6 @@
 {% block content %}
 {% include "trialapp/header.html" with title=fieldTrial.code subheader=fieldTrial.name action=title go_ref='field_trial_api' new_href_id='evaluation-edit' list_href='evaluation-list' refId=fieldTrial.id%}
 
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
 <div class="row">
   <div class="col-md-6">
     <div class="card no-border" >
