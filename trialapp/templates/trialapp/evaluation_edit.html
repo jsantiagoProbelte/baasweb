@@ -17,9 +17,22 @@
     </div>
   </div>
   <div class="col-md-6">
-    <div class="card no-border">
+    {% if evaluation_id %}
+    <div class="card  card-body-baas">
+        <h4>Add data:</h4>
+        <table>
+        <tbody><tr>
+          <td><a href="{% url 'data_thesis_index' evaluation_id %}" class="btn btn-primary fs-4">&#43;</a>
+            <span class="ml-4">Thesis</span></td>
+          <td><a href="{% url 'data_replica_index' evaluation_id %}" class="btn btn-primary fs-4 ml-4">&#43;</a>
+            <span class="ml-4">Replica</span></td>
+          <td><a href="{% url 'data-samples-index' evaluation_id 0 %}" class="btn btn-primary fs-4">&#43;</a>
+            <span class="ml-4">Sample</span></td>
+        </tr></tbody> </table>
+    </div>
+    <div class="card no-border mt-3">
       <div class="card-body-baas">
-        {% if evaluation_id %}
+
             <h4>Define thesis & products to be applied:</h4>
             <table class="table"><tbody id="table-items">
             <tr id="product_evaluation">
@@ -35,9 +48,9 @@
             {% endfor %}
             
             </tbody></table>
-        {% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
