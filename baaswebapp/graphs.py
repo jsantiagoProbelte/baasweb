@@ -1,6 +1,7 @@
 
 from plotly.offline import plot
 import plotly.graph_objs as go
+from plotly.validators.scatter.marker import SymbolValidator
 
 COLOR_main_color = '#a500a5'
 COLOR_red = '#ff6e73'
@@ -47,10 +48,10 @@ class Graph:
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
 
-    # SymbolValidator().values
-    SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
-                   'x', 'triangle-up', 'triangle-down',
-                   'triangle-left', 'triangle-right']
+    SYMBOL_LIST = SymbolValidator().values
+    # SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
+    #                'x', 'triangle-up', 'triangle-down',
+    #                'triangle-left', 'triangle-right']
 
     COLOR_LIST = [COLOR_bg_color, COLOR_morado, COLOR_bio_morado,
                   COLOR_violeta,
