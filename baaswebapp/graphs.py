@@ -54,7 +54,7 @@ class Graph:
                    'triangle-left', 'triangle-right', 'hexagram',
                    'star-triangle-up', 'star-triangle-down',
                    'diamond-tall', 'diamond-wide', 'square-cross',
-                   'circle-cross','circle-x', 'asterisk', 'hash']
+                   'circle-cross', 'circle-x', 'asterisk', 'hash']
 
     COLOR_LIST = [COLOR_bg_color, COLOR_morado, COLOR_bio_morado,
                   COLOR_violeta,
