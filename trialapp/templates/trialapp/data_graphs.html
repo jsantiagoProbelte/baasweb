@@ -1,4 +1,7 @@
 <div class="card card-body-baas mt-4">
+    {% if title %}
+        <h6 class="mt-2 mb-2">{{title}}</h6>
+    {% endif %}
     {% for graphRow in graphPlots%}
     <div class="row">
         {% for graph in graphRow %}

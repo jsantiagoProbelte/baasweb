@@ -47,6 +47,7 @@ class Graph:
 
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
+    L_SAMPLE = 'sample'
 
     # SYMBOL_LIST = SymbolValidator().values
     SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
@@ -99,11 +100,12 @@ class Graph:
         fig = go.Figure(data)
         # Update layout for graph object Figure
         fig.update_layout(
-            paper_bgcolor="#333333",
+            paper_bgcolor=COLOR_bg_color_cards,
             title_font_color="white",
-            plot_bgcolor="#333333",
+            plot_bgcolor=COLOR_bg_color_cards,
             font_color='white',
             title_text=title,
+            showlegend=True,
             xaxis_title=xaxis_title if orientation == 'v' else yaxis_title,
             yaxis_title=yaxis_title if orientation == 'v' else xaxis_title)
 
@@ -114,7 +116,7 @@ class Graph:
     def groupOnRows(self, graphs, columns=4):
         numGraphs = len(graphs)
         if numGraphs == 0:
-            return [], 'col-md-12'
+            return [], 'hide'
         classGroup = 'col-md-{}'.format(int(12 / (numGraphs % columns)))
         mgraphs = []
         count = 0
@@ -135,10 +137,12 @@ class Graph:
         # It has to follow the order of references
         # and then trial assessments
         graphs = []
+        if dataPoints is None or len(dataPoints) == 0:
+            return []
         for unit in trialAssessments:
             thisGraph = {
                 'title': unit.type.name,
-                'x_axis': level,
+                'x_axis': 'thesis',
                 'y_axis': unit.unit.name}
             theX = []
             theY = []
@@ -148,6 +152,7 @@ class Graph:
                 if unit.id == dataPoint.unit.id:
                     xValue = None
                     symbol = 'star'
+                    color = COLOR_bg_color_cards
                     if level == Graph.L_THESIS:
                         xValue = dataPoint.reference.name
                         color = Graph.COLOR_LIST[
@@ -158,13 +163,20 @@ class Graph:
                         color = Graph.COLOR_LIST[
                             dataPoint.reference.thesis.number]
                         xValue = dataPoint.reference.thesis.name
+                    elif level == Graph.L_SAMPLE:
+                        replica = dataPoint.reference.replica
+                        thesis = replica.thesis
+                        symbol = Graph.SYMBOL_LIST[replica.number]
+                        color = Graph.COLOR_LIST[thesis.number]
+                        xValue = thesis.name
                     theX.append(xValue)
                     theY.append(dataPoint.value)
                     theColors.append(color)
                     theSymbols.append(symbol)
-            thisGraph['x'] = theX
-            thisGraph['y'] = theY
-            thisGraph['symbols'] = theSymbols
-            thisGraph['colors'] = theColors
-            graphs.append(thisGraph)
+            if len(theX) > 0:
+                thisGraph['x'] = theX
+                thisGraph['y'] = theY
+                thisGraph['symbols'] = theSymbols
+                thisGraph['colors'] = theColors
+                graphs.append(thisGraph)
         return graphs

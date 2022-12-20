@@ -119,10 +119,10 @@ class DataViewsTest(TestCase):
         graph = Graph('thesis', self._units, dataPoints)
         graphToDisplay, classGraph = graph.bar()
         self.assertEqual(len(graphToDisplay), 1)
-        self.assertEqual(classGraph, 'col-md-6')
+        self.assertEqual(classGraph, 'col-md-12')
         graphToDisplay, classGraph = graph.scatter()
         self.assertEqual(len(graphToDisplay), 1)
-        self.assertEqual(classGraph, 'col-md-6')
+        self.assertEqual(classGraph, 'col-md-12')
 
     def test_manageEvaluationSet(self):
         requestIndex = self._apiFactory.get(

@@ -615,7 +615,7 @@ class SampleData(ModelHelpers, models.Model):
                                   on_delete=models.CASCADE)
 
     @classmethod
-    def getDataPoints(cls, evaluation, replica):
+    def getDataPointsReplica(cls, evaluation, replica):
         items = []
         for sample in Sample.getObjects(replica):
             dataPoints = SampleData.objects.filter(

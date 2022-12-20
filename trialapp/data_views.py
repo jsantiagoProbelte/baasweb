@@ -134,7 +134,7 @@ def showDataThesisIndex(request, evaluation_id=None,
     dataPointsList = sortDataPointsForDisplay(
         'thesis', evaluation, thesisTrial, trialAssessmentSets, dataPoints)
 
-    graph = Graph('thesis', trialAssessmentSets, dataPoints)
+    graph = Graph(Graph.L_THESIS, trialAssessmentSets, dataPoints)
     graphPlots, classGraph = graph.bar()
 
     return render(request, template_name, {
@@ -159,7 +159,7 @@ def showDataReplicaIndex(request, evaluation_id=None,
     dataPointsList = sortDataPointsForDisplay(
         'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
 
-    graph = Graph('replica', trialAssessmentSets, dataPoints)
+    graph = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPoints)
     graphPlots, classGraph = graph.scatter()
 
     return render(request, template_name, {
@@ -216,6 +216,7 @@ def showDataSamplesIndex(request, evaluation_id=None,
     dataPointsList = []
     selectedReplicaName = None
     missing_samples = False
+    dataPoints = []
     if selected_replica_id is None or selected_replica_id == 0:
         pass
     else:
@@ -226,13 +227,17 @@ def showDataSamplesIndex(request, evaluation_id=None,
         if redirection:
             return redirection
 
-        dataPoints = SampleData.getDataPoints(evaluation, replica)
+        dataPoints = SampleData.getDataPointsReplica(evaluation, replica)
         dataPointsList = sortDataPointsForDisplay(
             'sample', evaluation, samples,
             trialAssessmentSets, dataPoints)
 
     replicaReferences = sortDataPointsForDisplay(
         'replicas', evaluation, replicas, trialAssessmentSets, [])
+
+    allDataPoints = SampleData.getDataPoints(evaluation)
+    graph = Graph(Graph.L_SAMPLE, trialAssessmentSets, allDataPoints)
+    graphPlots, classGraph = graph.scatter()
 
     return render(request, template_name, {
                   'replicaReferences': replicaReferences,
@@ -242,4 +247,5 @@ def showDataSamplesIndex(request, evaluation_id=None,
                   'evaluation': evaluation,
                   'theses': thesisTrial,
                   'missing_samples': missing_samples,
+                  'graphPlots': graphPlots, 'classGraph': classGraph,
                   'errors': errors})

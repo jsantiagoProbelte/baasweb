@@ -293,7 +293,8 @@ class TrialAppModelTest(TestCase):
             unit=assset[0],
             value=66)
 
-        sampleData = SampleData.getDataPoints(evaluation, selectedReplica)
+        sampleData = SampleData.getDataPointsReplica(
+            evaluation, selectedReplica)
         self.assertEqual(len(sampleData), 1)
 
     def test_code_fieldTrial(self):
