@@ -29,6 +29,7 @@ class FieldTrialCreateForm(forms.Form):
                                   required=True, choices=[])
     responsible = forms.CharField(label="Responsible")
     contact = forms.CharField(label="Farmer")
+    cro = forms.CharField(label="CRO", required=False)
 
     product = forms.ChoiceField(label="Main Product",
                                 required=True, choices=[])
@@ -130,6 +131,7 @@ class FieldTrialCreateForm(forms.Form):
                                     css_class='col-md-4'),
                                 css_class='mb-2'),
                             Field('contact', css_class='mb-2'),
+                            Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border"),

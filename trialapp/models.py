@@ -245,6 +245,7 @@ class FieldTrial(ModelHelpers, models.Model):
                                      on_delete=models.CASCADE, null=True)
 
     contact = models.CharField(max_length=100, null=True)
+    cro = models.CharField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=True)
     latitude_str = models.CharField(max_length=100, null=True)
     latitude_str = models.CharField(max_length=100, null=True)

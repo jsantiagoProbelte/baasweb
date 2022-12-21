@@ -94,6 +94,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'initiation_date': fieldTrial.initiation_date,
             'completion_date': fieldTrial.completion_date,
             'contact': fieldTrial.contact,
+            'cro': fieldTrial.cro,
             'location': fieldTrial.location,
             'blocks': fieldTrial.blocks,
             'replicas_per_thesis': fieldTrial.replicas_per_thesis,
@@ -147,6 +148,8 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'completion_date', returnNoneIfEmpty=True)
         fieldTrial.contact = FieldTrial.getValueFromRequestOrArray(
             request, values, 'contact')
+        fieldTrial.cro = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'cro')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
             request, values, 'location')
         fieldTrial.blocks = int(FieldTrial.getValueFromRequestOrArray(
@@ -198,6 +201,8 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'completion_date', returnNoneIfEmpty=True),
             contact=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'contact'),
+            cro=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'cro'),
             location=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'location'),
             blocks=FieldTrial.getValueFromRequestOrArray(
@@ -265,8 +270,10 @@ class FieldTrialApi(APIView):
              'value': self.showValue(fieldTrial.lenght_row)},
             {'name': 'Gross area(m2)',
              'value': self.showValue(fieldTrial.gross_surface)},
-            {'name': 'contact',
-             'value': self.showValue(fieldTrial.contact)}
+            {'name': 'Farmer',
+             'value': self.showValue(fieldTrial.contact)},
+            {'name': 'CRO',
+             'value': self.showValue(fieldTrial.cro)}
             ], [
             {'name': '#replicas',
              'value': self.showValue(fieldTrial.replicas_per_thesis)},
