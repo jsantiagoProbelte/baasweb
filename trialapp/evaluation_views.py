@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import FieldTrial,  ProductEvaluation,\
-    ProductThesis, Evaluation, TrialAssessmentSet, ReplicaData
+    ProductThesis, Evaluation, TrialAssessmentSet, ReplicaData,\
+    ThesisData, SampleData
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import EvaluationEditForm
 from rest_framework.views import APIView
@@ -30,12 +31,26 @@ class EvaluationListView(LoginRequiredMixin, ListView):
         new_list = Evaluation.getObjects(fieldTrial)
 
         trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
-        dataPoints = ReplicaData.getDataPointsFieldTrial(fieldTrial)
-        graph = Graph('replica', trialAssessmentSets, dataPoints)
-        graphPlots, classGraph = graph.scatter()
+        # Replica data
+        dataPointsR = ReplicaData.getDataPointsFieldTrial(fieldTrial)
+        graphR = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsR)
+        graphPlotsR, classGraphR = graphR.scatter()
+
+        # Thesis data
+        dataPointsT = ThesisData.getDataPointsFieldTrial(fieldTrial)
+        graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT)
+        graphPlotsT, classGraphT = graphT.scatter()
+
+        # Sample data
+        dataPointsS = SampleData.getDataPointsFieldTrial(fieldTrial)
+        graphS = Graph(Graph.L_SAMPLE, trialAssessmentSets, dataPointsS)
+        graphPlotsS, classGraphS = graphS.scatter()
+
         return {'object_list': new_list,
                 'fieldTrial': fieldTrial,
-                'graphPlots': graphPlots, 'classGraph': classGraph}
+                'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
+                'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
+                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS}
 
 
 @login_required
