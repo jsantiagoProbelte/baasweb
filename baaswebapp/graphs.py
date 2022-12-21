@@ -44,6 +44,7 @@ class Graph:
     _graphData = []
     SCATTER = 'scatter'
     BAR = 'bar'
+    VIOLIN = 'violin'
 
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
@@ -84,6 +85,9 @@ class Graph:
     def scatter(self):
         return self.preparePlots(typeFigure=Graph.SCATTER)
 
+    def violin(self):
+        return self.preparePlots(typeFigure=Graph.VIOLIN)
+
     def figure(self, theX, theY,
                typeFigure=SCATTER, orientation='v',
                name=None, title=None,
@@ -97,6 +101,10 @@ class Graph:
             data = go.Scatter(name=name, x=theX, y=theY,
                               marker={'color': colors, 'symbol': symbols},
                               mode='markers', marker_size=15)
+        elif typeFigure == Graph.VIOLIN:
+            data = go.Violin(name=name, x=theX, y=theY,
+                             box_visible=True,
+                             meanline_visible=True)
         fig = go.Figure(data)
         # Update layout for graph object Figure
         fig.update_layout(

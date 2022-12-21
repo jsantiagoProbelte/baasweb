@@ -237,7 +237,7 @@ def showDataSamplesIndex(request, evaluation_id=None,
 
     allDataPoints = SampleData.getDataPoints(evaluation)
     graph = Graph(Graph.L_SAMPLE, trialAssessmentSets, allDataPoints)
-    graphPlots, classGraph = graph.scatter()
+    graphPlots, classGraph = graph.violin()
 
     return render(request, template_name, {
                   'replicaReferences': replicaReferences,
