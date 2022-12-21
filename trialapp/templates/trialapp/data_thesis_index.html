@@ -11,7 +11,7 @@
     <thead><tr>
         <th class="col-md-4">Thesis</th>
         {% for assessmentType in trialAssessmentSets %}
-            <th>{{assessmentType.type}} ({{assessmentType.unit}})</th>
+            <th>{{assessmentType.type}}<br>({{assessmentType.unit}})</th>
         {% empty %}
             <p>No result types defined. Go <span>
                 <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' evaluation.field_trial_id%}">here</a></span></p>
