@@ -36,6 +36,7 @@ class FieldTrialCreateForm(forms.Form):
     plague = forms.ChoiceField(label="Plague", required=False, choices=[])
 
     initiation_date = forms.DateField(widget=MyDateInput(), required=True)
+    completion_date = forms.DateField(widget=MyDateInput(), required=False)
     location = forms.CharField(label="City/Area")
     blocks = forms.CharField(label="# blocks",
                              widget=forms.NumberInput())
@@ -103,6 +104,7 @@ class FieldTrialCreateForm(forms.Form):
                             Field('trial_status', css_class='mb-2'),
                             Field('responsible', css_class='mb-2'),
                             Field('initiation_date', css_class='mb-2'),
+                            Field('completion_date', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border"),
                     css_class='col-md-4'),

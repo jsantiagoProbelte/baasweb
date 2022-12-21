@@ -143,6 +143,8 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'plague')
         fieldTrial.initiation_date = FieldTrial.getValueFromRequestOrArray(
             request, values, 'initiation_date')
+        fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
+            request, values, 'completion_date')
         fieldTrial.contact = FieldTrial.getValueFromRequestOrArray(
             request, values, 'contact')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
@@ -192,6 +194,8 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'plague'),
             initiation_date=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'initiation_date'),
+            completion_date = FieldTrial.getValueFromRequestOrArray(
+                request, values, 'completion_date'),
             contact=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'contact'),
             location=FieldTrial.getValueFromRequestOrArray(
