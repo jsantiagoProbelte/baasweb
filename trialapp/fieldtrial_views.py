@@ -144,7 +144,7 @@ def saveFieldTrial(request, field_trial_id=None):
         fieldTrial.initiation_date = FieldTrial.getValueFromRequestOrArray(
             request, values, 'initiation_date')
         fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'completion_date')
+            request, values, 'completion_date', returnNoneIfEmpty=True)
         fieldTrial.contact = FieldTrial.getValueFromRequestOrArray(
             request, values, 'contact')
         fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
@@ -194,8 +194,8 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'plague'),
             initiation_date=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'initiation_date'),
-            completion_date = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'completion_date'),
+            completion_date=FieldTrial.getValueFromRequestOrArray(
+                request, values, 'completion_date', returnNoneIfEmpty=True),
             contact=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'contact'),
             location=FieldTrial.getValueFromRequestOrArray(
@@ -250,6 +250,38 @@ class FieldTrialApi(APIView):
             thesisTrialRows.append(thesisTrialRow)
         return thesisTrialRows
 
+    def showValue(self, value):
+        return value if value else '?'
+
+    def prepareLayoutItems(self, fieldTrial):
+        return [[
+            {'name': '#blocks',
+             'value': self.showValue(fieldTrial.blocks)},
+            {'name': '#samples/block',
+             'value': self.showValue(fieldTrial.samples_per_replica)},
+            {'name': '# rows',
+             'value': self.showValue(fieldTrial.number_rows)},
+            {'name': 'Row length (m)',
+             'value': self.showValue(fieldTrial.lenght_row)},
+            {'name': 'Gross area(m2)',
+             'value': self.showValue(fieldTrial.gross_surface)},
+            {'name': 'contact',
+             'value': self.showValue(fieldTrial.contact)}
+            ], [
+            {'name': '#replicas',
+             'value': self.showValue(fieldTrial.replicas_per_thesis)},
+            {'name': 'Plants separation',
+             'value': self.showValue(fieldTrial.distance_between_plants)},
+            {'name': 'Rows separation',
+             'value': self.showValue(fieldTrial.distance_between_rows)},
+            {'name': 'Plants density (H)',
+             'value': self.showValue(fieldTrial.plantDensity())},
+            {'name': 'Net area (m2)',
+             'value': self.showValue(fieldTrial.net_surface)},
+            {'name': 'location',
+             'value': self.showValue(fieldTrial.location)}
+        ]]
+
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
         field_trial_id = None
@@ -271,6 +303,7 @@ class FieldTrialApi(APIView):
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,
                        'titleView': fieldTrial.getName(),
+                       'layoutData': self.prepareLayoutItems(fieldTrial),
                        'thesisTrialRows': self.orderItemsInRows(thesisTrial),
                        'assessments': assessmentsData,
                        'units': trialAssessmentSets,

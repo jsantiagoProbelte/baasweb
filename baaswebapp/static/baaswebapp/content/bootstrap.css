@@ -4622,7 +4622,7 @@ fieldset:disabled .btn {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #000;
+  background-color:var(--custom-bg-color-cards);
   background-clip: border-box;
   /* border: 1px solid rgba(223, 215, 202, 0.75); */
   border-radius:10px !important;

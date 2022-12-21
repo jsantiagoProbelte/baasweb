@@ -318,6 +318,15 @@ class FieldTrial(ModelHelpers, models.Model):
         trial.setCode(increment=False)
         return trial
 
+    def plantDensity(self):
+        if self.distance_between_plants is not None and\
+           self.distance_between_rows is not None:
+            return round(
+                10000 /
+                self.distance_between_plants*self.distance_between_rows, 2)
+        else:
+            return None
+
     def getName(self):
         code = self.code if self.code else '[undefined]'
         return '{} {}'.format(code, self.name)

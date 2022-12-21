@@ -6,7 +6,6 @@
 
 
 {% include "trialapp/header.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
-{{fieldTrial.filename}}
 
 <div class="row">
     <div class="col-md-4">
@@ -66,18 +65,19 @@
         <div class="card-header-baas h4">
           Layout
         </div>
-        <table class="table">
-          <thead><tr><td># replicas</td><td># blocks</td><td># samples</td></tr></thead>
-          <tbody><tr><td>{{fieldTrial.replicas_per_thesis}}</td><td>{{fieldTrial.blocks}}</td><td>{{fieldTrial.samples_per_replica}}</td></tr></tbody>
-          <thead><tr><td># rows</td><td>Distance between rows</td><td>Distance between plants</td></tr></thead>
-          <tbody><tr><td>{{fieldTrial.number_rows}}</td><td>{{ieldTrial.distance_between_rows}}</td><td>{{fieldTrial.distance_between_plants}}</td></tr></tbody>
-          <thead><tr><td>Row length(m)</td><td>Gross surface (m2)</td><td>Net surface (m2)</td></tr></thead>
-          <tbody><tr><td>{{fieldTrial.lenght_row}}</td><td></td>{{fieldTrial.gross_surface}}<td>{{fieldTrial.net_surface}}</td></tr></tbody>
-        </table>
-        <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='location' value=fieldTrial.location%}
-          {% include "trialapp/item_list_template.html" with field='contact' value=fieldTrial.contact%}
-        </ul>
+        <div class="card-body-baas">
+        <div class="row">
+          {% for column in layoutData %}
+            <div class="col-md-6">
+            <ul class="list-group list-group-flush">
+              {% for item in column %}
+                {% include "trialapp/item_list_template.html" with field=item.name value=item.value%}
+              {% endfor %}
+            </ul>
+            </div>
+          {% endfor %}
+        </div>
+        </div>
       </div>
     </div>
     <div class="col-md-5">

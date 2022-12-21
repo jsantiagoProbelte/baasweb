@@ -47,17 +47,17 @@ class FieldTrialCreateForm(forms.Form):
         label="# samples", required=False,
         widget=forms.NumberInput())
     distance_between_plants = forms.CharField(
-        label="Distance between plants", required=False)
+        label="Plants separation", required=False)
     distance_between_rows = forms.CharField(
-        label="Distance between rows", required=False)
+        label="Rows separation", required=False)
     number_rows = forms.CharField(
         label="# rows", required=False)
     lenght_row = forms.CharField(
         label="Row length(m)", required=False)
     net_surface = forms.CharField(
-        label="Net surface (m2)", required=False)
+        label="Net area (m2)", required=False)
     gross_surface = forms.CharField(
-        label="Gross surface (m2)", required=False)
+        label="Gross area (m2)", required=False)
 
     def __init__(self, *args, **kwargs):
         fieldValues = FieldTrial.extractValueModelChoicesFromKwargs(kwargs)
