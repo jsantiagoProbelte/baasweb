@@ -19,6 +19,7 @@ class DataViewsTest(TestCase):
     _units = []
     _evaluation = None
     _apiFactory = None
+    _replicas = None
 
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
@@ -31,6 +32,7 @@ class DataViewsTest(TestCase):
         Replica.createReplicas(
             self._theses[0],
             self._fieldTrial.replicas_per_thesis)
+        self._replicas = Replica.getObjects(self._theses[0])
 
         self._units = [TrialAssessmentSet.objects.create(
             field_trial=self._fieldTrial,
@@ -123,6 +125,55 @@ class DataViewsTest(TestCase):
         graphToDisplay, classGraph = graph.scatter()
         self.assertEqual(len(graphToDisplay), 1)
         self.assertEqual(classGraph, 'col-md-12')
+
+    def test_graph_logic(self):
+        thesis = self._theses[0]
+        unit = self._units[0]
+        dPT = ThesisData.objects.create(
+            evaluation=self._evaluation,
+            reference=thesis,
+            unit=unit,
+            value=33)
+
+        replica = self._replicas[0]
+        dPR = ReplicaData.objects.create(
+            evaluation=self._evaluation,
+            reference=replica,
+            unit=unit,
+            value=66)
+
+        Sample.createSamples(replica, 5)
+        samples = Sample.getObjects(replica)
+        sample = samples[0]
+
+        dPS = SampleData.objects.create(
+            evaluation=self._evaluation,
+            reference=sample,
+            unit=unit,
+            value=66)
+
+        graphT = Graph(Graph.L_THESIS, self._units, [dPT])
+        graphR = Graph(Graph.L_REPLICA, self._units, [dPR])
+        graphS = Graph(Graph.L_SAMPLE, self._units, [dPS])
+
+        self.assertEqual(graphT.traceId(dPT), thesis.number)
+        self.assertEqual(graphR.traceId(dPR), thesis.number)
+        self.assertEqual(graphS.traceId(dPS), replica.number)
+
+        self.assertEqual(graphT.getTraceName(dPT), thesis.name)
+        self.assertEqual(graphR.getTraceName(dPR), thesis.name)
+        self.assertEqual(graphS.getTraceName(dPS), thesis.name)
+
+        color = Graph.COLOR_LIST[thesis.number]
+        self.assertEqual(graphT.getTraceColor(dPT), color)
+        self.assertEqual(graphR.getTraceColor(dPR), color)
+        self.assertEqual(graphS.getTraceColor(dPS), color)
+
+        symbolT = Graph.SYMBOL_LIST[2]
+        symbolR = Graph.SYMBOL_LIST[replica.number]
+        self.assertEqual(graphT.getTraceSymbol(dPT), symbolT)
+        self.assertEqual(graphR.getTraceSymbol(dPR), symbolR)
+        self.assertEqual(graphS.getTraceSymbol(dPS), symbolR)
 
     def test_manageEvaluationSet(self):
         requestIndex = self._apiFactory.get(
