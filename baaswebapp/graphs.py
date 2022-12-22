@@ -98,6 +98,7 @@ class Graph:
 
     def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
+        showLegend = True
         data = None
         fig = go.Figure()
 
@@ -106,10 +107,15 @@ class Graph:
             name = trace['name']
             color = trace['marker_color']
             symbol = trace['marker_symbol']
-            x = trace['x']
-            y = trace['y']
+            if orientation == 'v':
+                x = trace['x']
+                y = trace['y']
+            else:
+                x = trace['y']
+                y = trace['x']
 
             if typeFigure == Graph.BAR:
+                showLegend = False
                 data = go.Bar(orientation=orientation,
                               name=name, marker={'color': color},
                               x=x, y=y)
@@ -140,7 +146,7 @@ class Graph:
             plot_bgcolor=COLOR_bg_color_cards,
             font_color='white',
             title_text=thisGraph['title'],
-            showlegend=True,
+            showlegend=showLegend,
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
