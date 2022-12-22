@@ -43,6 +43,7 @@ COLOR_bg_color_cards = '#333333'
 class Graph:
     _graphData = []
     _level = None
+    _xAxis = None
     SCATTER = 'scatter'
     BAR = 'bar'
     VIOLIN = 'violin'
@@ -70,6 +71,7 @@ class Graph:
     def __init__(self, level, trialAssessments,
                  dataPoints, xAxis=L_THESIS):
         self._level = level
+        self._xAxis = xAxis
         self._graphData = self.buildData(trialAssessments,
                                          dataPoints, xAxis=xAxis)
 
@@ -112,9 +114,11 @@ class Graph:
                               name=name, marker={'color': color},
                               x=x, y=y)
             elif typeFigure == Graph.SCATTER:
+                markerMode = 'lines+markers' if self._xAxis == Graph.L_DATE\
+                                             else 'markers'
                 data = go.Scatter(name=name, x=x, y=y,
                                   marker={'color': color, 'symbol': symbol},
-                                  mode='markers', marker_size=15)
+                                  mode=markerMode, marker_size=15)
             elif typeFigure == Graph.VIOLIN:
                 data = go.Violin(name=name, x=x, y=y,
                                  box_visible=True,
