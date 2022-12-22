@@ -67,19 +67,13 @@ class Graph:
                   COLOR_bs_warning, COLOR_bs_danger,
                   COLOR_bs_green, COLOR_bs_secondary]
 
-    def __init__(self, level, trialAssessments, 
+    def __init__(self, level, trialAssessments,
                  dataPoints, xAxis=L_THESIS):
         self._level = level
         self._graphData = self.buildData(trialAssessments,
                                          dataPoints, xAxis=xAxis)
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
-        # graphPlots = [self.figure(
-        #     item['x'], item['y'], title=item['title'],
-        #     colors=item['colors'], symbols=item['symbols'],
-        #     typeFigure=typeFigure, orientation=orientation,
-        #     xaxis_title=item['x_axis'], yaxis_title=item['y_axis'])
-        #         for item in self._graphData]
         graphPlots = [self.figure(item, typeFigure=typeFigure,
                                   orientation=orientation)
                       for item in self._graphData]
