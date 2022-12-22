@@ -160,7 +160,7 @@ def showDataReplicaIndex(request, evaluation_id=None,
         'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
 
     graph = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPoints)
-    graphPlots, classGraph = graph.scatter()
+    graphPlots, classGraph = graph.adaptative(len(replicas))
 
     return render(request, template_name, {
                   'trialAssessmentSets': trialAssessmentSets,

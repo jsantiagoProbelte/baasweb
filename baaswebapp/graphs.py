@@ -42,6 +42,7 @@ COLOR_bg_color_cards = '#333333'
 
 class Graph:
     _graphData = []
+    _level = None
     SCATTER = 'scatter'
     BAR = 'bar'
     VIOLIN = 'violin'
@@ -49,6 +50,7 @@ class Graph:
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
     L_SAMPLE = 'sample'
+    L_DATE = 'date'
 
     # SYMBOL_LIST = SymbolValidator().values
     SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
@@ -65,18 +67,22 @@ class Graph:
                   COLOR_bs_warning, COLOR_bs_danger,
                   COLOR_bs_green, COLOR_bs_secondary]
 
-    def __init__(self, level,
-                 trialAssessments, dataPoints):
-        self._graphData = self.buildData(level,
-                                         trialAssessments, dataPoints)
+    def __init__(self, level, trialAssessments, 
+                 dataPoints, xAxis=L_THESIS):
+        self._level = level
+        self._graphData = self.buildData(trialAssessments,
+                                         dataPoints, xAxis=xAxis)
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
-        graphPlots = [self.figure(
-            item['x'], item['y'], title=item['title'],
-            colors=item['colors'], symbols=item['symbols'],
-            typeFigure=typeFigure, orientation=orientation,
-            xaxis_title=item['x_axis'], yaxis_title=item['y_axis'])
-                for item in self._graphData]
+        # graphPlots = [self.figure(
+        #     item['x'], item['y'], title=item['title'],
+        #     colors=item['colors'], symbols=item['symbols'],
+        #     typeFigure=typeFigure, orientation=orientation,
+        #     xaxis_title=item['x_axis'], yaxis_title=item['y_axis'])
+        #         for item in self._graphData]
+        graphPlots = [self.figure(item, typeFigure=typeFigure,
+                                  orientation=orientation)
+                      for item in self._graphData]
         return self.groupOnRows(graphPlots)
 
     def bar(self):
@@ -88,34 +94,60 @@ class Graph:
     def violin(self):
         return self.preparePlots(typeFigure=Graph.VIOLIN)
 
-    def figure(self, theX, theY,
-               typeFigure=SCATTER, orientation='v',
-               name=None, title=None,
-               colors=[COLOR_morado], symbols=['cicle'],
-               xaxis_title=None, yaxis_title=None):
+    def adaptative(self, variants, threshold=3):
+        if variants > threshold:
+            return self.violin()
+        else:
+            return self.scatter()
+
+    def figure(self, thisGraph,
+               typeFigure=SCATTER, orientation='v'):
         data = None
-        if typeFigure == Graph.BAR:
-            data = go.Bar(orientation=orientation,
-                          name=name, x=theY, y=theX)
-        elif typeFigure == Graph.SCATTER:
-            data = go.Scatter(name=name, x=theX, y=theY,
-                              marker={'color': colors, 'symbol': symbols},
-                              mode='markers', marker_size=15)
-        elif typeFigure == Graph.VIOLIN:
-            data = go.Violin(name=name, x=theX, y=theY,
-                             box_visible=True,
-                             meanline_visible=True)
-        fig = go.Figure(data)
+        fig = go.Figure()
+
+        for traceKey in thisGraph['traces']:
+            trace = thisGraph['traces'][traceKey]
+            name = trace['name']
+            color = trace['marker_color']
+            symbol = trace['marker_symbol']
+            x = trace['x']
+            y = trace['y']
+
+            if typeFigure == Graph.BAR:
+                data = go.Bar(orientation=orientation,
+                              name=name, marker={'color': color},
+                              x=x, y=y)
+            elif typeFigure == Graph.SCATTER:
+                data = go.Scatter(name=name, x=x, y=y,
+                                  marker={'color': color, 'symbol': symbol},
+                                  mode='markers', marker_size=15)
+            elif typeFigure == Graph.VIOLIN:
+                data = go.Violin(name=name, x=x, y=y,
+                                 box_visible=True,
+                                 meanline_visible=True,
+                                 line_color=color)
+            fig.add_trace(data)
+
         # Update layout for graph object Figure
+        if orientation == 'v':
+            xaxis_title = thisGraph['x_axis']
+            yaxis_title = thisGraph['y_axis']
+        else:
+            xaxis_title = thisGraph['y_axis']
+            yaxis_title = thisGraph['x_axis']
+
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color="white",
             plot_bgcolor=COLOR_bg_color_cards,
             font_color='white',
-            title_text=title,
+            title_text=thisGraph['title'],
             showlegend=True,
-            xaxis_title=xaxis_title if orientation == 'v' else yaxis_title,
-            yaxis_title=yaxis_title if orientation == 'v' else xaxis_title)
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
+
+        if typeFigure == Graph.VIOLIN:
+            fig.update_layout(violinmode='group')
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
@@ -139,8 +171,57 @@ class Graph:
         mgraphs.append(rgraph)
         return mgraphs, classGroup
 
-    def buildData(self, level,
-                  trialAssessments, dataPoints):
+    def traceId(self, dataPoint):
+        if self._level == Graph.L_THESIS:
+            return dataPoint.reference.number
+        elif self._level == Graph.L_REPLICA:
+            return dataPoint.reference.thesis.number
+        elif self._level == Graph.L_SAMPLE:
+            return dataPoint.reference.replica.number
+
+    def getTraceName(self, dataPoint):
+        if self._level == Graph.L_THESIS:
+            return dataPoint.reference.name
+        elif self._level == Graph.L_REPLICA:
+            return dataPoint.reference.thesis.name
+        elif self._level == Graph.L_SAMPLE:
+            return dataPoint.reference.replica.thesis.name
+
+    def getTraceColor(self, dataPoint):
+        color = 1
+        if self._level == Graph.L_THESIS:
+            color = dataPoint.reference.number
+        elif self._level == Graph.L_REPLICA:
+            color = dataPoint.reference.thesis.number
+        elif self._level == Graph.L_SAMPLE:
+            color = dataPoint.reference.replica.thesis.number
+        return Graph.COLOR_LIST[color]
+
+    def getTraceSymbol(self, dataPoint):
+        symbol = 2
+        if self._level == Graph.L_REPLICA:
+            symbol = dataPoint.reference.number
+        elif self._level == Graph.L_SAMPLE:
+            symbol = dataPoint.reference.replica.number
+        return Graph.SYMBOL_LIST[symbol]
+
+    def prepareTrace(self, dataPoint):
+        return {
+            'name': self.getTraceName(dataPoint),
+            'marker_color': self.getTraceColor(dataPoint),
+            'marker_symbol': self.getTraceSymbol(dataPoint),
+            'x': [],
+            'y': []
+        }
+
+    def getX(self, dataPoint, xAxis):
+        if xAxis == Graph.L_THESIS:
+            return self.getTraceName(dataPoint)
+        if xAxis == Graph.L_DATE:
+            return dataPoint.evaluation.evaluation_date
+
+    def buildData(self, trialAssessments,
+                  dataPoints, xAxis=L_THESIS):
         # This is for diplay purposes. [[,],[,]...]
         # It has to follow the order of references
         # and then trial assessments
@@ -150,41 +231,19 @@ class Graph:
         for unit in trialAssessments:
             thisGraph = {
                 'title': unit.type.name,
-                'x_axis': 'thesis',
-                'y_axis': unit.unit.name}
-            theX = []
-            theY = []
-            theSymbols = []
-            theColors = []
+                'x_axis': xAxis,
+                'y_axis': unit.unit.name,
+                'traces': []}
+            traces = {}
             for dataPoint in dataPoints:
                 if unit.id == dataPoint.unit.id:
-                    xValue = None
-                    symbol = 'star'
-                    color = COLOR_bg_color_cards
-                    if level == Graph.L_THESIS:
-                        xValue = dataPoint.reference.name
-                        color = Graph.COLOR_LIST[
-                            dataPoint.reference.number]
-                    elif level == Graph.L_REPLICA:
-                        symbol = Graph.SYMBOL_LIST[
-                            dataPoint.reference.number]
-                        color = Graph.COLOR_LIST[
-                            dataPoint.reference.thesis.number]
-                        xValue = dataPoint.reference.thesis.name
-                    elif level == Graph.L_SAMPLE:
-                        replica = dataPoint.reference.replica
-                        thesis = replica.thesis
-                        symbol = Graph.SYMBOL_LIST[replica.number]
-                        color = Graph.COLOR_LIST[thesis.number]
-                        xValue = thesis.name
-                    theX.append(xValue)
-                    theY.append(dataPoint.value)
-                    theColors.append(color)
-                    theSymbols.append(symbol)
-            if len(theX) > 0:
-                thisGraph['x'] = theX
-                thisGraph['y'] = theY
-                thisGraph['symbols'] = theSymbols
-                thisGraph['colors'] = theColors
+                    traceId = self.traceId(dataPoint)
+                    if traceId not in traces:
+                        traces[traceId] = self.prepareTrace(dataPoint)
+                    traces[traceId]['y'].append(dataPoint.value)
+                    traces[traceId]['x'].append(self.getX(
+                        dataPoint, xAxis))
+            if len(traces) > 0:
+                thisGraph['traces'] = traces
                 graphs.append(thisGraph)
         return graphs

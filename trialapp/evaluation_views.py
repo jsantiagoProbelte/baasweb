@@ -33,17 +33,20 @@ class EvaluationListView(LoginRequiredMixin, ListView):
         trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
         # Replica data
         dataPointsR = ReplicaData.getDataPointsFieldTrial(fieldTrial)
-        graphR = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsR)
+        graphR = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsR, 
+                       xAxis=Graph.L_DATE)
         graphPlotsR, classGraphR = graphR.violin()
 
         # Thesis data
         dataPointsT = ThesisData.getDataPointsFieldTrial(fieldTrial)
-        graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT)
+        graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT, 
+                       xAxis=Graph.L_DATE)
         graphPlotsT, classGraphT = graphT.scatter()
 
         # Sample data
         dataPointsS = SampleData.getDataPointsFieldTrial(fieldTrial)
-        graphS = Graph(Graph.L_SAMPLE, trialAssessmentSets, dataPointsS)
+        graphS = Graph(Graph.L_SAMPLE, trialAssessmentSets, dataPointsS, 
+                       xAxis=Graph.L_DATE)
         graphPlotsS, classGraphS = graphS.violin()
 
         return {'object_list': new_list,
