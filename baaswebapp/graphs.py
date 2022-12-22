@@ -151,12 +151,15 @@ class Graph:
         numGraphs = len(graphs)
         if numGraphs == 0:
             return [], 'hide'
-        classGroup = 'col-md-{}'.format(int(12 / (numGraphs % columns)))
+        rcolumns = columns
+        if numGraphs < columns:
+            rcolumns = numGraphs
+        classGroup = 'col-md-{}'.format(int(12 / rcolumns))
         mgraphs = []
         count = 0
         rgraph = []
         for graph in graphs:
-            if count == columns:
+            if count == rcolumns:
                 count = 0
                 mgraphs.append(rgraph)
                 rgraph = []
