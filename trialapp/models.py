@@ -322,9 +322,9 @@ class FieldTrial(ModelHelpers, models.Model):
     def plantDensity(self):
         if self.distance_between_plants is not None and\
            self.distance_between_rows is not None:
-            return round(
-                10000 /
-                self.distance_between_plants*self.distance_between_rows, 2)
+            numberOfPlants = self.distance_between_plants * \
+                self.distance_between_rows
+            return round(10000 / numberOfPlants, 2)
         else:
             return None
 

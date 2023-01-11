@@ -297,6 +297,18 @@ class TrialAppModelTest(TestCase):
             evaluation, selectedReplica)
         self.assertEqual(len(sampleData), 1)
 
+    def test_fieldTrial_planDensity(self):
+        fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
+        dBp = 2.2
+        dBr = 0.5
+        self.assertEqual(fieldTrial.plantDensity(), None)
+        fieldTrial.distance_between_plants = dBp
+        self.assertEqual(fieldTrial.plantDensity(), None)
+        fieldTrial.distance_between_rows = dBr
+        self.assertEqual(fieldTrial.plantDensity(),
+                         round(10000/(dBp*dBr), 2))
+
     def test_code_fieldTrial(self):
         hoy = datetime.date.today()
         year = hoy.year
