@@ -2,7 +2,11 @@
     {% for item in row %}
       <div class="card no-border me-2" >
         <div class="bg-custom-{{item.number}} card-body-baas">
-            <small>{{item.name}}</small>
+            {% if item.name == '-' %}
+            -
+            {% else %}
+              <small>R{{item.name}}</small>
+            {% endif %}
         </div>
       </div>
     {% endfor %}

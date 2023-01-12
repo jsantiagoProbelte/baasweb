@@ -312,7 +312,7 @@ class FieldTrialApi(APIView):
                       {'fieldTrial': fieldTrial,
                        'titleView': fieldTrial.getName(),
                        'layoutData': self.prepareLayoutItems(fieldTrial),
-                       'thesisTrialRows': self.orderItemsInRows(thesisTrial),
+                       'thesisTrial': thesisTrial,
                        'assessments': assessmentsData,
                        'units': trialAssessmentSets,
                        'numberThesis': numberThesis,

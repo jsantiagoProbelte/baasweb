@@ -25,7 +25,7 @@ class LayoutTrial:
     @classmethod
     def setDeckCell(cls, replica: Replica, evaluation):
         if replica is None:
-            return {'name': 'None',
+            return {'name': '-',
                     'replica_id': 0,
                     'number': 0}
         else:
