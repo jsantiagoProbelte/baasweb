@@ -169,3 +169,8 @@ class TrialHelperTest(TestCase):
         self.assertNotEqual(_replicas1[0].pos_y, 0)
         self.assertNotEqual(_replicas1[1].pos_x, rows+1)
         self.assertNotEqual(_replicas1[1].pos_y, columns+1)
+
+    def test_headerLayout(self):
+        headers = LayoutTrial.headerLayout(self._fieldTrial)
+        self.assertEqual(len(headers), self._fieldTrial.blocks)
+        self.assertEqual(headers[0]['name'], 'A')

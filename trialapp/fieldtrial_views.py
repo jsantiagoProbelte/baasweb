@@ -260,8 +260,6 @@ class FieldTrialApi(APIView):
 
     def prepareLayoutItems(self, fieldTrial):
         return [[
-            {'name': '#blocks',
-             'value': self.showValue(fieldTrial.blocks)},
             {'name': '#samples/block',
              'value': self.showValue(fieldTrial.samples_per_replica)},
             {'name': '# rows',
@@ -275,8 +273,6 @@ class FieldTrialApi(APIView):
             {'name': 'CRO',
              'value': self.showValue(fieldTrial.cro)}
             ], [
-            {'name': '#replicas',
-             'value': self.showValue(fieldTrial.replicas_per_thesis)},
             {'name': 'Plants separation',
              'value': self.showValue(fieldTrial.distance_between_plants)},
             {'name': 'Rows separation',
@@ -307,7 +303,7 @@ class FieldTrialApi(APIView):
                             'id': item.id,
                             'date': item.evaluation_date}
                            for item in assessments]
-
+        headerRows = LayoutTrial.headerLayout(fieldTrial)
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,
                        'titleView': fieldTrial.getName(),
@@ -316,6 +312,7 @@ class FieldTrialApi(APIView):
                        'assessments': assessmentsData,
                        'units': trialAssessmentSets,
                        'numberThesis': numberThesis,
+                       'rowsReplicaHeader': headerRows,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})

@@ -22,8 +22,10 @@ class ThesisListView(LoginRequiredMixin, ListView):
         field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Thesis.getObjects(fieldTrial)
+        headerRows = LayoutTrial.headerLayout(fieldTrial)
         return {'object_list': new_list,
                 'fieldTrial': fieldTrial,
+                'rowsReplicaHeader': headerRows,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
                                                        new_list)}

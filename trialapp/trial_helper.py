@@ -35,6 +35,17 @@ class LayoutTrial:
                     'id': replica.generateReplicaDataSetId(evaluation)}
 
     @classmethod
+    def headerLayout(cls, fieldTrial: FieldTrial):
+        letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                   'J', 'K', 'L', 'M', 'N']
+        header = []
+        for i in range(0, fieldTrial.blocks):
+            header.append({'name': letters[i],
+                           'replica_id': 0,
+                           'number': 0})
+        return header
+
+    @classmethod
     def showLayout(cls, fieldTrial: FieldTrial,
                    evaluation: Evaluation, thesisTrial):
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
