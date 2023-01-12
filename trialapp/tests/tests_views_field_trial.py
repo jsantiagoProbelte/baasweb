@@ -146,3 +146,4 @@ class FieldTrialViewsTest(TestCase):
         output = api.orderItemsInRows(items)
         self.assertTrue(len(output), 2)
         self.assertTrue(len(output[0]), 4)
+        self.assertTrue(len(output[1]), 1)
