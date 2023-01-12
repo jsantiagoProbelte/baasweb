@@ -300,6 +300,7 @@ class FieldTrialApi(APIView):
             field_trial_id = kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
+        numberThesis = len(thesisTrial)
         assessments = Evaluation.getObjects(fieldTrial)
         trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
         assessmentsData = [{'name': item.getName(),
@@ -314,6 +315,7 @@ class FieldTrialApi(APIView):
                        'thesisTrialRows': self.orderItemsInRows(thesisTrial),
                        'assessments': assessmentsData,
                        'units': trialAssessmentSets,
+                       'numberThesis': numberThesis,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})
