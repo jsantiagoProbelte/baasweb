@@ -54,11 +54,11 @@ class FieldTrialCreateForm(forms.Form):
     number_rows = forms.CharField(
         label="# rows", required=False)
     lenght_row = forms.CharField(
-        label="Row length(m)", required=False)
+        label="Row length (m)", required=False)
     net_surface = forms.CharField(
-        label="Net area (m2)", required=False)
+        label="Net area plot (m2)", required=False)
     gross_surface = forms.CharField(
-        label="Gross area (m2)", required=False)
+        label="Gross area plot (m2)", required=False)
 
     def __init__(self, *args, **kwargs):
         fieldValues = FieldTrial.extractValueModelChoicesFromKwargs(kwargs)

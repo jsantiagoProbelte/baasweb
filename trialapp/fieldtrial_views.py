@@ -266,7 +266,7 @@ class FieldTrialApi(APIView):
              'value': self.showValue(fieldTrial.number_rows)},
             {'name': 'Row length (m)',
              'value': self.showValue(fieldTrial.lenght_row)},
-            {'name': 'Gross area(m2)',
+            {'name': 'Gross area plot (m2)',
              'value': self.showValue(fieldTrial.gross_surface)},
             {'name': 'Farmer',
              'value': self.showValue(fieldTrial.contact)},
@@ -279,7 +279,7 @@ class FieldTrialApi(APIView):
              'value': self.showValue(fieldTrial.distance_between_rows)},
             {'name': 'Plants density (H)',
              'value': self.showValue(fieldTrial.plantDensity())},
-            {'name': 'Net area (m2)',
+            {'name': 'Net area plot (m2)',
              'value': self.showValue(fieldTrial.net_surface)},
             {'name': 'location',
              'value': self.showValue(fieldTrial.location)}
