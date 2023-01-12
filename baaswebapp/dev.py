@@ -2,7 +2,6 @@
 # We need to import all the settings, but flake does not like,
 # do we explicitly ignore this errors
 from baaswebapp.settings import *  # noqa: F403, F401
-from sshtunnel import SSHTunnelForwarder
 
 # Connect to a server using the ssh keys.
 # See the sshtunnel documentation for using password authentication
@@ -11,6 +10,7 @@ from sshtunnel import SSHTunnelForwarder
 # # from trialapp.models import TrialDbInitialLoader
 # # TrialDbInitialLoader.loadInitialTrialValues(location='shhtunnel_db')
 
+# from sshtunnel import SSHTunnelForwarder
 # ssh_tunnel = SSHTunnelForwarder(
 #     '51.137.115.231',
 #     ssh_private_key='/Users/jsantiago/Code/azure/baasweb_server/'
