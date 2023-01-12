@@ -658,8 +658,8 @@ class TrialDbInitialLoader:
     @classmethod
     def initialTrialModelValues(cls):
         return {
-            TrialType: [ModelHelpers.UNKNOWN, 'Positioning', 'Development',
-                        'Demo', 'Registry'],
+            TrialType: [ModelHelpers.UNKNOWN, 'Development',
+                        'Commercial Demo', 'Registry', 'Demand Generation'],
             TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
                           'Anual Recurrence', 'Close'],
             ApplicationMode: [
