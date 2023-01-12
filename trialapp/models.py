@@ -180,6 +180,7 @@ class CropVariety(ModelHelpers, models.Model):
 
 class Plague(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+    other = models.CharField(max_length=100, null=True)
     scientific = models.CharField(max_length=200, null=True)
 
 
@@ -676,13 +677,7 @@ class TrialDbInitialLoader:
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
                       'Nemapron', 'Nutrihealth', 'Verticibel',
                       '-- No Product --'],
-            Plague: [ModelHelpers.UNKNOWN,
-                     'Antracnosis', 'Botrytis', 'Oidio', 'Sphaerotheca',
-                     'Cenicilla polvorienta', 'Damping off', 'Gusano soldado',
-                     'Marchitez', 'Minador', 'Mosca blanca', 'N/A',
-                     'Nematodo agallador', 'Tizon de la hoja',
-                     'Tristeza de los citricos', 'Tristeza del aguacatero',
-                     'Verticiliosis'],
+
             RateUnit: ['Kg/hectare', 'Liters/hectare'],
             AssessmentUnit: [
                 '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
@@ -728,7 +723,102 @@ class TrialDbInitialLoader:
                 'Lettuce': {'other': 'Lechuga'},
                 'Apple': {'other': 'Manzana'},
                 'Peach': {'other': 'Melocoton'},
-                'Carrot': {'other': 'Zanahoria'}}}
+                'Carrot': {'other': 'Zanahoria'}},
+
+            Plague: {
+                ModelHelpers.UNKNOWN: {'other': None},
+                "Mites": {"other": "Acaros"},
+                "Aguado/Citric Bacteriosis":
+                    {"other": "Aguado/Bacteriosis Citricos"},
+                "Alternary": {"other": "Alternaria"},
+                "Anarsia/Grafolite": {"other": "Anarsia/Grafolita"},
+                "Antilimacos": {"other": "Antilimacos"},
+                "Anthracnosis": {"other": "Antracnosis"},
+                "Crazy oat (oats)": {"other": "Avena Loca (Avena)"},
+                "Bacteriosis": {"other": "Bacteriosis"},
+                "Barrenadores": {"other": "Barrenadores"},
+                "Biofertilization": {"other": "BioFertilizacion"},
+                "Botrytis": {"other": "Botrytis"},
+                "Bremia": {"other": "Bremia"},
+                "Bromine": {"other": "Bromo"},
+                "Carpocapsa": {"other": "Carpocapsa"},
+                "Cercospora": {"other": "Cercospora"},
+                "CLADOSPORIOSIS (Fulvia Fulva)":
+                    {"other": "Cladosporiosis (Fulvia Fulva)"},
+                "Cochinillas": {"other": "Cochinillas"},
+                "Unbrotaries": {"other": "Desbrotadores"},
+                "Desiccants/defoliant": {"other": "Desecantes/Defoliantes"},
+                "Nascence diseases": {"other": "Enfermedades De Nascencia"},
+                "Eriofidos": {"other": "Eriofidos"},
+                "Potato beetle": {"other": "Escarabajo De La Patata"},
+                "Soil fertilizers": {"other": "Fertilizantes Suelo"},
+                "Fitor regulators": {"other": "Fitorreguladores"},
+                "Heliothis spp.": {"other": "Heliothis spp."},
+                "Contact herbicides": {"other": "Herbicidas De Contacto"},
+                "Residual herbicides": {"other": "Herbicidas Residuales"},
+                "Cereal fungi": {"other": "Hongos Cereal"},
+                "Seed fungi": {"other": "Hongos De Semilla"},
+                "Soil fungi": {"other": "Hongos De Suelo"},
+                "Fungi in general": {"other": "Hongos En General"},
+                "Fungi winter prefloration":
+                    {"other": "Hongos Invierno Prefloracion"},
+                "Ants": {"other": "Hormigas"},
+                "Soil insects": {"other": "Insectos De Suelo"},
+                "Insects in general": {"other": "Insectos En General"},
+                "Insects stored grains":
+                    {"other": "Insectos Granos Almacenados"},
+                "Winter insects prefloration":
+                    {"other": "Insectos Invierno Prefloracion"},
+                "Funeral (cyperus)": {"other": "Juncia (Cyperus)"},
+                "Locust": {"other": "Langosta"},
+                "Lava salts": {"other": "Lava Sales"},
+                "Lepidopteros": {"other": "Lepidopteros"},
+                "Leprosy": {"other": "Lepra"},
+                "Dicotyledoneas weeds":
+                    {"other": "Malas Hierbas Dicotiledoneas"},
+                "Pest mixture": {"other": "Mezcla De Plagas"},
+                "Mildew": {"other": "Mildiu"},
+                "Leaf minators": {"other": "Minadores De Hojas"},
+                "Mojantes": {"other": "Mojantes"},
+                "Mollusquicides": {"other": "Molusquicidas"},
+                "Moniliosis": {"other": "Moniliosis"},
+                "White fly": {"other": "Mosca Blanca"},
+                "Fruit fly": {"other": "Mosca De La Fruta"},
+                "Olive fly": {"other": "Mosca Del Olivo"},
+                "Mottled": {"other": "Moteado"},
+                "Mycosphaerella (in general)":
+                    {"other": "Mycosphaerella (en general)"},
+                "Bold": {"other": "Negrilla"},
+                "Nematodes": {"other": "Nematodos"},
+                "Oidio": {"other": "Oidio"},
+                "Other deficiencies": {"other": "Otras Carencias"},
+                "Other wooden diseases":
+                    {"other": "Otras Enfermedades De La Madera"},
+                "Other gramineas weeds":
+                    {"other": "Otras Malas Hierbas Gramineas"},
+                "Paulilla/Paulillon": {"other": "Paulilla/Paulillon"},
+                "Phytophthora citrus": {"other": "Phytophthora Citricos"},
+                "Piral de la Vid": {"other": "Piral De La Vid"},
+                "Cluster moth": {"other": "Polilla Del Racimo"},
+                "Prays Citri": {"other": "Prays Citri"},
+                "Prays del Olivo": {"other": "Prays Del Olivo"},
+                "Psyla": {"other": "Psyla"},
+                "Aphids": {"other": "Pulgones"},
+                "Beet thumb": {"other": "Pulguilla De La Remolacha"},
+                "Pyricularia Oryzae": {"other": "Pyricularia Oryzae"},
+                "Olive repilement": {"other": "Repilo Del Olivo"},
+                "Rhizoctonia": {"other": "Rhizoctonia"},
+                "Royas": {"other": "Royas"},
+                "Sclerotinia": {"other": "Sclerotinia"},
+                "Septoria": {"other": "Septoria"},
+                "Stempphylium vesicarium": {"other": "Stemphylium Vesicarium"},
+                "Drill of the corn": {"other": "Taladro Del Maiz"},
+                "Post harvest treatments":
+                    {"other": "Tratamientos Post Cosecha"},
+                "Trips": {"other": "Trips"},
+                "Absolute tutta": {"other": "Tutta Absoluta"},
+                "Vallico (Lolium)": {"other": "Vallico (Lolium)"},
+                "YESCA DE LA VID": {"other": "Yesca De La Vid"}}}
 
     # Use location='shhtunnel_db'
     @classmethod

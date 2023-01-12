@@ -2,15 +2,19 @@
 # We need to import all the settings, but flake does not like,
 # do we explicitly ignore this errors
 from baaswebapp.settings import *  # noqa: F403, F401
-# from sshtunnel import SSHTunnelForwarder
+from sshtunnel import SSHTunnelForwarder
 
-# # Connect to a server using the ssh keys.
-# # See the sshtunnel documentation for using password authentication
+# Connect to a server using the ssh keys.
+# See the sshtunnel documentation for using password authentication
+# # python manage.py migrate --database=shhtunnel_db
+# # python manage.py shell
+# # from trialapp.models import TrialDbInitialLoader
+# # TrialDbInitialLoader.loadInitialTrialValues(location='shhtunnel_db')
+
 # ssh_tunnel = SSHTunnelForwarder(
 #     '51.137.115.231',
 #     ssh_private_key='/Users/jsantiago/Code/azure/baasweb_server/'
 #                     'baas-server-connect-vm_key.cer',
-#     # ssh_private_key_password='enunlugardelamancha',
 #     ssh_username='azureuser',
 #     remote_bind_address=('baasweb-server.postgres.database.azure.com', 5432),
 # )
@@ -27,7 +31,7 @@ DATABASES = {
     #     'HOST': '127.0.0.1',
     #     'PORT': ssh_tunnel.local_bind_port,
     #     'NAME': 'baas_db',
-    #     'USER': 'baas_admin',
-    #     'PASSWORD': BREAK ME,
+    #     'USER': 'ugeudpboxa',
+    #     'PASSWORD': '3O760T1N7725FZE0$',
     # },
 }
