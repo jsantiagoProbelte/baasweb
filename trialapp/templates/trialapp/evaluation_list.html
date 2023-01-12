@@ -26,7 +26,7 @@
         <td><a href="{% url 'evaluation-edit' fieldTrial.id item.id %}" class="btn btn-sm btn-info">&#10000;</a></td>
         <td>{{item.evaluation_date}}</td>
         <td>{{item.name}}</td>
-        <td>{{item.crop_stage_majority}} {{item.crop_stage_scale}}</td>
+        <td>{{item.crop_stage_majority}} BBCH</td>
         <td><a href="{% url 'data_thesis_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
         <td><a href="{% url 'data_replica_index' item.id %}" class="btn btn-primary fs-4">&#43;</a></td>
         <td><a href="{% url 'data-samples-index' item.id 0 %}" class="btn btn-primary fs-4">&#43;</a></td>

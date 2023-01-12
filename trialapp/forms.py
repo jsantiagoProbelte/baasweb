@@ -208,7 +208,6 @@ class EvaluationEditForm(forms.Form):
     crop_stage_majority = forms.CharField(
         label='Crop Stage Majority', required=True,
         widget=forms.NumberInput())
-    crop_stage_scale = forms.CharField(label='Crop Stage Scale', required=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -234,7 +233,6 @@ class EvaluationEditForm(forms.Form):
                     css_class='col-md-6'),
                 Div(
                     Field('name', css_class='mb-3'),
-                    Field('crop_stage_scale', css_class='mb-4'),
                     css_class='col-md-6')),
             Div(
                 FormActions(

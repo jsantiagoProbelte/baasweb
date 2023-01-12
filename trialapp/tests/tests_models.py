@@ -68,8 +68,7 @@ class TrialAppModelTest(TestCase):
         'field_trial_id': 1,
         'name': 'Primera aplication',
         'evaluation_date': '2022-07-01',
-        'crop_stage_majority': 66,
-        'crop_stage_scale': 'BBCH'
+        'crop_stage_majority': 66
     }]
 
     def setUp(self):
@@ -248,8 +247,7 @@ class TrialAppModelTest(TestCase):
             name='eval1',
             evaluation_date='2022-12-15',
             field_trial=fieldTrial,
-            crop_stage_majority=65,
-            crop_stage_scale='BBCH')
+            crop_stage_majority=65)
         dataPoints = ThesisData.getDataPoints(evaluation)
         self.assertEqual(len(dataPoints), 0)
         ThesisData.setDataPoint(thesis, evaluation, assSet, 33)

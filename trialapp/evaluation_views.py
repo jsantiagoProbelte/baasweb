@@ -76,7 +76,6 @@ def editEvaluation(request, field_trial_id=None, evaluation_id=None,
         initialValues['name'] = evaluation.name
         initialValues['evaluation_date'] = evaluation.evaluation_date
         initialValues['crop_stage_majority'] = evaluation.crop_stage_majority
-        initialValues['crop_stage_scale'] = evaluation.crop_stage_scale
         # retrieve the list of the current defined product evaluation
         product_list = ProductEvaluation.getObjects(evaluation)
 
@@ -112,8 +111,6 @@ def saveEvaluation(request, evaluation_id=None):
         evaluation.crop_stage_majority =\
             Evaluation.getValueFromRequestOrArray(
                 request, values, 'crop_stage_majority')
-        evaluation.crop_stage_scale = Evaluation.getValueFromRequestOrArray(
-            request, values, 'crop_stage_scale')
         evaluation.save()
     else:
         # This is a new evaluation
@@ -124,9 +121,7 @@ def saveEvaluation(request, evaluation_id=None):
             evaluation_date=Evaluation.getValueFromRequestOrArray(
                 request, values, 'evaluation_date'),
             crop_stage_majority=Evaluation.getValueFromRequestOrArray(
-                request, values, 'crop_stage_majority'),
-            crop_stage_scale=Evaluation.getValueFromRequestOrArray(
-                request, values, 'crop_stage_scale'))
+                request, values, 'crop_stage_majority'))
 
         # Create by default a list based on all the existing thesis
         # and let the user remove them

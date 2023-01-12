@@ -31,7 +31,7 @@ DATABASES = {
     #     'HOST': '127.0.0.1',
     #     'PORT': ssh_tunnel.local_bind_port,
     #     'NAME': 'baas_db',
-    #     'USER': 'ugeudpboxa',
-    #     'PASSWORD': '3O760T1N7725FZE0$',
+    #     'USER': USER,
+    #     'PASSWORD': BREAK,
     # },
 }

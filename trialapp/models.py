@@ -540,7 +540,6 @@ class Evaluation(ModelHelpers, models.Model):
     evaluation_date = models.DateField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.IntegerField()
-    crop_stage_scale = models.CharField(max_length=10)
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -549,9 +548,8 @@ class Evaluation(ModelHelpers, models.Model):
                 .order_by('evaluation_date')
 
     def getName(self):
-        return "{}-{}".format(
-            self.crop_stage_majority,
-            self.crop_stage_scale)
+        return "{}-BBCH".format(
+            self.crop_stage_majority)
 
 
 # This collects which products are included in each evaluation

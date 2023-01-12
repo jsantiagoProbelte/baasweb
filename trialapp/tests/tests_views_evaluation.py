@@ -80,15 +80,12 @@ class EvaluationViewsTest(TestCase):
         self.assertContains(response, evaluationData['name'])
         self.assertEqual(response.status_code, 200)
 
-        newscale = 'new name'
         evaluationData['evaluation_id'] = evaluation.id
-        evaluationData['crop_stage_scale'] = newscale
         request = self._apiFactory.post('evaluation-save',
                                         data=evaluationData)
         self._apiFactory.setUser(request)
         response = saveEvaluation(request)
         evaluation2 = Evaluation.objects.get(name=evaluation.name)
-        self.assertEqual(evaluation2.crop_stage_scale, newscale)
         self.assertEqual(response.status_code, 302)
 
         # Lets delete some products

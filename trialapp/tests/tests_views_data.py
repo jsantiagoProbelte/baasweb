@@ -43,8 +43,7 @@ class DataViewsTest(TestCase):
             name='eval1',
             evaluation_date='2022-12-15',
             field_trial=self._fieldTrial,
-            crop_stage_majority=65,
-            crop_stage_scale='BBCH')
+            crop_stage_majority=65)
 
     def test_setData(self):
         request = self._apiFactory.get('data_thesis_index',
