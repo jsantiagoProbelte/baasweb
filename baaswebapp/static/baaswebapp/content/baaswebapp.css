@@ -52,9 +52,14 @@
   background: var(--custom-bio-morado );
 }
 
+.bg-custom-cards{
+  background: var(--custom-bg-color-cards);
+}
+
 .bg-custom-main{
   background: var(--custom-main-color);
 }
+
 .txt-custom-main{
   color: var(--custom-main-color);
 }
