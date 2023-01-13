@@ -17,7 +17,7 @@
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
         <td class="col-md-1"><a class="btn btn-info" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
-        <td class="col-md-1"><a class="btn btn-sm btn-secondary" href="{% url 'trial-assessment-set-list' item.id%}">{{item.fieldtrials}}</a></td>
+        <td class="col-md-1"><a class="btn btn-sm btn-secondary" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.fieldtrials}}</a></td>
         <td class="col-md-2">{% include "catalogue/show_tags.html" with tags=item.dimensions badge_class='bg-light'%}</td> 
         <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.crops badge_class='bg-primary' %}</td>
         <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.plagues badge_class='bg-secondary'%}</td>
