@@ -261,22 +261,6 @@ class FieldTrialApi(APIView):
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)
 
-    def orderItemsInRows(self, items):
-        thesisTrialRows = []
-        thesisTrialRow = []
-        index = 1
-        for thesis in items:
-            thesisTrialRow.append(thesis)
-            if index % 4 == 0:
-                index = 0
-                thesisTrialRows.append(thesisTrialRow)
-                thesisTrialRow = []
-            else:
-                index += 1
-        if thesisTrialRow:
-            thesisTrialRows.append(thesisTrialRow)
-        return thesisTrialRows
-
     def showValue(self, value):
         return value if value else '?'
 

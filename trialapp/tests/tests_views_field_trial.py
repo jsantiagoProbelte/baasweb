@@ -133,17 +133,3 @@ class FieldTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
             FieldTrial.objects.filter(pk=deletedId).exists())
-
-    def test_orderItemsInRows(self):
-        items = range(0, 3)
-        api = FieldTrialApi()
-        output = api.orderItemsInRows(items)
-        self.assertTrue(len(output), 1)
-        self.assertTrue(len(output[0]), 3)
-
-        items = range(0, 5)
-        api = FieldTrialApi()
-        output = api.orderItemsInRows(items)
-        self.assertTrue(len(output), 2)
-        self.assertTrue(len(output[0]), 4)
-        self.assertTrue(len(output[1]), 1)
