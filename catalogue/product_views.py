@@ -1,16 +1,12 @@
 # Create your views here.
-import django_filters
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from rest_framework import permissions
-from django.contrib.auth.decorators import login_required
 from trialapp.models import Evaluation, FieldTrial, Thesis,\
                             TrialAssessmentSet, Product, ModelHelpers
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import datetime
 
 
 class ProductListView(LoginRequiredMixin, FilterView):
