@@ -36,7 +36,7 @@ class FieldTrialCreateForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 10}))
 
     ref_to_eppo = forms.CharField(label="EPPO Reference", required=False)
-    ref_to_criteria = forms.CharField(label="Criteria Reference", 
+    ref_to_criteria = forms.CharField(label="Criteria Reference",
                                       required=False)
     comments_criteria = forms.CharField(
         label="Criteria comments",
