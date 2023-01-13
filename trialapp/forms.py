@@ -206,7 +206,7 @@ class EvaluationEditForm(forms.Form):
     name = forms.CharField(label='Name', required=True)
     evaluation_date = forms.DateField(widget=MyDateInput(), required=True)
     crop_stage_majority = forms.CharField(
-        label='Crop Stage Majority', required=True,
+        label='Crop Stage Majority (BBCH)', required=True,
         widget=forms.NumberInput())
 
     def __init__(self, *args, **kwargs):
