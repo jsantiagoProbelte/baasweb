@@ -14,11 +14,12 @@
           Goal
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='project' value=fieldTrial.project%}
-          {% include "trialapp/item_list_template.html" with field='objective' value=fieldTrial.objective%}
-          {% include "trialapp/item_list_template.html" with field='main product' value=fieldTrial.product%}
-          {% include "trialapp/item_list_template.html" with field='crop' value=fieldTrial.crop%}
-          {% include "trialapp/item_list_template.html" with field='plague' value=fieldTrial.plague%}
+          {% include "trialapp/item_list_template.html" with field='Project' value=fieldTrial.project%}
+          {% include "trialapp/item_list_template.html" with field='Objective' value=fieldTrial.objective%}
+          {% include "trialapp/item_list_template.html" with field='main Product' value=fieldTrial.product%}
+          {% include "trialapp/item_list_template.html" with field='Crop' value=fieldTrial.crop%}
+          {% include "trialapp/item_list_template.html" with field='Plague' value=fieldTrial.plague%}
+          {% include "trialapp/item_list_template.html" with field='Description' value=fieldTrial.description%}
         </ul>
       </div>
       <div class="card no-border mb-3" >
@@ -26,11 +27,11 @@
           Status
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='type' value=fieldTrial.trial_type%}
-          {% include "trialapp/item_list_template.html" with field='status' value=fieldTrial.trial_status %}
-          {% include "trialapp/item_list_template.html" with field='responsible' value=fieldTrial.responsible%}
-          {% include "trialapp/item_list_template.html" with field='started' value=fieldTrial.initiation_date%}
-          {% include "trialapp/item_list_template.html" with field='completed' value=fieldTrial.completion_date%}
+          {% include "trialapp/item_list_template.html" with field='Type' value=fieldTrial.trial_type%}
+          {% include "trialapp/item_list_template.html" with field='Status' value=fieldTrial.trial_status %}
+          {% include "trialapp/item_list_template.html" with field='Responsible' value=fieldTrial.responsible%}
+          {% include "trialapp/item_list_template.html" with field='Started' value=fieldTrial.initiation_date%}
+          {% include "trialapp/item_list_template.html" with field='Completed' value=fieldTrial.completion_date%}
         </ul>
       </div>
     </div>
@@ -53,7 +54,10 @@
             Assessments
             <a class="btn btn-info btn-sm float-end" href="{% url 'evaluation-list' fieldTrial.id%}">&#10000;</a>
         </div>
-        <ul class="list-group list-group-flush"></ul>
+        <ul class="list-group list-group-flush">
+          {% include "trialapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
+          {% include "trialapp/item_list_template.html" with field='Criteria' value=fieldTrial.ref_to_criteria%}
+          {% include "trialapp/item_list_template.html" with field='Comments' value=fieldTrial.comments_criteria%}
           {% for item in assessments %}
             {% include "trialapp/item_list_template.html" with field=item.name value=item.date%}
           {% empty %}

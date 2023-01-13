@@ -30,6 +30,18 @@ class FieldTrialCreateForm(forms.Form):
     responsible = forms.CharField(label="Responsible")
     contact = forms.CharField(label="Farmer")
     cro = forms.CharField(label="CRO", required=False)
+    description = forms.CharField(
+        label="Description",
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 10}))
+
+    ref_to_eppo = forms.CharField(label="EPPO Reference", required=False)
+    ref_to_criteria = forms.CharField(label="Criteria Reference", 
+                                      required=False)
+    comments_criteria = forms.CharField(
+        label="Criteria comments",
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 5}))
 
     product = forms.ChoiceField(label="Main Product",
                                 required=True, choices=[])
@@ -97,6 +109,7 @@ class FieldTrialCreateForm(forms.Form):
                             Field('product', css_class='mb-2'),
                             Field('crop', css_class='mb-2'),
                             Field('plague', css_class='mb-2'),
+                            Field('description', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border"),
                     css_class='col-md-4'),
@@ -106,6 +119,12 @@ class FieldTrialCreateForm(forms.Form):
                             Field('responsible', css_class='mb-2'),
                             Field('initiation_date', css_class='mb-2'),
                             Field('completion_date', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    Div(HTML('Assessments'), css_class="card-header-baas h4"),
+                    Div(Div(Field('ref_to_eppo', css_class='mb-2'),
+                            Field('ref_to_criteria', css_class='mb-2'),
+                            Field('comments_criteria', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border"),
                     css_class='col-md-4'),

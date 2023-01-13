@@ -87,6 +87,10 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
             'trial_type': fieldTrial.trial_type.id,
             'objective': fieldTrial.objective.id,
             'responsible': fieldTrial.responsible,
+            'description': fieldTrial.description,
+            'ref_to_eppo': fieldTrial.ref_to_eppo,
+            'ref_to_criteria': fieldTrial.ref_to_criteria,
+            'comments_criteria': fieldTrial.comments_criteria,
             'product': fieldTrial.product.id,
             'project': fieldTrial.project.id,
             'crop': fieldTrial.crop.id,
@@ -134,6 +138,16 @@ def saveFieldTrial(request, field_trial_id=None):
             request, values, 'objective')
         fieldTrial.responsible = FieldTrial.getValueFromRequestOrArray(
             request, values, 'responsible')
+
+        fieldTrial.description = FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'description')
+        fieldTrial.ref_to_eppo = FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'ref_to_eppo')
+        fieldTrial.ref_to_criteria = FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'ref_to_criteria')
+        fieldTrial.comments_criteria = FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'comments_criteria')
+
         fieldTrial.product = FieldTrial.getValueFromRequestOrArray(
             request, values, 'product')
         fieldTrial.project = FieldTrial.getValueFromRequestOrArray(
@@ -187,6 +201,14 @@ def saveFieldTrial(request, field_trial_id=None):
                 request, values, 'objective'),
             responsible=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'responsible'),
+            description=FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'description'),
+            ref_to_eppo=FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'ref_to_eppo'),
+            ref_to_criteria=FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'ref_to_criteria'),
+            comments_criteria=FieldTrial.getValueFromRequestOrArray(
+                    request, values, 'comments_criteria'),
             product=FieldTrial.getValueFromRequestOrArray(
                 request, values, 'product'),
             project=FieldTrial.getValueFromRequestOrArray(

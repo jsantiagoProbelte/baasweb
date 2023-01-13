@@ -233,6 +233,11 @@ class FieldTrial(ModelHelpers, models.Model):
                                    on_delete=models.CASCADE, null=True)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     responsible = models.CharField(max_length=100)
+    description = models.TextField(null=True)
+
+    ref_to_eppo = models.CharField(max_length=100, null=True)
+    ref_to_criteria = models.CharField(max_length=100, null=True)
+    comments_criteria = models.TextField(null=True)
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
