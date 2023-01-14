@@ -20,7 +20,7 @@ urlpatterns = [
     #     fieldtrial_views.FieldTrialApi.as_view(),
     #     name='field_trial_api'),
     path(
-        'product_api/<int:field_trial_id>/',
+        'product_api/<int:product_id>/',
         product_views.ProductApi.as_view(),
         name='product_api'),
     # path(

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from trialapp.models import Product, FieldTrial, TrialDbInitialLoader
-from catalogue.product_views import ProductListView  # ProductApi
+from catalogue.product_views import ProductListView, ProductApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -88,3 +88,27 @@ class ProductViewsTest(TestCase):
         products = Product.objects.all()
         for product in products:
             self.assertContains(response, product.name)
+
+    def test_showProduct(self):
+        productid=4
+        product = Product.objects.get(pk=productid)
+        request = self._apiFactory.get(
+            'product_api',
+            data={'product_id': productid})
+        self._apiFactory.setUser(request)
+        apiView = ProductApi()
+        response = apiView.get(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, product.name)
+
+        deletedId = productid
+        deleteData = {'item_id': deletedId}
+        deleteRequest = self._apiFactory.post(
+            'product_api',
+            data=deleteData)
+        self._apiFactory.setUser(deleteRequest)
+
+        response = apiView.delete(deleteRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            Product.objects.filter(pk=deletedId).exists())

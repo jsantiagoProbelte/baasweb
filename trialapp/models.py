@@ -166,6 +166,16 @@ class ModelHelpers:
         return cls.objects \
                   .filter(evaluation_id__in=evaluationIds)
 
+    @classmethod
+    def extractDistincValues(cls, results, tag):
+        values = {}
+        for result in results:
+            found = result[tag]
+            if found == ModelHelpers.UNKNOWN:
+                continue
+            if found not in values:
+                values[found] = 1
+        return list(values.keys())
 
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -203,6 +213,27 @@ class TrialType(ModelHelpers, models.Model):
 class Product(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     # vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+
+    def distinctValues(self, tag):
+        results = FieldTrial.objects.filter(product=self).values(tag)
+        return ModelHelpers.extractDistincValues(results, tag)
+
+    def getCrops(self):
+        return self.distinctValues('crop__name')
+
+    def getPlagues(self):
+        return self.distinctValues('plague__name')
+
+    def dimensionsValues(self):
+        results = FieldTrial.objects.filter(product=self).values('id')
+        ids = [value['id'] for value in results]
+        tag = 'type__name'
+        results = TrialAssessmentSet.objects.filter(
+            field_trial_id__in=ids).values(tag)
+        return ModelHelpers.extractDistincValues(results, tag)
+
+    def getCountFieldTrials(self):
+        return FieldTrial.objects.filter(product=self).count()
 
 
 class RateUnit(ModelHelpers, models.Model):

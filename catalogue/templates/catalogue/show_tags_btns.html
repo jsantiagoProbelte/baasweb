@@ -1,0 +1,7 @@
+<li class="list-group-item list-group-item-baas">
+    <span class="badge bg-light ms-2 me-4 ">{{title}}</span> 
+    {% for tag in tags%}
+    <span class="btn btn-sm btn-dark me-2 mb-1">{{tag}}</span>
+    {% empty %}
+    {% endfor %}
+</li>

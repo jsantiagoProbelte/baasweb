@@ -1,0 +1,35 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% include "baaswebapp/header_page.html" with title=titleView subtitle='product' edit_href="product_api" item=product %}
+
+<div class="row">
+    <div class="col-md-3">
+      <div class="card no-border mb-3" >
+        <ul class="list-group list-group-flush">
+          {% include "baaswebapp/item_list_template.html" with field='Category' value='to be defined'%}
+          {% include "baaswebapp/item_list_template.html" with field='Vendor' value='vendor'%}
+          <li class="list-group-item list-group-item-baas">
+            <span class='text-muted small'># trials</span>
+            <span class='float-end'><a class="btn btn-sm btn-info" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}}</a></span>
+        </li>
+        </ul>
+      </div>
+      <div class="card no-border mb-3">
+        <div class="card-header-baas h5">
+            Data points
+        </div>
+        <ul class="list-group list-group-flush">
+          {% include "catalogue/show_tags_btns.html" with title='Dimensions' tags=dimensions %}</li>
+          {% include "catalogue/show_tags_btns.html" with title='Crops' tags=crops %}</li>
+          {% include "catalogue/show_tags_btns.html" with title='Plagues' tags=plagues %}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-8">
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

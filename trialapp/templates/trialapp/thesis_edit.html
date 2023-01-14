@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "trialapp/header.html" with title=fieldTrial.code subheader=fieldTrial.name action=title subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' list_href='thesis-list' refId=fieldTrial.id%}
+{% include "baaswebapp/header_page.html" with title=fieldTrial.code subheader=fieldTrial.name action=title subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' list_href='thesis-list' refId=fieldTrial.id%}
 
 <div class="row">
   <div class="col-md-4">

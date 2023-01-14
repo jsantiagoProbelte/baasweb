@@ -5,7 +5,7 @@
 {% block content %}
 
 
-{% include "trialapp/header.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
+{% include "baaswebapp/header_page.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
 
 <div class="row">
     <div class="col-md-4">
@@ -14,12 +14,12 @@
           Goal
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='Project' value=fieldTrial.project%}
-          {% include "trialapp/item_list_template.html" with field='Objective' value=fieldTrial.objective%}
-          {% include "trialapp/item_list_template.html" with field='main Product' value=fieldTrial.product%}
-          {% include "trialapp/item_list_template.html" with field='Crop' value=fieldTrial.crop%}
-          {% include "trialapp/item_list_template.html" with field='Plague' value=fieldTrial.plague%}
-          {% include "trialapp/item_list_template.html" with field='Description' value=fieldTrial.description%}
+          {% include "baaswebapp/item_list_template.html" with field='Project' value=fieldTrial.project%}
+          {% include "baaswebapp/item_list_template.html" with field='Objective' value=fieldTrial.objective%}
+          {% include "baaswebapp/item_list_template.html" with field='main Product' value=fieldTrial.product%}
+          {% include "baaswebapp/item_list_template.html" with field='Crop' value=fieldTrial.crop%}
+          {% include "baaswebapp/item_list_template.html" with field='Plague' value=fieldTrial.plague%}
+          {% include "baaswebapp/item_list_template.html" with field='Description' value=fieldTrial.description%}
         </ul>
       </div>
       <div class="card no-border mb-3" >
@@ -27,11 +27,11 @@
           Status
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='Type' value=fieldTrial.trial_type%}
-          {% include "trialapp/item_list_template.html" with field='Status' value=fieldTrial.trial_status %}
-          {% include "trialapp/item_list_template.html" with field='Responsible' value=fieldTrial.responsible%}
-          {% include "trialapp/item_list_template.html" with field='Started' value=fieldTrial.initiation_date%}
-          {% include "trialapp/item_list_template.html" with field='Completed' value=fieldTrial.completion_date%}
+          {% include "baaswebapp/item_list_template.html" with field='Type' value=fieldTrial.trial_type%}
+          {% include "baaswebapp/item_list_template.html" with field='Status' value=fieldTrial.trial_status %}
+          {% include "baaswebapp/item_list_template.html" with field='Responsible' value=fieldTrial.responsible%}
+          {% include "baaswebapp/item_list_template.html" with field='Started' value=fieldTrial.initiation_date%}
+          {% include "baaswebapp/item_list_template.html" with field='Completed' value=fieldTrial.completion_date%}
         </ul>
       </div>
     </div>
@@ -43,7 +43,7 @@
         </div>
         <ul class="list-group list-group-flush"></ul>
           {% for item in units %}
-            {% include "trialapp/item_list_template.html" with field=item.unit.name value=item.type.name%}
+            {% include "baaswebapp/item_list_template.html" with field=item.unit.name value=item.type.name%}
           {% empty %}
             <p>No units yet.</p>
           {% endfor %}
@@ -55,11 +55,11 @@
             <a class="btn btn-info btn-sm float-end" href="{% url 'evaluation-list' fieldTrial.id%}">&#10000;</a>
         </div>
         <ul class="list-group list-group-flush">
-          {% include "trialapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
-          {% include "trialapp/item_list_template.html" with field='Criteria' value=fieldTrial.ref_to_criteria%}
-          {% include "trialapp/item_list_template.html" with field='Comments' value=fieldTrial.comments_criteria%}
+          {% include "baaswebapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
+          {% include "baaswebapp/item_list_template.html" with field='Criteria' value=fieldTrial.ref_to_criteria%}
+          {% include "baaswebapp/item_list_template.html" with field='Comments' value=fieldTrial.comments_criteria%}
           {% for item in assessments %}
-            {% include "trialapp/item_list_template.html" with field=item.name value=item.date%}
+            {% include "baaswebapp/item_list_template.html" with field=item.name value=item.date%}
           {% empty %}
             <p>No Assessments yet.</p>
           {% endfor %}
@@ -75,7 +75,7 @@
             <div class="col-md-6">
             <ul class="list-group list-group-flush">
               {% for item in column %}
-                {% include "trialapp/item_list_template.html" with field=item.name value=item.value%}
+                {% include "baaswebapp/item_list_template.html" with field=item.name value=item.value%}
               {% endfor %}
             </ul>
             </div>
