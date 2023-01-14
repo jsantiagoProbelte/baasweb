@@ -177,6 +177,7 @@ class ModelHelpers:
                 values[found] = 1
         return list(values.keys())
 
+
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     scientific = models.CharField(max_length=100)

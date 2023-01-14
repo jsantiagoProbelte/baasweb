@@ -90,7 +90,7 @@ class ProductViewsTest(TestCase):
             self.assertContains(response, product.name)
 
     def test_showProduct(self):
-        productid=4
+        productid = 4
         product = Product.objects.get(pk=productid)
         request = self._apiFactory.get(
             'product_api',
