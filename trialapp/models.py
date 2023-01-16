@@ -167,15 +167,16 @@ class ModelHelpers:
                   .filter(evaluation_id__in=evaluationIds)
 
     @classmethod
-    def extractDistincValues(cls, results, tag):
+    def extractDistincValues(cls, results, tag_id, tag_name):
         values = {}
         for result in results:
-            found = result[tag]
-            if found == ModelHelpers.UNKNOWN:
+            found = result[tag_id]
+            name = result[tag_name]
+            if name in [ModelHelpers.UNKNOWN, 'N/A']:
                 continue
             if found not in values:
-                values[found] = 1
-        return list(values.keys())
+                values[found] = name
+        return [{'id': id, 'name': values[id]} for id in values]
 
 
 class Crop(ModelHelpers, models.Model):
@@ -216,22 +217,28 @@ class Product(ModelHelpers, models.Model):
     # vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 
     def distinctValues(self, tag):
-        results = FieldTrial.objects.filter(product=self).values(tag)
-        return ModelHelpers.extractDistincValues(results, tag)
+        tag_id = '{}__id'.format(tag)
+        tag_name = '{}__name'.format(tag)
+        results = FieldTrial.objects.filter(product=self).values(
+            tag_id, tag_name)
+        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
 
     def getCrops(self):
-        return self.distinctValues('crop__name')
+        return self.distinctValues('crop')
 
     def getPlagues(self):
-        return self.distinctValues('plague__name')
+        return self.distinctValues('plague')
 
     def dimensionsValues(self):
         results = FieldTrial.objects.filter(product=self).values('id')
         ids = [value['id'] for value in results]
-        tag = 'type__name'
+        tag = 'type'
+        # We need the id from the set, but we display the name from the type
+        tag_id = 'id'
+        tag_name = '{}__name'.format(tag)
         results = TrialAssessmentSet.objects.filter(
-            field_trial_id__in=ids).values(tag)
-        return ModelHelpers.extractDistincValues(results, tag)
+            field_trial_id__in=ids).values(tag_id, tag_name)
+        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
 
     def getCountFieldTrials(self):
         return FieldTrial.objects.filter(product=self).count()

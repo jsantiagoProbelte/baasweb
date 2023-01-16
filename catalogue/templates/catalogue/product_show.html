@@ -5,7 +5,7 @@
 {% include "baaswebapp/header_page.html" with title=titleView subtitle='product' edit_href="product_api" item=product %}
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="card no-border mb-3" >
         <ul class="list-group list-group-flush">
           {% include "baaswebapp/item_list_template.html" with field='Category' value='to be defined'%}
@@ -16,19 +16,41 @@
         </li>
         </ul>
       </div>
+
+    </div>
+    <div class="col-md-10">
       <div class="card no-border mb-3">
+        <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
+          {% csrf_token %}
+          {{ form|crispy }}
         <div class="card-header-baas h5">
             Data points
+            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm float-end"/>
         </div>
-        <ul class="list-group list-group-flush">
-          {% include "catalogue/show_tags_btns.html" with title='Dimensions' tags=dimensions %}</li>
-          {% include "catalogue/show_tags_btns.html" with title='Crops' tags=crops %}</li>
-          {% include "catalogue/show_tags_btns.html" with title='Plagues' tags=plagues %}</li>
-        </ul>
+          <ul class="list-group list-group-horizontal">
+            {% for tagValues in filterData %}
+              {% include "catalogue/show_tags_btns.html" with title=tagValues.name tags=tagValues.values %}
+            {% endfor %}
+          </ul>
+        </form>
       </div>
-    </div>
-    <div class="col-md-8">
       
+      {% for graphDim in graphs %}
+        <div class="card no-border mb-3">
+          <div class="card-header-baas h5">
+            {{graphDim.name}}
+          </div>
+          {% for graphRow in graphDim.values %}
+            <ul class="list-group list-group-horizontal">
+              {% for graph in graphRow %}
+              <li class="list-group-item list-group-item-baas {{classGraphCol}}">
+                {{graph}}
+              </li>
+              {% endfor %}
+            </ul>
+          {% endfor %}
+        </div>
+      {% endfor %}
     </div>
   </div>
 </div>

@@ -157,6 +157,12 @@ class Graph:
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
+    @classmethod
+    def classColGraphs(cls, rcolumns, max_columns):
+        rcolumns = 1 if rcolumns == 0 else rcolumns
+        columns = max_columns if max_columns < rcolumns else rcolumns
+        return 'col-md-{}'.format(int(12 / columns))
+
     def groupOnRows(self, graphs, columns=4):
         numGraphs = len(graphs)
         if numGraphs == 0:
@@ -164,7 +170,7 @@ class Graph:
         rcolumns = columns
         if numGraphs < columns:
             rcolumns = numGraphs
-        classGroup = 'col-md-{}'.format(int(12 / rcolumns))
+        classGroup = Graph.classColGraphs(rcolumns, columns)
         mgraphs = []
         count = 0
         rgraph = []

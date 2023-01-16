@@ -187,7 +187,7 @@
   font-family: 'Rubik', sans-serif;
 }
 .navbar .nav-item .btn-info{
-  border-radius:20px;
+  border-radius:10px;
   padding-left: 2.5rem !important;
   padding-right: 2.5rem !important;
 }
@@ -201,7 +201,7 @@
 }
 .navbar .nav-item .dropdown-menu .dropdown-item{
   padding: 0.25rem 3rem;
-  border-radius:20px;
+  border-radius:10px;
 }
 .navbar .nav-item .dropdown-menu .dropdown-item:hover, .navbar .nav-item .dropdown-menu .dropdown-item:focus {
   color: #8e8c84;
@@ -286,7 +286,7 @@ input[type='checkbox'], input[type="radio"] {
   border-radius:2px !important;
 }
 input[type='submit'], button[type='submit'], .btn-primary {
-  border-radius: 20px !important;
+  border-radius: 10px !important;
   background: var(--custom-main-color);
   color:#fff;
 }

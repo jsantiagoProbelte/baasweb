@@ -1,10 +1,11 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import Product
+from trialapp.models import Product, Crop, Plague, TrialAssessmentSet
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from baaswebapp.graphs import Graph
 
 
 class ProductListView(LoginRequiredMixin, FilterView):
@@ -31,7 +32,11 @@ class ProductListView(LoginRequiredMixin, FilterView):
 class ProductApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete', 'get']
+    http_method_names = ['delete', 'get', 'post']
+    TAG_DIMENSIONS = 'dimensions'
+    TAG_CROPS = 'crops'
+    TAG_PLAGUES = 'plagues'
+    FILTER_DATA = [TAG_DIMENSIONS, TAG_CROPS, TAG_PLAGUES]
 
     def delete(self, request, *args, **kwargs):
         item = Product.objects.get(
@@ -40,8 +45,55 @@ class ProductApi(APIView):
         response_data = {'msg': 'Product was deleted.'}
         return Response(response_data, status=200)
 
+    def identifyObjectFilter(self, tags):
+        dimensions = []
+        crops = []
+        plagues = []
+        for tag in tags:
+            tagTypes = tag.split('-')
+            tagType = tagTypes[0]
+            if tagType in ProductApi.FILTER_DATA:
+                tagId = tagTypes[1]
+                if tagType == ProductApi.TAG_CROPS:
+                    crops.append(Crop.objects.get(pk=tagId))
+                if tagType == ProductApi.TAG_DIMENSIONS:
+                    dimensions.append(TrialAssessmentSet.objects.get(pk=tagId))
+                if tagType == ProductApi.TAG_PLAGUES:
+                    plagues.append(Plague.objects.get(pk=tagId))
+        return dimensions, crops, plagues
+
+    def calcularGraphs(self, product, tags, graphPerRow=3):
+        if 'show_data' not in tags:
+            return [], '', 'col-md-12'
+        dimensions, crops, plagues = self.identifyObjectFilter(tags)
+        classGroup = Graph.classColGraphs(len(crops), graphPerRow)
+        if len(dimensions) == 0:
+            return [], 'Please select dimensions', classGroup
+        if len(crops) == 0:
+            return [], 'Please select crop', classGroup
+
+        graphs = []
+        for dimension in dimensions:
+            graphDim = {'name': "{} ({})".format(dimension.type.name,
+                                                 dimension.unit.name),
+                        'values': []}
+            lastRow = []
+
+            for crop in crops:
+                cropDim = {'name': crop.name}
+                # Get graph
+                graph = cropDim
+                lastRow.append(graph)
+                if len(lastRow) % graphPerRow == 0:
+                    graphDim['values'].append(lastRow)
+                    lastRow = []
+            if len(lastRow) > 0:
+                graphDim['values'].append(lastRow)
+            graphs.append(graphDim)
+
+        return graphs, '', classGroup
+
     def get(self, request, *args, **kwargs):
-        template_name = 'catalogue/product_show.html'
         product_id = None
         if 'product_id' in request.GET:
             # for testing
@@ -49,12 +101,21 @@ class ProductApi(APIView):
         elif 'product_id' in kwargs:
             # from call on server
             product_id = kwargs['product_id']
+        template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
+        filterData = [
+            {'name': ProductApi.TAG_CROPS, 'values': product.getCrops()},
+            {'name': ProductApi.TAG_PLAGUES, 'values': product.getPlagues()},
+            {'name': ProductApi.TAG_DIMENSIONS,
+             'values': product.dimensionsValues()}]
+        graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
+                                                                 request.GET)
 
         return render(request, template_name,
                       {'product': product,
                        'fieldtrials': product.getCountFieldTrials(),
-                       'crops': product.getCrops(),
-                       'plagues': product.getPlagues(),
-                       'dimensions': product.dimensionsValues(),
+                       'filterData': filterData,
+                       'graphs': graphs,
+                       'errors': errorgraphs,
+                       'classGraphCol': classGraphCol,
                        'titleView': product.getName()})

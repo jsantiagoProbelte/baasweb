@@ -89,7 +89,7 @@ class ProductViewsTest(TestCase):
         for product in products:
             self.assertContains(response, product.name)
 
-    def test_showProduct(self):
+    def test_showProductS_simple(self):
         productid = 4
         product = Product.objects.get(pk=productid)
         request = self._apiFactory.get(
@@ -112,3 +112,15 @@ class ProductViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
             Product.objects.filter(pk=deletedId).exists())
+
+    def test_showProductS_graph(self):
+        productid = 1
+        # product = Product.objects.get(pk=productid)
+        request = self._apiFactory.get(
+            'product_api',
+            data={'product_id': productid, 'show_data': 'show_data'})
+        self._apiFactory.setUser(request)
+
+        apiView = ProductApi()
+        response = apiView.get(request)
+        self.assertEqual(response.status_code, 200)

@@ -2177,7 +2177,7 @@ progress {
 }
 
 .form-control:disabled, .form-control[readonly] {
-  background-color: #f8f5f0;
+  background-color: var(--custom-bg-color-cards);
   opacity: 1;
 }
 
@@ -6810,7 +6810,7 @@ fieldset:disabled .btn {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1030;
+  z-index: 1000;
 }
 
 .sticky-top {

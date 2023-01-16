@@ -1,7 +1,12 @@
-<li class="list-group-item list-group-item-baas">
-    <span class="badge bg-light ms-2 me-4 ">{{title}}</span> 
+<li class="list-group-item list-group-item-baas col-md-4">
+    <label class="btn btn-sm btn-outline-secondary mb-2">{{title}}</label>
+
     {% for tag in tags%}
-    <span class="btn btn-sm btn-dark me-2 mb-1">{{tag}}</span>
+    <span>
+        <input type="checkbox" class="btn-check" name="{{title}}-{{tag.id}}" id="btn-check-{{title}}-{{tag.id}}" value="{{title}}-{{tag.id}}" />
+        <label class="btn btn-sm btn-outline-primary mb-2" for="btn-check-{{title}}-{{tag.id}}">{{tag.name}}</label>
+    </span>
     {% empty %}
     {% endfor %}
+
 </li>
