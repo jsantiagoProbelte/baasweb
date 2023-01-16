@@ -42,9 +42,10 @@
           </div>
           {% for graphRow in graphDim.values %}
             <ul class="list-group list-group-horizontal">
-              {% for graph in graphRow %}
+              {% for item in graphRow %}
               <li class="list-group-item list-group-item-baas {{classGraphCol}}">
-                {{graph}}
+                <h6 class="mt-2 mb-2">{{item.name}}</h6>
+                {{item.graph|safe}}
               </li>
               {% endfor %}
             </ul>

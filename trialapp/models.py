@@ -167,6 +167,23 @@ class ModelHelpers:
                   .filter(evaluation_id__in=evaluationIds)
 
     @classmethod
+    def getDataPointsProduct(cls, product, crop, plague):
+        fieldTrials = FieldTrial.objects.filter(product=product,
+                                                crop=crop,
+                                                plague=plague).values('id')
+        if len(fieldTrials) == 0:
+            return []
+        fieldTrialIds = [item['id'] for item in fieldTrials]
+
+        evaluationIds = Evaluation.objects \
+            .filter(field_trial_id__in=fieldTrialIds) \
+            .values('id')
+        evaluationIds = [item['id'] for item in evaluationIds]
+
+        return cls.objects \
+                  .filter(evaluation_id__in=evaluationIds)
+
+    @classmethod
     def extractDistincValues(cls, results, tag_id, tag_name):
         values = {}
         for result in results:

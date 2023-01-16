@@ -1,7 +1,8 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import Product, Crop, Plague, TrialAssessmentSet
+from trialapp.models import Product, Crop, Plague, TrialAssessmentSet,\
+                            ThesisData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -72,26 +73,58 @@ class ProductApi(APIView):
         if len(crops) == 0:
             return [], 'Please select crop', classGroup
 
+        croplagues = []
+        for crop in crops:
+            if len(plagues) > 0:
+                for plague in plagues:
+                    croplagues.append([crop, plague])
+            else:
+                croplagues.append([crop, None])
+
         graphs = []
         for dimension in dimensions:
-            graphDim = {'name': "{} ({})".format(dimension.type.name,
-                                                 dimension.unit.name),
-                        'values': []}
-            lastRow = []
-
-            for crop in crops:
-                cropDim = {'name': crop.name}
-                # Get graph
-                graph = cropDim
-                lastRow.append(graph)
-                if len(lastRow) % graphPerRow == 0:
-                    graphDim['values'].append(lastRow)
-                    lastRow = []
-            if len(lastRow) > 0:
-                graphDim['values'].append(lastRow)
+            graphDim = self.fetchData(product, dimension,
+                                      croplagues, graphPerRow)
             graphs.append(graphDim)
 
         return graphs, '', classGroup
+
+    def fetchData(self, product, dimension, croplagues, graphPerRow):
+        graphDim = {'name': "{} ({})".format(dimension.type.name,
+                                             dimension.unit.name),
+                    'values': []}
+        lastRow = []
+
+        for croplague in croplagues:
+            # Get graph
+            crop = croplague[0]
+            plague = croplague[1]
+            nameItem = crop.name
+            if plague:
+                nameItem += '-' + plague.name
+            graph = self.computeGraph(product, crop, plague, dimension)
+            item = {'name': nameItem, 'graph': graph}
+            lastRow.append(item)
+            if len(lastRow) % graphPerRow == 0:
+                graphDim['values'].append(lastRow)
+                lastRow = []
+
+        if len(lastRow) > 0:
+            graphDim['values'].append(lastRow)
+
+        return graphDim
+
+    def computeGraph(self, product, crop, plague,
+                     trialAssessmentSet, level=Graph.L_THESIS):
+        # Thesis data
+        dataPointsT = ThesisData.getDataPointsProduct(product, crop, plague)
+        if dataPointsT:
+            graphT = Graph(Graph.L_THESIS, [trialAssessmentSet], dataPointsT,
+                           xAxis=Graph.L_DATE)
+            graphPlotsT, classGraphT = graphT.scatter()
+            return graphPlotsT[0][0]
+        else:
+            return 'No data found'
 
     def get(self, request, *args, **kwargs):
         product_id = None

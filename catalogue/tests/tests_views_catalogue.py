@@ -1,7 +1,10 @@
 from django.test import TestCase
-from trialapp.models import Product, FieldTrial, TrialDbInitialLoader
+from trialapp.models import Product, FieldTrial, TrialDbInitialLoader,\
+    Thesis, ThesisData, Evaluation, TrialAssessmentSet, AssessmentType,\
+    AssessmentUnit
 from catalogue.product_views import ProductListView, ProductApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
+from trialapp.tests.tests_models import TrialAppModelTest
 
 
 class ProductViewsTest(TestCase):
@@ -59,6 +62,9 @@ class ProductViewsTest(TestCase):
     ]
     _products = []
     _fieldTrials = []
+    _theses = []
+    _evaluations = []
+    _units = []
 
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
@@ -67,10 +73,21 @@ class ProductViewsTest(TestCase):
             self._fieldTrials.append(
                 FieldTrial.create_fieldTrial(**fieldTrialInfo))
 
-        # TrialAssessmentSet.objects.create(
-        #     field_trial=product,
-        #     type=AssessmentType.objects.get(pk=1),
-        #     unit=AssessmentUnit.objects.get(pk=1))
+        # for fieldTrial in self._fieldTrials:
+        for thesis in TrialAppModelTest.THESIS:
+            # thesis['field_trial_id'] = fieldTrial.id
+            self._theses.append(Thesis.create_Thesis(**thesis))
+
+        self._units = [TrialAssessmentSet.objects.create(
+            field_trial=self._fieldTrials[0],
+            type=AssessmentType.objects.get(pk=i),
+            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 3)]
+
+        self._evaluations = [Evaluation.objects.create(
+            name='eval{}'.format(i),
+            evaluation_date='2023-0{}-15'.format(i),
+            field_trial=self._fieldTrials[0],
+            crop_stage_majority=65+i) for i in range(1, 3)]
 
     def test_trialapp_index(self):
         request = self._apiFactory.get('product-list')
@@ -115,12 +132,32 @@ class ProductViewsTest(TestCase):
 
     def test_showProductS_graph(self):
         productid = 1
-        # product = Product.objects.get(pk=productid)
+
+        # Le's add data
+        value = 1
+        self.assertEqual(ThesisData.objects.count(), 0)
+        for thesis in self._theses:
+            for evaluation in self._evaluations:
+                for unit in self._units:
+                    ThesisData.objects.create(
+                        value=value,
+                        evaluation=evaluation,
+                        unit=unit,
+                        reference=thesis)
+                    value += 10
+        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
+        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
+        dimensionId = 'dimensions-{}'.format(self._units[0].id)
         request = self._apiFactory.get(
             'product_api',
-            data={'product_id': productid, 'show_data': 'show_data'})
+            data={'product_id': productid,
+                  'show_data': 'show_data',
+                  cropId: cropId,
+                  plagueId: plagueId,
+                  dimensionId: dimensionId})
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
         response = apiView.get(request)
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'No data found')
