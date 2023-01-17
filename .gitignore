@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Sensitive files
+baaswebapp/remote_prod.py
+
 # Distribution / packaging
 .Python
 build/

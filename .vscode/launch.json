@@ -16,13 +16,13 @@
             "justMyCode": true
         },
         {
-            "name": "BaasWebApp Production",
+            "name": "BaasWebApp Remote Production",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "runserver",
-                "--settings=baaswebapp.prod"
+                "--settings=baaswebapp.remote_prod"
             ],
             "django": true,
             "justMyCode": true
