@@ -120,7 +120,7 @@ class ProductApi(APIView):
             product, crop, plague, assessmentType)
         if dataPointsT:
             graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT,
-                           xAxis=Graph.L_DATE)
+                           xAxis=Graph.L_DATE, combineTrialAssessments=True)
             graphPlotsT, classGraphT = graphT.scatter()
             return graphPlotsT[0][0]
         else:

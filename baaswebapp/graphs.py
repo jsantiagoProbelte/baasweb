@@ -69,11 +69,17 @@ class Graph:
                   COLOR_bs_green, COLOR_bs_secondary]
 
     def __init__(self, level, trialAssessments,
-                 dataPoints, xAxis=L_THESIS):
+                 dataPoints, xAxis=L_THESIS,
+                 combineTrialAssessments=False):
         self._level = level
         self._xAxis = xAxis
-        self._graphData = self.buildData(trialAssessments,
-                                         dataPoints, xAxis=xAxis)
+        self._combineTrialAssessments = combineTrialAssessments
+        if self._combineTrialAssessments:
+            self._graphData = self.buildDataOneGraph(trialAssessments,
+                                                     dataPoints, xAxis=xAxis)
+        else:
+            self._graphData = self.buildData(trialAssessments,
+                                             dataPoints, xAxis=xAxis)
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
         graphPlots = [self.figure(item, typeFigure=typeFigure,
@@ -184,7 +190,7 @@ class Graph:
         mgraphs.append(rgraph)
         return mgraphs, classGroup
 
-    def traceId(self, dataPoint):
+    def traceIdLevel(self, dataPoint):
         if self._level == Graph.L_THESIS:
             return dataPoint.reference.number
         elif self._level == Graph.L_REPLICA:
@@ -192,13 +198,25 @@ class Graph:
         elif self._level == Graph.L_SAMPLE:
             return dataPoint.reference.replica.number
 
-    def getTraceName(self, dataPoint):
+    def traceId(self, dataPoint, unitId):
+        theId = '{}'.format(self.traceIdLevel(dataPoint))
+        if self._combineTrialAssessments:
+            theId += '-{}'.format(unitId)
+        return theId
+
+    def getTraceNameLevel(self, dataPoint):
         if self._level == Graph.L_THESIS:
             return dataPoint.reference.name
         elif self._level == Graph.L_REPLICA:
             return dataPoint.reference.thesis.name
         elif self._level == Graph.L_SAMPLE:
             return dataPoint.reference.replica.thesis.name
+
+    def getTraceName(self, dataPoint, code):
+        theName = self.getTraceNameLevel(dataPoint)
+        if self._combineTrialAssessments:
+            theName += '-{}'.format(code)
+        return theName
 
     def getTraceColor(self, dataPoint):
         color = 1
@@ -218,18 +236,18 @@ class Graph:
             symbol = dataPoint.reference.replica.number
         return Graph.SYMBOL_LIST[symbol]
 
-    def prepareTrace(self, dataPoint):
+    def prepareTrace(self, dataPoint, code):
         return {
-            'name': self.getTraceName(dataPoint),
+            'name': self.getTraceName(dataPoint, code),
             'marker_color': self.getTraceColor(dataPoint),
             'marker_symbol': self.getTraceSymbol(dataPoint),
             'x': [],
             'y': []
         }
 
-    def getX(self, dataPoint, xAxis):
+    def getX(self, dataPoint, xAxis, code):
         if xAxis == Graph.L_THESIS:
-            return self.getTraceName(dataPoint)
+            return self.getTraceName(dataPoint, code)
         if xAxis == Graph.L_DATE:
             return dataPoint.evaluation.evaluation_date
 
@@ -241,22 +259,55 @@ class Graph:
         graphs = []
         if dataPoints is None or len(dataPoints) == 0:
             return []
+
         for setAss in trialAssessments:
             thisGraph = {
                 'title': setAss.type.name,
                 'x_axis': xAxis,
                 'y_axis': setAss.unit.name,
                 'traces': []}
+            unitId = setAss.id
+            code = setAss.field_trial.code
             traces = {}
             for dataPoint in dataPoints:
                 if setAss.id == dataPoint.unit.id:
-                    traceId = self.traceId(dataPoint)
+                    traceId = self.traceId(dataPoint, unitId)
                     if traceId not in traces:
-                        traces[traceId] = self.prepareTrace(dataPoint)
+                        traces[traceId] = self.prepareTrace(dataPoint, code)
                     traces[traceId]['y'].append(dataPoint.value)
                     traces[traceId]['x'].append(self.getX(
-                        dataPoint, xAxis))
+                        dataPoint, xAxis, code))
             if len(traces) > 0:
                 thisGraph['traces'] = traces
                 graphs.append(thisGraph)
+        return graphs
+
+    def buildDataOneGraph(self, trialAssessments,
+                          dataPoints, xAxis=L_THESIS):
+        # This is for diplay purposes. [[,],[,]...]
+        # It has to follow the order of references
+        # and then trial assessments
+        graphs = []
+        if dataPoints is None or len(dataPoints) == 0:
+            return []
+        referenceTrialAssessmentSet = trialAssessments[0]
+        thisGraph = {
+            'title': referenceTrialAssessmentSet.type.name,
+            'x_axis': xAxis,
+            'y_axis': referenceTrialAssessmentSet.unit.name,
+            'traces': []}
+        traces = {}
+        for dataPoint in dataPoints:
+            # TODO: there could be data with different units
+            unitId = dataPoint.unit.id
+            code = dataPoint.unit.field_trial.code
+            traceId = self.traceId(dataPoint, unitId)
+            if traceId not in traces:
+                traces[traceId] = self.prepareTrace(dataPoint, code)
+            traces[traceId]['y'].append(dataPoint.value)
+            traces[traceId]['x'].append(self.getX(
+                dataPoint, xAxis, code))
+        if len(traces) > 0:
+            thisGraph['traces'] = traces
+            graphs.append(thisGraph)
         return graphs

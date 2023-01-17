@@ -154,14 +154,24 @@ class DataViewsTest(TestCase):
         graphT = Graph(Graph.L_THESIS, self._units, [dPT])
         graphR = Graph(Graph.L_REPLICA, self._units, [dPR])
         graphS = Graph(Graph.L_SAMPLE, self._units, [dPS])
+        traceId = unit.id
+        code = unit.field_trial.code
+        self.assertEqual(graphT.traceId(dPT, traceId),
+                         "{}".format(thesis.number))
+        self.assertEqual(graphR.traceId(dPR, traceId),
+                         "{}".format(thesis.number))
+        self.assertEqual(graphS.traceId(dPS, traceId),
+                         "{}".format(replica.number))
 
-        self.assertEqual(graphT.traceId(dPT), thesis.number)
-        self.assertEqual(graphR.traceId(dPR), thesis.number)
-        self.assertEqual(graphS.traceId(dPS), replica.number)
+        self.assertEqual(graphT.getTraceName(dPT, code), thesis.name)
+        self.assertEqual(graphR.getTraceName(dPR, code), thesis.name)
+        self.assertEqual(graphS.getTraceName(dPS, code), thesis.name)
 
-        self.assertEqual(graphT.getTraceName(dPT), thesis.name)
-        self.assertEqual(graphR.getTraceName(dPR), thesis.name)
-        self.assertEqual(graphS.getTraceName(dPS), thesis.name)
+        graphT._combineTrialAssessments = True
+        self.assertEqual(graphT.traceId(dPT, traceId),
+                         "{}-{}".format(thesis.number, traceId))
+        self.assertEqual(graphT.getTraceName(dPT, code),
+                         "{}-{}".format(thesis.name, code))
 
         color = Graph.COLOR_LIST[thesis.number]
         self.assertEqual(graphT.getTraceColor(dPT), color)
