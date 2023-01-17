@@ -1,7 +1,7 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import Product, Crop, Plague, TrialAssessmentSet,\
+from trialapp.models import Product, Crop, Plague, AssessmentType,\
                             ThesisData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -58,7 +58,7 @@ class ProductApi(APIView):
                 if tagType == ProductApi.TAG_CROPS:
                     crops.append(Crop.objects.get(pk=tagId))
                 if tagType == ProductApi.TAG_DIMENSIONS:
-                    dimensions.append(TrialAssessmentSet.objects.get(pk=tagId))
+                    dimensions.append(AssessmentType.objects.get(pk=tagId))
                 if tagType == ProductApi.TAG_PLAGUES:
                     plagues.append(Plague.objects.get(pk=tagId))
         return dimensions, crops, plagues
@@ -90,8 +90,7 @@ class ProductApi(APIView):
         return graphs, '', classGroup
 
     def fetchData(self, product, dimension, croplagues, graphPerRow):
-        graphDim = {'name': "{} ({})".format(dimension.type.name,
-                                             dimension.unit.name),
+        graphDim = {'name': "{}".format(dimension.name),
                     'values': []}
         lastRow = []
 
@@ -115,11 +114,12 @@ class ProductApi(APIView):
         return graphDim
 
     def computeGraph(self, product, crop, plague,
-                     trialAssessmentSet, level=Graph.L_THESIS):
+                     assessmentType, level=Graph.L_THESIS):
         # Thesis data
-        dataPointsT = ThesisData.getDataPointsProduct(product, crop, plague)
+        dataPointsT, trialAssessmentSets = ThesisData.getDataPointsProduct(
+            product, crop, plague, assessmentType)
         if dataPointsT:
-            graphT = Graph(Graph.L_THESIS, [trialAssessmentSet], dataPointsT,
+            graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT,
                            xAxis=Graph.L_DATE)
             graphPlotsT, classGraphT = graphT.scatter()
             return graphPlotsT[0][0]
@@ -143,7 +143,6 @@ class ProductApi(APIView):
              'values': product.dimensionsValues()}]
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
-
         return render(request, template_name,
                       {'product': product,
                        'fieldtrials': product.getCountFieldTrials(),

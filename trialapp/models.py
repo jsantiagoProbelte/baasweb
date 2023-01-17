@@ -167,21 +167,23 @@ class ModelHelpers:
                   .filter(evaluation_id__in=evaluationIds)
 
     @classmethod
-    def getDataPointsProduct(cls, product, crop, plague):
-        fieldTrials = FieldTrial.objects.filter(product=product,
-                                                crop=crop,
-                                                plague=plague).values('id')
+    def getDataPointsProduct(cls, product, crop, plague, assessmentType):
+        filterTrials = {'product__id': product.id,
+                        'crop__id': crop.id}
+        if plague:
+            filterTrials['plague__id'] = plague.id
+
+        fieldTrials = FieldTrial.objects.filter(**filterTrials).values('id')
         if len(fieldTrials) == 0:
-            return []
+            return [], []
         fieldTrialIds = [item['id'] for item in fieldTrials]
 
-        evaluationIds = Evaluation.objects \
-            .filter(field_trial_id__in=fieldTrialIds) \
-            .values('id')
-        evaluationIds = [item['id'] for item in evaluationIds]
-
-        return cls.objects \
-                  .filter(evaluation_id__in=evaluationIds)
+        trialAssessmentSets = TrialAssessmentSet.objects.filter(
+            field_trial_id__in=fieldTrialIds,
+            type_id=assessmentType.id).all()
+        setIds = [item.id for item in trialAssessmentSets]
+        dataSets = cls.objects.filter(unit_id__in=setIds)
+        return dataSets, trialAssessmentSets
 
     @classmethod
     def extractDistincValues(cls, results, tag_id, tag_name):
@@ -251,7 +253,7 @@ class Product(ModelHelpers, models.Model):
         ids = [value['id'] for value in results]
         tag = 'type'
         # We need the id from the set, but we display the name from the type
-        tag_id = 'id'
+        tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
         results = TrialAssessmentSet.objects.filter(
             field_trial_id__in=ids).values(tag_id, tag_name)

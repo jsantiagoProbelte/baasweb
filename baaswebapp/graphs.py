@@ -241,15 +241,15 @@ class Graph:
         graphs = []
         if dataPoints is None or len(dataPoints) == 0:
             return []
-        for unit in trialAssessments:
+        for setAss in trialAssessments:
             thisGraph = {
-                'title': unit.type.name,
+                'title': setAss.type.name,
                 'x_axis': xAxis,
-                'y_axis': unit.unit.name,
+                'y_axis': setAss.unit.name,
                 'traces': []}
             traces = {}
             for dataPoint in dataPoints:
-                if unit.id == dataPoint.unit.id:
+                if setAss.id == dataPoint.unit.id:
                     traceId = self.traceId(dataPoint)
                     if traceId not in traces:
                         traces[traceId] = self.prepareTrace(dataPoint)
