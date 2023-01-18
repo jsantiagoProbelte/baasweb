@@ -1,12 +1,14 @@
 from django.test import TestCase
+from baaswebapp.data_loaders import TrialDbInitialLoader
+from baaswebapp.models import ModelHelpers
 from trialapp.models import AssessmentType, AssessmentUnit, FieldTrial,\
-    Thesis, TrialAssessmentSet, TrialDbInitialLoader, Evaluation,\
-    ModelHelpers, ReplicaData, Replica, Sample, SampleData
+    Thesis, TrialAssessmentSet, Evaluation,\
+    Replica, Sample
 from trialapp.tests.tests_models import TrialAppModelTest
-
+from trialapp.data_models import ThesisData, ReplicaData, SampleData
 from baaswebapp.graphs import Graph
 from trialapp.data_views import showDataThesisIndex,\
-    SetDataEvaluation, ThesisData, ManageTrialAssessmentSet,\
+    SetDataEvaluation, ManageTrialAssessmentSet,\
     showTrialAssessmentSetIndex, showDataReplicaIndex,\
     showDataSamplesIndex, sortDataPointsForDisplay
 from baaswebapp.tests.test_views import ApiRequestHelperTest

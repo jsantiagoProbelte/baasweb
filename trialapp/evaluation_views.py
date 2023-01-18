@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import FieldTrial,  ProductEvaluation,\
-    ProductThesis, Evaluation, TrialAssessmentSet, ReplicaData,\
-    ThesisData, SampleData
+    ProductThesis, Evaluation, TrialAssessmentSet
+from trialapp.data_models import ThesisData, ReplicaData, SampleData
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import EvaluationEditForm
 from rest_framework.views import APIView

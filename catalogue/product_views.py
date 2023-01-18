@@ -1,8 +1,8 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import Product, Crop, Plague, AssessmentType,\
-                            ThesisData
+from trialapp.models import Product, Crop, Plague, AssessmentType
+from trialapp.data_models import ThesisData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response

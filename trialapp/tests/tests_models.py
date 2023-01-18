@@ -1,9 +1,12 @@
 from django.test import TestCase
-from trialapp.models import FieldTrial, ModelHelpers, Crop, Plague,\
+from baaswebapp.models import ModelHelpers
+from baaswebapp.data_loaders import TrialDbInitialLoader
+from trialapp.models import FieldTrial, Crop, Plague,\
                             ProductThesis, Thesis, Evaluation,\
-                            TrialDbInitialLoader, TrialAssessmentSet,\
-                            AssessmentType, AssessmentUnit, ThesisData,\
-                            Sample, SampleData, Replica, TrialType
+                            TrialAssessmentSet,\
+                            AssessmentType, AssessmentUnit,\
+                            Sample, Replica, TrialType
+from trialapp.data_models import ThesisData, SampleData
 from django.test import RequestFactory
 import datetime
 

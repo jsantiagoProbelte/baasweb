@@ -2,10 +2,11 @@
 from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
+from baaswebapp.models import ModelHelpers
 from trialapp.models import Evaluation, Thesis, AssessmentUnit,\
                             TrialAssessmentSet, FieldTrial, Replica,\
-                            ThesisData, ReplicaData, SampleData,\
-                            AssessmentType, ModelHelpers, Sample
+                            AssessmentType, Sample
+from trialapp.data_models import ThesisData, ReplicaData, SampleData
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response

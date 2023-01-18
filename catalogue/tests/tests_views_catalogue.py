@@ -1,7 +1,9 @@
 from django.test import TestCase
-from trialapp.models import Product, FieldTrial, TrialDbInitialLoader,\
-    Thesis, ThesisData, Evaluation, TrialAssessmentSet, AssessmentType,\
+from baaswebapp.data_loaders import TrialDbInitialLoader
+from trialapp.models import Product, FieldTrial,\
+    Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
     AssessmentUnit
+from trialapp.data_models import ThesisData
 from catalogue.product_views import ProductListView, ProductApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest

@@ -1,5 +1,6 @@
 from django.test import TestCase
-from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader,\
+from baaswebapp.data_loaders import TrialDbInitialLoader
+from trialapp.models import FieldTrial, Thesis,\
     TrialAssessmentSet, AssessmentType, AssessmentUnit
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial,\

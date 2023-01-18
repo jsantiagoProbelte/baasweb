@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
+from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, ProductThesis, Replica,\
-                            TrialDbInitialLoader, Thesis
+                            Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.thesis_views import editThesis, saveThesis,\
     ManageProductToThesis, ManageReplicaToThesis, ThesisApi

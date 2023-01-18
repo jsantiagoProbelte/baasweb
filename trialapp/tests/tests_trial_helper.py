@@ -1,5 +1,6 @@
 from django.test import TestCase
-from trialapp.models import FieldTrial, Thesis, TrialDbInitialLoader, Replica
+from baaswebapp.data_loaders import TrialDbInitialLoader
+from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.trial_helper import LayoutTrial
 from trialapp.fieldtrial_views import reshuffle_blocks
