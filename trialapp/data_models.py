@@ -30,6 +30,38 @@ class DataHelper(ModelHelpers):
         dataSets = cls.objects.filter(unit_id__in=setIds)
         return dataSets, trialAssessmentSets
 
+    @classmethod
+    def distinctValues(cls, product, tag):
+        tag_id = '{}__id'.format(tag)
+        tag_name = '{}__name'.format(tag)
+        results = FieldTrial.objects.filter(product=product).values(
+            tag_id, tag_name)
+        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
+
+    @classmethod
+    def getCrops(cls, product):
+        return cls.distinctValues(product, 'crop')
+
+    @classmethod
+    def getPlagues(cls, product):
+        return cls.distinctValues(product, 'plague')
+
+    @classmethod
+    def dimensionsValues(cls, product):
+        results = FieldTrial.objects.filter(product=product).values('id')
+        ids = [value['id'] for value in results]
+        tag = 'type'
+        # We need the id from the set, but we display the name from the type
+        tag_id = '{}__id'.format(tag)
+        tag_name = '{}__name'.format(tag)
+        results = TrialAssessmentSet.objects.filter(
+            field_trial_id__in=ids).values(tag_id, tag_name)
+        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
+
+    @classmethod
+    def getCountFieldTrials(cls, product):
+        return FieldTrial.objects.filter(product=product).count()
+
 
 class ThesisData(DataHelper, models.Model):
     value = models.DecimalField(max_digits=5, decimal_places=3)

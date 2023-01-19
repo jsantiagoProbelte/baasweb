@@ -2,7 +2,7 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from trialapp.models import Product, Crop, Plague, AssessmentType
-from trialapp.data_models import ThesisData
+from trialapp.data_models import ThesisData, DataHelper
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,10 +21,10 @@ class ProductListView(LoginRequiredMixin, FilterView):
         for item in objectList:
             new_list.append({
                 'name': item.name,
-                'fieldtrials': item.getCountFieldTrials(),
-                'crops': item.getCrops(),
-                'plagues': item.getPlagues(),
-                'dimensions': item.dimensionsValues(),
+                'fieldtrials': DataHelper.getCountFieldTrials(item),
+                'crops': DataHelper.getCrops(item),
+                'plagues': DataHelper.getPlagues(item),
+                'dimensions': DataHelper.dimensionsValues(item),
                 'id': item.id})
         return {'object_list': new_list,
                 'titleList': '({}) Products'.format(len(objectList))}
@@ -137,10 +137,12 @@ class ProductApi(APIView):
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
         filterData = [
-            {'name': ProductApi.TAG_CROPS, 'values': product.getCrops()},
-            {'name': ProductApi.TAG_PLAGUES, 'values': product.getPlagues()},
+            {'name': ProductApi.TAG_CROPS,
+             'values': DataHelper.getCrops(product)},
+            {'name': ProductApi.TAG_PLAGUES,
+             'values': DataHelper.getPlagues(product)},
             {'name': ProductApi.TAG_DIMENSIONS,
-             'values': product.dimensionsValues()}]
+             'values': DataHelper.dimensionsValues(product)}]
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         return render(request, template_name,
