@@ -3,6 +3,7 @@ from django.db import models
 import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
+from catalogue.models import Product
 
 
 class Crop(ModelHelpers, models.Model):
@@ -32,38 +33,6 @@ class Objective(ModelHelpers, models.Model):
 
 class TrialType(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
-
-
-class Product(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    # vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-
-    def distinctValues(self, tag):
-        tag_id = '{}__id'.format(tag)
-        tag_name = '{}__name'.format(tag)
-        results = FieldTrial.objects.filter(product=self).values(
-            tag_id, tag_name)
-        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
-
-    def getCrops(self):
-        return self.distinctValues('crop')
-
-    def getPlagues(self):
-        return self.distinctValues('plague')
-
-    def dimensionsValues(self):
-        results = FieldTrial.objects.filter(product=self).values('id')
-        ids = [value['id'] for value in results]
-        tag = 'type'
-        # We need the id from the set, but we display the name from the type
-        tag_id = '{}__id'.format(tag)
-        tag_name = '{}__name'.format(tag)
-        results = TrialAssessmentSet.objects.filter(
-            field_trial_id__in=ids).values(tag_id, tag_name)
-        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
-
-    def getCountFieldTrials(self):
-        return FieldTrial.objects.filter(product=self).count()
 
 
 class RateUnit(ModelHelpers, models.Model):

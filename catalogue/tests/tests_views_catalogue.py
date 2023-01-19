@@ -1,6 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import Product, FieldTrial,\
+from catalogue.models import Product
+from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
     AssessmentUnit
 from trialapp.data_models import ThesisData

@@ -147,7 +147,7 @@ class ProductApi(APIView):
                                                                  request.GET)
         return render(request, template_name,
                       {'product': product,
-                       'fieldtrials': product.getCountFieldTrials(),
+                       'fieldtrials': DataHelper.getCountFieldTrials(product),
                        'filterData': filterData,
                        'graphs': graphs,
                        'errors': errorgraphs,
