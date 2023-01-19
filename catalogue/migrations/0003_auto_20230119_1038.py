@@ -11,6 +11,25 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL("""
-
+            /*INSERT INTO catalogue_product (
+                id,
+                name
+            )
+            SELECT
+                id,
+                name
+            FROM
+                trialapp_product;
+            SELECT setval(pg_get_serial_sequence('"catalogue_product"','id'), coalesce(max("id"), 1), max("id") IS NOT null) FROM "catalogue_product";*/
+        """, reverse_sql="""
+            INSERT INTO trialapp_product (
+                id,
+                name
+            )
+            SELECT
+                id,
+                name
+            FROM
+                catalogue_product;
         """)
     ]
