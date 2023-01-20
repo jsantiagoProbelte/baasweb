@@ -138,7 +138,7 @@ class ProductViewsTest(TestCase):
         productid = 1
 
         # Le's add data
-        value = 1
+        value = 1000.10
         self.assertEqual(ThesisData.objects.count(), 0)
         for thesis in self._theses:
             for evaluation in self._evaluations:
@@ -148,7 +148,7 @@ class ProductViewsTest(TestCase):
                         evaluation=evaluation,
                         unit=unit,
                         reference=thesis)
-                    value += 5
+                    value += 500.10
         cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
         plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
         dimensionId = 'dimensions-{}'.format(self._units[0].id)

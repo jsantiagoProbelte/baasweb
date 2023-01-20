@@ -64,7 +64,7 @@ class DataHelper(ModelHelpers):
 
 
 class ThesisData(DataHelper, models.Model):
-    value = models.DecimalField(max_digits=5, decimal_places=3)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
     unit = models.ForeignKey(TrialAssessmentSet,
@@ -74,7 +74,7 @@ class ThesisData(DataHelper, models.Model):
 
 
 class ReplicaData(DataHelper, models.Model):
-    value = models.DecimalField(max_digits=5, decimal_places=3)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
     unit = models.ForeignKey(TrialAssessmentSet,
@@ -84,7 +84,7 @@ class ReplicaData(DataHelper, models.Model):
 
 
 class SampleData(DataHelper, models.Model):
-    value = models.DecimalField(max_digits=5, decimal_places=3)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
     unit = models.ForeignKey(TrialAssessmentSet,

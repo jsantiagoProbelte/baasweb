@@ -91,16 +91,16 @@ class FieldTrial(ModelHelpers, models.Model):
     replicas_per_thesis = models.IntegerField()
     samples_per_replica = models.IntegerField(default=0, null=True)
     distance_between_plants = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True)
     distance_between_rows = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True)
     number_rows = models.IntegerField(default=0, null=True)
     lenght_row = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True)
     net_surface = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True)
     gross_surface = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True)
 
     report_filename = models.TextField(null=True)
     code = models.CharField(max_length=10, null=True)
@@ -224,7 +224,7 @@ class Thesis(ModelHelpers, models.Model):
 class ProductThesis(ModelHelpers, models.Model):
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.DecimalField(max_digits=5, decimal_places=3)
+    rate = models.DecimalField(max_digits=10, decimal_places=2)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
     foreignModelLabels = {Product: 'product', RateUnit: 'rate_unit'}
 
