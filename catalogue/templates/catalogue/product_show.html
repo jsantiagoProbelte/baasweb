@@ -8,8 +8,8 @@
     <div class="col-md-2">
       <div class="card no-border mb-3" >
         <ul class="list-group list-group-flush">
-          {% include "baaswebapp/item_list_template.html" with field='Category' value='to be defined'%}
-          {% include "baaswebapp/item_list_template.html" with field='Vendor' value='vendor'%}
+          {% include "baaswebapp/item_list_template.html" with field='Category' value=product.category%}
+          {% include "baaswebapp/item_list_template.html" with field='Vendor' value=product.vendor%}
           <li class="list-group-item list-group-item-baas">
             <span class='text-muted small'># trials</span>
             <span class='float-end'><a class="btn btn-sm btn-info" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}}</a></span>
