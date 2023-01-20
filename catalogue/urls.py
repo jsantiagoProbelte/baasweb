@@ -7,24 +7,12 @@ urlpatterns = [
         'products',
         product_views.ProductListView.as_view(),
         name='product-list'),
-    # path(
-    #     'edit_fieldtrial',
-    #     fieldtrial_views.editNewFieldTrial,
-    #     name='fieldtrial-edit'),
-    # path(
-    #     'edit_fieldtrial/<int:field_trial_id>/',
-    #     fieldtrial_views.editNewFieldTrial,
-    #     name='fieldtrial-edit'),
-    # path(
-    #     'field_trial_api',
-    #     fieldtrial_views.FieldTrialApi.as_view(),
-    #     name='field_trial_api'),
     path(
         'product_api/<int:product_id>/',
         product_views.ProductApi.as_view(),
         name='product_api'),
-    # path(
-    #     'save_fieldtrial',
-    #     fieldtrial_views.saveFieldTrial,
-    #     name='fieldtrial-save'),
+    path('product/add/', product_views.ProductCreateView.as_view(),
+         name='product-add'),
+    path('product/<int:pk>/', product_views.ProductUpdateView.as_view(),
+         name='product-update'),
 ]

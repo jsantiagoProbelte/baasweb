@@ -4,6 +4,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
 from baaswebapp.models import ModelHelpers
+from catalogue.models import Product, ProductCategory, Vendor
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
                             Project, Objective, RateUnit, AssessmentType,\
                             AssessmentUnit, Product, Plague, Crop, FieldTrial
@@ -44,7 +45,11 @@ class TrialDbInitialLoader:
                 'K-Potassium', 'Fruit firmness', '°Brix',
                 'Fruit size', 'Yield', 'Fruit weight',
                 'N-Nitrogen', 'Greenness', 'Plant height',
-                'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN']
+                'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN'],
+            ProductCategory: [
+                'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide', 'Other'],
+            Vendor: [
+                'Probelte', 'Syngenta', 'BASF', 'Corteva']
         }
 
     @classmethod
@@ -183,7 +188,6 @@ class TrialDbInitialLoader:
         for modelo in initialValues:
             for value in initialValues[modelo]:
                 if modelo.objects.filter(name=value).exists():
-                    print('{} already in DB'.format(value))
                     continue
                 thisObj = {'name': value}
                 theObject = modelo(**thisObj)
@@ -193,7 +197,6 @@ class TrialDbInitialLoader:
         for modelo in initialValues:
             for name in initialValues[modelo]:
                 if modelo.objects.filter(name=name).exists():
-                    print('{} already in DB'.format(name))
                     continue
                 values = initialValues[modelo][name]
                 thisObj = {key: values[key] for key in values}

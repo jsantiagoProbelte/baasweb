@@ -7,6 +7,35 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from baaswebapp.graphs import Graph
+from django.views.generic.edit import CreateView, UpdateView
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
+
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    model = Product
+    fields = ['name', 'vendor', 'category']
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.helper = FormHelper()
+        form.helper.add_input(Submit('submit', 'Create',
+                                     css_class='btn-primary'))
+        return form
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    model = Product
+    fields = ['name', 'vendor', 'category']
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.helper = FormHelper()
+        form.helper.add_input(Submit('submit', 'Save',
+                                     css_class='btn-primary'))
+        return form
 
 
 class ProductListView(LoginRequiredMixin, FilterView):

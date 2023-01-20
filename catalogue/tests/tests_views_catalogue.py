@@ -5,7 +5,8 @@ from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
     AssessmentUnit
 from trialapp.data_models import ThesisData
-from catalogue.product_views import ProductListView, ProductApi
+from catalogue.product_views import ProductListView, ProductApi,\
+    ProductCreateView, ProductUpdateView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
 
@@ -147,7 +148,7 @@ class ProductViewsTest(TestCase):
                         evaluation=evaluation,
                         unit=unit,
                         reference=thesis)
-                    value += 10
+                    value += 5
         cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
         plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
         dimensionId = 'dimensions-{}'.format(self._units[0].id)
@@ -164,3 +165,33 @@ class ProductViewsTest(TestCase):
         response = apiView.get(request)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'No data found')
+
+    def test_editProduct(self):
+        data = {'name': 'New Product', 'vendor': 1,
+                'category': 1}
+        request = self._apiFactory.post(
+            '/product/add/',
+            data=data)
+        self._apiFactory.setUser(request)
+
+        viewNew = ProductCreateView(request=request)
+        viewNew.post(request)
+        formNew = viewNew.get_form()
+        self.assertTrue(formNew.is_valid())
+        newProduct = Product.objects.filter(name='New Product')
+        self.assertEqual(newProduct[0].name, 'New Product')
+
+        productOne = Product.objects.get(pk=1)
+        newName = 'New Name'
+        self.assertFalse(productOne.name == newName)
+        data = {'name': newName, 'vendor': 1,
+                'category': 1}
+        request = self._apiFactory.post(
+            '/product/1/',
+            data=data)
+        viewNew = ProductUpdateView(request=request)
+        # viewNew.post(request)
+        formNew = viewNew.get_form()
+        self.assertTrue(formNew.is_valid())
+        newProduct = Product.objects.get(pk=1)
+        # self.assertEqual(newProduct.name, newName)

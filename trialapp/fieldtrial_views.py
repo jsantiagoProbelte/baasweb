@@ -75,7 +75,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
     initialValues = {
         'field_trial_id': None,
         'code': FieldTrial.getCode(datetime.date.today(), True)}
-    template_name = 'trialapp/fieldtrial_edit.html'
+    template_name = 'baaswebapp/model_edit.html'
     title = 'New'
     if field_trial_id is not None:
         title = 'Edit'
