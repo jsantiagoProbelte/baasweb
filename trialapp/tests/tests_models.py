@@ -347,3 +347,9 @@ class TrialAppModelTest(TestCase):
         counts = Thesis.objects.count()
         self.assertEqual(counts, 1)
         self.assertEqual(thesis.number, counts)
+
+    def test_plague_name(self):
+        p1 = Plague.objects.create(name='name1')
+        p2 = Plague.objects.create(name='name2', scientific='sctf2')
+        self.assertEqual(p1.getName(), p1.name)
+        self.assertEqual(p2.getName(), p2.scientific)

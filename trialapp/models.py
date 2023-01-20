@@ -22,6 +22,12 @@ class Plague(ModelHelpers, models.Model):
     other = models.CharField(max_length=100, null=True)
     scientific = models.CharField(max_length=200, null=True)
 
+    def getName(self):
+        if self.scientific:
+            return self.scientific
+        else:
+            return self.name
+
 
 class Project(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
