@@ -7,7 +7,7 @@ from baaswebapp.models import ModelHelpers
 from catalogue.models import Product, ProductCategory, Vendor
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
                             Project, Objective, RateUnit, AssessmentType,\
-                            AssessmentUnit, Product, Plague, Crop, FieldTrial
+                            AssessmentUnit, Plague, Crop, FieldTrial
 from trialapp.data_models import ThesisData
 
 
