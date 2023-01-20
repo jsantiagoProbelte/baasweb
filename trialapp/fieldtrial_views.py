@@ -113,7 +113,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
     dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
     newFieldTrial_form = FieldTrialCreateForm(**dictKwargs)
     return render(request, template_name,
-                  {'create_form': newFieldTrial_form,
+                  {'form': newFieldTrial_form,
                    'title': title,
                    'errors': errors})
 
