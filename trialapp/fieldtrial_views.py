@@ -77,14 +77,18 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
         'code': FieldTrial.getCode(datetime.date.today(), True)}
     template_name = 'baaswebapp/model_edit.html'
     title = 'New'
+
     if field_trial_id is not None:
         title = 'Edit'
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+        trialTypeId = None
+        if fieldTrial.trial_type:
+            trialTypeId = fieldTrial.trial_type.id 
         initialValues = {
             'field_trial_id': fieldTrial.id,
             'code': fieldTrial.code,
             'name': fieldTrial.name,
-            'trial_type': fieldTrial.trial_type.id,
+            'trial_type': trialTypeId,
             'objective': fieldTrial.objective.id,
             'responsible': fieldTrial.responsible,
             'description': fieldTrial.description,
