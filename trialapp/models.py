@@ -275,6 +275,7 @@ class ProductThesis(ModelHelpers, models.Model):
 
 class Replica(ModelHelpers, models.Model):
     number = models.IntegerField()
+    name = models.CharField(max_length=10, null=True)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     pos_x = models.IntegerField(default=0)
     pos_y = models.IntegerField(default=0)
@@ -286,12 +287,15 @@ class Replica(ModelHelpers, models.Model):
                 .order_by('number')
 
     def getName(self):
-        return ('[{}-{}] {}-({},{})').format(
-            self.thesis.number,
-            self.thesis.name,
-            self.number,
-            self.pos_x,
-            self.pos_y)
+        if self.name:
+            return self.name
+        else:
+            return ('[{}-{}] {}-({},{})').format(
+                self.thesis.number,
+                self.thesis.name,
+                self.number,
+                self.pos_x,
+                self.pos_y)
 
     def getKey(self):
         return self.number
