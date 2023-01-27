@@ -73,38 +73,19 @@
 {% endblock %}
 
 {% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
-var setDataPointAPI = '/set_data_point';
 
 $('.data-input-template').on('blur', function(){
-    var element=$(this)
+    var element=$(this);
     return setDataPoint(element);
 });
 
-function setDataPoint(element) {
-    var formElement=element.parent()
-    var dataJson={}
-    $(element.serializeArray()).each(function(index,obj){
-        dataJson[obj.name]=obj.value;
-    });
-    dataJson['data_point_id']=formElement.attr('id');
-
-    $.ajax({
-        type : formElement.attr('method'), 
-        url: setDataPointAPI,
-        data: dataJson,
-        
-        success: function(data){
-            element.css("background-color", "grey");
-        },
+$('.data-input-template').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element);
+});
     
-        failure: function() {
-            alert('Error. Please reload');
-        }
-    });
-    return false;
-};
-
 </script>
 {% endblock %}
 
