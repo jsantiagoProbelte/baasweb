@@ -83,7 +83,7 @@ def editNewFieldTrial(request, field_trial_id=None, errors=None):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         trialTypeId = None
         if fieldTrial.trial_type:
-            trialTypeId = fieldTrial.trial_type.id 
+            trialTypeId = fieldTrial.trial_type.id
         initialValues = {
             'field_trial_id': fieldTrial.id,
             'code': fieldTrial.code,
