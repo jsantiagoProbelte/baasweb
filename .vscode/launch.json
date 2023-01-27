@@ -33,6 +33,24 @@
             "request": "launch",
             "module": "trialapp.report_finder",
             "justMyCode": true,
-        }
+        },
+        {
+            "name": "PDF Table Import",
+            "type": "python",
+            "request": "launch",
+            "module": "trialapp.import_pdf_trial",
+            "justMyCode": true,
+        },
+        {
+            "name": "Run all Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
     ]
 }

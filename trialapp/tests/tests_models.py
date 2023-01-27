@@ -265,8 +265,20 @@ class TrialAppModelTest(TestCase):
         Replica.createReplicas(thesis, toCreate)
         replicas = Replica.getObjects(thesis)
         self.assertEqual(len(replicas), toCreate)
-
         selectedReplica = replicas[0]
+        self.assertEqual(
+            selectedReplica.getName(),
+            '[{}-{}] {}-({},{})'.format(
+                selectedReplica.thesis.number,
+                selectedReplica.thesis.name,
+                selectedReplica.number,
+                selectedReplica.pos_x,
+                selectedReplica.pos_y))
+        selectedReplica.name = '666'
+        self.assertEqual(
+            selectedReplica.getName(),
+            selectedReplica.name)
+
         toCreate = 4
         Sample.createSamples(selectedReplica, toCreate)
         samples = Sample.getObjects(selectedReplica)
@@ -353,3 +365,18 @@ class TrialAppModelTest(TestCase):
         p2 = Plague.objects.create(name='name2', scientific='sctf2')
         self.assertEqual(p1.getName(), p1.name)
         self.assertEqual(p2.getName(), p2.scientific)
+
+    def test_findOrCreate(self):
+        crops = Crop.getObjects()
+        lastOne = len(crops) - 1
+        crop1 = crops[lastOne]
+        cropNew = Crop.findOrCreate(name=crop1.name)
+        self.assertEqual(crop1.id, cropNew.id)
+
+        cropNew = Crop.findOrCreate(name='Cropy')
+        self.assertTrue(crop1.id < cropNew.id)
+
+        cropNew2 = Crop.findOrCreate(name='Cropy2',
+                                     scientific='Scientific')
+        self.assertTrue(cropNew.id < cropNew2.id)
+        self.assertEqual(cropNew2.scientific, 'Scientific')

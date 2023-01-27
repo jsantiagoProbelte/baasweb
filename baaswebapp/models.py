@@ -4,8 +4,24 @@ class ModelHelpers:
     UNKNOWN = ' Unknown'
 
     @classmethod
+    def getUnknown(cls):
+        return cls.objects.get(name=ModelHelpers.UNKNOWN)
+
+    @classmethod
+    def isUnknown(self):
+        return self.name == ModelHelpers.UNKNOWN
+
+    @classmethod
     def getObjects(cls):
         return cls.objects.all().order_by('name')
+
+    @classmethod
+    def findOrCreate(cls, **args):
+        objs = cls.objects.filter(**args)
+        if objs:
+            return objs[0]
+        else:
+            return cls.objects.create(**args)
 
     @classmethod
     def getDictObjectsId(cls):
