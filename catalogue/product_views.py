@@ -2,7 +2,7 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from trialapp.models import Product, Crop, Plague, AssessmentType
-from trialapp.data_models import ThesisData, DataHelper
+from trialapp.data_models import ThesisData, DataHelper, ReplicaData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -142,8 +142,8 @@ class ProductApi(APIView):
 
         return graphDim
 
-    def computeGraph(self, product, crop, plague,
-                     assessmentType, level=Graph.L_THESIS):
+    def computeGraphT(self, product, crop, plague,
+                      assessmentType, level=Graph.L_THESIS):
         # Thesis data
         dataPointsT, trialAssessmentSets = ThesisData.getDataPointsProduct(
             product, crop, plague, assessmentType)
@@ -151,6 +151,19 @@ class ProductApi(APIView):
             graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT,
                            xAxis=Graph.L_DATE, combineTrialAssessments=True)
             graphPlotsT, classGraphT = graphT.scatter()
+            return graphPlotsT[0][0]
+        else:
+            return 'No data found'
+
+    def computeGraph(self, product, crop, plague,
+                     assessmentType, level=Graph.L_REPLICA):
+        # Thesis data
+        dataPointsT, trialAssessmentSets = ReplicaData.getDataPointsProduct(
+            product, crop, plague, assessmentType)
+        if dataPointsT:
+            graphT = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsT,
+                           xAxis=Graph.L_DATE, combineTrialAssessments=True)
+            graphPlotsT, classGraphT = graphT.violin()
             return graphPlotsT[0][0]
         else:
             return 'No data found'
