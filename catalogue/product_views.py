@@ -66,7 +66,8 @@ class ProductApi(APIView):
     TAG_DIMENSIONS = 'dimensions'
     TAG_CROPS = 'crops'
     TAG_PLAGUES = 'plagues'
-    FILTER_DATA = [TAG_DIMENSIONS, TAG_CROPS, TAG_PLAGUES]
+    TAG_LEVEL = 'level'
+    FILTER_DATA = [TAG_DIMENSIONS, TAG_CROPS, TAG_PLAGUES, TAG_LEVEL]
 
     def delete(self, request, *args, **kwargs):
         item = Product.objects.get(
@@ -79,6 +80,7 @@ class ProductApi(APIView):
         dimensions = []
         crops = []
         plagues = []
+        level = Graph.L_REPLICA
         for tag in tags:
             tagTypes = tag.split('-')
             tagType = tagTypes[0]
@@ -90,12 +92,15 @@ class ProductApi(APIView):
                     dimensions.append(AssessmentType.objects.get(pk=tagId))
                 if tagType == ProductApi.TAG_PLAGUES:
                     plagues.append(Plague.objects.get(pk=tagId))
-        return dimensions, crops, plagues
+                if tagType == ProductApi.TAG_LEVEL:
+                    if tagId == Graph.L_THESIS:
+                        level = Graph.L_THESIS
+        return dimensions, crops, plagues, level
 
     def calcularGraphs(self, product, tags, graphPerRow=3):
         if 'show_data' not in tags:
             return [], '', 'col-md-12'
-        dimensions, crops, plagues = self.identifyObjectFilter(tags)
+        dimensions, crops, plagues, level = self.identifyObjectFilter(tags)
         classGroup = Graph.classColGraphs(len(crops), graphPerRow)
         if len(dimensions) == 0:
             return [], 'Please select dimensions', classGroup
@@ -113,12 +118,14 @@ class ProductApi(APIView):
         graphs = []
         for dimension in dimensions:
             graphDim = self.fetchData(product, dimension,
-                                      croplagues, graphPerRow)
+                                      croplagues, graphPerRow,
+                                      level)
             graphs.append(graphDim)
 
         return graphs, '', classGroup
 
-    def fetchData(self, product, dimension, croplagues, graphPerRow):
+    def fetchData(self, product, dimension, croplagues,
+                  graphPerRow, level):
         graphDim = {'name': "{}".format(dimension.name),
                     'values': []}
         lastRow = []
@@ -130,7 +137,8 @@ class ProductApi(APIView):
             nameItem = crop.name
             if plague:
                 nameItem += '-' + plague.name
-            graph = self.computeGraph(product, crop, plague, dimension)
+            graph = self.computeGraph(product, crop, plague, dimension, level)
+
             item = {'name': nameItem, 'graph': graph}
             lastRow.append(item)
             if len(lastRow) % graphPerRow == 0:
@@ -142,28 +150,25 @@ class ProductApi(APIView):
 
         return graphDim
 
-    def computeGraphT(self, product, crop, plague,
-                      assessmentType, level=Graph.L_THESIS):
-        # Thesis data
-        dataPointsT, trialAssessmentSets = ThesisData.getDataPointsProduct(
-            product, crop, plague, assessmentType)
-        if dataPointsT:
-            graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT,
-                           xAxis=Graph.L_DATE, combineTrialAssessments=True)
-            graphPlotsT, classGraphT = graphT.scatter()
-            return graphPlotsT[0][0]
-        else:
-            return 'No data found'
-
     def computeGraph(self, product, crop, plague,
-                     assessmentType, level=Graph.L_REPLICA):
-        # Thesis data
-        dataPointsT, trialAssessmentSets = ReplicaData.getDataPointsProduct(
+                     assessmentType, level):
+        dataClass = None
+        # Fetch Data
+        if level == Graph.L_THESIS:
+            dataClass = ThesisData
+        elif level == Graph.L_REPLICA:
+            dataClass = ReplicaData
+
+        dataPointsT, trialAssessmentSets = dataClass.getDataPointsProduct(
             product, crop, plague, assessmentType)
+
         if dataPointsT:
-            graphT = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsT,
+            graphT = Graph(level, trialAssessmentSets, dataPointsT,
                            xAxis=Graph.L_DATE, combineTrialAssessments=True)
-            graphPlotsT, classGraphT = graphT.violin()
+            if level == Graph.L_THESIS:
+                graphPlotsT, classGraphT = graphT.scatter()
+            elif level == Graph.L_REPLICA:
+                graphPlotsT, classGraphT = graphT.violin()
             return graphPlotsT[0][0]
         else:
             return 'No data found'
@@ -172,12 +177,13 @@ class ProductApi(APIView):
         product_id = None
         if 'product_id' in request.GET:
             # for testing
-            product_id = request.GET['product_id']
+            product_id = request.GET.get('product_id')
         elif 'product_id' in kwargs:
             # from call on server
             product_id = kwargs['product_id']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
+
         filterData = [
             {'name': ProductApi.TAG_CROPS,
              'values': DataHelper.getCrops(product)},

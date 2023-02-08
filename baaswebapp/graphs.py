@@ -156,7 +156,7 @@ class Graph:
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
-                y=-0.5,
+                y=-1,
                 xanchor="left",
                 x=0),
             xaxis_title=xaxis_title,
