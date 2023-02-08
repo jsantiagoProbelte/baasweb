@@ -52,5 +52,17 @@
             "django": true,
             "justMyCode": true
         },
+        {
+            "name": "Run Import Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test",
+                "trialapp.tests.tests_import_pdf"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
     ]
 }
