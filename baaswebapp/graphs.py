@@ -153,6 +153,12 @@ class Graph:
             font_color='white',
             title_text=thisGraph['title'],
             showlegend=showLegend,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.5,
+                xanchor="left",
+                x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
