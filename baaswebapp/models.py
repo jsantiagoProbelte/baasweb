@@ -165,6 +165,9 @@ class ModelHelpers:
         else:
             dataPoint[0].value = value
             dataPoint[0].save()
+            # This should not happen, but in that case, remove items
+            for i in range(1, len(dataPoint)):
+                dataPoint[i].delete()
 
     @classmethod
     def getDataPoints(cls, evaluation):

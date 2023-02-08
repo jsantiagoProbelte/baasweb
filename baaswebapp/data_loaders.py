@@ -25,7 +25,7 @@ class TrialDbInitialLoader:
                 'Irrigation', 'Drip Irrigation'],
             Project: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',
                       'Belthirul',
-                      'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
+                      'Biopron', 'Bulhnova',
                       'Nemapron', 'Nutrihealth', 'Verticibel'],
             Objective: [ModelHelpers.UNKNOWN, 'Fertilizer Reduction',
                         'Biological effectiveness'],

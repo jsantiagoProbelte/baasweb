@@ -17,8 +17,7 @@ from baaswebapp.graphs import Graph
 class ManageTrialAssessmentSet(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = [
-        'delete', 'post']
+    http_method_names = ['delete', 'post']
 
     def post(self, request, format=None):
         field_trial_id = request.POST['field_trial_id'].split('-')[-1]

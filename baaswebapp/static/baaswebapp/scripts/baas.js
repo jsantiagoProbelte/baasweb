@@ -62,7 +62,6 @@ function delete_item(item_id){
             success : function(json) {
                 // hide the post
                 $('#item-'+item_id).hide(); // hide the post on success
-                console.log("post deletion successful");
             },
 
             error : function(xhr,errmsg,err) {
