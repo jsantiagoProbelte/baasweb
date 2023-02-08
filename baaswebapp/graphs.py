@@ -263,7 +263,7 @@ class Graph:
         # It has to follow the order of references
         # and then trial assessments
         graphs = []
-        if dataPoints is None or len(dataPoints) == 0:
+        if dataPoints is None or dataPoints.count() == 0:
             return []
 
         for setAss in trialAssessments:

@@ -43,6 +43,16 @@ class EvaluationListView(LoginRequiredMixin, ListView):
                        xAxis=Graph.L_DATE)
         graphPlotsT, classGraphT = graphT.scatter()
 
+        show_active_replica = 'show active'
+        show_active_thesis = ''
+        active_replica = 'active'
+        active_thesis = ''
+        if dataPointsT.count() > 0:
+            show_active_thesis = 'show active'
+            show_active_replica = ''
+            active_replica = ''
+            active_thesis = 'active'
+
         # Sample data
         dataPointsS = SampleData.getDataPointsFieldTrial(fieldTrial)
         graphS = Graph(Graph.L_SAMPLE, trialAssessmentSets, dataPointsS,
@@ -51,6 +61,10 @@ class EvaluationListView(LoginRequiredMixin, ListView):
 
         return {'object_list': new_list,
                 'fieldTrial': fieldTrial,
+                'show_active_thesis': show_active_thesis,
+                'show_active_replica': show_active_replica,
+                'active_replica': active_replica,
+                'active_thesis': active_thesis,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
                 'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS}
