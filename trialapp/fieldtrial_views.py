@@ -45,7 +45,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         orderBy.append('name')
         objectList = FieldTrial.objects.filter(
             **filter_kwargs).order_by(
-            '-created', 'objective', 'product', 'crop', 'plague')
+            '-initiation_date', 'objective', 'product', 'crop', 'plague')
         filter = FieldTrialFilter(self.request.GET)
         for item in objectList:
             evaluations = Evaluation.objects.filter(field_trial=item).count()
