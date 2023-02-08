@@ -14,12 +14,12 @@ function processEnter(event,element) {
         result = setDataPoint(element);
         nextElement = element.parent().parent().parent().next().find('input.data-input-template');
         if (nextElement.length !== 0)
-            nextElement.focus();
+            nextElement[0].focus();
         else
             scrollTo('.baas-graphs');
         return result;
     }
-}
+};
 
 function setDataPoint(element) {
     var formElement=element.parent()
