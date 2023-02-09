@@ -384,7 +384,7 @@ class Evaluation(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     evaluation_date = models.DateField()
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    crop_stage_majority = models.IntegerField()
+    crop_stage_majority = models.CharField(max_length=25)
 
     @classmethod
     def getObjects(cls, field_trial):
