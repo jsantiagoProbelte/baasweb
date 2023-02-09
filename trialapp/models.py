@@ -298,14 +298,17 @@ class Replica(ModelHelpers, models.Model):
                 self.pos_y)
 
     def getKey(self):
-        return self.number
+        if self.name:
+            return self.name
+        else:
+            return self.number
 
     def getShortName(self):
-        return self.number
+        return self.getKey()
 
     def getTitle(self):
         return "Thesis {} - Replica {}".format(
-            self.thesis.name, self.number)
+            self.thesis.name, self.getKey())
 
     def generateReplicaDataSetId(self, evaluation):
         evaluationId = evaluation.id if evaluation else 'null'
