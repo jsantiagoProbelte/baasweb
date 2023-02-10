@@ -39,15 +39,19 @@
 .bg-project {
   background: var(--custom-morado );
 }
+
 .bg-objective{
-  background: var(--custom-blue );
+  background-color: var(--custom-green );
+  
 }
 .bg-plague{
   background: var(--custom-red );
 }
+
 .bg-crop{
-  background-color: var(--custom-green );
+  background: var(--custom-blue );
 }
+
 .bg-product{
   background: var(--custom-bio-morado );
 }

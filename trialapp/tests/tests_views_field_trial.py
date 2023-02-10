@@ -43,7 +43,7 @@ class FieldTrialViewsTest(TestCase):
         self.assertContains(response, fieldTrial.name)
         self.assertContains(
             response,
-            'Please define assessment types and units')
+            'Please define types and units')
 
         TrialAssessmentSet.objects.create(
             field_trial=fieldTrial,

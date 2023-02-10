@@ -26,7 +26,7 @@
                 {% render_field filter.form.plague class="form-control" %}
             </div>
             <div class="form-group col-sm-2 col-md-2">
-                <button type="submit" class="btn btn-primary mt-4">Search</button>
+                <button type="submit" class="btn btn-info mt-4">Search</button>
             </div>
         </div>
     </form>
@@ -39,7 +39,7 @@
         <tr>
             <th>Status</th>
             <th>Name</th>
-            <th>Assessment Types</th>
+            <th>Unit Types</th>
             <th>Thesis</th>
             <th>Assessments</th>
             <th>Keywords</th>
@@ -50,33 +50,32 @@
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
         <td><span class="badge">{{ item.trial_status }}</span></td>
-        <td><a class="btn btn-info" href="{% url 'field_trial_api' item.id%}">{{ item.code }}</a>
+        <td><a class="btn btn-light fs-6 me-3" href="{% url 'field_trial_api' item.id%}">{{ item.code }}</a>
             <span>{{item.name}}</span>
         </td>
         <td>
-            <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' item.id%}">{{item.results}} &#10000;</a>
+            <a class="badge btn btn-outline-secondary fs-5" href="{% url 'trial-assessment-set-list' item.id%}">{{item.results}} &#10000;</a>
         </td>
         <td>
             {% if item.results > 0 %}
-                <a class="badge btn btn-info fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
+                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
             {% else %}
-                <small>Please define assessment types and units</small>
+                <small>Please define types and units</small>
             {% endif %}
         </td>
         <td>
             {% if item.thesis > 0 %}
-                <a class="badge btn btn-info fs-5" href="{% url 'evaluation-list' item.id%}">{{item.evaluations}} &#43;</a>
+                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'evaluation-list' item.id%}">{{item.evaluations}} &#43;</a>
             {% else %}
                 <small>Please define thesis first</small>
             {% endif %}
         </td>
-        <td><span class="badge bg-project">{{ item.project }}</span>
-            <span class="badge bg-objective">{{ item.objective }}</span>
+        <td>
             <span class="badge bg-plague">{{ item.plague }}</span>
             <span class="badge bg-crop">{{ item.crop }}</span>
             <span class="badge bg-product">{{ item.product }}</span>
         </td>
-        <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
+        <td><a id='delete-item-{{item.id}}' class="btn btn-outline-warning btn-sm btn-sm fs-1">-</a></td>
     </tr>
     </tbody>    
     {% empty %}
