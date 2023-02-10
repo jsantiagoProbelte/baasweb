@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "baaswebapp/header_page.html" with title=fieldTrial.code subheader=fieldTrial.name action=title subtitle='thesis' go_ref='field_trial_api' new_href_id='thesis-edit' list_href='thesis-list' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='thesis'%}
 
 <div class="row">
   <div class="col-md-4">
@@ -28,7 +28,7 @@
                     <td>{{item.product}}</td>
                     <td>{{item.rate}}</td>
                     <td>{{item.rate_unit}}</td>
-                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
                 </tr>
             {% empty %}
                 <p>No products yet.</p>
@@ -44,7 +44,7 @@
       <div class="card-body-baas">
         {% if thesis_id %}
             <h4>Replicas
-                <span><a id="add-replica-to-thesis-{{thesis_id}}" class="btn btn-primary btn-sm add-replica-to-thesis fs-4">&#43;</a></span>
+                <span><a id="add-replica-to-thesis-{{thesis_id}}" class="btn btn-primary btn-sm add-replica-to-thesis btn-sm fs-1">&#43;</a></span>
             </h4>
             <table class="table">
                 <thead><th>#</th><th>X</th><th>Y</th></thead>
@@ -55,7 +55,7 @@
                         <td>{{item.number}}</td>
                         <td>{{item.pos_x}}</td>
                         <td>{{item.pos_y}}</td>
-                        <td><a id='delete-replica-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                        <td><a id='delete-replica-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
                     </tr>
                 {% empty %}
                     <p>No replicas yet.</p>
@@ -95,7 +95,7 @@ function addProductToThesisCall(element,appendTable) {
                 '<tr id="item-'+data.id+'"><td>'+data.product+'</td>\
                     <td>'+data.rate+'</td>\
                     <td>'+data.rate_unit+'</td>\
-                    <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                    <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>\
                 </tr>'); /* response message */
         },
     

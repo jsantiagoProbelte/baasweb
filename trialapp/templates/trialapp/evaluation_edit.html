@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "baaswebapp/header_page.html" with title=fieldTrial.code subheader=fieldTrial.name action=title go_ref='field_trial_api' new_href_id='evaluation-edit' list_href='evaluation-list' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='assessment' %}
 
 <div class="row">
   <div class="col-md-6">
@@ -19,11 +19,11 @@
         <h4>Add data:</h4>
         <table>
         <tbody><tr>
-          <td><a href="{% url 'data_thesis_index' evaluation_id %}" class="btn btn-primary fs-4">&#43;</a>
+          <td><a href="{% url 'data_thesis_index' evaluation_id %}" class="btn btn-primary btn-sm fs-1">&#43;</a>
             <span class="ml-4">Thesis</span></td>
-          <td><a href="{% url 'data_replica_index' evaluation_id %}" class="btn btn-primary fs-4 ml-4">&#43;</a>
+          <td><a href="{% url 'data_replica_index' evaluation_id %}" class="btn btn-primary btn-sm fs-1 ml-4">&#43;</a>
             <span class="ml-4">Replica</span></td>
-          <td><a href="{% url 'data-samples-index' evaluation_id 0 %}" class="btn btn-primary fs-4">&#43;</a>
+          <td><a href="{% url 'data-samples-index' evaluation_id 0 %}" class="btn btn-primary btn-sm fs-1">&#43;</a>
             <span class="ml-4">Sample</span></td>
         </tr></tbody> </table>
     </div>
@@ -38,7 +38,7 @@
             {% for item in product_list %}
                 <tr id="item-{{item.id}}">
                     <td>{{item.name}}</td>
-                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
                 </tr>
             {% empty %}
                 <p>No applied products from thesis defined.</p>
@@ -78,7 +78,7 @@ function addProductToevaluationCall(element,appendTable) {
             console.log("data");
             appendTable.append(
                 '<tr id="item-'+data.id+'"><td>'+data.name+'</td>\
-                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>\
                 </tr>'); /* response message */
         },
     

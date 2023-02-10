@@ -340,10 +340,8 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(counts, 1)
         expectedCode = FieldTrial.formatCode(year, month, counts)
         self.assertEqual(fieldTrial.code, expectedCode)
-        self.assertTrue(expectedCode in fieldTrial.getName())
         fieldTrial.code = None
         fieldTrial.save()
-        self.assertTrue('undefined' in fieldTrial.getName())
 
     def test_thesis_extras(self):
         fieldTrial = FieldTrial.create_fieldTrial(

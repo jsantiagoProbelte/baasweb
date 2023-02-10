@@ -73,6 +73,10 @@ class SetDataEvaluation(APIView):
         return Response({'success': True})
 
 
+def titleDataPage(evaluation):
+    return "[{}] {}".format(evaluation.evaluation_date, evaluation.name)
+
+
 @login_required
 def showTrialAssessmentSetIndex(request, field_trial_id=None,
                                 errors=None):
@@ -127,8 +131,9 @@ def showDataThesisIndex(request, evaluation_id=None,
                         errors=None):
     template_name = 'trialapp/data_thesis_index.html'
     evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-    thesisTrial = Thesis.getObjects(evaluation.field_trial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
+    fieldTrial = evaluation.field_trial
+    thesisTrial = Thesis.getObjects(fieldTrial)
+    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
     dataPoints = ThesisData.getDataPoints(evaluation)
 
     dataPointsList = sortDataPointsForDisplay(
@@ -136,12 +141,13 @@ def showDataThesisIndex(request, evaluation_id=None,
 
     graph = Graph(Graph.L_THESIS, trialAssessmentSets, dataPoints)
     graphPlots, classGraph = graph.bar()
-
     return render(request, template_name, {
                   'evaluation': evaluation,
                   'dataPoints': dataPointsList,
                   'theses': thesisTrial,
                   'graphPlots': graphPlots,
+                  'fieldTrial': fieldTrial,
+                  'title': titleDataPage(evaluation),
                   'classGraph': classGraph,
                   'trialAssessmentSets': trialAssessmentSets,
                   'errors': errors})
@@ -152,9 +158,10 @@ def showDataReplicaIndex(request, evaluation_id=None,
                          errors=None):
     template_name = 'trialapp/data_replica_index.html'
     evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-    replicas = Replica.getFieldTrialObjects(evaluation.field_trial)
-    thesisTrial = Thesis.getObjects(evaluation.field_trial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
+    fieldTrial = evaluation.field_trial
+    replicas = Replica.getFieldTrialObjects(fieldTrial)
+    thesisTrial = Thesis.getObjects(fieldTrial)
+    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
     dataPoints = ReplicaData.getDataPoints(evaluation)
     dataPointsList = sortDataPointsForDisplay(
         'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
@@ -167,6 +174,8 @@ def showDataReplicaIndex(request, evaluation_id=None,
                   'dataPoints': dataPointsList,
                   'evaluation': evaluation,
                   'theses': thesisTrial,
+                  'fieldTrial': fieldTrial,
+                  'title': titleDataPage(evaluation),
                   'graphPlots': graphPlots, 'classGraph': classGraph,
                   'errors': errors})
 
@@ -209,10 +218,11 @@ def showDataSamplesIndex(request, evaluation_id=None,
         request, evaluation.field_trial)
     if redirection:
         return redirection
-    replicas = Replica.getFieldTrialObjects(evaluation.field_trial)
+    fieldTrial = evaluation.field_trial
+    replicas = Replica.getFieldTrialObjects(fieldTrial)
 
-    thesisTrial = Thesis.getObjects(evaluation.field_trial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(evaluation.field_trial)
+    thesisTrial = Thesis.getObjects(fieldTrial)
+    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
     dataPointsList = []
     selectedReplicaName = None
     missing_samples = False
@@ -245,6 +255,8 @@ def showDataSamplesIndex(request, evaluation_id=None,
                   'trialAssessmentSets': trialAssessmentSets,
                   'dataPoints': dataPointsList,
                   'evaluation': evaluation,
+                  'fieldTrial': fieldTrial,
+                  'title': titleDataPage(evaluation),
                   'theses': thesisTrial,
                   'missing_samples': missing_samples,
                   'graphPlots': graphPlots, 'classGraph': classGraph,

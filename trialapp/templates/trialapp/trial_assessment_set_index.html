@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "baaswebapp/header_page.html" with title=fieldTrial.code subheader=fieldTrial.name action='add types and units for this trial' go_ref='field_trial_api' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title='Add types and units for this trial' subheader=fieldTrial.name %}
 
 <div class="row">
   <div class="col-md-2">
@@ -22,7 +22,7 @@
             <tr id="item-{{item.id}}">
                 <td>{{item.type}}</td>
                 <td>{{item.unit}}</td>
-                <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm fs-4">-</a></td>
+                <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
             </tr>
         {% empty %}
             <p>No assessment types defined yet.</p>
@@ -64,7 +64,7 @@ function addItemCall(element,appendTable) {
         success: function(data){
             appendTable.append(
                 '<tr id="item-'+data.id+'"><td>'+data.type+'</td><td>'+data.unit+'</td>\
-                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm fs-4">-</a></td>\
+                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>\
                 </tr>'); /* response message */
         },
     

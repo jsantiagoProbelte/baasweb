@@ -1,8 +1,19 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-
-{% include "baaswebapp/header_page.html" with title=titleView subtitle='product' edit_href="product-update" item=product %}
+<h2 class="fw-bold mt-4 ms-4 mb-3">
+  {{product.name}}
+  <span class="text-muted ml-2">product</span>
+  <span> <div class="btn-group float-end " role="group">
+      <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
+          data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
+      <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3 ms-2"
+          data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+  </div></span>
+</h2>
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
 
 <div class="row">
     <div class="col-md-2">

@@ -4,8 +4,7 @@
 
 {% block content %}
 
-
-{% include "baaswebapp/header_page.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial  %}
+{% include "trialapp/header_page_trial.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-edit" item=fieldTrial%}
 
 <div class="row">
     <div class="col-md-3">
@@ -38,8 +37,7 @@
     <div class="col-md-4">
       <div class="card no-border mb-3" >
         <div class="card-header-baas h5">
-            Units
-            <a class="btn btn-info btn-sm float-end" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">&#10000;</a>
+            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">Units</a>
         </div>
         <ul class="list-group list-group-flush"></ul>
           {% for item in units %}
@@ -51,8 +49,7 @@
       </div>
       <div class="card no-border mb-3" >
         <div class="card-header-baas h4">
-            Assessments
-            <a class="btn btn-info btn-sm float-end" href="{% url 'evaluation-list' fieldTrial.id%}">&#10000;</a>
+            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'evaluation-list' fieldTrial.id%}">Assessments</a>
         </div>
         <ul class="list-group list-group-flush">
           {% include "baaswebapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
@@ -87,8 +84,8 @@
     <div class="col-md-5">
       <div class="card no-border" >
         <div class="card-header-baas h4">
-            [{{numberThesis}}] Thesis
-            <a class="btn btn-info btn-sm float-end" href="{% url 'thesis-list' fieldTrial.id%}">&#10000;</a>
+          <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">
+            Thesis<span class='badge bg-light ms-2'>{{numberThesis}}</span></a>
         </div>
         <div class="card-body-baas">
           <table >
@@ -105,7 +102,7 @@
       </div>
       <div class="card no-border mt-3" >
         <div class="card-header-baas h4">
-          [{{fieldTrial.blocks}}] Blocks & [{{fieldTrial.replicas_per_thesis}}] Replicas distribution
+            Blocks <span class='badge bg-light ms-1'>{{fieldTrial.blocks}}</span> & Replicas distribution <span class='badge bg-light ms-1'>{{fieldTrial.replicas_per_thesis}}</span>
         </div>
         <div class="card-body-baas">
           {% include "trialapp/data_row_replica_template.html" with row=rowsReplicaHeader appendix='block '%}
