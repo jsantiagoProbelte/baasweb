@@ -59,7 +59,7 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                "trialapp.tests.tests_import_pdf"
+                "trialapp.tests.t_import_pdf"
             ],
             "django": true,
             "justMyCode": true
