@@ -175,7 +175,7 @@ class Graph:
         columns = max_columns if max_columns < rcolumns else rcolumns
         return 'col-md-{}'.format(int(12 / columns))
 
-    def groupOnRows(self, graphs, columns=4):
+    def groupOnRows(self, graphs, columns=2):
         numGraphs = len(graphs)
         if numGraphs == 0:
             return [], 'hide'

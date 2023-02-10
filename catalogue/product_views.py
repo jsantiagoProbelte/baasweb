@@ -97,7 +97,7 @@ class ProductApi(APIView):
                         level = Graph.L_THESIS
         return dimensions, crops, plagues, level
 
-    def calcularGraphs(self, product, tags, graphPerRow=3):
+    def calcularGraphs(self, product, tags, graphPerRow=2):
         if 'show_data' not in tags:
             return [], '', 'col-md-12'
         dimensions, crops, plagues, level = self.identifyObjectFilter(tags)
