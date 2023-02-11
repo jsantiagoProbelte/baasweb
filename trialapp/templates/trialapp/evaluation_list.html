@@ -5,42 +5,47 @@
 {% block content %}
 
 {% include "trialapp/header_page_trial.html" with title="Assessments list" subheader=fieldTrial.name new_href_id='evaluation-edit' refId=fieldTrial.id%}
-
-<div class="card card-body-baas">
-<table class="table" id="table-items">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Crop Stage</th>
-            <th>Thesis Data</th>
-            <th>Replicas Data</th>
-            <th>Samples Data</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-{% for item in object_list %}
-    <tr id="item-{{item.id}}">
-        <td><a href="{% url 'evaluation-edit' fieldTrial.id item.id %}" class="btn btn-dark">
-            {{item.evaluation_date}}
-        </a></td>
-        <td>{{item.name}}</td>
-        <td>{{item.crop_stage_majority}} BBCH</td>
-        <td><a href="{% url 'data_thesis_index' item.id %}" class="btn btn-primary btn-sm fs-1">&#43;</a></td>
-        <td><a href="{% url 'data_replica_index' item.id %}" class="btn btn-primary btn-sm fs-1">&#43;</a></td>
-        <td><a href="{% url 'data-samples-index' item.id 0 %}" class="btn btn-primary btn-sm fs-1">&#43;</a></td>
-        <td>
-            <a id='delete-item-{{item.id}}' class="btn btn-secondary btn-sm btn-sm fs-1">-</a></td>
-    </tr>
-    </tbody>    
-{% empty %}
-    <p>No assessments yet.</p>
-{% endfor %}
-</table>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card card-body-baas">
+        <table class="table" id="table-items">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Crop Stage</th>
+                    <th>Data</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        {% for item in object_list %}
+            <tr id="item-{{item.id}}">
+                <td><a href="{% url 'evaluation-edit' fieldTrial.id item.id %}" class="btn btn-dark">
+                    {{item.evaluation_date}}
+                </a></td>
+                <td>{{item.name}}</td>
+                <td>{{item.crop_stage_majority}} BBCH</td>
+                <td><div class="btn-group " role="group">
+                    <a href="{% url 'data_thesis_index' item.id %}" class="btn btn-secondary btn-sm fs-2">&#9776;</a>
+                    <a href="{% url 'data_replica_index' item.id %}" class="btn btn-secondary btn-sm fs-2">&#9783;</a>
+                    <a href="{% url 'data-samples-index' item.id 0 %}" class="btn btn-secondary btn-sm fs-2">&#9880;</a>
+                    </div>
+                    <a id='delete-item-{{item.id}}' class="btn btn-outline-warning btn-sm fs-1">-</a>
+                </td>
+            </tr>
+            </tbody>    
+        {% empty %}
+            <p>No assessments yet.</p>
+        {% endfor %}
+        </table>
+        </div>
+    </div>
+    <div class="col-md-8">
+        {% include 'trialapp/data_tabs.html' with graphPlots=graphPlots classGraph=classGraph %}
+    </div>
 </div>
 
-{% include 'trialapp/data_tabs.html' with graphPlots=graphPlots classGraph=classGraph %}
 {% endblock %}
 
 {% block scripts %}
