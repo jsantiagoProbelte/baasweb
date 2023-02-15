@@ -52,6 +52,7 @@ class Graph:
     L_REPLICA = 'replica'
     L_SAMPLE = 'sample'
     L_DATE = 'date'
+    LEVELS = [L_THESIS, L_REPLICA, L_SAMPLE]
 
     # SYMBOL_LIST = SymbolValidator().values
     SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
@@ -70,9 +71,11 @@ class Graph:
 
     def __init__(self, level, trialAssessments,
                  dataPoints, xAxis=L_THESIS,
-                 combineTrialAssessments=False):
+                 combineTrialAssessments=False,
+                 showTitle=True):
         self._level = level
         self._xAxis = xAxis
+        self._showTitle = showTitle
         self._combineTrialAssessments = combineTrialAssessments
         if self._combineTrialAssessments:
             self._graphData = self.buildDataOneGraph(trialAssessments,
@@ -101,6 +104,12 @@ class Graph:
             return self.violin()
         else:
             return self.scatter()
+
+    def draw(self, level):
+        if level == Graph.L_THESIS:
+            return self.bar()
+        else:
+            return self.violin()
 
     def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
@@ -151,7 +160,7 @@ class Graph:
             title_font_color="white",
             plot_bgcolor=COLOR_bg_color_cards,
             font_color='white',
-            title_text=thisGraph['title'],
+            title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
             legend=dict(
                 orientation="h",

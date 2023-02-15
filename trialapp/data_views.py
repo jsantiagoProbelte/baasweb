@@ -2,15 +2,14 @@
 from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from baaswebapp.models import ModelHelpers
 from trialapp.models import Evaluation, Thesis, AssessmentUnit,\
                             TrialAssessmentSet, FieldTrial, Replica,\
                             AssessmentType, Sample
-from trialapp.data_models import ThesisData, ReplicaData, SampleData
+from trialapp.data_models import DataModel, ThesisData, ReplicaData, SampleData
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from trialapp.fieldtrial_views import editNewFieldTrial
+# from trialapp.fieldtrial_views import editNewFieldTrial
 from baaswebapp.graphs import Graph
 
 
@@ -51,30 +50,30 @@ class SetDataEvaluation(APIView):
     http_method_names = ['post']
 
     def post(self, request, format=None):
-        # data_point_id-[evaluation_id]-[reference_id]-[assessment_set_id]
+        #                5       4               3                   2              1
+        # data_point_id-[level]-[evaluation_id]-[assessment_set_id]-[reference_id]-[fakeId]
         theIds = request.POST['data_point_id'].split('-')
-        level = theIds[-4]
-        evaluation = get_object_or_404(Evaluation, pk=theIds[-3])
-        unit = get_object_or_404(TrialAssessmentSet, pk=theIds[-1])
+        level = theIds[-5]
+        evaluation = get_object_or_404(Evaluation, pk=theIds[-4])
+        unit = get_object_or_404(TrialAssessmentSet, pk=theIds[-3])
         value = request.POST['data-point']
 
         # try to find if exists:
-        if level == 'thesis':
+        if level == Graph.L_THESIS:
             item = get_object_or_404(Thesis, pk=theIds[-2])
             ThesisData.setDataPoint(item, evaluation, unit, value)
-        elif level == 'replica':
+        elif level == Graph.L_REPLICA:
             item = get_object_or_404(Replica, pk=theIds[-2])
             ReplicaData.setDataPoint(item, evaluation, unit, value)
-        elif level == 'sample':
-            item = get_object_or_404(Sample, pk=theIds[-2])
+        elif level == Graph.L_SAMPLE:
+            replicaId = theIds[-2]
+            sampleNumber = theIds[-1]
+            item = Sample.findOrCreate(replica_id=replicaId,
+                                       number=sampleNumber)
             SampleData.setDataPoint(item, evaluation, unit, value)
         else:
             return Response({'success': False}, status='500')
         return Response({'success': True})
-
-
-def titleDataPage(evaluation):
-    return "[{}] {}".format(evaluation.evaluation_date, evaluation.name)
 
 
 @login_required
@@ -91,173 +90,174 @@ def showTrialAssessmentSetIndex(request, field_trial_id=None,
                   'errors': errors})
 
 
-def sortDataPointsForDisplay(level, evaluation, references,
-                             trialAssessments, dataPoints):
-    # This is for diplay purposes. [[,],[,]...]
-    # It has to follow the order of references
-    # and then trial assessments
-    values = []
-    lastIndex = 'Nada'
-    for reference in references:
-        thisIndex = reference.getReferenceIndexDataInput()
-        if lastIndex == thisIndex:
-            thisIndex = ''
-        else:
-            lastIndex = thisIndex
-        thisRefValues = {
-            'index': thisIndex,
-            'color': reference.getBackgroundColor(),
-            'name': reference.getKey(),
-            'id': reference.id,
-            'dataPoints': []}
-        for unit in trialAssessments:
+# Show Data methods
+class DataHelper:
+    def __init__(self, evaluationId):
+        self._evaluation = get_object_or_404(Evaluation, pk=evaluationId)
+        self._fieldTrial = self._evaluation.field_trial
+        self._replicas = Replica.getFieldTrialObjects(self._fieldTrial)
+        self._thesisTrial = Thesis.getObjects(self._fieldTrial)
+        self._trialAssessmentSets = TrialAssessmentSet.getObjects(
+            self._fieldTrial)
+
+    def titleDataPage(self):
+        return "[{}] {}".format(self._evaluation.evaluation_date,
+                                self._evaluation.name)
+
+    def prepareHeader(self, references):
+        header = []
+        lastIndex = "Bla"
+        for reference in references:
+            thisIndex = reference.getReferenceIndexDataInput()
+            if lastIndex == thisIndex:
+                thisIndex = ''
+            else:
+                lastIndex = thisIndex
+            header.append({
+                'index': thisIndex,
+                'color': reference.getBackgroundColor(),
+                'name': reference.getKey(),
+                'id': reference.id})
+        return header
+
+    CLSDATAS = {
+        Graph.L_REPLICA: ReplicaData,
+        Graph.L_THESIS: ThesisData,
+        Graph.L_SAMPLE: SampleData}
+
+    def prepareDataPoints(self, references, level, assSet):
+        clsData = DataHelper.CLSDATAS[level]
+        dataPoints = clsData.getDataPointsAssSet(self._evaluation,
+                                                 assSet)
+        dataPointsToDisplay = []
+        dataPointsForGraph = []
+        for reference in references:
             value = ''
-            thisRefValue = {}
-            thisRefValue['item_id'] = ModelHelpers.generateDataPointId(
-                level, evaluation, reference, unit)
             for dataPoint in dataPoints:
-                if dataPoint.reference.id == reference.id and\
-                   unit.id == dataPoint.unit.id:
+                if dataPoint.reference.id == reference.id:
                     value = dataPoint.value
+                    dataPointsForGraph.append(dataPoint)
                     break
-            thisRefValue['value'] = value
-            thisRefValues['dataPoints'].append(thisRefValue)
-        values.append(thisRefValues)
-    return values
+            dataPointsToDisplay.append({
+                'value': value,
+                'item_id': DataModel.generateDataPointId(
+                    level, self._evaluation, assSet, reference)})
+        rows = [{
+            'index': self._evaluation.evaluation_date,
+            'dataPoints': dataPointsToDisplay}]
+        return rows, dataPointsForGraph
 
+    def prepareSampleDataPoints(self, replicas, level, assSet):
+        fakeSampleIds = range(1, self._fieldTrial.samples_per_replica+1)
+        dataPointsForGraph = []
+        rows = []
+        for fakeSampleId in fakeSampleIds:
+            dataPointsToDisplay = []
+            for replica in replicas:
+                dataPoints = SampleData.getDataPointsPerSampleNumber(
+                    self._evaluation, assSet, fakeSampleId)
+                value = ''
+                for dataPoint in dataPoints:
+                    if dataPoint.reference.replica.id == replica.id:
+                        value = dataPoint.value
+                        dataPointsForGraph.append(dataPoint)
+                        break
+                dataPointsToDisplay.append({
+                    'value': value,
+                    'item_id': DataModel.generateDataPointId(
+                        level, self._evaluation, assSet,
+                        replica, fakeSampleId)})
+            rows.append({
+                'index': fakeSampleId,
+                'dataPoints': dataPointsToDisplay})
+        return rows, dataPointsForGraph
 
-@login_required
-def showDataThesisIndex(request, evaluation_id=None,
-                        errors=None):
-    template_name = 'trialapp/data_thesis_index.html'
-    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-    fieldTrial = evaluation.field_trial
-    thesisTrial = Thesis.getObjects(fieldTrial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
-    dataPoints = ThesisData.getDataPoints(evaluation)
+    def prepareAssSet(self, level, assSet,
+                      references):
+        graph = 'Add data and refresh to show graph'
+        if level == Graph.L_SAMPLE:
+            rows, pointForGraph = self.prepareSampleDataPoints(
+                references, level, assSet)
+        else:
+            rows, pointForGraph = self.prepareDataPoints(
+                references, level, assSet)
+        # Calculate graph
+        pointsInGraphs = len(pointForGraph)
+        if pointsInGraphs > 1:
+            graph = Graph(level, [assSet],
+                          pointForGraph, showTitle=False)
+            graphPlots, classGraph = graph.draw(level)
+            # We only expect one
+            graph = graphPlots[0][0]
+        return rows, graph, pointsInGraphs
 
-    dataPointsList = sortDataPointsForDisplay(
-        'thesis', evaluation, thesisTrial, trialAssessmentSets, dataPoints)
+    TOKEN_LEVEL = {
+        Graph.L_REPLICA: 'dataPointsR',
+        Graph.L_THESIS: 'dataPointsT',
+        Graph.L_SAMPLE: 'dataPointsS'}
 
-    graph = Graph(Graph.L_THESIS, trialAssessmentSets, dataPoints)
-    graphPlots, classGraph = graph.bar()
-    return render(request, template_name, {
-                  'evaluation': evaluation,
-                  'dataPoints': dataPointsList,
-                  'theses': thesisTrial,
-                  'graphPlots': graphPlots,
-                  'fieldTrial': fieldTrial,
-                  'title': titleDataPage(evaluation),
-                  'classGraph': classGraph,
-                  'trialAssessmentSets': trialAssessmentSets,
-                  'errors': errors})
+    def showDataPerLevel(self, level, onlyThisData=False):
+        references = None
+        subtitle = 'Evaluation'
+        if level == Graph.L_THESIS:
+            references = self._thesisTrial
+        elif level == Graph.L_REPLICA:
+            references = self._replicas
+        elif level == Graph.L_SAMPLE:
+            references = self._replicas
+            subtitle = 'Samples'
+            if not self._fieldTrial.samples_per_replica:
+                return {DataHelper.TOKEN_LEVEL[level]: [{
+                    'errors': 'Number of samples per replica '
+                              'is not defined. Go to field trial'
+                              'definition'}]}, 0
+        dataPointsList = []
+        totalPoints = 0
+        header = self.prepareHeader(references)
+        for assSet in self._trialAssessmentSets:
+            rows, graph, pointsInGraph = self.prepareAssSet(
+                level, assSet, references)
+            dataPointsList.append({
+                'title': assSet.getName(), 'subtitle': subtitle,
+                'header': header, 'errors': '',
+                'graph': graph, 'rows': rows})
+            totalPoints += pointsInGraph
+        return self.returnData(
+            {DataHelper.TOKEN_LEVEL[level]: dataPointsList},
+            onlyThisData), totalPoints
 
+    def returnData(self, dataToReturned, onlyThisData):
+        if onlyThisData:
+            return dataToReturned
+        else:
+            common = {
+                'title': self.titleDataPage(),
+                'trialAssessmentSets': self._trialAssessmentSets,
+                'evaluation': self._evaluation,
+                'theses': self._thesisTrial,
+                'fieldTrial': self._fieldTrial}
+            return {**common, **dataToReturned}
 
-@login_required
-def showDataReplicaIndex(request, evaluation_id=None,
-                         errors=None):
-    template_name = 'trialapp/data_replica_index.html'
-    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-    fieldTrial = evaluation.field_trial
-    replicas = Replica.getFieldTrialObjects(fieldTrial)
-    thesisTrial = Thesis.getObjects(fieldTrial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
-    dataPoints = ReplicaData.getDataPoints(evaluation)
-    dataPointsList = sortDataPointsForDisplay(
-        'replica', evaluation, replicas, trialAssessmentSets, dataPoints)
+    def makeActiveView(self, pointsR, pointsT):
+        active = Graph.L_SAMPLE
+        if pointsT > 0:
+            active = Graph.L_THESIS
+        elif pointsR > 0:
+            active = Graph.L_REPLICA
+        activeViews = {}
+        for level in Graph.LEVELS:
+            navActive = ''
+            tabActive = ''
+            if level == active:
+                navActive = 'active'
+                tabActive = 'show active'
+            activeViews['{}_nav'.format(level)] = navActive
+            activeViews['{}_tab'.format(level)] = tabActive
+        return activeViews
 
-    graph = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPoints)
-    graphPlots, classGraph = graph.adaptative(len(replicas))
-
-    return render(request, template_name, {
-                  'trialAssessmentSets': trialAssessmentSets,
-                  'dataPoints': dataPointsList,
-                  'evaluation': evaluation,
-                  'theses': thesisTrial,
-                  'fieldTrial': fieldTrial,
-                  'title': titleDataPage(evaluation),
-                  'graphPlots': graphPlots, 'classGraph': classGraph,
-                  'errors': errors})
-
-
-def needToRedirectToDefineSamples(request, fieldTrial):
-    if fieldTrial.samples_per_replica == 0:
-        return editNewFieldTrial(
-            request,
-            field_trial_id=fieldTrial.id,
-            errors='You need to define the number of samples per replica')
-    return None
-
-
-def needToCreateSamples(request, replica):
-    fieldTrial = replica.thesis.field_trial
-    samples = Sample.getObjects(replica)
-    if len(samples) > 0:
-        # If there are samples, we are good to go
-        return None, samples
-
-    redirection = needToRedirectToDefineSamples(
-        request, fieldTrial)
-    if redirection:
-        # if there are no samples because they are not defined
-        # in the field trial, we will ask to define such number
-        return redirection, None
-
-    # If there were not created we do it in the spot
-    Sample.createSamples(replica, fieldTrial.samples_per_replica)
-    samples = Sample.getObjects(replica)
-    return None, samples
-
-
-@login_required
-def showDataSamplesIndex(request, evaluation_id=None,
-                         selected_replica_id=None, errors=None):
-    template_name = 'trialapp/data_samples_index.html'
-    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-    redirection = needToRedirectToDefineSamples(
-        request, evaluation.field_trial)
-    if redirection:
-        return redirection
-    fieldTrial = evaluation.field_trial
-    replicas = Replica.getFieldTrialObjects(fieldTrial)
-
-    thesisTrial = Thesis.getObjects(fieldTrial)
-    trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
-    dataPointsList = []
-    selectedReplicaName = None
-    missing_samples = False
-    dataPoints = []
-    if selected_replica_id is None or selected_replica_id == 0:
-        pass
-    else:
-        replica = get_object_or_404(Replica, pk=selected_replica_id)
-        selectedReplicaName = replica.getTitle()
-        redirection, samples = needToCreateSamples(
-            request, replica)
-        if redirection:
-            return redirection
-
-        dataPoints = SampleData.getDataPointsReplica(evaluation, replica)
-        dataPointsList = sortDataPointsForDisplay(
-            'sample', evaluation, samples,
-            trialAssessmentSets, dataPoints)
-
-    replicaReferences = sortDataPointsForDisplay(
-        'replicas', evaluation, replicas, trialAssessmentSets, [])
-
-    allDataPoints = SampleData.getDataPoints(evaluation)
-    graph = Graph(Graph.L_SAMPLE, trialAssessmentSets, allDataPoints)
-    graphPlots, classGraph = graph.violin()
-
-    return render(request, template_name, {
-                  'replicaReferences': replicaReferences,
-                  'selectedReplicaName': selectedReplicaName,
-                  'trialAssessmentSets': trialAssessmentSets,
-                  'dataPoints': dataPointsList,
-                  'evaluation': evaluation,
-                  'fieldTrial': fieldTrial,
-                  'title': titleDataPage(evaluation),
-                  'theses': thesisTrial,
-                  'missing_samples': missing_samples,
-                  'graphPlots': graphPlots, 'classGraph': classGraph,
-                  'errors': errors})
+    def showDataEvaluation(self):
+        dataR, pR = self.showDataPerLevel(Graph.L_REPLICA)
+        dataT, pT = self.showDataPerLevel(Graph.L_THESIS, onlyThisData=True)
+        dataS, pS = self.showDataPerLevel(Graph.L_SAMPLE, onlyThisData=True)
+        activeViews = self.makeActiveView(pR, pT)
+        return {**dataR, **dataT, **dataS, **activeViews}

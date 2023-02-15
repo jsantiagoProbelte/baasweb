@@ -439,3 +439,6 @@ class TrialAssessmentSet(ModelHelpers, models.Model):
         return cls.objects \
                   .filter(field_trial=fieldTrial) \
                   .order_by('unit__name')
+
+    def getName(self):
+        return '{} ({})'.format(self.type.name, self.unit.name)

@@ -4,7 +4,43 @@ from trialapp.models import Evaluation, TrialAssessmentSet, FieldTrial,\
                             Thesis, Sample, Replica
 
 
-class DataHelper(ModelHelpers):
+class DataModel(ModelHelpers):
+    @classmethod
+    def generateDataPointId(cls, level, evaluation, unit,
+                            reference, fakeId=0):
+        return 'data-point-{}-{}-{}-{}-{}'.format(
+            level, evaluation.id, unit.id, reference.id, fakeId)
+
+    @classmethod
+    def setDataPoint(cls, reference, evaluation, unit, value):
+        dataPoint = cls.objects.filter(
+            evaluation=evaluation,
+            reference=reference,
+            unit=unit).all()
+        if not dataPoint:
+            cls.objects.create(
+                evaluation=evaluation,
+                reference=reference,
+                unit=unit,
+                value=value)
+        else:
+            dataPoint[0].value = value
+            dataPoint[0].save()
+            # This should not happen, but in that case, remove items
+            for i in range(1, len(dataPoint)):
+                dataPoint[i].delete()
+
+    @classmethod
+    def getDataPoints(cls, evaluation):
+        return cls.objects \
+                  .filter(evaluation=evaluation)
+
+    @classmethod
+    def getDataPointsAssSet(cls, evaluation, assSet):
+        return cls.objects \
+                  .filter(evaluation=evaluation,
+                          unit=assSet)
+
     @classmethod
     def getDataPointsFieldTrial(cls, fieldTrial):
         evaluationIds = [item.id for item in Evaluation.getObjects(fieldTrial)]
@@ -63,7 +99,7 @@ class DataHelper(ModelHelpers):
         return FieldTrial.objects.filter(product=product).count()
 
 
-class ThesisData(DataHelper, models.Model):
+class ThesisData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
@@ -73,7 +109,7 @@ class ThesisData(DataHelper, models.Model):
                                   on_delete=models.CASCADE)
 
 
-class ReplicaData(DataHelper, models.Model):
+class ReplicaData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
@@ -83,7 +119,7 @@ class ReplicaData(DataHelper, models.Model):
                                   on_delete=models.CASCADE)
 
 
-class SampleData(DataHelper, models.Model):
+class SampleData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
     evaluation = models.ForeignKey(Evaluation,
                                    on_delete=models.CASCADE)
@@ -93,13 +129,9 @@ class SampleData(DataHelper, models.Model):
                                   on_delete=models.CASCADE)
 
     @classmethod
-    def getDataPointsReplica(cls, evaluation, replica):
-        items = []
-        for sample in Sample.getObjects(replica):
-            dataPoints = SampleData.objects.filter(
+    def getDataPointsPerSampleNumber(cls, evaluation, assSet, number):
+        return SampleData.objects.filter(
                     evaluation=evaluation,
-                    reference=sample).\
+                    unit=assSet,
+                    reference__number=number).\
                 order_by('reference__number')
-            for dataPoint in dataPoints:
-                items.append(dataPoint)
-        return items

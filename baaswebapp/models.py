@@ -144,37 +144,6 @@ class ModelHelpers:
         return self.getName()
 
     @classmethod
-    def generateDataPointId(cls, level, evaluation,
-                            reference, unit):
-        return 'data-point-{}-{}-{}-{}'.format(
-            level, evaluation.id,
-            reference.id, unit.id)
-
-    @classmethod
-    def setDataPoint(cls, reference, evaluation, unit, value):
-        dataPoint = cls.objects.filter(
-            evaluation=evaluation,
-            reference=reference,
-            unit=unit).all()
-        if not dataPoint:
-            cls.objects.create(
-                evaluation=evaluation,
-                reference=reference,
-                unit=unit,
-                value=value)
-        else:
-            dataPoint[0].value = value
-            dataPoint[0].save()
-            # This should not happen, but in that case, remove items
-            for i in range(1, len(dataPoint)):
-                dataPoint[i].delete()
-
-    @classmethod
-    def getDataPoints(cls, evaluation):
-        return cls.objects \
-                  .filter(evaluation=evaluation)
-
-    @classmethod
     def extractDistincValues(cls, results, tag_id, tag_name):
         values = {}
         for result in results:

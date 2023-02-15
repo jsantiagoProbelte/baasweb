@@ -2,7 +2,7 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from trialapp.models import Product, Crop, Plague, AssessmentType
-from trialapp.data_models import ThesisData, DataHelper, ReplicaData
+from trialapp.data_models import ThesisData, DataModel, ReplicaData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -50,10 +50,10 @@ class ProductListView(LoginRequiredMixin, FilterView):
         for item in objectList:
             new_list.append({
                 'name': item.name,
-                'fieldtrials': DataHelper.getCountFieldTrials(item),
-                'crops': DataHelper.getCrops(item),
-                'plagues': DataHelper.getPlagues(item),
-                'dimensions': DataHelper.dimensionsValues(item),
+                'fieldtrials': DataModel.getCountFieldTrials(item),
+                'crops': DataModel.getCrops(item),
+                'plagues': DataModel.getPlagues(item),
+                'dimensions': DataModel.dimensionsValues(item),
                 'id': item.id})
         return {'object_list': new_list,
                 'titleList': '({}) Products'.format(len(objectList))}
@@ -186,16 +186,16 @@ class ProductApi(APIView):
 
         filterData = [
             {'name': ProductApi.TAG_CROPS,
-             'values': DataHelper.getCrops(product)},
+             'values': DataModel.getCrops(product)},
             {'name': ProductApi.TAG_PLAGUES,
-             'values': DataHelper.getPlagues(product)},
+             'values': DataModel.getPlagues(product)},
             {'name': ProductApi.TAG_DIMENSIONS,
-             'values': DataHelper.dimensionsValues(product)}]
+             'values': DataModel.dimensionsValues(product)}]
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         return render(request, template_name,
                       {'product': product,
-                       'fieldtrials': DataHelper.getCountFieldTrials(product),
+                       'fieldtrials': DataModel.getCountFieldTrials(product),
                        'filterData': filterData,
                        'graphs': graphs,
                        'errors': errorgraphs,

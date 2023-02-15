@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from trialapp.trial_helper import LayoutTrial
 from baaswebapp.graphs import Graph
+from trialapp.data_views import DataHelper
 
 
 class EvaluationListView(LoginRequiredMixin, ListView):
@@ -70,39 +71,57 @@ class EvaluationListView(LoginRequiredMixin, ListView):
                 'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS}
 
 
+def getProductEvaluationList(evaluation):
+    product_list = ProductEvaluation.getObjects(evaluation)
+    return [{'id': item.id, 'name': item.getName()}
+            for item in product_list]
+
+
 @login_required
-def editEvaluation(request, field_trial_id=None, evaluation_id=None,
+def editEvaluation(request, evaluation_id=None,
                    errors=None):
-    initialValues = {'field_trial_id': field_trial_id,
+    template_name = 'trialapp/evaluation_edit.html'
+    title = 'New'
+    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+    product_list = []
+    fieldTrial = evaluation.field_trial
+    title = 'Edit'
+    evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+    initialValues = {'field_trial_id': fieldTrial.id,
                      'evaluation_id': evaluation_id}
+    initialValues['name'] = evaluation.name
+    initialValues['evaluation_date'] = evaluation.evaluation_date
+    initialValues['crop_stage_majority'] = evaluation.crop_stage_majority
+    # retrieve the list of the current defined product evaluation
+    product_list = getProductEvaluationList(evaluation)
+    edit_form = EvaluationEditForm(initial=initialValues)
+    return render(request, template_name,
+                  {'edit_form': edit_form,
+                   'fieldTrial': fieldTrial,
+                   'evaluation': evaluation,
+                   'title': title,
+                   'product_list': product_list,
+                   'products': ProductThesis.getSelectListFieldTrial(
+                        fieldTrial, asDict=True),
+                   'errors': errors})
+
+
+@login_required
+def newEvaluation(request, field_trial_id=None, errors=None):
+    initialValues = {'field_trial_id': field_trial_id}
     template_name = 'trialapp/evaluation_edit.html'
     title = 'New'
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
     product_list = []
-
-    if evaluation_id is not None:
-        title = 'Edit'
-        evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
-
-        if fieldTrial.id != evaluation.field_trial.id:
-            return redirect('fieldtrial-list', error='Bad forming Evaluation')
-
-        initialValues['name'] = evaluation.name
-        initialValues['evaluation_date'] = evaluation.evaluation_date
-        initialValues['crop_stage_majority'] = evaluation.crop_stage_majority
-        # retrieve the list of the current defined product evaluation
-        product_list = ProductEvaluation.getObjects(evaluation)
-
+    evaluation = None
     edit_form = EvaluationEditForm(initial=initialValues)
-    product_list_show = [{'id': item.id, 'name': item.getName()}
-                         for item in product_list]
 
     return render(request, template_name,
                   {'edit_form': edit_form,
                    'fieldTrial': fieldTrial,
-                   'evaluation_id': evaluation_id,
+                   'evaluation': evaluation,
                    'title': title,
-                   'product_list': product_list_show,
+                   'product_list': product_list,
                    'products': ProductThesis.getSelectListFieldTrial(
                         fieldTrial, asDict=True),
                    'errors': errors})
@@ -144,11 +163,8 @@ def saveEvaluation(request, evaluation_id=None):
                 product_thesis=item,
                 thesis=item.thesis,
                 evaluation=evaluation)
-
-    return redirect(
-        'evaluation-edit',
-        field_trial_id=fieldTrial.id,
-        evaluation_id=evaluation.id)
+    return redirect('assessment_api',
+                    evaluation_id=evaluation.id)
 
 
 class ManageProductToEvaluation(APIView):
@@ -184,7 +200,7 @@ class ManageProductToEvaluation(APIView):
 class AssessmentApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete']
+    http_method_names = ['delete', 'get']
 
     def delete(self, request, *args, **kwargs):
         item = Evaluation.objects.get(
@@ -195,3 +211,18 @@ class AssessmentApi(APIView):
         LayoutTrial.distributeLayout(fieldTrial)
         response_data = {'msg': 'Thesis was deleted.'}
         return Response(response_data, status=200)
+
+    def get(self, request, *args, **kwargs):
+        template_name = 'trialapp/evaluation_show.html'
+        evaluation_id = None
+        if 'evaluation_id' in request.GET:
+            # for testing
+            evaluation_id = request.GET.get('evaluation_id', None)
+        elif 'evaluation_id' in kwargs:
+            # from call on server
+            evaluation_id = kwargs.get('evaluation_id', None)
+        dataHelper = DataHelper(evaluation_id)
+        dataEvaluation = dataHelper.showDataEvaluation()
+        dataEvaluation['product_list'] = getProductEvaluationList(
+            dataEvaluation['evaluation'])
+        return render(request, template_name, dataEvaluation)

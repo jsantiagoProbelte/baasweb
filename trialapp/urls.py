@@ -71,15 +71,19 @@ urlpatterns = [
         evaluation_views.AssessmentApi.as_view(),
         name='assessment_api'),
     path(
+        'assessment_api/<int:evaluation_id>/',
+        evaluation_views.AssessmentApi.as_view(),
+        name='assessment_api'),
+    path(
         'evaluationlist/<int:field_trial_id>/',
         evaluation_views.EvaluationListView.as_view(),
         name='evaluation-list'),
     path(
-        'edit_evaluation/<int:field_trial_id>/',
-        evaluation_views.editEvaluation,
-        name='evaluation-edit'),
+        'new_evaluation/<int:field_trial_id>/',
+        evaluation_views.newEvaluation,
+        name='evaluation-new'),
     path(
-        'edit_evaluation/<int:field_trial_id>/<int:evaluation_id>/',
+        'edit_evaluation/<int:evaluation_id>/',
         evaluation_views.editEvaluation,
         name='evaluation-edit'),
     path(
@@ -95,18 +99,6 @@ urlpatterns = [
         'trial_assessment_set_list/<int:field_trial_id>/',
         data_views.showTrialAssessmentSetIndex,
         name='trial-assessment-set-list'),
-    path(
-        'data_thesis_index/<int:evaluation_id>/',
-        data_views.showDataThesisIndex,
-        name='data_thesis_index'),
-    path(
-        'data_replica_index/<int:evaluation_id>/',
-        data_views.showDataReplicaIndex,
-        name='data_replica_index'),
-    path(
-        'data_samples_index/<int:evaluation_id>/<int:selected_replica_id>/',
-        data_views.showDataSamplesIndex,
-        name='data-samples-index'),
     path(
         'manage_trial_assessment_set_api',
         data_views.ManageTrialAssessmentSet.as_view(),

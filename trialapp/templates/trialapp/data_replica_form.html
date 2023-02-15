@@ -1,0 +1,32 @@
+<div class="card card-body-baas mt-3">
+    <table class="table">
+        <thead><tr>
+            <th>Thesis</th>
+            <th>Replica</th>
+            {% for assessmentType in trialAssessmentSets %}
+                <th class="col-md-1">{{assessmentType.type}}<br>({{assessmentType.unit}})</th>
+            {% empty %}
+                <p>No unit types defined. Go <span>
+                    <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' evaluation.field_trial_id%}">here</a></span></p>
+            {% endfor %}
+        </tr></thead>
+        {% for dataPointReference in dataPointsR %}
+        <tr>
+            <td class="bg-custom-{{dataPointReference.color}}">
+                {{dataPointReference.index}}
+            </td>
+            <td class="bg-custom-{{dataPointReference.color}}">
+                {{dataPointReference.name}}
+            </td>
+            {% for dataPointValue in dataPointReference.dataPoints %}
+            <td>
+                {% include "trialapp/data_input_template.html" with item_id=dataPointValue.item_id placeholder='-' currentValue=dataPointValue.value%}
+            </td>
+            {% empty %}
+            {% endfor %}
+        </tr>
+        {% empty %}
+            <p>No Replicas yet.</p>
+        {% endfor %}
+    </table>
+</div>

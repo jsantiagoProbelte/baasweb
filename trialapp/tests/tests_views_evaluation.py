@@ -1,12 +1,12 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, ProductEvaluation, ProductThesis,\
-     Thesis, Evaluation
+     Thesis, Evaluation, TrialAssessmentSet, AssessmentType, AssessmentUnit
 from trialapp.tests.tests_models import TrialAppModelTest
-
+from trialapp.data_models import ThesisData
 from trialapp.evaluation_views import editEvaluation, saveEvaluation,\
+    newEvaluation,\
     ManageProductToEvaluation, AssessmentApi, EvaluationListView
-# from trialapp.evaluation_views import editEvaluation
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -17,11 +17,16 @@ class EvaluationViewsTest(TestCase):
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        FieldTrial.create_fieldTrial(**TrialAppModelTest.FIELDTRIALS[0])
+        self._fieldTrial = FieldTrial.create_fieldTrial(
+            **TrialAppModelTest.FIELDTRIALS[0])
         for thesis in TrialAppModelTest.THESIS:
             Thesis.create_Thesis(**thesis)
         for productThesis in TrialAppModelTest.PRODUCT_THESIS:
             ProductThesis.create_ProductThesis(**productThesis)
+        self._units = [TrialAssessmentSet.objects.create(
+            field_trial=self._fieldTrial,
+            type=AssessmentType.objects.get(pk=i),
+            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 3)]
 
     def test_evaluation_emply_list(self):
         fieldTrial = FieldTrial.objects.get(
@@ -41,9 +46,9 @@ class EvaluationViewsTest(TestCase):
     def test_editfieldtrial(self):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
-        request = self._apiFactory.get('/edit_evaluation')
+        request = self._apiFactory.get('evaluation-new')
         self._apiFactory.setUser(request)
-        response = editEvaluation(request, field_trial_id=fieldTrial.id)
+        response = newEvaluation(request, field_trial_id=fieldTrial.id)
         self.assertContains(response, 'create-evaluation')
         self.assertContains(response, 'New')
         self.assertNotContains(response, 'Edit')
@@ -69,11 +74,10 @@ class EvaluationViewsTest(TestCase):
 
         # Editar y ver nuevo
         request = self._apiFactory.get(
-            '/edit_evaluation/{}'.format(fieldTrial.id))
+            'evaluation-edit', args=[evaluation.id])
         self._apiFactory.setUser(request)
         response = editEvaluation(
             request,
-            field_trial_id=fieldTrial.id,
             evaluation_id=evaluation.id)
         self.assertContains(response, 'create-evaluation')
         self.assertNotContains(response, 'New')
@@ -123,10 +127,37 @@ class EvaluationViewsTest(TestCase):
         deletedId = item.id
         deleteData = {'item_id': deletedId}
         deleteRequest = self._apiFactory.post(
-            'thesis_api',
+            'assessment_api',
             data=deleteData)
         apiView = AssessmentApi()
         response = apiView.delete(deleteRequest)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
             Evaluation.objects.filter(pk=deletedId).exists())
+
+    def test_AssessmentApiGet(self):
+        evaluationData = TrialAppModelTest.APPLICATION[0]
+        request = self._apiFactory.post('evaluation-save',
+                                        data=evaluationData)
+        self._apiFactory.setUser(request)
+        response = saveEvaluation(request)
+        self.assertEqual(response.status_code, 302)
+        item = Evaluation.objects.get(name=evaluationData['name'])
+        self.assertEqual(item.getName(), '66-BBCH')
+
+        # Lets add data
+        for thesis in Thesis.getObjects(self._fieldTrial):
+            ThesisData.objects.create(
+                value=66, reference=thesis,
+                unit=self._units[0], evaluation=item)
+
+        apiView = AssessmentApi()
+        getData = {'evaluation_id': item.id}
+        getRequest = self._apiFactory.get(
+            'assessment_api',
+            data=getData)
+        response = apiView.get(getRequest)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            '"nav-link active" id="v-pills-thesis-tab"')

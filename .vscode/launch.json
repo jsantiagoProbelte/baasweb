@@ -64,5 +64,17 @@
             "django": true,
             "justMyCode": true
         },
+        {
+            "name": "Run One Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test",
+                "trialapp.tests.tests_views_evaluation"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
     ]
 }

@@ -245,16 +245,9 @@ class EvaluationEditForm(forms.Form):
         self.helper.layout = Layout(
             Field('field_trial_id'),
             Field('evaluation_id'),
-            Row(
-                Div(
-                    Field('evaluation_date', css_class='mb-3'),
-                    Field('crop_stage_majority', css_class='mb-4'),
-                    css_class='col-md-6'),
-                Div(
-                    Field('name', css_class='mb-3'),
-                    css_class='col-md-6')),
-            Div(
-                FormActions(
-                    Submit('submit', text,
-                           css_class="btn btn-info")),
+            Field('evaluation_date', css_class='mb-3'),
+            Field('crop_stage_majority', css_class='mb-4'),
+            Field('name', css_class='mb-3'),
+            FormActions(
+                Submit('submit', text, css_class="btn btn-info"),
                 css_class='text-sm-end'))

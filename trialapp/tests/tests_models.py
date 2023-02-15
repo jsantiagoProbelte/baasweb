@@ -306,8 +306,8 @@ class TrialAppModelTest(TestCase):
             unit=assset[0],
             value=66)
 
-        sampleData = SampleData.getDataPointsReplica(
-            evaluation, selectedReplica)
+        sampleData = SampleData.getDataPointsPerSampleNumber(
+            evaluation, assset[0], selectedReplica.number)
         self.assertEqual(len(sampleData), 1)
 
     def test_fieldTrial_planDensity(self):
