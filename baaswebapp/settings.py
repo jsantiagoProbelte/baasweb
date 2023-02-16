@@ -88,7 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'baaswebapp.wsgi.application'
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
