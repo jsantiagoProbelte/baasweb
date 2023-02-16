@@ -2,7 +2,7 @@
 # Django related
 django
 applicationinsights
-django-crispy-forms
+django-crispy-forms==1.14.0
 psycopg2-binary
 #psycopg2 # On mac needs > brew install postgresql@12
 django-bootstrap-v5
