@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import BootstrapAuthenticationForm
+from baaswebapp.forms import BootstrapAuthenticationForm
 from baaswebapp.data_loaders import TrialStats
 
 
