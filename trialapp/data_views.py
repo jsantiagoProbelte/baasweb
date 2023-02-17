@@ -50,8 +50,8 @@ class SetDataEvaluation(APIView):
     http_method_names = ['post']
 
     def post(self, request, format=None):
-        #                5       4               3                   2              1
-        # data_point_id-[level]-[evaluation_id]-[assessment_set_id]-[reference_id]-[fakeId]
+        # noqa:                     5       4               3                   2              1
+        # noqa: E501 data_point_id-[level]-[evaluation_id]-[assessment_set_id]-[reference_id]-[fakeId]
         theIds = request.POST['data_point_id'].split('-')
         level = theIds[-5]
         evaluation = get_object_or_404(Evaluation, pk=theIds[-4])
@@ -240,10 +240,10 @@ class DataHelper:
 
     def makeActiveView(self, pointsR, pointsT):
         active = Graph.L_SAMPLE
-        if pointsT > 0:
-            active = Graph.L_THESIS
-        elif pointsR > 0:
+        if pointsR > 0:
             active = Graph.L_REPLICA
+        elif pointsT > 0:
+            active = Graph.L_THESIS
         activeViews = {}
         for level in Graph.LEVELS:
             navActive = ''

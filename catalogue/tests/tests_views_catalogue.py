@@ -3,8 +3,8 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product
 from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
-    AssessmentUnit
-from trialapp.data_models import ThesisData
+    AssessmentUnit, Replica, Plague
+from trialapp.data_models import ThesisData, ReplicaData
 from catalogue.product_views import ProductListView, ProductApi,\
     ProductCreateView, ProductUpdateView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
@@ -85,7 +85,7 @@ class ProductViewsTest(TestCase):
         self._units = [TrialAssessmentSet.objects.create(
             field_trial=self._fieldTrials[0],
             type=AssessmentType.objects.get(pk=i),
-            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 3)]
+            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 4)]
 
         self._evaluations = [Evaluation.objects.create(
             name='eval{}'.format(i),
@@ -167,6 +167,32 @@ class ProductViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'No data found')
 
+        # Not enough dimensions
+        request = self._apiFactory.get(
+            'product_api',
+            data={'show_data': 'show_data',
+                  plagueId: plagueId,
+                  dimensionId: dimensionId,
+                  levelId: levelId})
+        self._apiFactory.setUser(request)
+        response = apiView.get(request,
+                               **{'product_id': productid})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Please select crop')
+
+        # Not enough crops
+        request = self._apiFactory.get(
+            'product_api',
+            data={'show_data': 'show_data',
+                  cropId: cropId,
+                  plagueId: plagueId,
+                  levelId: levelId})
+        self._apiFactory.setUser(request)
+        response = apiView.get(request,
+                               **{'product_id': productid})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Please select dimensions')
+
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
                 'category': 1}
@@ -194,3 +220,47 @@ class ProductViewsTest(TestCase):
         formNew = viewNew.get_form()
         self.assertTrue(formNew.is_valid())
         newProduct = Product.objects.get(pk=1)
+
+    def test_showProduct_Replica_graph(self):
+        productid = 1
+        plagues = Plague.getObjects()
+        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
+        plague2 = 'crops-{}'.format(plagues[2].id)
+        plague3 = 'crops-{}'.format(plagues[3].id)
+        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
+        dimensionId = 'dimensions-{}'.format(self._units[0].id)
+        levelId = 'level-replica'
+        request = self._apiFactory.get(
+            'product_api',
+            data={'show_data': 'show_data',
+                  cropId: cropId,
+                  plagueId: plagueId,
+                  plague2: plague2,
+                  plague3: plague3,
+                  dimensionId: dimensionId,
+                  levelId: levelId})
+        self._apiFactory.setUser(request)
+
+        apiView = ProductApi()
+        response = apiView.get(request,
+                               **{'product_id': productid})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No data found', count=3)
+        self.assertEqual(ReplicaData.objects.count(), 0)
+
+        # Le's add data
+        value = 1000.10
+        Replica.createReplicas(self._theses[0], 4)
+        for replica in Replica.getObjects(self._theses[0]):
+            for evaluation in self._evaluations:
+                for unit in self._units:
+                    ReplicaData.objects.create(
+                        value=value,
+                        evaluation=evaluation,
+                        unit=unit,
+                        reference=replica)
+                    value += 500.10
+        response = apiView.get(request,
+                               **{'product_id': productid})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No data found', count=2)

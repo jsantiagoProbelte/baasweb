@@ -89,6 +89,10 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(types, types2)
 
     def test_ModelHelpers(self):
+        unknownCrop = Crop.getUnknown()
+        self.assertEqual(unknownCrop.name, ModelHelpers.UNKNOWN)
+        self.assertTrue(unknownCrop.isUnknown())
+
         itemsFromObjectsAll = Crop.objects.all()
         len_itemsFromObjectsAll = len(itemsFromObjectsAll)
         self.assertGreater(len_itemsFromObjectsAll, 0)
@@ -227,6 +231,34 @@ class TrialAppModelTest(TestCase):
                 faultyRequest, {'in_post_label': 33},
                 'in_post_label'),
             33)
+
+        requestNull = request_factory.post(
+            '/manage_product_to_thesis_api',
+            data={'in_post_label': ''})
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                requestNull, {},
+                'in_post_label', returnNoneIfEmpty=True),
+            None)
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                requestNull, {},
+                'in_post_label', returnNoneIfEmpty=False),
+            '')
+
+        requestFloat = request_factory.post(
+            '/manage_product_to_thesis_api',
+            data={'in_post_label': '2.5'})
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                requestFloat, {},
+                'in_post_label', floatValue=True),
+            2.5)
+        self.assertEqual(
+            ModelHelpers.getValueFromRequestOrArray(
+                requestFloat, {},
+                'in_post_label', floatValue=False),
+            '2.5')
 
         params = {'label': 1, 'other': 2}
         self.checkExtract2('label', 1, **params)

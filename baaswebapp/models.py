@@ -7,7 +7,6 @@ class ModelHelpers:
     def getUnknown(cls):
         return cls.objects.get(name=ModelHelpers.UNKNOWN)
 
-    @classmethod
     def isUnknown(self):
         return self.name == ModelHelpers.UNKNOWN
 
@@ -22,14 +21,6 @@ class ModelHelpers:
             return objs[0]
         else:
             return cls.objects.create(**args)
-
-    @classmethod
-    def getDictObjectsId(cls):
-        return {item.name.lower(): item.id for item in cls.getObjects()}
-
-    @classmethod
-    def getUnknownKey(cls):
-        return cls.objects.get(name=ModelHelpers.UNKNOWN)
 
     @classmethod
     def returnFormatedItem(cls, asDict, id, name):

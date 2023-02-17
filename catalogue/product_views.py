@@ -95,6 +95,8 @@ class ProductApi(APIView):
                 if tagType == ProductApi.TAG_LEVEL:
                     if tagId == Graph.L_THESIS:
                         level = Graph.L_THESIS
+                    elif tagId == Graph.L_REPLICA:
+                        level = Graph.L_REPLICA
         return dimensions, crops, plagues, level
 
     def calcularGraphs(self, product, tags, graphPerRow=2):

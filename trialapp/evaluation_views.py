@@ -210,13 +210,7 @@ class AssessmentApi(APIView):
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/evaluation_show.html'
-        evaluation_id = None
-        if 'evaluation_id' in request.GET:
-            # for testing
-            evaluation_id = request.GET.get('evaluation_id', None)
-        elif 'evaluation_id' in kwargs:
-            # from call on server
-            evaluation_id = kwargs.get('evaluation_id', None)
+        evaluation_id = kwargs.get('evaluation_id', None)
         dataHelper = DataHelper(evaluation_id)
         dataEvaluation = dataHelper.showDataEvaluation()
         dataEvaluation['product_list'] = getProductEvaluationList(
