@@ -62,7 +62,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
 class ProductApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete', 'get']
+    http_method_names = ['delete', 'get', 'post']
     TAG_DIMENSIONS = 'dimensions'
     TAG_CROPS = 'crops'
     TAG_PLAGUES = 'plagues'
@@ -175,12 +175,7 @@ class ProductApi(APIView):
 
     def get(self, request, *args, **kwargs):
         product_id = None
-        if 'product_id' in request.GET:
-            # for testing
-            product_id = request.GET.get('product_id')
-        elif 'product_id' in kwargs:
-            # from call on server
-            product_id = kwargs['product_id']
+        product_id = kwargs['product_id']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
 

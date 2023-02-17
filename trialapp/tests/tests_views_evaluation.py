@@ -32,11 +32,10 @@ class EvaluationViewsTest(TestCase):
         fieldTrial = FieldTrial.objects.get(
             name=TrialAppModelTest.FIELDTRIALS[0]['name'])
 
-        request = self._apiFactory.get(
-            'evaluation-list',
-            data={'field_trial_id': fieldTrial.id})
+        request = self._apiFactory.get('evaluation-list')
         self._apiFactory.setUser(request)
-        response = EvaluationListView.as_view()(request)
+        response = EvaluationListView.as_view()(
+            request, **{'field_trial_id': fieldTrial.id})
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'assessments')

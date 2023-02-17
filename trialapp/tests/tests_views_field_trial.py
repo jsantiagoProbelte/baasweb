@@ -114,12 +114,11 @@ class FieldTrialViewsTest(TestCase):
 
         # path = reverse('field_trial_api',
         #                kwargs={'field_trial_id': fieldTrial.id})
-        request = self._apiFactory.get(
-            'field_trial_api',
-            data={'field_trial_id': fieldTrial.id})
+        request = self._apiFactory.get('field_trial_api')
         self._apiFactory.setUser(request)
         apiView = FieldTrialApi()
-        response = apiView.get(request)
+        response = apiView.get(request,
+                               **{'field_trial_id': fieldTrial.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
 

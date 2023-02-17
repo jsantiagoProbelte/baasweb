@@ -113,12 +113,11 @@ class ProductViewsTest(TestCase):
     def test_showProductS_simple(self):
         productid = 4
         product = Product.objects.get(pk=productid)
-        request = self._apiFactory.get(
-            'product_api',
-            data={'product_id': productid})
+        request = self._apiFactory.get('product_api')
         self._apiFactory.setUser(request)
         apiView = ProductApi()
-        response = apiView.get(request)
+        response = apiView.get(request,
+                               **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
 
@@ -155,8 +154,7 @@ class ProductViewsTest(TestCase):
         levelId = 'level-thesis'
         request = self._apiFactory.get(
             'product_api',
-            data={'product_id': productid,
-                  'show_data': 'show_data',
+            data={'show_data': 'show_data',
                   cropId: cropId,
                   plagueId: plagueId,
                   dimensionId: dimensionId,
@@ -164,7 +162,8 @@ class ProductViewsTest(TestCase):
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
-        response = apiView.get(request)
+        response = apiView.get(request,
+                               **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'No data found')
 
@@ -192,8 +191,6 @@ class ProductViewsTest(TestCase):
             '/product/1/',
             data=data)
         viewNew = ProductUpdateView(request=request)
-        # viewNew.post(request)
         formNew = viewNew.get_form()
         self.assertTrue(formNew.is_valid())
         newProduct = Product.objects.get(pk=1)
-        # self.assertEqual(newProduct.name, newName)
