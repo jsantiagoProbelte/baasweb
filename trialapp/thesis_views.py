@@ -3,7 +3,8 @@ from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 # from rest_framework import permissions
-from trialapp.models import FieldTrial, Product, ProductThesis, RateUnit,\
+from catalogue.models import Product  # , Batch
+from trialapp.models import FieldTrial, ProductThesis, RateUnit,\
     Thesis, Replica
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ThesisEditForm
@@ -126,9 +127,12 @@ class ManageProductToThesis(APIView):
         rate = request.POST['rate']
         rate_unit_id = request.POST['rate_unit']
         rateUnit = get_object_or_404(RateUnit, pk=rate_unit_id)
+        # batch_id = request.POST['batch']
+        # batch = get_object_or_404(Batch, pk=batch_id)
 
         productThesis = ProductThesis(
             thesis=thesis,
+            # batch=batch,
             product=product,
             rate_unit=rateUnit,
             rate=rate)
@@ -136,6 +140,7 @@ class ManageProductToThesis(APIView):
         responseData = {
             'id': productThesis.id,
             'product': product.name,
+            # 'batch': batch.name,
             'rate_unit': rateUnit.name,
             'rate': rate}
         return Response(responseData)

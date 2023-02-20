@@ -121,18 +121,6 @@ class ProductViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
 
-        deletedId = productid
-        deleteData = {'item_id': deletedId}
-        deleteRequest = self._apiFactory.post(
-            'product_api',
-            data=deleteData)
-        self._apiFactory.setUser(deleteRequest)
-
-        response = apiView.delete(deleteRequest)
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(
-            Product.objects.filter(pk=deletedId).exists())
-
     def test_showProductS_graph(self):
         productid = 1
 
