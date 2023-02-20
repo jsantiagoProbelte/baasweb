@@ -11,7 +11,7 @@
 <table class="table" id="table-items">
     <thead>
         <tr><th>Name</th><th># trials</th><th>Dimensions</th><th>Crops</th>
-            <th>Plagues</th><th></th></tr>
+            <th>Plagues</th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
@@ -21,7 +21,6 @@
         <td class="col-md-2">{% include "catalogue/show_tags.html" with tags=item.dimensions badge_class='bg-light'%}</td> 
         <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.crops badge_class='bg-primary' %}</td>
         <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.plagues badge_class='bg-secondary'%}</td>
-        <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
     </tr>
     </tbody>
     {% empty %}

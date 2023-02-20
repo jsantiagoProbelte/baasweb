@@ -6,11 +6,16 @@
   <span class="text-muted ml-2">product</span>
   <span> <div class="btn-group float-end " role="group">
       <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
-          data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
-      <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3 ms-2"
-          data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
-  </div></span>
+          data-toggle="tooltip" data-placement="top" title='Go to product list'>&#8679;</a>
+      <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3"
+          data-toggle="tooltip" data-placement="top" title='Edit product'>&#10000;</a>
+      <a href="{% url 'product-delete' product.id %}" class="btn btn-warning btn-sm fs-3"
+          data-toggle="tooltip" data-placement="top" title='Delete product'> - </a>
+  </span>
 </h2>
+
+
+
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}

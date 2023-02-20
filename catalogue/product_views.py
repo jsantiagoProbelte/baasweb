@@ -1,15 +1,34 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import Product, Crop, Plague, AssessmentType
+from catalogue.models import Product  # , Batch, Treatment, ProductVariant
+from trialapp.models import Crop, Plague, AssessmentType
 from trialapp.data_models import ThesisData, DataModel, ReplicaData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from baaswebapp.graphs import Graph
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from django.urls import reverse_lazy
+from crispy_forms.layout import Layout, Div, Submit, Field, HTML
+from crispy_forms.bootstrap import FormActions
+
+
+class ProductForm(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New product' if new else 'Upate product'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(Field('name', css_class='mb-3'),
+                Field('vendor', css_class='mb-3'),
+                Field('category', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', submitTxt, css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas col-md-4 mt-2")
+            ))
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -19,9 +38,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.helper = FormHelper()
-        form.helper.add_input(Submit('submit', 'Create',
-                                     css_class='btn-primary'))
+        form.helper = ProductForm()
         return form
 
 
@@ -32,10 +49,15 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.helper = FormHelper()
-        form.helper.add_input(Submit('submit', 'Save',
-                                     css_class='btn-primary'))
+        form.helper = ProductForm(new=False)
         return form
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('product-list')
+    template_name = 'catalogue/product_delete.html'
+    success_message = 'Your Product has been deleted successfully.'
 
 
 class ProductListView(LoginRequiredMixin, FilterView):
@@ -68,13 +90,6 @@ class ProductApi(APIView):
     TAG_PLAGUES = 'plagues'
     TAG_LEVEL = 'level'
     FILTER_DATA = [TAG_DIMENSIONS, TAG_CROPS, TAG_PLAGUES, TAG_LEVEL]
-
-    def delete(self, request, *args, **kwargs):
-        item = Product.objects.get(
-            pk=request.POST['item_id'])
-        item.delete()
-        response_data = {'msg': 'Product was deleted.'}
-        return Response(response_data, status=200)
 
     def identifyObjectFilter(self, tags):
         dimensions = []
@@ -192,9 +207,56 @@ class ProductApi(APIView):
                                                                  request.GET)
         return render(request, template_name,
                       {'product': product,
+                       'deleteProductForm': ProductDeleteView(),
                        'fieldtrials': DataModel.getCountFieldTrials(product),
                        'filterData': filterData,
                        'graphs': graphs,
                        'errors': errorgraphs,
                        'classGraphCol': classGraphCol,
                        'titleView': product.getName()})
+
+
+# class BatchForm(FormHelper):
+#     def __init__(self, new=True):
+#         super().__init__()
+#         title = 'New product' if new else 'Upate product'
+#         submitTxt = 'Create' if new else 'Save'
+#         self.add_layout(Layout(Div(
+#             HTML(title), css_class="h4 mt-4"),
+#             Div(Field('product', css_class='mb-3'),
+#                 Field('name', css_class='mb-3'),
+#                 Field('serial_number', css_class='mb-3'),
+#                 Field('rate', css_class='mb-3'),
+#                 Field('rate_unit', css_class='mb-3'),
+#                 FormActions(
+#                     Submit('submit', submitTxt, css_class="btn btn-info"),
+#                     css_class='text-sm-end'),
+#                 css_class="card-body-baas col-md-4 mt-2")
+#             ))
+
+
+# class BatchCreateView(LoginRequiredMixin, CreateView):
+#     model = Batch
+#     fields = ['name', 'vendor', 'category']
+#     template_name = 'baaswebapp/model_edit_form.html'
+
+#     def get_form(self, form_class=None):
+#         form = super().get_form(form_class)
+#         form.helper = BatchForm()
+#         return form
+
+
+# class BatchUpdateView(LoginRequiredMixin, UpdateView):
+#     model = Batch
+#     fields = ['name', 'vendor', 'category']
+#     template_name = 'baaswebapp/model_edit_form.html'
+
+#     def get_form(self, form_class=None):
+#         form = super().get_form(form_class)
+#         form.helper = BatchForm(new=False)
+#         return form
+
+
+# class BatchDeleteView(DeleteView):
+#     model = Batch
+#     success_url = reverse_lazy('product-list')
