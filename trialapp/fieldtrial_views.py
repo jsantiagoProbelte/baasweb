@@ -1,6 +1,9 @@
 # Create your views here.
 import django_filters
+
 from django_filters.views import FilterView
+from django.views.generic.edit import DeleteView
+from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from django.contrib.auth.decorators import login_required
@@ -10,7 +13,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FieldTrialCreateForm
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
-from rest_framework.response import Response
 import datetime
 
 
@@ -255,15 +257,7 @@ def saveFieldTrial(request, field_trial_id=None):
 class FieldTrialApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete', 'get']
-
-    def delete(self, request, *args, **kwargs):
-        item = FieldTrial.objects.get(
-            pk=request.POST['item_id'])
-        item.delete()
-
-        response_data = {'msg': 'Product was deleted.'}
-        return Response(response_data, status=200)
+    http_method_names = ['get']
 
     def showValue(self, value):
         return value if value else '?'
@@ -321,6 +315,12 @@ class FieldTrialApi(APIView):
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               thesisTrial)})
+
+
+class FieldTrialDeleteView(DeleteView):
+    model = FieldTrial
+    success_url = reverse_lazy('fieldtrial-list')
+    template_name = 'trialapp/fieldtrial_delete.html'
 
 
 @login_required

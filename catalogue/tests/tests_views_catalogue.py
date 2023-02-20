@@ -6,7 +6,7 @@ from trialapp.models import FieldTrial,\
     AssessmentUnit, Replica, Plague
 from trialapp.data_models import ThesisData, ReplicaData
 from catalogue.product_views import ProductListView, ProductApi,\
-    ProductCreateView, ProductUpdateView
+    ProductCreateView, ProductUpdateView, ProductDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
 
@@ -118,6 +118,13 @@ class ProductViewsTest(TestCase):
         apiView = ProductApi()
         response = apiView.get(request,
                                **{'product_id': productid})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, product.name)
+
+        deleteRequest = self._apiFactory.get('product-delete')
+        self._apiFactory.setUser(deleteRequest)
+        apiView = ProductDeleteView.as_view()(deleteRequest,
+                                              pk=product.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
 

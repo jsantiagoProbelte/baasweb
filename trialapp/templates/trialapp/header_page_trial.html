@@ -4,19 +4,26 @@
 <h2 class="fw-bold mt-4 ms-4 mb-3">
     {{title}}
     <span class="text-muted ml-2">{{subtitle}}</span>
-    {% if edit_href %}
-    <span><a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 ms-2"
-             data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a></span>
-    {% endif %}
-    {% if new_href %}
-    <span><a href="{% url new_href %}" class="btn btn-info btn-sm fs-1 ms-2"
-             data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a></span>
-    {% endif %}
-    {% if new_href_id %}
-    <a href="{% url new_href_id refId %}" class="btn btn-secondary btn-sm fs-1 ms-2"
-        data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
-    {% endif %}
-    <span> <div class="btn-group float-end " role="group">
+    <span><div class="btn-group ms-2" role="group">
+        {% if edit_href %}
+        <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
+                data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+        {% endif %}
+        {% if new_href %}
+        <a href="{% url new_href %}" class="btn btn-info btn-sm fs-1"
+                data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+        {% endif %}
+        
+        {% if new_href_id %}
+        <a href="{% url new_href_id refId %}" class="btn btn-secondary btn-sm fs-1"
+            data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+        {% endif %}
+        {% if delete_url %}
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-1"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
+        {% endif %}
+    </div></span>
+    <span> <div class="btn-group float-end" role="group">
         <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
             data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
         <a href="{% url 'field_trial_api' fieldTrial.id%}" class="btn btn-light fs-4"

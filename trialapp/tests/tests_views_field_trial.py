@@ -4,7 +4,7 @@ from trialapp.models import FieldTrial, Thesis,\
     TrialAssessmentSet, AssessmentType, AssessmentUnit
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial,\
-    FieldTrialApi, FieldTrialListView
+    FieldTrialApi, FieldTrialListView, FieldTrialDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -122,14 +122,9 @@ class FieldTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
 
-        deletedId = fieldTrial.id
-        deleteData = {'item_id': deletedId}
-        deleteRequest = self._apiFactory.post(
-            'field_trial_api',
-            data=deleteData)
+        deleteRequest = self._apiFactory.get('fieldtrial-delete')
         self._apiFactory.setUser(deleteRequest)
-        apiView = FieldTrialApi()
-        response = apiView.delete(deleteRequest)
+        apiView = FieldTrialDeleteView.as_view()(deleteRequest,
+                                                 pk=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(
-            FieldTrial.objects.filter(pk=deletedId).exists())
+        self.assertContains(response, fieldTrial.name)

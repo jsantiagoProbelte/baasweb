@@ -43,7 +43,6 @@
             <th>Thesis</th>
             <th>Assessments</th>
             <th>Keywords</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -75,7 +74,6 @@
             <span class="badge bg-crop">{{ item.crop }}</span>
             <span class="badge bg-product">{{ item.product }}</span>
         </td>
-        <td><a id='delete-item-{{item.id}}' class="btn btn-outline-warning btn-sm btn-sm fs-1">-</a></td>
     </tr>
     </tbody>    
     {% empty %}
@@ -83,13 +81,4 @@
     {% endfor %}
 </table>
 </div>
-{% endblock %}
-
-
-{% block scripts %}
-<script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>
-    var manageItemEndPoint='field_trial_api';
-</script>
-
 {% endblock %}
