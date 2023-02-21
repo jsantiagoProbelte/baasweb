@@ -204,7 +204,8 @@ class Thesis(ModelHelpers, models.Model):
             description=kwargs['description'],
             number_applications=kwargs['number_applications'],
             interval=kwargs['interval'],
-            first_application=kwargs['first_application'])
+            first_application=kwargs['first_application']
+            )
         if 'mode' in kwargs:
             thesis.mode = kwargs['mode']
             thesis.save()
@@ -224,6 +225,12 @@ class Thesis(ModelHelpers, models.Model):
             # The object maybe already created or is new
             counts += 1
         return counts
+
+    def getTitle(self):
+        return 'T{}: {}'.format(self.number, self.name)
+
+    def get_absolute_url(self):
+        return "/thesis_api/%i/" % self.id
 
 
 class ProductThesis(ModelHelpers, models.Model):

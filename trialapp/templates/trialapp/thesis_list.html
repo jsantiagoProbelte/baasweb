@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% include "trialapp/header_page_trial.html" with title="Thesis list" subheader=fieldTrial.name  new_href_id='thesis-edit' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title="Thesis list" subheader=fieldTrial.name  new_href_id='thesis-add' refId=fieldTrial.id%}
 
 <div class="row">
     <div class="col-md-6">
@@ -15,16 +15,14 @@
                     <th>Number</th>
                     <th>Name</th>
                     <th>description</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
         {% for item in object_list %}
             <tr id="item-{{item.id}}">
-                <td><a href="{% url 'thesis-edit' fieldTrial.id item.id %}" class="btn bg-custom-{{item.number}}">T{{item.number}}</a></td>
+                <td><a href="{% url 'thesis_api' item.id %}" class="btn bg-custom-{{item.number}}">T{{item.number}}</a></td>
                 <td><strong>{{item.name}}</strong></td>
                 <td>{{item.description}}</td>
-                <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
             </tr>
         {% empty %}
             <p>No Thesis yet.</p>
@@ -50,11 +48,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>
-    var manageItemEndPoint='/thesis_api';
-</script>
 {% endblock %}

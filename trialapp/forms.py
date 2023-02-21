@@ -157,68 +157,6 @@ class FieldTrialCreateForm(forms.Form):
                     css_class='col-md-4')))
 
 
-class ThesisEditForm(forms.Form):
-    field_trial_id = forms.CharField(widget=forms.HiddenInput())
-    thesis_id = forms.CharField(widget=forms.HiddenInput())
-    number = forms.CharField(
-        label='Number', required=True,
-        widget=forms.NumberInput())
-    name = forms.CharField(label='Name', required=True)
-    description = forms.CharField(label="Description", required=False,
-                                  widget=forms.Textarea(attrs={'rows': 3}))
-
-    number_applications = forms.CharField(
-        label='Number Applications', required=False,
-        widget=forms.NumberInput())
-    interval = forms.CharField(
-        label='Days between applications', required=False,
-        widget=forms.NumberInput())
-    first_application = forms.CharField(
-        label='First application date',
-        widget=MyDateInput(), required=False)
-    mode = forms.ChoiceField(
-        label="Mode", required=False, choices=[])
-
-    def __init__(self, *args, **kwargs):
-        fieldValues = Thesis.extractValueModelChoicesFromKwargs(kwargs)
-        super().__init__(*args, **kwargs)
-        for label in fieldValues:
-            self.fields[label].choices = fieldValues[label]
-        self.helper = FormHelper()
-        self.helper.form_id = 'id-edit-thesis'
-        self.helper.form_class = 'create-thesis'
-        self.helper.form_method = 'post'
-        self.helper.form_action = '/save_thesis'
-
-        text = 'Create Thesis'
-        if 'initial' in kwargs and \
-           'thesis_id' in kwargs['initial'] and \
-           kwargs['initial']['thesis_id'] is not None:
-            text = 'Save'
-
-        self.helper.layout = Layout(
-            Field('field_trial_id'),
-            Field('thesis_id'),
-            Row(
-                Div(
-                    Field('number'),
-                    css_class='col-md-4'),
-                Div(
-                    Field('name'),
-                    css_class='col-md-8'),
-                css_class='mb-4'),
-            Field('description', css_class='mb-4 mt-2'),
-            Field('number_applications', css_class='mb-3'),
-            Field('interval', css_class='mb-3'),
-            Field('first_application', css_class='mb-3'),
-            Field('mode', css_class='mb-3'),
-            Div(
-                FormActions(
-                    Submit('submit', text,
-                           css_class="btn btn-info")),
-                css_class='text-sm-end'))
-
-
 class EvaluationEditForm(forms.Form):
     field_trial_id = forms.CharField(widget=forms.HiddenInput())
     evaluation_id = forms.CharField(widget=forms.HiddenInput())

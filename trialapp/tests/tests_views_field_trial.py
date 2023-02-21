@@ -124,7 +124,7 @@ class FieldTrialViewsTest(TestCase):
 
         deleteRequest = self._apiFactory.get('fieldtrial-delete')
         self._apiFactory.setUser(deleteRequest)
-        apiView = FieldTrialDeleteView.as_view()(deleteRequest,
-                                                 pk=fieldTrial.id)
+        response = FieldTrialDeleteView.as_view()(deleteRequest,
+                                                  pk=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)

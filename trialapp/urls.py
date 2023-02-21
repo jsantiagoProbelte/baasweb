@@ -41,26 +41,18 @@ urlpatterns = [
         'thesislist/<int:field_trial_id>/',
         thesis_views.ThesisListView.as_view(),
         name='thesis-list'),
+    path('thesis_api/<int:thesis_id>/',
+         thesis_views.ThesisApi.as_view(),
+         name='thesis_api'),
+    path('thesis/add/<int:field_trial_id>/',
+         thesis_views.ThesisCreateView.as_view(),
+         name='thesis-add'),
+    path('thesis/edit/<int:pk>/', thesis_views.ThesisUpdateView.as_view(),
+         name='thesis-update'),
     path(
-        'thesis_api',
-        thesis_views.ThesisApi.as_view(),
-        name='thesis_api'),
-    path(
-        'thesis_api/<int:thesis_id>/',
-        thesis_views.ThesisApi.as_view(),
-        name='thesis_api'),
-    path(
-        'edit_thesis/<int:field_trial_id>/',
-        thesis_views.editThesis,
-        name='thesis-edit'),
-    path(
-        'edit_thesis/<int:field_trial_id>/<int:thesis_id>/',
-        thesis_views.editThesis,
-        name='thesis-edit'),
-    path(
-        'save_thesis',
-        thesis_views.saveThesis,
-        name='thesis-save'),
+        'thesis/delete/<int:pk>/',
+        thesis_views.ThesisDeleteView.as_view(),
+        name='thesis-delete'),
     path(
         'manage_product_to_thesis_api',
         thesis_views.ManageProductToThesis.as_view(),

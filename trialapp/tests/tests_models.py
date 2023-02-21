@@ -38,7 +38,8 @@ class TrialAppModelTest(TestCase):
         'field_trial_id': 1,
         'number_applications': 5,
         'interval': 14,
-        'first_application': '2021-01-01'
+        'first_application': '2021-01-01',
+        # 'mode': 1 Use mode and not mode_id in post calls
         }, {
         'name': 'thesis 777',
         'description': 'Thesis 777 for product 2',

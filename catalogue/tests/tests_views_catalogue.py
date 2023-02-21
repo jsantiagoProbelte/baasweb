@@ -192,29 +192,25 @@ class ProductViewsTest(TestCase):
         data = {'name': 'New Product', 'vendor': 1,
                 'category': 1}
         request = self._apiFactory.post(
-            '/product/add/',
+            'product-add',
             data=data)
         self._apiFactory.setUser(request)
-
-        viewNew = ProductCreateView(request=request)
-        viewNew.post(request)
-        formNew = viewNew.get_form()
-        self.assertTrue(formNew.is_valid())
-        newProduct = Product.objects.filter(name='New Product')
-        self.assertEqual(newProduct[0].name, 'New Product')
+        response = ProductCreateView.as_view()(request)
+        self.assertTrue(response.status_code, 302)
+        newProduct = Product.objects.get(name='New Product')
+        self.assertEqual(newProduct.name, 'New Product')
 
         productOne = Product.objects.get(pk=1)
         newName = 'New Name'
         self.assertFalse(productOne.name == newName)
-        data = {'name': newName, 'vendor': 1,
-                'category': 1}
-        request = self._apiFactory.post(
-            '/product/1/',
-            data=data)
-        viewNew = ProductUpdateView(request=request)
-        formNew = viewNew.get_form()
-        self.assertTrue(formNew.is_valid())
-        newProduct = Product.objects.get(pk=1)
+        requestPost = self._apiFactory.post(
+            'product-update',
+            data={'name': newName})
+        self._apiFactory.setUser(requestPost)
+        response = ProductUpdateView.as_view()(requestPost,
+                                               pk=productOne.id)
+        self.assertTrue(response.status_code, 302)
+        self.assertContains(response, newName)
 
     def test_showProduct_Replica_graph(self):
         productid = 1

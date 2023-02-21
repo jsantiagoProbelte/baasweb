@@ -1,17 +1,21 @@
 # Create your views here.
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 # from rest_framework import permissions
 from catalogue.models import Product  # , Batch
 from trialapp.models import FieldTrial, ProductThesis, RateUnit,\
     Thesis, Replica
-from django.shortcuts import get_object_or_404, render, redirect
-from .forms import ThesisEditForm
+from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from trialapp.trial_helper import FactoryTrials
 from trialapp.trial_helper import LayoutTrial
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from crispy_forms.helper import FormHelper
+from django.urls import reverse_lazy, reverse
+from crispy_forms.layout import Layout, Div, Submit, Field, HTML
+from crispy_forms.bootstrap import FormActions
+from django.http import HttpResponseRedirect
+from django import forms
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -30,87 +34,6 @@ class ThesisListView(LoginRequiredMixin, ListView):
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
                                                        new_list)}
-
-
-@login_required
-def editThesis(request, field_trial_id=None, thesis_id=None, errors=None):
-    template_name = 'trialapp/thesis_edit.html'
-    title = 'New'
-    fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-    initialValues = {'field_trial_id': field_trial_id,
-                     'thesis_id': thesis_id,
-                     'number': Thesis.computeNumber(fieldTrial, True)}
-    product_list = []
-    replica_list = []
-
-    if thesis_id is not None:
-        title = 'Edit'
-        thesis = get_object_or_404(Thesis, pk=thesis_id)
-
-        if fieldTrial.id != thesis.field_trial.id:
-            return redirect('fieldtrial-list', error='Bad forming Thesis')
-
-        initialValues['name'] = thesis.name
-        initialValues['number'] = thesis.number
-        initialValues['description'] = thesis.description
-        initialValues['number_applications'] = thesis.number_applications
-        initialValues['interval'] = thesis.interval
-        initialValues['first_application'] = thesis.first_application
-        initialValues['mode'] = thesis.mode.id if thesis.mode else None
-        product_list = ProductThesis.getObjects(thesis)
-        replica_list = Replica.getObjects(thesis)
-
-    dictKwargs = Thesis.generateFormKwargsChoices(initialValues)
-    edit_form = ThesisEditForm(**dictKwargs)
-
-    return render(request, template_name,
-                  {'edit_form': edit_form,
-                   'fieldTrial': fieldTrial,
-                   'thesis_id': thesis_id,
-                   'title': title,
-                   'product_list': product_list,
-                   'replica_list': replica_list,
-                   'products': Product.getSelectList(asDict=True),
-                   'rate_units': RateUnit.getSelectList(asDict=True),
-                   'errors': errors})
-
-
-@login_required
-def saveThesis(request):
-    fieldTrial = get_object_or_404(
-        FieldTrial, pk=request.POST['field_trial_id'])
-    values = Thesis.preloadValues(request.POST)
-    if 'thesis_id' in request.POST and request.POST['thesis_id']:
-        # This is not a new user review.
-        thesis = get_object_or_404(
-            Thesis, pk=request.POST['thesis_id'])
-        thesis.field_trial = fieldTrial
-        thesis.name = Thesis.getValueFromRequestOrArray(
-            request, values, 'name')
-        thesis.number = Thesis.getValueFromRequestOrArray(
-            request, values, 'number')
-        thesis.description = Thesis.getValueFromRequestOrArray(
-            request, values, 'description')
-
-        thesis.number_applications = Thesis.getValueFromRequestOrArray(
-            request, values, 'number_applications', intValue=True)
-
-        thesis.interval = Thesis.getValueFromRequestOrArray(
-            request, values, 'interval', intValue=True)
-
-        thesis.first_application = Thesis.getValueFromRequestOrArray(
-            request, values, 'first_application', returnNoneIfEmpty=True)
-
-        thesis.mode = Thesis.getValueFromRequestOrArray(
-            request, values, 'mode', returnNoneIfEmpty=True)
-        thesis.save()
-    else:
-        thesis = FactoryTrials.createThesisReplicasLayout(
-            request, values, fieldTrial)
-
-    return redirect('thesis-edit',
-                    field_trial_id=fieldTrial.id,
-                    thesis_id=thesis.id)
 
 
 class ManageProductToThesis(APIView):
@@ -187,15 +110,116 @@ class ManageReplicaToThesis(APIView):
         return Response(response_data, status=200)
 
 
+class ThesisFormLayout(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New thesis' if new else 'Edit thesis'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(Field('name', css_class='mb-3'),
+                Field('number_applications', css_class='mb-3'),
+                Field('interval', css_class='mb-3'),
+                Field('first_application', css_class='mb-3'),
+                Field('mode', css_class='mb-3'),
+                Field('description', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', submitTxt, css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas col-md-4 mt-2")
+            ))
+
+
+class MyDateInput(forms.widgets.DateInput):
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        # use the browser's HTML date picker (no css/javascript required)
+        context['widget']['type'] = 'date'
+        return context
+
+
+class ThesisForm(forms.ModelForm):
+    class Meta:
+        model = Thesis
+        fields = ('name', 'number_applications', 'interval', 'mode',
+                  'description', 'first_application')
+        widgets = {
+            'first_application': MyDateInput()
+        }
+
+
+class ThesisCreateView(LoginRequiredMixin, CreateView):
+    model = Thesis
+    form_class = ThesisForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=ThesisForm):
+        form = super().get_form(form_class)
+        form.helper = ThesisFormLayout()
+        return form
+
+    def form_valid(self, form):
+        if form.is_valid():
+            form.instance.field_trial_id = self.kwargs["field_trial_id"]
+            thesis = form.instance
+            thesis.number = Thesis.objects.filter(
+                field_trial_id=thesis.field_trial_id).count()+1
+            thesis.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            pass
+
+    def get_success_url(self):
+        return reverse(
+            'thesis-list',
+            kwargs={'field_trial_id': self.kwargs["field_trial_id"]})
+
+
+class ThesisUpdateView(LoginRequiredMixin, UpdateView):
+    model = Thesis
+    form_class = ThesisForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=ThesisForm):
+        form = super().get_form(form_class)
+        form.helper = ThesisFormLayout(new=False)
+        return form
+
+
+class ThesisDeleteView(DeleteView):
+    model = Thesis
+    success_url = reverse_lazy('thesis-list')
+    template_name = 'trialapp/thesis_delete.html'
+    _field_trial_id = None
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        self._field_trial_id = self.object.field_trial_id
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse(
+            'thesis-list',
+            kwargs={'field_trial_id': self._field_trial_id})
+
+
 class ThesisApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete']
+    http_method_names = ['get']
 
-    def delete(self, request, *args, **kwargs):
-        item = Thesis.objects.get(
-            pk=request.POST['item_id'])
-        item.delete()
+    def get(self, request, *args, **kwargs):
+        template_name = 'trialapp/thesis_show.html'
+        thesis_id = kwargs['thesis_id']
+        thesis = get_object_or_404(Thesis, pk=thesis_id)
 
-        response_data = {'msg': 'Thesis was deleted.'}
-        return Response(response_data, status=200)
+        return render(
+            request, template_name, {
+                'fieldTrial': thesis.field_trial,
+                'thesis': thesis,
+                'title': thesis.getTitle(),
+                'product_list': ProductThesis.getObjects(thesis),
+                'replica_list': Replica.getObjects(thesis),
+                'products': Product.getSelectList(asDict=True),
+                'rate_units': RateUnit.getSelectList(asDict=True)})

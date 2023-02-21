@@ -12,12 +12,13 @@ from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
+from django import forms
 
 
-class ProductForm(FormHelper):
+class ProductFormLayout(FormHelper):
     def __init__(self, new=True):
         super().__init__()
-        title = 'New product' if new else 'Upate product'
+        title = 'New product' if new else 'Edit product'
         submitTxt = 'Create' if new else 'Save'
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
@@ -31,25 +32,31 @@ class ProductForm(FormHelper):
             ))
 
 
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('name', 'vendor', 'category')
+
+
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
-    fields = ['name', 'vendor', 'category']
+    form_class = ProductForm
     template_name = 'baaswebapp/model_edit_form.html'
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class=ProductForm):
         form = super().get_form(form_class)
-        form.helper = ProductForm()
+        form.helper = ProductFormLayout()
         return form
 
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
-    fields = ['name', 'vendor', 'category']
+    form_class = ProductForm
     template_name = 'baaswebapp/model_edit_form.html'
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class=ProductForm):
         form = super().get_form(form_class)
-        form.helper = ProductForm(new=False)
+        form.helper = ProductFormLayout(new=False)
         return form
 
 
@@ -57,7 +64,6 @@ class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('product-list')
     template_name = 'catalogue/product_delete.html'
-    success_message = 'Your Product has been deleted successfully.'
 
 
 class ProductListView(LoginRequiredMixin, FilterView):
