@@ -153,30 +153,3 @@ class LayoutTrial:
         # Assigned each cell of the deck
         return LayoutTrial.shuffleAndAssigned(deck, toBeAssigned,
                                               rows, columns)
-
-
-class FactoryTrials:
-    @classmethod
-    def createThesisReplicasLayout(cls, request, values, fieldTrial):
-        # This is a new field trial
-        thesis = Thesis.create_Thesis(
-            name=Thesis.getValueFromRequestOrArray(
-                request, values, 'name'),
-            number=Thesis.getValueFromRequestOrArray(
-                request, values, 'number'),
-            field_trial_id=fieldTrial.id,
-            description=Thesis.getValueFromRequestOrArray(
-                request, values, 'description'),
-            number_applications=Thesis.getValueFromRequestOrArray(
-                request, values, 'number_applications', intValue=True),
-            interval=Thesis.getValueFromRequestOrArray(
-                request, values, 'interval', intValue=True),
-            first_application=Thesis.getValueFromRequestOrArray(
-                request, values, 'first_application', returnNoneIfEmpty=True),
-            mode=Thesis.getValueFromRequestOrArray(
-                request, values, 'mode', returnNoneIfEmpty=True))
-        Replica.createReplicas(thesis, fieldTrial.replicas_per_thesis)
-
-        # Reassigned all replicas of the same
-        LayoutTrial.distributeLayout(fieldTrial)
-        return thesis

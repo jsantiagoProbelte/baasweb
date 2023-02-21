@@ -16,6 +16,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
+from trialapp.forms import MyDateInput
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -130,22 +131,21 @@ class ThesisFormLayout(FormHelper):
             ))
 
 
-class MyDateInput(forms.widgets.DateInput):
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        # use the browser's HTML date picker (no css/javascript required)
-        context['widget']['type'] = 'date'
-        return context
-
-
 class ThesisForm(forms.ModelForm):
     class Meta:
         model = Thesis
         fields = ('name', 'number_applications', 'interval', 'mode',
                   'description', 'first_application')
-        widgets = {
-            'first_application': MyDateInput()
-        }
+
+    def __init__(self, *args, **kwargs):
+        super(ThesisForm, self).__init__(*args, **kwargs)
+        self.fields['first_application'].required = False
+        self.fields['first_application'].widget = MyDateInput()
+        self.fields['mode'].required = False
+        self.fields['interval'].required = False
+        self.fields['number_applications'].required = False
+        self.fields['description'].required = False
+        self.fields['interval'].label = 'Days between application'
 
 
 class ThesisCreateView(LoginRequiredMixin, CreateView):
@@ -165,9 +165,13 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
             thesis.number = Thesis.objects.filter(
                 field_trial_id=thesis.field_trial_id).count()+1
             thesis.save()
+
+            # Create replicas
+            Replica.createReplicas(thesis,
+                                   thesis.field_trial.replicas_per_thesis)
+            # Reassigned all replicas of the same
+            LayoutTrial.distributeLayout(thesis.field_trial)
             return HttpResponseRedirect(self.get_success_url())
-        else:
-            pass
 
     def get_success_url(self):
         return reverse(

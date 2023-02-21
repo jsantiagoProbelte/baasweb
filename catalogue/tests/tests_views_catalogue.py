@@ -123,10 +123,21 @@ class ProductViewsTest(TestCase):
 
         deleteRequest = self._apiFactory.get('product-delete')
         self._apiFactory.setUser(deleteRequest)
-        apiView = ProductDeleteView.as_view()(deleteRequest,
-                                              pk=product.id)
+        response = ProductDeleteView.as_view()(deleteRequest,
+                                               pk=product.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
+        # This works with get
+        self.assertContains(response, 'Are you sure to delete')
+
+        # Now let's post and really delete
+        deleteRequest = self._apiFactory.delete('product-delete')
+        self._apiFactory.setUser(deleteRequest)
+        deletedId = product.id
+        response = ProductDeleteView.as_view()(deleteRequest,
+                                               pk=deletedId)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Product.objects.filter(pk=deletedId).exists())
 
     def test_showProductS_graph(self):
         productid = 1
