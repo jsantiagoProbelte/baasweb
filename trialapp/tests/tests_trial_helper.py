@@ -159,7 +159,7 @@ class TrialHelperTest(TestCase):
 
         # let´s change it
         request = self._apiFactory.get(
-            'field_trial_api',
+            'fieldtrial_api',
             data={'field_trial_id': self._fieldTrial.id})
         self._apiFactory.setUser(request)
         response = reshuffle_blocks(

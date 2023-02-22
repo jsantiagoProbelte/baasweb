@@ -111,11 +111,6 @@ class FieldTrial(ModelHelpers, models.Model):
     report_filename = models.TextField(null=True)
     code = models.CharField(max_length=10, null=True)
 
-    foreignModelLabels = {
-        TrialType: 'trial_type', Objective: 'objective', Product: 'product',
-        Crop: 'crop', Plague: 'plague', Project: 'project',
-        TrialStatus: 'trial_status'}
-
     @classmethod
     def formatCode(cls, year, month, counts):
         return '{}{}{}'.format(year,
@@ -173,6 +168,9 @@ class FieldTrial(ModelHelpers, models.Model):
     def getName(self):
         return self.name
 
+    def get_absolute_url(self):
+        return "/fieldtrial_api/%i/" % self.id
+
 
 class Thesis(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -184,8 +182,6 @@ class Thesis(ModelHelpers, models.Model):
     first_application = models.DateField(null=True)
     mode = models.ForeignKey(ApplicationMode,
                              on_delete=models.CASCADE, null=True)
-
-    foreignModelLabels = {ApplicationMode: 'mode'}
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -238,7 +234,6 @@ class ProductThesis(ModelHelpers, models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-    foreignModelLabels = {Product: 'product', RateUnit: 'rate_unit'}
 
     @classmethod
     def getObjects(cls, thesis: Thesis):

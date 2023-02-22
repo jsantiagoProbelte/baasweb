@@ -2,7 +2,6 @@
 import django_filters
 
 from django_filters.views import FilterView
-from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
@@ -10,10 +9,16 @@ from django.contrib.auth.decorators import login_required
 from trialapp.models import Evaluation, FieldTrial, Thesis,\
                             TrialAssessmentSet
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import FieldTrialCreateForm
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 import datetime
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
+from crispy_forms.bootstrap import FormActions
+from django.http import HttpResponseRedirect
+from django import forms
+from trialapp.forms import MyDateInput
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -72,188 +77,6 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'filter': filter}
 
 
-@login_required
-def editNewFieldTrial(request, field_trial_id=None, errors=None):
-    initialValues = {
-        'field_trial_id': None,
-        'code': FieldTrial.getCode(datetime.date.today(), True)}
-    template_name = 'baaswebapp/model_edit.html'
-    title = 'New'
-
-    if field_trial_id is not None:
-        title = 'Edit'
-        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        trialTypeId = None
-        if fieldTrial.trial_type:
-            trialTypeId = fieldTrial.trial_type.id
-        initialValues = {
-            'field_trial_id': fieldTrial.id,
-            'code': fieldTrial.code,
-            'name': fieldTrial.name,
-            'trial_type': trialTypeId,
-            'objective': fieldTrial.objective.id,
-            'responsible': fieldTrial.responsible,
-            'description': fieldTrial.description,
-            'ref_to_eppo': fieldTrial.ref_to_eppo,
-            'ref_to_criteria': fieldTrial.ref_to_criteria,
-            'comments_criteria': fieldTrial.comments_criteria,
-            'product': fieldTrial.product.id,
-            'project': fieldTrial.project.id,
-            'crop': fieldTrial.crop.id,
-            'plague': fieldTrial.plague.id,
-            'initiation_date': fieldTrial.initiation_date,
-            'completion_date': fieldTrial.completion_date,
-            'contact': fieldTrial.contact,
-            'cro': fieldTrial.cro,
-            'location': fieldTrial.location,
-            'blocks': fieldTrial.blocks,
-            'replicas_per_thesis': fieldTrial.replicas_per_thesis,
-            'samples_per_replica': fieldTrial.samples_per_replica,
-            'distance_between_plants': fieldTrial.distance_between_plants,
-            'distance_between_rows': fieldTrial.distance_between_rows,
-            'number_rows': fieldTrial.number_rows,
-            'lenght_row': fieldTrial.lenght_row,
-            'net_surface': fieldTrial.net_surface,
-            'gross_surface': fieldTrial.gross_surface
-            }
-    dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
-    newFieldTrial_form = FieldTrialCreateForm(**dictKwargs)
-    return render(request, template_name,
-                  {'form': newFieldTrial_form,
-                   'title': title,
-                   'errors': errors})
-
-
-@login_required
-def saveFieldTrial(request, field_trial_id=None):
-    values = FieldTrial.preloadValues(request.POST)
-
-    if 'field_trial_id' in request.POST and request.POST['field_trial_id']:
-        # This is not a new user review.
-        fieldTrial = get_object_or_404(FieldTrial,
-                                       pk=request.POST['field_trial_id'])
-        fieldTrial.name = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'name')
-        fieldTrial.code = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'code')
-        fieldTrial.trial_type = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'trial_type')
-        fieldTrial.trial_status = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'trial_status')
-        fieldTrial.objective = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'objective')
-        fieldTrial.responsible = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'responsible')
-
-        fieldTrial.description = FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'description')
-        fieldTrial.ref_to_eppo = FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'ref_to_eppo')
-        fieldTrial.ref_to_criteria = FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'ref_to_criteria')
-        fieldTrial.comments_criteria = FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'comments_criteria')
-
-        fieldTrial.product = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'product')
-        fieldTrial.project = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'project')
-        fieldTrial.crop = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'crop')
-        fieldTrial.plague = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'plague')
-        fieldTrial.initiation_date = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'initiation_date')
-        fieldTrial.completion_date = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'completion_date', returnNoneIfEmpty=True)
-        fieldTrial.contact = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'contact')
-        fieldTrial.cro = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'cro')
-        fieldTrial.location = FieldTrial.getValueFromRequestOrArray(
-            request, values, 'location')
-        fieldTrial.blocks = int(FieldTrial.getValueFromRequestOrArray(
-            request, values, 'blocks'))
-        fieldTrial.replicas_per_thesis = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'replicas_per_thesis', intValue=True)
-        fieldTrial.samples_per_replica = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'samples_per_replica', intValue=True)
-        fieldTrial.distance_between_plants = FieldTrial.\
-            getValueFromRequestOrArray(
-                request, values, 'distance_between_plants', floatValue=True)
-        fieldTrial.distance_between_rows = FieldTrial.\
-            getValueFromRequestOrArray(
-                request, values, 'distance_between_rows', floatValue=True)
-        fieldTrial.number_rows = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'number_rows', intValue=True)
-        fieldTrial.lenght_row = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'lenght_row', floatValue=True)
-        fieldTrial.net_surface = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'net_surface', floatValue=True)
-        fieldTrial.gross_surface = FieldTrial.getValueFromRequestOrArray(
-                request, values, 'gross_surface', floatValue=True)
-        fieldTrial.save()
-        LayoutTrial.distributeLayout(fieldTrial)
-    else:
-        # This is a new field trial
-        fieldTrial = FieldTrial.objects.create(
-            name=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'name'),
-            trial_type=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'trial_type'),
-            trial_status=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'trial_status'),
-            objective=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'objective'),
-            responsible=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'responsible'),
-            description=FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'description'),
-            ref_to_eppo=FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'ref_to_eppo'),
-            ref_to_criteria=FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'ref_to_criteria'),
-            comments_criteria=FieldTrial.getValueFromRequestOrArray(
-                    request, values, 'comments_criteria'),
-            product=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'product'),
-            project=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'project'),
-            crop=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'crop'),
-            plague=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'plague'),
-            initiation_date=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'initiation_date'),
-            completion_date=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'completion_date', returnNoneIfEmpty=True),
-            contact=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'contact'),
-            cro=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'cro'),
-            location=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'location'),
-            blocks=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'blocks'),
-            replicas_per_thesis=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'replicas_per_thesis'),
-            samples_per_replica=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'samples_per_replica'),
-            distance_between_plants=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'distance_between_plants', floatValue=True),
-            distance_between_rows=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'distance_between_rows', floatValue=True),
-            number_rows=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'number_rows', intValue=True),
-            lenght_row=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'lenght_row', floatValue=True),
-            net_surface=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'net_surface', floatValue=True),
-            gross_surface=FieldTrial.getValueFromRequestOrArray(
-                request, values, 'gross_surface', floatValue=True))
-    return redirect('field_trial_api', field_trial_id=fieldTrial.id)
-
-
 class FieldTrialApi(APIView):
     authentication_classes = []
     permission_classes = []
@@ -285,14 +108,13 @@ class FieldTrialApi(APIView):
              'value': self.showValue(fieldTrial.plantDensity())},
             {'name': 'Net area plot (m2)',
              'value': self.showValue(fieldTrial.net_surface)},
-            {'name': 'location',
+            {'name': 'Location',
              'value': self.showValue(fieldTrial.location)}
         ]]
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
-        field_trial_id = None
-        field_trial_id = kwargs['field_trial_id']
+        field_trial_id = kwargs.get('field_trial_id', None)
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
         numberThesis = len(thesisTrial)
@@ -317,12 +139,6 @@ class FieldTrialApi(APIView):
                                                               thesisTrial)})
 
 
-class FieldTrialDeleteView(DeleteView):
-    model = FieldTrial
-    success_url = reverse_lazy('fieldtrial-list')
-    template_name = 'trialapp/fieldtrial_delete.html'
-
-
 @login_required
 def reshuffle_blocks(request, field_trial_id=None):
     fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
@@ -330,3 +146,172 @@ def reshuffle_blocks(request, field_trial_id=None):
     return redirect(
         'thesis-list',
         field_trial_id=fieldTrial.id)
+
+
+class FieldTrialFormLayout(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New' if new else 'Edit'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(
+            Row(Div(HTML(title),
+                    css_class='col-md-1 h2'),
+                Div(Field('code'),
+                    css_class='col-md-2'),
+                Div(Field('name'),
+                    css_class='col-md-7'),
+                Div(FormActions(
+                        Submit('submit', submitTxt, css_class="btn btn-info")),
+                    css_class='col-md-2 text-sm-end'),
+                css_class='mt-3 mb-3'),
+            Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
+                    Div(Div(Field('project', css_class='mb-2'),
+                            Field('objective', css_class='mb-2'),
+                            Field('product', css_class='mb-2'),
+                            Field('crop', css_class='mb-2'),
+                            Field('plague', css_class='mb-2'),
+                            Field('description', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    css_class='col-md-4'),
+                Div(Div(HTML('Status'), css_class="card-header-baas h4"),
+                    Div(Div(Field('trial_type', css_class='mb-2'),
+                            Field('trial_status', css_class='mb-2'),
+                            Field('responsible', css_class='mb-2'),
+                            Field('initiation_date', css_class='mb-2'),
+                            Field('completion_date', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    Div(HTML('Assessments'), css_class="card-header-baas h4"),
+                    Div(Div(Field('ref_to_eppo', css_class='mb-2'),
+                            Field('ref_to_criteria', css_class='mb-2'),
+                            Field('comments_criteria', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    css_class='col-md-4'),
+                Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
+                    Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
+                                Div(Field('replicas_per_thesis'),
+                                    css_class='col-md-4'),
+                                Div(Field('samples_per_replica'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Row(Div(Field('number_rows'),
+                                    css_class='col-md-4'),
+                                Div(Field('distance_between_rows'),
+                                    css_class='col-md-4'),
+                                Div(Field('distance_between_plants'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Row(Div(Field('lenght_row'),
+                                    css_class='col-md-4'),
+                                Div(Field('gross_surface'),
+                                    css_class='col-md-4'),
+                                Div(Field('net_surface'),
+                                    css_class='col-md-4'),
+                                css_class='mb-2'),
+                            Field('contact', css_class='mb-2'),
+                            Field('cro', css_class='mb-2'),
+                            Field('location', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border"),
+                    css_class='col-md-4'))))
+
+
+class FieldTrialForm(forms.ModelForm):
+    class Meta:
+        model = FieldTrial
+        fields = (
+            'name', 'trial_type', 'objective', 'responsible', 'description',
+            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
+            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
+            'trial_status', 'contact', 'cro', 'location', 'blocks',
+            'replicas_per_thesis', 'samples_per_replica',
+            'distance_between_plants', 'distance_between_rows', 'number_rows',
+            'lenght_row', 'net_surface', 'gross_surface', 'code')
+
+    def __init__(self, *args, **kwargs):
+        super(FieldTrialForm, self).__init__(*args, **kwargs)
+        self.fields['trial_type'].label = 'Type'
+        self.fields['trial_status'].label = 'Status'
+        self.fields['cro'].required = False
+        self.fields['description'].widget = forms.Textarea(attrs={'rows': 10})
+        self.fields['description'].required = False
+        self.fields['ref_to_eppo'].label = "EPPO Reference"
+        self.fields['ref_to_eppo'].required = False
+        self.fields['ref_to_criteria'].label = "Criteria Reference"
+        self.fields['ref_to_criteria'].required = False
+        self.fields['comments_criteria'].label = "Criteria comments"
+        self.fields['comments_criteria'].required = False
+        self.fields['comments_criteria'].widget = forms.Textarea(
+            attrs={'rows': 5})
+        self.fields['plague'].required = False
+        self.fields['initiation_date'].widget = MyDateInput()
+        self.fields['completion_date'].widget = MyDateInput()
+        self.fields['completion_date'].required = False
+        self.fields['blocks'].label = "# blocks"
+        self.fields['blocks'].widget = forms.NumberInput()
+
+        self.fields['replicas_per_thesis'].label = "# replicas"
+        self.fields['replicas_per_thesis'].widget = forms.NumberInput()
+
+        self.fields['samples_per_replica'].label = "# samples"
+        self.fields['samples_per_replica'].widget = forms.NumberInput()
+        self.fields['samples_per_replica'].required = False
+
+        self.fields['distance_between_plants'].label = "Plants separation"
+        self.fields['distance_between_plants'].required = False
+
+        self.fields['distance_between_rows'].label = "Rows separation"
+        self.fields['distance_between_rows'].required = False
+
+        self.fields['number_rows'].label = "# rows"
+        self.fields['number_rows'].required = False
+
+        self.fields['lenght_row'].label = "Row length (m)"
+        self.fields['lenght_row'].required = False
+
+        self.fields['net_surface'].label = "Net area plot (m2)"
+        self.fields['net_surface'].required = False
+
+        self.fields['gross_surface'].label = "Gross area plot (m2)"
+        self.fields['gross_surface'].required = False
+
+
+class FieldTrialCreateView(LoginRequiredMixin, CreateView):
+    model = FieldTrial
+    form_class = FieldTrialForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=FieldTrialForm):
+        form = super().get_form(form_class)
+        form.helper = FieldTrialFormLayout()
+        form.fields['code'].initial = FieldTrial.getCode(
+            datetime.date.today(), True)
+        return form
+
+    def form_valid(self, form):
+        if form.is_valid():
+            fieldTrial = form.instance
+            fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
+            fieldTrial.save()
+            return HttpResponseRedirect(fieldTrial.get_absolute_url())
+        else:
+            pass
+
+
+class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
+    model = FieldTrial
+    form_class = FieldTrialForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=FieldTrialForm):
+        form = super().get_form(form_class)
+        form.helper = FieldTrialFormLayout(new=False)
+        return form
+
+
+class FieldTrialDeleteView(DeleteView):
+    model = FieldTrial
+    success_url = reverse_lazy('fieldtrial-list')
+    template_name = 'trialapp/fieldtrial_delete.html'

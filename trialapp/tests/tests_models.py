@@ -7,7 +7,6 @@ from trialapp.models import FieldTrial, Crop, Plague,\
                             AssessmentType, AssessmentUnit,\
                             Sample, Replica, TrialType
 from trialapp.data_models import ThesisData, SampleData
-from django.test import RequestFactory
 import datetime
 
 
@@ -29,7 +28,9 @@ class TrialAppModelTest(TestCase):
             'location': 'La Finca',
             'replicas_per_thesis': 4,
             'report_filename': '',
-            'blocks': 3}
+            'blocks': 3,
+            'type': 1,
+            'status': 1}
     ]
 
     THESIS = [{
@@ -129,55 +130,6 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(len(theArray), len_cropValues)
         self.assertTrue(theArray[0]['name'] in cropValues)
 
-    def checkExtract(self, label, values, **kwargs):
-        valuesExtracted = ModelHelpers.extractTagsFromKwargs(kwargs, label)
-        self.assertTrue(len(valuesExtracted) ==
-                        len(values))
-        for valueItem in values:
-            found = False
-            for valueExtratecItem in valuesExtracted:
-                if valueItem.name == valueExtratecItem[1]:
-                    found = True
-                    break
-            self.assertTrue(found)
-
-    def test_FieldTrialModelHelpers(self):
-        foreignModels = FieldTrial.getForeignModels()
-        foreignLabels = FieldTrial.getForeignModelsLabels()
-        expectedModels = FieldTrial.foreignModelLabels
-        self.assertTrue(len(foreignModels) == len(foreignLabels))
-        self.assertTrue(len(list(expectedModels.values())) ==
-                        len(foreignLabels))
-
-        # Testing functions to create select choices for forms
-        # for classes that has foreign keys
-        crops = Crop.getObjects()
-        selectListCrop = Crop.getSelectList()
-        labelCrop = foreignModels[Crop]
-        self.checkExtract(labelCrop, crops, crop=selectListCrop)
-
-        # lets test for the whole class like FieldTrial
-        # Let´s first generate the choices
-        initialValues = {'field_trial_id': 66}
-        dictKwargs = FieldTrial.generateFormKwargsChoices(initialValues)
-        # check if all the key foreing keys are in + initial
-        for label in foreignLabels:
-            self.assertTrue(label in dictKwargs)
-        self.assertTrue('initial' in dictKwargs)
-        self.assertTrue(dictKwargs['initial']['field_trial_id'] ==
-                        initialValues['field_trial_id'])
-        # let´s emulate we passed it to a form and we extract them
-        modelValues = FieldTrial.extractValueModelChoicesFromKwargs(
-            dictKwargs)
-        for model in foreignModels:
-            labelModel = foreignModels[model]
-            self.assertTrue(labelModel in modelValues)
-            valuesModel = model.getObjects()
-            dictKwargValues = {labelModel: modelValues[labelModel]}
-            self.checkExtract(labelModel, valuesModel,
-                              **dictKwargValues)
-        self.assertFalse('initial' in modelValues)
-
     def test_fixtures(self):
         fieldTrial666 = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
@@ -193,77 +145,6 @@ class TrialAppModelTest(TestCase):
             **TrialAppModelTest.PRODUCT_THESIS[0])
         self.assertEqual(productThesis.rate,
                          TrialAppModelTest.PRODUCT_THESIS[0]['rate'])
-
-    def checkExtract2(self, this_label, expectedValue, **kwargs):
-        self.assertEqual(
-            ModelHelpers.extractTagsFromKwargs(
-                kwargs, this_label),
-            expectedValue)
-        self.assertTrue(this_label not in kwargs)
-
-    def test_errorcases(self):
-        self.assertEqual(Plague.getForeignModelsLabels(), [])
-        self.assertEqual(Plague.getForeignModels(), {})
-        request_factory = RequestFactory()
-        faultyRequest = request_factory.post(
-            '/manage_product_to_thesis_api',
-            data={'in_post_label': 66})
-
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                faultyRequest, {'other_label': 33},
-                'label'),
-            None)
-
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                faultyRequest, {'other_label': 33},
-                'other_label'),
-            33)
-
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                faultyRequest, {'other_label': 33},
-                'in_post_label'),
-            '66')
-
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                faultyRequest, {'in_post_label': 33},
-                'in_post_label'),
-            33)
-
-        requestNull = request_factory.post(
-            '/manage_product_to_thesis_api',
-            data={'in_post_label': ''})
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                requestNull, {},
-                'in_post_label', returnNoneIfEmpty=True),
-            None)
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                requestNull, {},
-                'in_post_label', returnNoneIfEmpty=False),
-            '')
-
-        requestFloat = request_factory.post(
-            '/manage_product_to_thesis_api',
-            data={'in_post_label': '2.5'})
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                requestFloat, {},
-                'in_post_label', floatValue=True),
-            2.5)
-        self.assertEqual(
-            ModelHelpers.getValueFromRequestOrArray(
-                requestFloat, {},
-                'in_post_label', floatValue=False),
-            '2.5')
-
-        params = {'label': 1, 'other': 2}
-        self.checkExtract2('label', 1, **params)
-        self.checkExtract2('nolabel', None, **params)
 
     def test_names(self):
         for model in TrialDbInitialLoader.initialTrialModelValues():

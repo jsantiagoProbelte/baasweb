@@ -7,30 +7,20 @@ urlpatterns = [
         'fieldtrials',
         fieldtrial_views.FieldTrialListView.as_view(),
         name='fieldtrial-list'),
+    path('fieldtrial/add/',
+         fieldtrial_views.FieldTrialCreateView.as_view(),
+         name='fieldtrial-add'),
+    path('fieldtrial/edit/<int:pk>/',
+         fieldtrial_views.FieldTrialUpdateView.as_view(),
+         name='fieldtrial-update'),
     path(
-        'edit_fieldtrial',
-        fieldtrial_views.editNewFieldTrial,
-        name='fieldtrial-edit'),
-    path(
-        'edit_fieldtrial/<int:field_trial_id>/',
-        fieldtrial_views.editNewFieldTrial,
-        name='fieldtrial-edit'),
-    path(
-        'field_trial_api',
+        'fieldtrial_api/<int:field_trial_id>/',
         fieldtrial_views.FieldTrialApi.as_view(),
-        name='field_trial_api'),
+        name='fieldtrial_api'),
     path(
-        'field_trial_api/<int:field_trial_id>/',
-        fieldtrial_views.FieldTrialApi.as_view(),
-        name='field_trial_api'),
-    path(
-        'field_trial/delete/<int:pk>/',
+        'fieldtrial/delete/<int:pk>/',
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
-    path(
-        'save_fieldtrial',
-        fieldtrial_views.saveFieldTrial,
-        name='fieldtrial-save'),
     path(
         'reshuffle_blocks/<int:field_trial_id>/',
         fieldtrial_views.reshuffle_blocks,

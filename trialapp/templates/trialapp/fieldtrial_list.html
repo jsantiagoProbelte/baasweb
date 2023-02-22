@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-{% include "baaswebapp/header_page.html" with title=titleList new_href='fieldtrial-edit' %}
+{% include "baaswebapp/header_page.html" with title=titleList new_href='fieldtrial-add' %}
 
 <div class='card-body-baas mb-3'>
     <form method="get" class="">
@@ -49,7 +49,7 @@
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
         <td><span class="badge">{{ item.trial_status }}</span></td>
-        <td><a class="btn btn-light fs-6 me-3" href="{% url 'field_trial_api' item.id%}">{{ item.code }}</a>
+        <td><a class="btn btn-light fs-6 me-3" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a>
             <span>{{item.name}}</span>
         </td>
         <td>

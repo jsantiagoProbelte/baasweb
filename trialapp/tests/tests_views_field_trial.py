@@ -3,8 +3,8 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis,\
     TrialAssessmentSet, AssessmentType, AssessmentUnit
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.fieldtrial_views import editNewFieldTrial, saveFieldTrial,\
-    FieldTrialApi, FieldTrialListView, FieldTrialDeleteView
+from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
+    FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -57,53 +57,60 @@ class FieldTrialViewsTest(TestCase):
         thesis.delete()
         fieldTrial.delete()
 
-    def test_editfieldtrial(self):
-        request = self._apiFactory.get('/edit_fieldtrial')
+    def test_createFieldtrial(self):
+        request = self._apiFactory.get('fieldtrial-add')
         self._apiFactory.setUser(request)
-        response = editNewFieldTrial(request)
-        self.assertContains(response, 'create-field-trial')
+        response = FieldTrialCreateView.as_view()(request)
         self.assertContains(response, 'New')
         self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        fieldTrialData = TrialAppModelTest.FIELDTRIALS[0]
+        fieldTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
         request = self._apiFactory.post(
-            '/save_fieldtrial', data=fieldTrialData)
+            'fieldtrial-add', data=fieldTrialData)
         self._apiFactory.setUser(request)
-        response = saveFieldTrial(request)
+        response = FieldTrialCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This field is required.')
+        # it is missing a code.
+        fieldTrialData['code'] = '19701409'
+        request = self._apiFactory.post(
+            'fieldtrial-add', data=fieldTrialData)
+        self._apiFactory.setUser(request)
+        response = FieldTrialCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 302)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
         self.assertEqual(fieldTrial.name, fieldTrialData['name'])
-        self.assertEqual(response.status_code, 302)
+        self.assertTrue(fieldTrial.code is not None)
 
-        request = self._apiFactory.get(
-            '/edit_fieldtrial/{}'.format(fieldTrial.id))
+        request = self._apiFactory.get('fieldtrial-update')
         self._apiFactory.setUser(request)
-        response = editNewFieldTrial(request, field_trial_id=fieldTrial.id)
-        self.assertContains(response, 'create-field-trial')
+        response = FieldTrialUpdateView.as_view()(
+            request, pk=fieldTrial.id)
         self.assertNotContains(response, 'New')
         self.assertContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         newresponsible = 'Lobo'
-        fieldTrialData['field_trial_id'] = fieldTrial.id
         fieldTrialData['responsible'] = newresponsible
 
         request = self._apiFactory.post(
-            '/save_fieldtrial', data=fieldTrialData)
+            'fieldtrial-update', data=fieldTrialData)
         self._apiFactory.setUser(request)
-        response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
+        response = FieldTrialUpdateView.as_view()(
+            request, pk=fieldTrial.id)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
         self.assertEqual(fieldTrial.responsible, newresponsible)
         self.assertEqual(response.status_code, 302)
 
-        fieldTrialData['field_trial_id'] = fieldTrial.id
         fieldTrialData['samples_per_replica'] = '3'
-        self.assertEqual(fieldTrial.samples_per_replica, None)
+        self.assertEqual(fieldTrial.samples_per_replica, 0)
         request = self._apiFactory.post(
-            '/save_fieldtrial', data=fieldTrialData)
+            'fieldtrial-update', data=fieldTrialData)
         self._apiFactory.setUser(request)
-        response = saveFieldTrial(request, field_trial_id=fieldTrial.id)
+        response = FieldTrialUpdateView.as_view()(
+            request, pk=fieldTrial.id)
         fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
         self.assertEqual(fieldTrial.samples_per_replica, 3)
         self.assertEqual(response.status_code, 302)
@@ -112,19 +119,18 @@ class FieldTrialViewsTest(TestCase):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
 
-        # path = reverse('field_trial_api',
-        #                kwargs={'field_trial_id': fieldTrial.id})
-        request = self._apiFactory.get('field_trial_api')
+        request = self._apiFactory.get('fieldtrial_api')
         self._apiFactory.setUser(request)
         apiView = FieldTrialApi()
         response = apiView.get(request,
-                               **{'field_trial_id': fieldTrial.id})
+                               field_trial_id=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
 
-        deleteRequest = self._apiFactory.get('fieldtrial-delete')
+        deleteRequest = self._apiFactory.delete('fieldtrial-delete')
         self._apiFactory.setUser(deleteRequest)
+        deletedId = fieldTrial.id
         response = FieldTrialDeleteView.as_view()(deleteRequest,
-                                                  pk=fieldTrial.id)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, fieldTrial.name)
+                                                  pk=deletedId)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(FieldTrial.objects.filter(pk=deletedId).exists())
