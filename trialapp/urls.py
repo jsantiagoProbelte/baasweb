@@ -72,7 +72,7 @@ urlpatterns = [
     path('assessment/add/<int:field_trial_id>/',
          assessment_views.AssessmentCreateView.as_view(),
          name='assessment-add'),
-    path('assessment/edit/<int:pk>/', 
+    path('assessment/edit/<int:pk>/',
          assessment_views.AssessmentUpdateView.as_view(),
          name='assessment-update'),
     path(
