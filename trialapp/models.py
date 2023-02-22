@@ -111,6 +111,9 @@ class FieldTrial(ModelHelpers, models.Model):
     report_filename = models.TextField(null=True)
     code = models.CharField(max_length=10, null=True)
 
+    application_volume = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True)
+
     @classmethod
     def formatCode(cls, year, month, counts):
         return '{}{}{}'.format(year,

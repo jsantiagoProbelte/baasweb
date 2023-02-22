@@ -100,6 +100,14 @@
             </table>
         </div>
       </div>
+      <div class="card no-border" >
+        <div class="card-header-baas h4">
+          Applications
+        </div>
+        <div class="card-body-baas">
+          {% include "baaswebapp/item_list_template.html" with field='Volume (L/Ha)' value=fieldTrial.application_volume%}
+        </div>
+      </div>
       <div class="card no-border mt-3" >
         <div class="card-header-baas h4">
             Blocks <span class='badge bg-light ms-1'>{{fieldTrial.blocks}}</span> & Replicas distribution <span class='badge bg-light ms-1'>{{fieldTrial.replicas_per_thesis}}</span>

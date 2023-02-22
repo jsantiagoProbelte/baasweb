@@ -172,7 +172,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('plague', css_class='mb-2'),
                             Field('description', css_class='mb-2'),
                             css_class="card-body-baas"),
-                        css_class="card no-border"),
+                        css_class="card no-border mb-3"),
                     css_class='col-md-4'),
                 Div(Div(HTML('Status'), css_class="card-header-baas h4"),
                     Div(Div(Field('trial_type', css_class='mb-2'),
@@ -181,13 +181,13 @@ class FieldTrialFormLayout(FormHelper):
                             Field('initiation_date', css_class='mb-2'),
                             Field('completion_date', css_class='mb-2'),
                             css_class="card-body-baas"),
-                        css_class="card no-border"),
+                        css_class="card no-border mb-3"),
                     Div(HTML('Assessments'), css_class="card-header-baas h4"),
                     Div(Div(Field('ref_to_eppo', css_class='mb-2'),
                             Field('ref_to_criteria', css_class='mb-2'),
                             Field('comments_criteria', css_class='mb-2'),
                             css_class="card-body-baas"),
-                        css_class="card no-border"),
+                        css_class="card no-border mb-3"),
                     css_class='col-md-4'),
                 Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
                     Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
@@ -209,13 +209,22 @@ class FieldTrialFormLayout(FormHelper):
                                     css_class='col-md-4'),
                                 Div(Field('net_surface'),
                                     css_class='col-md-4'),
-                                css_class='mb-2'),
-                            Field('contact', css_class='mb-2'),
+                                css_class='mb-3'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border mb-3"),
+                    Div(HTML('Location'), css_class="card-header-baas h4"),
+                    Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
                             css_class="card-body-baas"),
-                        css_class="card no-border"),
-                    css_class='col-md-4'))))
+                        css_class="card no-border mb-3"),
+                    Div(HTML('Applications'), css_class="card-header-baas h4"),
+                    Div(Div(Field('application_volume', css_class='mb-2'),
+                            css_class="card-body-baas"),
+                        css_class="card no-border mb-3"),
+                    css_class='col-md-4')
+                )  # row
+            ))
 
 
 class FieldTrialForm(forms.ModelForm):
@@ -228,7 +237,8 @@ class FieldTrialForm(forms.ModelForm):
             'trial_status', 'contact', 'cro', 'location', 'blocks',
             'replicas_per_thesis', 'samples_per_replica',
             'distance_between_plants', 'distance_between_rows', 'number_rows',
-            'lenght_row', 'net_surface', 'gross_surface', 'code')
+            'lenght_row', 'net_surface', 'gross_surface', 'code',
+            'application_volume')
 
     def __init__(self, *args, **kwargs):
         super(FieldTrialForm, self).__init__(*args, **kwargs)
@@ -276,6 +286,9 @@ class FieldTrialForm(forms.ModelForm):
 
         self.fields['gross_surface'].label = "Gross area plot (m2)"
         self.fields['gross_surface'].required = False
+
+        self.fields['application_volume'].label = "Application Volume (L/Ha)"
+        self.fields['application_volume'].required = False
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):
