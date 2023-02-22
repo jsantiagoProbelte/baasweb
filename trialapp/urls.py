@@ -1,6 +1,5 @@
 from django.urls import path
-from . import fieldtrial_views, thesis_views, evaluation_views,\
-              data_views
+from . import assessment_views, fieldtrial_views, thesis_views, data_views
 
 urlpatterns = [
     # Field Trials urls
@@ -63,33 +62,23 @@ urlpatterns = [
         name='manage_replica_to_thesis_api'),
     # Evaluation urls
     path(
-        'assessment_api',
-        evaluation_views.AssessmentApi.as_view(),
-        name='assessment_api'),
-    path(
         'assessment_api/<int:evaluation_id>/',
-        evaluation_views.AssessmentApi.as_view(),
+        assessment_views.AssessmentApi.as_view(),
         name='assessment_api'),
     path(
-        'evaluationlist/<int:field_trial_id>/',
-        evaluation_views.EvaluationListView.as_view(),
-        name='evaluation-list'),
+        'assessment_list/<int:field_trial_id>/',
+        assessment_views.AssessmentListView.as_view(),
+        name='assessment-list'),
+    path('assessment/add/<int:field_trial_id>/',
+         assessment_views.AssessmentCreateView.as_view(),
+         name='assessment-add'),
+    path('assessment/edit/<int:pk>/', 
+         assessment_views.AssessmentUpdateView.as_view(),
+         name='assessment-update'),
     path(
-        'new_evaluation/<int:field_trial_id>/',
-        evaluation_views.newEvaluation,
-        name='evaluation-new'),
-    path(
-        'edit_evaluation/<int:evaluation_id>/',
-        evaluation_views.editEvaluation,
-        name='evaluation-edit'),
-    path(
-        'save_evaluation',
-        evaluation_views.saveEvaluation,
-        name='evaluation-save'),
-    path(
-        'manage_product_to_evaluation_api',
-        evaluation_views.ManageProductToEvaluation.as_view(),
-        name='manage_product_to_evaluation_api'),
+        'assessment/delete/<int:pk>/',
+        assessment_views.AssessmentDeleteView.as_view(),
+        name='assessment-delete'),
     # Data & measurements apis
     path(
         'trial_assessment_set_list/<int:field_trial_id>/',

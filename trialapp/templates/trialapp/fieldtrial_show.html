@@ -49,7 +49,7 @@
       </div>
       <div class="card no-border mb-3" >
         <div class="card-header-baas h4">
-            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'evaluation-list' fieldTrial.id%}">Assessments</a>
+            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'assessment-list' fieldTrial.id%}">Assessments</a>
         </div>
         <ul class="list-group list-group-flush">
           {% include "baaswebapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
@@ -91,7 +91,7 @@
           <table >
             {% for thesis in thesisTrial %}
               <tr><td>
-                <a href="{% url 'thesis-edit' fieldTrial.id thesis.id %}" class="btn btn-sm bg-custom-{{thesis.number}}">T{{thesis.number}}</a>
+                <a href="{% url 'thesis_api' thesis.id %}" class="btn btn-sm bg-custom-{{thesis.number}}">T{{thesis.number}}</a>
                 <span class="ml-4">{{thesis.name}}</span>
               </td></tr>
             {% empty %}

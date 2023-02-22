@@ -3,12 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='assessment' edit_href="evaluation-edit" item=evaluation%}
-
-
-<div class="card ">
- 
-</div>
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='assessment' edit_href="assessment-update" item=assessment delete_url='assessment-delete'%}
 
 <div class="card card-body-baas mt-2">
   <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">

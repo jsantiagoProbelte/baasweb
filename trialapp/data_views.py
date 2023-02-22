@@ -100,10 +100,6 @@ class DataHelper:
         self._trialAssessmentSets = TrialAssessmentSet.getObjects(
             self._fieldTrial)
 
-    def titleDataPage(self):
-        return "[{}] {}".format(self._evaluation.evaluation_date,
-                                self._evaluation.name)
-
     def prepareHeader(self, references):
         header = []
         lastIndex = "Bla"
@@ -231,9 +227,9 @@ class DataHelper:
             return dataToReturned
         else:
             common = {
-                'title': self.titleDataPage(),
+                'title': self._evaluation.getTitle(),
                 'trialAssessmentSets': self._trialAssessmentSets,
-                'evaluation': self._evaluation,
+                'assessment': self._evaluation,
                 'theses': self._thesisTrial,
                 'fieldTrial': self._fieldTrial}
             return {**common, **dataToReturned}

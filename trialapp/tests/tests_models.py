@@ -68,7 +68,7 @@ class TrialAppModelTest(TestCase):
         'rate_unit_id': 1}
     ]
 
-    APPLICATION = [{
+    EVALUATION = [{
         'field_trial_id': 1,
         'name': 'Primera aplication',
         'evaluation_date': '2022-07-01',

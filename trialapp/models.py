@@ -405,6 +405,13 @@ class Evaluation(ModelHelpers, models.Model):
         return "{}-BBCH".format(
             self.crop_stage_majority)
 
+    def get_absolute_url(self):
+        return "/assessment_api/%i/" % self.id
+
+    def getTitle(self):
+        return "[{}] {}".format(self.evaluation_date,
+                                self.name)
+
 
 # This collects which products are included in each evaluation
 class ProductEvaluation(models.Model):
