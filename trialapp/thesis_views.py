@@ -78,39 +78,6 @@ class ManageProductToThesis(APIView):
         return Response(response_data, status=200)
 
 
-class ManageReplicaToThesis(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = [
-        'delete', 'post']
-
-    def post(self, request, format=None):
-        thesis_id = request.POST['thesis_id'].split('-')[-1]
-        thesis = get_object_or_404(Thesis, pk=thesis_id)
-        count = Replica.objects.filter(thesis=thesis).count()
-        replica = Replica.objects.create(
-            thesis=thesis,
-            pos_x=0,
-            pos_y=0,
-            number=count+1)
-
-        responseData = {
-            'id': replica.id,
-            'pos_x': replica.pos_x,
-            'pos_y': replica.pos_y,
-            'number': replica.number}
-
-        return Response(responseData)
-
-    def delete(self, request, *args, **kwargs):
-        replica = Replica.objects.get(
-            pk=request.POST['replica_id'])
-        replica.delete()
-
-        response_data = {'msg': 'Product was deleted.'}
-        return Response(response_data, status=200)
-
-
 class ThesisFormLayout(FormHelper):
     def __init__(self, new=True):
         super().__init__()
@@ -213,17 +180,57 @@ class ThesisApi(APIView):
     permission_classes = []
     http_method_names = ['get']
 
+    def getThesisVolume(self):
+        trial = self._thesis.field_trial
+        appVolume = trial.application_volume
+        if appVolume is None:
+            return {
+                'value': 'Missing Data: Volume',
+                'detail': 'Please define Application Volume in field trial'}
+
+        netArea = trial.net_surface
+        if netArea is None:
+            return {'value': 'Missing Data: Net area',
+                    'detail': 'Please define Net Surface in trial'}
+
+        replicas_per_thesis = trial.replicas_per_thesis
+        blocks = trial.blocks
+
+        numberThesis = Thesis.getObjects(trial).count()
+
+        litres = netArea * appVolume * replicas_per_thesis
+        surfacePerThesis = (numberThesis * blocks * 10000)
+        thesisVolume = litres / surfacePerThesis
+        rounding = 2
+        unit = 'L'
+        if thesisVolume < 1.0:
+            thesisVolume = thesisVolume * 1000
+            unit = 'mL'
+            rounding = 0
+
+        detail = 'Volumen per thesis for a {} L/Ha as application volumen, '\
+                 ' on a net area of {} m2 and {} thesis'.format(
+                    appVolume, netArea, numberThesis)
+        return {'value': '{} {}'.format(round(thesisVolume, rounding), unit),
+                'detail': detail}
+
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/thesis_show.html'
         thesis_id = kwargs['thesis_id']
-        thesis = get_object_or_404(Thesis, pk=thesis_id)
-
+        self._thesis = get_object_or_404(Thesis, pk=thesis_id)
+        trial = self._thesis.field_trial
+        headerRows = LayoutTrial.headerLayout(trial)
+        layout = LayoutTrial.showLayout(
+            self._thesis.field_trial, None,
+            Thesis.getObjects(trial), onlyThis=thesis_id)
         return render(
             request, template_name, {
-                'fieldTrial': thesis.field_trial,
-                'thesis': thesis,
-                'title': thesis.getTitle(),
-                'product_list': ProductThesis.getObjects(thesis),
-                'replica_list': Replica.getObjects(thesis),
+                'fieldTrial': trial,
+                'thesis': self._thesis,
+                'title': self._thesis.getTitle(),
+                'thesisVolume': self.getThesisVolume(),
+                'product_list': ProductThesis.getObjects(self._thesis),
                 'products': Product.getSelectList(asDict=True),
-                'rate_units': RateUnit.getSelectList(asDict=True)})
+                'rate_units': RateUnit.getSelectList(asDict=True),
+                'rowsReplicaHeader': headerRows,
+                'rowsReplicas': layout})

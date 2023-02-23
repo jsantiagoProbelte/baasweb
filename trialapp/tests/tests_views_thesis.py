@@ -1,10 +1,11 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, ProductThesis, Replica
+from trialapp.models import FieldTrial, Thesis, ProductThesis, Replica,\
+                            ApplicationMode
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.thesis_views import ThesisCreateView, ThesisUpdateView,\
                                   ThesisApi, ManageProductToThesis,\
-                                  ManageReplicaToThesis, ThesisDeleteView,\
+                                  ThesisDeleteView,\
                                   ThesisListView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
@@ -103,36 +104,7 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ProductThesis.objects.count(), 0)
 
-        # Lets add a replica
-        replicaData = {'thesis_id': thesis.id}
-        addReplicaThesisRequest = self._apiFactory.post(
-            '/manage_replica_to_thesis_api',
-            data=replicaData)
-
-        # when thesis is created, it is expected that its replicas are
-        # also created
-        expectedReplicas = self._fieldTrial.replicas_per_thesis
-        self.assertEqual(Replica.objects.count(),
-                         expectedReplicas)
-        apiView = ManageReplicaToThesis()
-        response = apiView.post(addReplicaThesisRequest)
-        self._apiFactory.setUser(addReplicaThesisRequest)
-        self.assertEqual(response.status_code, 200)
-        thesisReplicas = Replica.objects.all()
-        self.assertEqual(len(thesisReplicas),
-                         expectedReplicas+1)
-        self.assertEqual(thesisReplicas[0].thesis.name,
-                         thesis.name)
-
-        deleteReplicaThesisRequest = self._apiFactory.post(
-            'manage_replica_to_thesis_api',
-            data={'replica_id': thesisReplicas[0].id})
-        self._apiFactory.setUser(deleteReplicaThesisRequest)
-        response = apiView.delete(deleteReplicaThesisRequest)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(Replica.objects.count(), expectedReplicas)
-
-    def test_ThesisApi(self):
+    def test_thesis_api(self):
         # Creating thesis , but not with all attributres
         thesisData = TrialAppModelTest.THESIS[0]
         request = self._apiFactory.post('thesis-add', thesisData)
@@ -141,6 +113,12 @@ class ThesisViewsTest(TestCase):
             request, field_trial_id=self._fieldTrial.id)
         self.assertEqual(response.status_code, 302)
         item = Thesis.objects.get(name=thesisData['name'])
+
+        # when thesis is created, it is expected that its replicas are
+        # also created
+        expectedReplicas = self._fieldTrial.replicas_per_thesis
+        self.assertEqual(Replica.objects.count(),
+                         expectedReplicas)
 
         getRequest = self._apiFactory.post('thesis_api')
         apiView = ThesisApi()
@@ -165,3 +143,43 @@ class ThesisViewsTest(TestCase):
                                               pk=deletedId)
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Thesis.objects.filter(pk=deletedId).exists())
+
+    def test_ThesisVolume(self):
+        theThesis = None
+        theThesisId = None
+        for thesis in TrialAppModelTest.THESIS:
+            copiedData = thesis.copy()
+            copiedData['mode'] = ApplicationMode.objects.get(pk=1)
+            theThesis = Thesis.create_Thesis(**copiedData)
+            theThesisId = theThesis.id
+        # numberThesis = Thesis.getObjects(self._fieldTrial).count()
+        api = ThesisApi()
+        # We do not care which one to use
+        api._thesis = Thesis.objects.get(id=theThesisId)
+
+        thesisVolume = api.getThesisVolume()
+        self.assertTrue('Missing Data: Volume' in thesisVolume['value'])
+        appVolume = 100
+        self._fieldTrial.application_volume = appVolume
+        self._fieldTrial.save()
+
+        api._thesis = Thesis.objects.get(id=theThesisId)
+        thesisVolume = api.getThesisVolume()
+        self.assertTrue('Missing Data: Net area' in thesisVolume['value'])
+        netArea = 100
+        self._fieldTrial.net_surface = netArea
+        self._fieldTrial.save()
+
+        api._thesis = Thesis.objects.get(id=theThesisId)
+        thesisVolume = api.getThesisVolume()
+        # litres = netArea * appVolume * self._fieldTrial.replicas_per_thesis
+        # surfacePerThesis = (numberThesis * self._fieldTrial.blocks * 10000)
+        # thesisVolumeV = litres / surfacePerThesis
+        # unit = 'L'
+        # rounding = 2
+        # if thesisVolumeV < 1.0:
+        #     thesisVolumeV = thesisVolumeV * 1000
+        #     unit = 'mL'
+        #     rounding = 0
+        self.assertEqual(thesisVolume['value'], '667 mL')
+        # {} {}'.format(round(thesisVolumeV, rounding), unit))

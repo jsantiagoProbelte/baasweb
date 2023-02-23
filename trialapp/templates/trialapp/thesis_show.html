@@ -1,12 +1,10 @@
 {% extends "baaswebapp/layout.html" %}
-
 {% load crispy_forms_tags %}
-
 {% block content %}
 {% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='thesis' edit_href="thesis-update" item=thesis delete_url='thesis-delete'%}
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card no-border" >
       <div class="card-body-baas"> 
         <div class="row">
@@ -17,8 +15,8 @@
             </div>
             <div class="col-md-6">
                 {% include "baaswebapp/item_list_template.html" with field='Name' value=thesis.name%}
-                {% include "baaswebapp/item_list_template.html" with field='Number applications' value=thesis.number_applications%}
-                {% include "baaswebapp/item_list_template.html" with field='Date first application' value=thesis.first_application%}
+                {% include "baaswebapp/item_list_template.html" with field='Applications' value=thesis.number_applications%}
+                {% include "baaswebapp/item_list_template.html" with field='First application' value=thesis.first_application%}
             </div>
         </div>
         {% include "baaswebapp/item_list_template.html" with field='Description' value=thesis.description%}
@@ -29,7 +27,7 @@
   <div class="col-md-5">
     <div class="card no-border" >
       <div class="card-body-baas">
-            <h4>Products</h4>
+            <h4>Treatment</h4>
             <table class="table"><tbody id="table-items">
             <tr id="product_thesis">
                 {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
@@ -48,29 +46,13 @@
             </tbody></table>
       </div>
     </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card no-border" >
-      <div class="card-body-baas">
-            <h4>Replicas
-                <span><a id="add-replica-to-thesis-{{thesis_id}}" class="btn btn-primary btn-sm add-replica-to-thesis btn-sm fs-1">&#43;</a></span>
-            </h4>
-            <table class="table">
-                <thead><th>#</th><th>X</th><th>Y</th></thead>
-                <tbody id="replica_thesis_table">
-                
-                {% for item in replica_list %}
-                    <tr id="replica-thesis-{{item.id}}">
-                        <td>{{item.number}}</td>
-                        <td>{{item.pos_x}}</td>
-                        <td>{{item.pos_y}}</td>
-                        <td><a id='delete-replica-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
-                    </tr>
-                {% empty %}
-                    <p>No replicas yet.</p>
-                {% endfor %}
-      </div>
+    <div class="card card-body-baas mt-3">
+        <h4>Thesis Volumen</h4>
+        <p>{{thesisVolume.value}} <span class="text-muted">{{thesisVolume.detail}} </span></p>
     </div>
+  </div>
+  <div class="col-md-4">
+    {% include 'trialapp/thesis_map.html' %}
   </div>
 </div>
 {% endblock %}
@@ -115,75 +97,6 @@ function addProductToThesisCall(element,appendTable) {
 };
 
 
-// Functions to manage replica data
-$(".add-replica-to-thesis").on('click', function(){
-    var element=$(this)
-    
-    var appendTable=$('#replica_thesis_table')
-    return addReplicaToThesisCall(element,appendTable)
-});
-
-var manageReplicaThesisEndPoint = '/manage_replica_to_thesis_api';
-
-function addReplicaToThesisCall(element,appendTable) {
-    var dataJson={}
-
-    dataJson['thesis_id']=$(element).attr('id')
-    console.log(dataJson)
-    $.ajax({
-        type : 'POST', 
-        url: manageReplicaThesisEndPoint,
-        data: dataJson,
-        
-        success: function(data){
-
-            console.log("data");
-            appendTable.append(
-                '<tr id="replica-thesis-'+data.id+'"><td>'+data.number+'</td>\
-                    <td>'+data.pos_x+'</td>\
-                    ><td>'+data.pos_y+'</td>\
-                    <td><a id="delete-replica-'+data.id+'" class="btn btn-warning btn-sm">-</a></td>\
-                </tr>'); /* response message */
-        },
-    
-        failure: function() {
-            alert('Error. Please reload');
-        }
-    });
-    return false;
-};
-
-// Delete product on click
-$("#replica_thesis_table").on('click', 'a[id^=delete-replica-]', function(){
-    var replica_thesis_id = $(this).attr('id').split('-')[2];
-    console.log(product_thesis_id) // sanity check
-    delete_product(replica_thesis_id);
-});
-
-// AJAX for deleting
-function delete_replica(replica_thesis_id){
-    if (confirm('are you sure you want to remove this product?')==true){
-        $.ajax({
-            url : manageReplicaThesisEndPoint, // the endpoint
-            type : "DELETE", // http method
-            data : { 'replica_thesis_id' : replica_thesis_id }, // data sent with the delete request
-            success : function(json) {
-                // hide the post
-                $('#replica-thesis-'+replica_thesis_id).hide(); // hide the post on success
-                console.log("post deletion successful");
-            },
-
-            error : function(xhr,errmsg,err) {
-                // Show an error
-                $('#results').html("<div class='alert-box alert radius' data-alert>"+
-                "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-    } else {
-        return false;
-    }
-};
 
 </script>
 {% endblock %}

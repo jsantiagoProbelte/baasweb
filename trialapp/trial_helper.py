@@ -23,15 +23,19 @@ class LayoutTrial:
         return deck, (rows, blocks)
 
     @classmethod
-    def setDeckCell(cls, replica: Replica, evaluation):
+    def setDeckCell(cls, replica: Replica, evaluation,
+                    onlyThis=None):
         if replica is None:
             return {'name': '-',
                     'replica_id': 0,
                     'number': 0}
         else:
+            number = replica.thesis.number
+            if onlyThis and replica.thesis.id != onlyThis:
+                number = 0
             return {'name': replica.getShortName(),
                     'replica_id': replica.id,
-                    'number': replica.thesis.number,
+                    'number': number,
                     'id': replica.generateReplicaDataSetId(evaluation)}
 
     @classmethod
@@ -47,7 +51,8 @@ class LayoutTrial:
 
     @classmethod
     def showLayout(cls, fieldTrial: FieldTrial,
-                   evaluation: Evaluation, thesisTrial):
+                   evaluation: Evaluation, thesisTrial,
+                   onlyThis=None):
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         # Place the thesis in the deck
@@ -56,7 +61,9 @@ class LayoutTrial:
                 if (replica.pos_x > 0) and (replica.pos_y > 0) and\
                    (replica.pos_x <= rows) and (replica.pos_y <= columns):
                     deck[replica.pos_x-1][replica.pos_y-1] =\
-                        LayoutTrial.setDeckCell(replica, evaluation)
+                        LayoutTrial.setDeckCell(
+                            replica, evaluation,
+                            onlyThis=onlyThis)
         return deck
 
     @classmethod

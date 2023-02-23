@@ -46,10 +46,6 @@ urlpatterns = [
         'manage_product_to_thesis_api',
         thesis_views.ManageProductToThesis.as_view(),
         name='manage_product_to_thesis_api'),
-    path(
-        'manage_replica_to_thesis_api',
-        thesis_views.ManageReplicaToThesis.as_view(),
-        name='manage_replica_to_thesis_api'),
     # Evaluation urls
     path(
         'assessment_api/<int:evaluation_id>/',
