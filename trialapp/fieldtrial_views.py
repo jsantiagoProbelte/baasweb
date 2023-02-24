@@ -6,8 +6,10 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from django.contrib.auth.decorators import login_required
-from trialapp.models import Evaluation, FieldTrial, Thesis,\
-                            TrialAssessmentSet
+from trialapp.models import\
+    Evaluation, FieldTrial, Thesis, TrialAssessmentSet, Project, Objective,\
+    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
+    Plague, CultivationMethod, Irrigation
 from django.shortcuts import render, get_object_or_404, redirect
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
@@ -25,6 +27,95 @@ class FieldTrialFilter(django_filters.FilterSet):
     class Meta:
         model = FieldTrial
         fields = ['objective', 'product', 'crop', 'plague']
+
+
+class TrialModel():
+    T_D = 'TypeDate'
+    T_I = 'TypeInteger'
+    T_N = 'TypeNoChange'
+    T_T = 'TypeText'
+    FIELDS = {
+        'Goal': {
+            'project': {'label': "Project", 'required': True, 'type': T_N,
+                        'cls': Project},
+            'objective': {'label': "Objective", 'required': True, 'type': T_N,
+                          'cls': Objective},
+            'product': {'label': "Main Product", 'required': True,
+                        'type': T_N, 'cls': Product},
+            'crop': {'label': "Crop", 'required': True, 'type': T_N,
+                     'cls': Crop},
+            'plague': {'label': "Plague", 'required': False, 'type': T_N,
+                       'cls': Plague},
+            'description': {'label': "Description", 'required': False,
+                            'type': T_T, 'rows': 10},
+        },
+        'Status': {
+            'trial_type': {'label': 'Type', 'required': True, 'type': T_N,
+                           'cls': TrialType},
+            'trial_status': {'label': 'Status', 'required': True, 'type': T_N,
+                             'cls': TrialStatus},
+            'responsible': {'label': 'Responsible', 'required': True,
+                            'type': T_N},
+            'initiation_date': {'label': 'Started', 'required': True,
+                                'type': T_D},
+            'completion_date': {'label': 'Completed by', 'required': False,
+                                'type': T_D},
+        },
+        'Cultive': {
+            'crop_variety': {'label': 'Crop Variety', 'required': False,
+                             'type': T_N, 'cls': CropVariety},
+            'cultivation': {'label': 'Cultivation Mode', 'required': False,
+                            'type': T_N, 'cls': CultivationMethod},
+            'irrigation': {'label': 'Irrigation', 'required': False,
+                           'type': T_N, 'cls': Irrigation},
+            'crop_age': {'label': 'Crop Age (years)', 'required': False,
+                         'type': T_I},
+            'seed_date': {'label': 'Seed date', 'required': False,
+                          'type': T_D},
+            'transplant_date': {'label': 'Transplante date', 'required': False,
+                                'type': T_D},
+        },
+        'Assessments': {
+            'ref_to_eppo': {'label': "EPPO Reference", 'required': False,
+                            'type': T_N},
+            'ref_to_criteria': {'label': "Criteria Reference",
+                                'required': False, 'type': T_N},
+            'comments_criteria': {'label': "Criteria comments",
+                                  'required': False, 'type': T_T, 'rows': 5},
+        },
+        'Applications': {
+            'application_volume': {'label': "Application Volume (L/Ha)",
+                                   'required': False, 'type': T_N},
+            'mode': {'label': "Application Mode", 'required': False,
+                     'type': T_N, 'cls': ApplicationMode},
+        },
+        'Layout': {
+            'blocks': {'label': "# blocks", 'required': True,
+                       'type': T_I},
+            'replicas_per_thesis': {'label': "# replicas", 'required': True,
+                                    'type': T_I},
+            'samples_per_replica': {'label': "# samples/replica ",
+                                    'required': False, 'type': T_I},
+            'distance_between_plants': {'label': "Plants separation",
+                                        'required': False, 'type': T_N},
+            'distance_between_rows': {'label': "Rows separation",
+                                      'required': False, 'type': T_N},
+            'number_rows': {'label': "# rows", 'required': False, 'type': T_I},
+            'lenght_row': {'label': "Row length (m)", 'required': False,
+                           'type': T_N},
+            'net_surface': {'label': "Net area plot (m2)", 'required': False,
+                            'type': T_N},
+            'gross_surface': {'label': "Gross area plot (m2)",
+                              'required': False, 'type': T_N},
+        },
+        'Location': {
+            'contact': {'label': "Farmer", 'required': False, 'type': T_N},
+            'cro': {'label': "CRO", 'required': False, 'type': T_N},
+            'location': {'label': "City/Area", 'required': False, 'type': T_N},
+            # 'latitude_str': None,
+            # 'altitude': None,
+        }
+    }
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
@@ -82,35 +173,28 @@ class FieldTrialApi(APIView):
     permission_classes = []
     http_method_names = ['get']
 
-    def showValue(self, value):
-        return value if value else '?'
-
-    def prepareLayoutItems(self, fieldTrial):
-        return [[
-            {'name': '#samples/block',
-             'value': self.showValue(fieldTrial.samples_per_replica)},
-            {'name': '# rows',
-             'value': self.showValue(fieldTrial.number_rows)},
-            {'name': 'Row length (m)',
-             'value': self.showValue(fieldTrial.lenght_row)},
-            {'name': 'Gross area plot (m2)',
-             'value': self.showValue(fieldTrial.gross_surface)},
-            {'name': 'Farmer',
-             'value': self.showValue(fieldTrial.contact)},
-            {'name': 'CRO',
-             'value': self.showValue(fieldTrial.cro)}
-            ], [
-            {'name': 'Plants separation',
-             'value': self.showValue(fieldTrial.distance_between_plants)},
-            {'name': 'Rows separation',
-             'value': self.showValue(fieldTrial.distance_between_rows)},
-            {'name': 'Plants density (H)',
-             'value': self.showValue(fieldTrial.plantDensity())},
-            {'name': 'Net area plot (m2)',
-             'value': self.showValue(fieldTrial.net_surface)},
-            {'name': 'Location',
-             'value': self.showValue(fieldTrial.location)}
-        ]]
+    def prepareDataItems(self, fieldTrial):
+        trialDict = fieldTrial.__dict__
+        trialData = {}
+        for group in TrialModel.FIELDS:
+            trialData[group] = []
+            for field in TrialModel.FIELDS[group]:
+                label = TrialModel.FIELDS[group][field]['label']
+                value = '?'
+                if field in trialDict:
+                    value = trialDict[field]
+                else:
+                    field_id = field + '_id'
+                    if field_id not in trialDict:
+                        continue
+                    else:
+                        theId = trialDict[field_id]
+                        if theId is not None:
+                            model = TrialModel.FIELDS[group][field]['cls']
+                            value = model.objects.get(id=theId)
+                showValue = value if value is not None else '?'
+                trialData[group].append({'name': label, 'value': showValue})
+        return trialData
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/fieldtrial_show.html'
@@ -120,17 +204,16 @@ class FieldTrialApi(APIView):
         numberThesis = len(thesisTrial)
         assessments = Evaluation.getObjects(fieldTrial)
         trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
-        assessmentsData = [{'name': item.getName(),
-                            'id': item.id,
-                            'date': item.evaluation_date}
-                           for item in assessments]
+        dataTrial = self.prepareDataItems(fieldTrial)
+        for item in assessments:
+            dataTrial['Assessments'].append(
+                {'name': item.getName(), 'value': item.evaluation_date})
         headerRows = LayoutTrial.headerLayout(fieldTrial)
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,
                        'titleView': fieldTrial.getName(),
-                       'layoutData': self.prepareLayoutItems(fieldTrial),
+                       'dataTrial': dataTrial,
                        'thesisTrial': thesisTrial,
-                       'assessments': assessmentsData,
                        'units': trialAssessmentSets,
                        'numberThesis': numberThesis,
                        'rowsReplicaHeader': headerRows,
@@ -169,6 +252,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('objective', css_class='mb-2'),
                             Field('product', css_class='mb-2'),
                             Field('crop', css_class='mb-2'),
+                            Field('crop_variety', css_class='mb-2'),
                             Field('plague', css_class='mb-2'),
                             Field('description', css_class='mb-2'),
                             css_class="card-body-baas"),
@@ -216,10 +300,13 @@ class FieldTrialFormLayout(FormHelper):
                     Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
+                            Field('cultivation', css_class='mb-2'),
+                            Field('irrigation', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
                     Div(HTML('Applications'), css_class="card-header-baas h4"),
                     Div(Div(Field('application_volume', css_class='mb-2'),
+                            Field('mode', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
                     css_class='col-md-4')
@@ -237,58 +324,25 @@ class FieldTrialForm(forms.ModelForm):
             'trial_status', 'contact', 'cro', 'location', 'blocks',
             'replicas_per_thesis', 'samples_per_replica',
             'distance_between_plants', 'distance_between_rows', 'number_rows',
-            'lenght_row', 'net_surface', 'gross_surface', 'code',
-            'application_volume')
+            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
+            'application_volume', 'mode', 'crop_variety', 'cultivation',
+            'crop_age', 'seed_date', 'transplant_date')
 
     def __init__(self, *args, **kwargs):
         super(FieldTrialForm, self).__init__(*args, **kwargs)
-        self.fields['trial_type'].label = 'Type'
-        self.fields['trial_status'].label = 'Status'
-        self.fields['cro'].required = False
-        self.fields['description'].widget = forms.Textarea(attrs={'rows': 10})
-        self.fields['description'].required = False
-        self.fields['ref_to_eppo'].label = "EPPO Reference"
-        self.fields['ref_to_eppo'].required = False
-        self.fields['ref_to_criteria'].label = "Criteria Reference"
-        self.fields['ref_to_criteria'].required = False
-        self.fields['comments_criteria'].label = "Criteria comments"
-        self.fields['comments_criteria'].required = False
-        self.fields['comments_criteria'].widget = forms.Textarea(
-            attrs={'rows': 5})
-        self.fields['plague'].required = False
-        self.fields['initiation_date'].widget = MyDateInput()
-        self.fields['completion_date'].widget = MyDateInput()
-        self.fields['completion_date'].required = False
-        self.fields['blocks'].label = "# blocks"
-        self.fields['blocks'].widget = forms.NumberInput()
-
-        self.fields['replicas_per_thesis'].label = "# replicas"
-        self.fields['replicas_per_thesis'].widget = forms.NumberInput()
-
-        self.fields['samples_per_replica'].label = "# samples"
-        self.fields['samples_per_replica'].widget = forms.NumberInput()
-        self.fields['samples_per_replica'].required = False
-
-        self.fields['distance_between_plants'].label = "Plants separation"
-        self.fields['distance_between_plants'].required = False
-
-        self.fields['distance_between_rows'].label = "Rows separation"
-        self.fields['distance_between_rows'].required = False
-
-        self.fields['number_rows'].label = "# rows"
-        self.fields['number_rows'].required = False
-
-        self.fields['lenght_row'].label = "Row length (m)"
-        self.fields['lenght_row'].required = False
-
-        self.fields['net_surface'].label = "Net area plot (m2)"
-        self.fields['net_surface'].required = False
-
-        self.fields['gross_surface'].label = "Gross area plot (m2)"
-        self.fields['gross_surface'].required = False
-
-        self.fields['application_volume'].label = "Application Volume (L/Ha)"
-        self.fields['application_volume'].required = False
+        for block in TrialModel.FIELDS:
+            for field in TrialModel.FIELDS[block]:
+                fieldData = TrialModel.FIELDS[block][field]
+                self.fields[field].label = fieldData['label']
+                self.fields[field].required = fieldData['required']
+                typeField = fieldData['type']
+                if typeField == TrialModel.T_D:
+                    self.fields[field].widget = MyDateInput()
+                elif typeField == TrialModel.T_I:
+                    self.fields[field].widget = forms.NumberInput()
+                elif typeField == TrialModel.T_T:
+                    self.fields['comments_criteria'].widget = forms.Textarea(
+                        attrs={'rows': fieldData['rows']})
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):

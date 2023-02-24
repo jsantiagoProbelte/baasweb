@@ -7,87 +7,35 @@
 {% include "trialapp/header_page_trial.html" with title=titleView subtitle='field trial' edit_href="fieldtrial-update" item=fieldTrial delete_url='fieldtrial-delete'%}
 
 <div class="row">
-    <div class="col-md-3">
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h4">
-          Goal
-        </div>
-        <ul class="list-group list-group-flush">
-          {% include "baaswebapp/item_list_template.html" with field='Project' value=fieldTrial.project%}
-          {% include "baaswebapp/item_list_template.html" with field='Objective' value=fieldTrial.objective%}
-          {% include "baaswebapp/item_list_template.html" with field='main Product' value=fieldTrial.product%}
-          {% include "baaswebapp/item_list_template.html" with field='Crop' value=fieldTrial.crop%}
-          {% include "baaswebapp/item_list_template.html" with field='Plague' value=fieldTrial.plague%}
-          {% include "baaswebapp/item_list_template.html" with field='Description' value=fieldTrial.description%}
-        </ul>
+  <div class="col-md-2">
+    {% include "trialapp/card_values.html" with title='Goal' dataItems=dataTrial.Goal classColumn='classColumn1'%}
+    {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn1'%}
+  </div>
+  <div class="col-md-5">
+    <div class="card no-border mb-3" >
+      <div class="card-header-baas h5">
+          <a class="btn btn-secondary btn-sm fs-5" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">Units</a>
       </div>
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h4">
-          Status
-        </div>
-        <ul class="list-group list-group-flush">
-          {% include "baaswebapp/item_list_template.html" with field='Type' value=fieldTrial.trial_type%}
-          {% include "baaswebapp/item_list_template.html" with field='Status' value=fieldTrial.trial_status %}
-          {% include "baaswebapp/item_list_template.html" with field='Responsible' value=fieldTrial.responsible%}
-          {% include "baaswebapp/item_list_template.html" with field='Started' value=fieldTrial.initiation_date%}
-          {% include "baaswebapp/item_list_template.html" with field='Completed' value=fieldTrial.completion_date%}
-        </ul>
-      </div>
+      <ul class="list-group list-group-flush"></ul>
+        {% for item in units %}
+          {% include "baaswebapp/item_list_template.html" with field=item.unit.name value=item.type.name%}
+        {% empty %}
+          <p>No units yet.</p>
+        {% endfor %}
+      </ul>
     </div>
-    <div class="col-md-4">
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h5">
-            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">Units</a>
-        </div>
-        <ul class="list-group list-group-flush"></ul>
-          {% for item in units %}
-            {% include "baaswebapp/item_list_template.html" with field=item.unit.name value=item.type.name%}
-          {% empty %}
-            <p>No units yet.</p>
-          {% endfor %}
-        </ul>
+    {% include "trialapp/card_values.html" with title='Assessments' dataItems=dataTrial.Assessments link='assessment-list' classColumn='classColumn2'%}
+    {% include "trialapp/card_values.html" with title='Cultive' dataItems=dataTrial.Cultive classColumn='classColumn2'%}
+    {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn3'%}
+  </div>
+  <div class="col-md-5">
+    {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications classColumn='classColumn2'%}
+    <div class="card no-border mb-3" >
+      <div class="card-header-baas h4">
+        <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">
+          Thesis<span class='badge bg-light ms-2'>{{numberThesis}}</span></a>
       </div>
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h4">
-            <a class="btn btn-secondary btn-sm fs-5" href="{% url 'assessment-list' fieldTrial.id%}">Assessments</a>
-        </div>
-        <ul class="list-group list-group-flush">
-          {% include "baaswebapp/item_list_template.html" with field='EPPO' value=fieldTrial.ref_to_eppo%}
-          {% include "baaswebapp/item_list_template.html" with field='Criteria' value=fieldTrial.ref_to_criteria%}
-          {% include "baaswebapp/item_list_template.html" with field='Comments' value=fieldTrial.comments_criteria%}
-          {% for item in assessments %}
-            {% include "baaswebapp/item_list_template.html" with field=item.name value=item.date%}
-          {% empty %}
-            <p>No Assessments yet.</p>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h4">
-          Layout
-        </div>
-        <div class="card-body-baas">
-        <div class="row">
-          {% for column in layoutData %}
-            <div class="col-md-6">
-            <ul class="list-group list-group-flush">
-              {% for item in column %}
-                {% include "baaswebapp/item_list_template.html" with field=item.name value=item.value%}
-              {% endfor %}
-            </ul>
-            </div>
-          {% endfor %}
-        </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5">
-      <div class="card no-border" >
-        <div class="card-header-baas h4">
-          <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">
-            Thesis<span class='badge bg-light ms-2'>{{numberThesis}}</span></a>
-        </div>
-        <div class="card-body-baas">
+      <div class="card-body-baas">
           <table >
             {% for thesis in thesisTrial %}
               <tr><td>
@@ -97,31 +45,12 @@
             {% empty %}
               <p>No Thesis yet.</p>
             {% endfor %}
-            </table>
-        </div>
-      </div>
-      <div class="card no-border" >
-        <div class="card-header-baas h4">
-          Applications
-        </div>
-        <div class="card-body-baas">
-          {% include "baaswebapp/item_list_template.html" with field='Volume (L/Ha)' value=fieldTrial.application_volume%}
-        </div>
-      </div>
-      <div class="card no-border mt-3" >
-        <div class="card-header-baas h4">
-            Blocks <span class='badge bg-light ms-1'>{{fieldTrial.blocks}}</span> & Replicas distribution <span class='badge bg-light ms-1'>{{fieldTrial.replicas_per_thesis}}</span>
-        </div>
-        <div class="card-body-baas">
-          {% include "trialapp/data_row_replica_template.html" with row=rowsReplicaHeader appendix='block '%}
-          {% for row in rowsReplicas %}
-              {% include "trialapp/data_row_replica_template.html" with row=row appendix='R'%}
-          {% empty %}
-              <p>No Thesis yet.</p>
-          {% endfor %}
-        </div>
+          </table>
       </div>
     </div>
+    
+    {% include 'trialapp/thesis_map.html' %}
   </div>
+
 </div>
 {% endblock %}

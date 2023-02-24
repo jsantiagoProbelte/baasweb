@@ -312,3 +312,19 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
   border-radius: 20px !important;
   padding: 5px 15px !important;
 }
+
+.classColumn3 {
+  column-count: 3;
+}
+
+.classColumn2 {
+  column-count: 2;
+}
+
+.classColumn1 {
+  column-count: 1;
+}
+
+.classColumn4 {
+  column-count: 4;
+}

@@ -7,7 +7,8 @@ from baaswebapp.models import ModelHelpers
 from catalogue.models import Product, ProductCategory, Vendor
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
                             Project, Objective, RateUnit, AssessmentType,\
-                            AssessmentUnit, Plague, Crop, FieldTrial
+                            AssessmentUnit, Plague, Crop, FieldTrial,\
+                            Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData
 
 
@@ -19,6 +20,8 @@ class TrialDbInitialLoader:
                         'Commercial Demo', 'Registry', 'Demand Generation'],
             TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
                           'Anual Recurrence', 'Close'],
+            Irrigation: [ModelHelpers.UNKNOWN, 'Dry', 'Manta',
+                         'Aspersion', 'Drip', 'Hydroponic', 'Others'],
             ApplicationMode: [
                 ModelHelpers.UNKNOWN, 'Foliar', 'Foliar Spray', 'Drench',
                 'Fertigation', 'Seeder', 'Fertiliser', 'Specific',
@@ -34,7 +37,8 @@ class TrialDbInitialLoader:
                       'Biopron', 'Bulhnova', 'Canelys', 'ChemBio', 'Mimotem',
                       'Nemapron', 'Nutrihealth', 'Verticibel',
                       '-- No Product --'],
-
+            CultivationMethod: [
+                ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
             RateUnit: ['Kg/hectare', 'Liters/hectare'],
             AssessmentUnit: [
                 '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
@@ -47,7 +51,8 @@ class TrialDbInitialLoader:
                 'N-Nitrogen', 'Greenness', 'Plant height',
                 'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN'],
             ProductCategory: [
-                'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide', 'Other'],
+                'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide',
+                'Other'],
             Vendor: [
                 'Probelte', 'Syngenta', 'BASF', 'Corteva']
         }
@@ -85,7 +90,9 @@ class TrialDbInitialLoader:
                 'Apple': {'other': 'Manzana'},
                 'Peach': {'other': 'Melocoton'},
                 'Carrot': {'other': 'Zanahoria'}},
-
+            CropVariety: {
+                'Unknown': {'crop_id': 1}
+            },
             Plague: {
                 ModelHelpers.UNKNOWN: {'other': None},
                 "Mites": {"other": "Acaros"},

@@ -1,0 +1,16 @@
+<div class="card no-border mb-3" >
+    <div class="card-header-baas h4">
+      {% if link %}
+        <a class="btn btn-secondary btn-sm fs-5" href="{% url link fieldTrial.id%}">{{title}}</a>
+      {% else %}
+        {{title}}
+      {% endif %}
+    </div>
+    <div class="{{classColumn}}">
+      {% for data in dataItems %}
+        <div class="card">
+        {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value %}
+        </div>
+      {% endfor %}
+      </div>
+</div>

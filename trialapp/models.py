@@ -29,6 +29,10 @@ class Plague(ModelHelpers, models.Model):
             return self.name
 
 
+class Irrigation(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+
+
 class Project(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -46,6 +50,10 @@ class RateUnit(ModelHelpers, models.Model):
 
 
 class ApplicationMode(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+
+
+class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
@@ -78,7 +86,9 @@ class FieldTrial(ModelHelpers, models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
-    plague = models.ForeignKey(Plague, on_delete=models.CASCADE)
+    crop_variety = models.ForeignKey(CropVariety,
+                                     on_delete=models.CASCADE, null=True)
+    plague = models.ForeignKey(Plague, on_delete=models.CASCADE, null=True)
 
     initiation_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
@@ -92,6 +102,13 @@ class FieldTrial(ModelHelpers, models.Model):
     latitude_str = models.CharField(max_length=100, null=True)
     latitude_str = models.CharField(max_length=100, null=True)
     altitude = models.IntegerField(null=True)
+    irrigation = models.ForeignKey(Irrigation,
+                                   on_delete=models.CASCADE, null=True)
+    cultivation = models.ForeignKey(CultivationMethod,
+                                    on_delete=models.CASCADE, null=True)
+    crop_age = models.IntegerField(null=True)
+    seed_date = models.DateField(null=True)
+    transplant_date = models.DateField(null=True)
 
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
@@ -113,6 +130,8 @@ class FieldTrial(ModelHelpers, models.Model):
 
     application_volume = models.DecimalField(
         max_digits=10, decimal_places=2, null=True)
+    mode = models.ForeignKey(ApplicationMode,
+                             on_delete=models.CASCADE, null=True)
 
     @classmethod
     def formatCode(cls, year, month, counts):
