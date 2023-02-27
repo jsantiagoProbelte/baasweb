@@ -351,7 +351,7 @@ class FieldTrialForm(forms.ModelForm):
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):
     model = FieldTrial
     form_class = FieldTrialForm
-    template_name = 'baaswebapp/model_edit_form.html'
+    template_name = 'baaswebapp/model_edit_full.html'
 
     def get_form(self, form_class=FieldTrialForm):
         form = super().get_form(form_class)
@@ -373,7 +373,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
 class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
     model = FieldTrial
     form_class = FieldTrialForm
-    template_name = 'baaswebapp/model_edit_form.html'
+    template_name = 'baaswebapp/model_edit_full.html'
 
     def get_form(self, form_class=FieldTrialForm):
         form = super().get_form(form_class)
