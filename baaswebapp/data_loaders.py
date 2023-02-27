@@ -9,7 +9,7 @@ from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
                             Project, Objective, RateUnit, AssessmentType,\
                             AssessmentUnit, Plague, Crop, FieldTrial,\
                             Irrigation, CultivationMethod, CropVariety
-from trialapp.data_models import ThesisData
+from trialapp.data_models import ThesisData, ReplicaData, SampleData
 
 
 class TrialDbInitialLoader:
@@ -216,7 +216,10 @@ class TrialDbInitialLoader:
 class TrialStats:
     @classmethod
     def getGeneralStats(cls):
+        points = ThesisData.objects.count() +\
+                 ReplicaData.objects.count() +\
+                 SampleData.objects.count()
         return {
             'products': Product.objects.count(),
             'field_trials': FieldTrial.objects.count(),
-            'points': ThesisData.objects.count()}
+            'points': points}
