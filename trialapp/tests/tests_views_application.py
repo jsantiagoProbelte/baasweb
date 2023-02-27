@@ -39,9 +39,10 @@ class ApplicationViewsTest(TestCase):
         response = ApplicationCreateView.as_view()(
             request, field_trial_id=self._fieldTrial.id)
         self.assertEqual(response.status_code, 302)
-        application = Application.objects.get(app_date=applicationData['app_date'])
-        self.assertEqual(application.ddt, 0)
-        self.assertEqual(application.getName(), 'DDT-0')
+        application = Application.objects.get(
+            app_date=applicationData['app_date'])
+        self.assertEqual(application.daa, 0)
+        self.assertEqual(application.getName(), 'DAA-0')
 
         # Editar y ver nuevo
         request = self._apiFactory.get('application-update')
@@ -62,7 +63,8 @@ class ApplicationViewsTest(TestCase):
         response = ApplicationUpdateView.as_view()(
             request,
             pk=application.id)
-        application2 = Application.objects.get(app_date=applicationData['app_date'])
+        application2 = Application.objects.get(
+            app_date=applicationData['app_date'])
         self.assertEqual(application2.comment, newdescription)
         self.assertEqual(response.status_code, 302)
 
@@ -92,8 +94,8 @@ class ApplicationViewsTest(TestCase):
             request, field_trial_id=self._fieldTrial.id)
         self.assertEqual(response.status_code, 302)
         item2 = Application.objects.get(app_date=applicationData2['app_date'])
-        ddt = (item2.app_date - item.app_date).days
-        self.assertTrue(item2.ddt, ddt)
+        daa = (item2.app_date - item.app_date).days
+        self.assertTrue(item2.daa, daa)
 
         # Let's call application list
         getRequest = self._apiFactory.get('application-list')

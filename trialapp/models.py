@@ -253,7 +253,8 @@ class Thesis(ModelHelpers, models.Model):
 
 class Application(ModelHelpers, models.Model):
     app_date = models.DateField()
-    ddt = models.IntegerField(null=True)
+    daa = models.IntegerField(null=True)
+    daf = models.IntegerField(null=True)
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     comment = models.TextField(null=True)
     bbch = models.CharField(max_length=25)
@@ -264,21 +265,28 @@ class Application(ModelHelpers, models.Model):
                 .filter(field_trial=field_trial) \
                 .order_by('app_date')
 
+    def daysBetween(self, fromDate):
+        return (self.app_date-fromDate).days
+
     @classmethod
     def computeDDT(cls, trial):
         previous = None
+        firstApp = None
         # We assume getObjects ordered by date
         for application in cls.getObjects(trial):
+            if firstApp is None:
+                firstApp = application
             if previous is None:
-                application.ddt = 0
+                application.daa = 0
+                application.daf = 0
             else:
-                ddt = application.app_date - previous.app_date
-                application.ddt = ddt.days
+                application.daa = application.daysBetween(previous.app_date)
+                application.daf = application.daysBetween(firstApp.app_date)
             application.save()
             previous = application
 
     def getName(self):
-        return 'DDT-{}'.format(self.ddt)
+        return 'DAA-{}'.format(self.daa)
 
     def get_absolute_url(self):
         return "/application_api/%i/" % self.id
