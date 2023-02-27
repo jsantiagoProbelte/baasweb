@@ -188,17 +188,17 @@ class ThesisApi(APIView):
                 'value': 'Missing Data: Volume',
                 'detail': 'Please define Application Volume in field trial'}
 
-        netArea = trial.net_surface
-        if netArea is None:
-            return {'value': 'Missing Data: Net area',
-                    'detail': 'Please define Net Surface in trial'}
+        grossArea = trial.gross_surface
+        if grossArea is None:
+            return {'value': 'Missing Data: Gross area',
+                    'detail': 'Please define Gross Surface in trial'}
 
         replicas_per_thesis = trial.replicas_per_thesis
         blocks = trial.blocks
 
         numberThesis = Thesis.getObjects(trial).count()
 
-        litres = netArea * appVolume * replicas_per_thesis
+        litres = grossArea * appVolume * replicas_per_thesis
         surfacePerThesis = (numberThesis * blocks * 10000)
         thesisVolume = litres / surfacePerThesis
         rounding = 2
@@ -209,8 +209,8 @@ class ThesisApi(APIView):
             rounding = 0
 
         detail = 'Volumen per thesis for a {} L/Ha as application volumen, '\
-                 ' on a net area of {} m2 and {} thesis'.format(
-                    appVolume, netArea, numberThesis)
+                 ' on a gross area of {} m2 and {} thesis'.format(
+                    appVolume, grossArea, numberThesis)
         return {'value': '{} {}'.format(round(thesisVolume, rounding), unit),
                 'detail': detail}
 

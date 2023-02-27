@@ -165,14 +165,14 @@ class ThesisViewsTest(TestCase):
 
         api._thesis = Thesis.objects.get(id=theThesisId)
         thesisVolume = api.getThesisVolume()
-        self.assertTrue('Missing Data: Net area' in thesisVolume['value'])
-        netArea = 100
-        self._fieldTrial.net_surface = netArea
+        self.assertTrue('Missing Data: Gross area' in thesisVolume['value'])
+        grossArea = 100
+        self._fieldTrial.gross_surface = grossArea
         self._fieldTrial.save()
 
         api._thesis = Thesis.objects.get(id=theThesisId)
         thesisVolume = api.getThesisVolume()
-        # litres = netArea * appVolume * self._fieldTrial.replicas_per_thesis
+        # litres = grossArea * appVolume * self._fieldTrial.replicas_per_thesis
         # surfacePerThesis = (numberThesis * self._fieldTrial.blocks * 10000)
         # thesisVolumeV = litres / surfacePerThesis
         # unit = 'L'
