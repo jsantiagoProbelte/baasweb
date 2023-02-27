@@ -85,7 +85,7 @@ class AssessmentFormLayout(FormHelper):
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
-                css_class="card-body-baas col-md-4 mt-2")
+                css_class="card-body-baas mt-2")
             ))
 
 
