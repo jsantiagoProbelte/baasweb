@@ -29,7 +29,7 @@
     {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn3'%}
   </div>
   <div class="col-md-5">
-    {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications classColumn='classColumn2'%}
+    {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn2'%}
     <div class="card no-border mb-3" >
       <div class="card-header-baas h4">
         <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">

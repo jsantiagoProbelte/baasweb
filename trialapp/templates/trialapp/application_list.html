@@ -1,0 +1,30 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include "trialapp/header_page_trial.html" with title="Application list" subheader=fieldTrial.name  new_href_id='application-add' refId=fieldTrial.id%}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-body-baas">
+        <table class="table" id="table-items">
+            <thead><tr><th>Date</th><th>DDT</th><th>BBCH</th><th>Comment</th></tr></thead>
+            <tbody>
+        {% for item in object_list %}
+            <tr id="item-{{item.id}}">
+                <td><a href="{% url 'application_api' item.id %}" class="btn btn-secondary">{{item.app_date}}</a></td>
+                <td>DDT-{{item.ddt}}</td>
+                <td>{{item.bbch}}</strong></td>
+                <td>{{item.comment}}</td>
+            </tr>
+        {% empty %}
+            <p>No Thesis yet.</p>
+        {% endfor %}
+            </tbody> 
+        </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

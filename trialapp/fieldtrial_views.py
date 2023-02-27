@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from trialapp.models import\
     Evaluation, FieldTrial, Thesis, TrialAssessmentSet, Project, Objective,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
-    Plague, CultivationMethod, Irrigation
+    Plague, CultivationMethod, Irrigation, Application
 from django.shortcuts import render, get_object_or_404, redirect
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
@@ -208,6 +208,9 @@ class FieldTrialApi(APIView):
         for item in assessments:
             dataTrial['Assessments'].append(
                 {'name': item.getName(), 'value': item.evaluation_date})
+        for item in Application.getObjects(fieldTrial):
+            dataTrial['Applications'].append(
+                {'name': item.getName(), 'value': item.app_date})
         headerRows = LayoutTrial.headerLayout(fieldTrial)
         return render(request, template_name,
                       {'fieldTrial': fieldTrial,

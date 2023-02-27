@@ -1,5 +1,6 @@
 from django.urls import path
-from . import assessment_views, fieldtrial_views, thesis_views, data_views
+from . import assessment_views, fieldtrial_views, thesis_views, data_views,\
+              application_views
 
 urlpatterns = [
     # Field Trials urls
@@ -77,4 +78,22 @@ urlpatterns = [
     path(
         'set_data_point',
         data_views.SetDataEvaluation.as_view(),
-        name='set_data_point')]
+        name='set_data_point'),
+    # Application urls
+    path(
+        'applicationlist/<int:field_trial_id>/',
+        application_views.ApplicationListView.as_view(),
+        name='application-list'),
+    path('application/<int:application_id>/',
+         application_views.ApplicationApi.as_view(),
+         name='application_api'),
+    path('application/add/<int:field_trial_id>/',
+         application_views.ApplicationCreateView.as_view(),
+         name='application-add'),
+    path('application/edit/<int:pk>/',
+         application_views.ApplicationUpdateView.as_view(),
+         name='application-update'),
+    path(
+        'application/delete/<int:pk>/',
+        application_views.ApplicationDeleteView.as_view(),
+        name='application-delete')]

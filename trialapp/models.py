@@ -251,6 +251,42 @@ class Thesis(ModelHelpers, models.Model):
         return "/thesis_api/%i/" % self.id
 
 
+class Application(ModelHelpers, models.Model):
+    app_date = models.DateField()
+    ddt = models.IntegerField(null=True)
+    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
+    comment = models.TextField(null=True)
+    bbch = models.CharField(max_length=25)
+
+    @classmethod
+    def getObjects(cls, field_trial):
+        return cls.objects \
+                .filter(field_trial=field_trial) \
+                .order_by('app_date')
+
+    @classmethod
+    def computeDDT(cls, trial):
+        previous = None
+        # We assume getObjects ordered by date
+        for application in cls.getObjects(trial):
+            if previous is None:
+                application.ddt = 0
+            else:
+                ddt = application.app_date - previous.app_date
+                application.ddt = ddt.days
+            application.save()
+            previous = application
+
+    def getName(self):
+        return 'DDT-{}'.format(self.ddt)
+
+    def get_absolute_url(self):
+        return "/application_api/%i/" % self.id
+
+    def get_success_url(self):
+        return "/applicationlist/%i/" % self.field_trial.id
+
+
 class ProductThesis(ModelHelpers, models.Model):
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

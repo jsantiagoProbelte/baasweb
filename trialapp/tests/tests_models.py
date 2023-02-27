@@ -76,6 +76,19 @@ class TrialAppModelTest(TestCase):
         'crop_stage_majority': 66
     }]
 
+    APPLICATION = [{
+        'field_trial_id': 1,
+        'comment': 'Primera aplication',
+        'app_date': '2022-07-01',
+        'bbch': 66
+        },
+        {
+        'field_trial_id': 1,
+        'comment': 'segunda aplication',
+        'app_date': '2022-07-07',
+        'bbch': 67
+    }]
+
     def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
 

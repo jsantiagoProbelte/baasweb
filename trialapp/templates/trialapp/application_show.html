@@ -1,0 +1,17 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% include "trialapp/header_page_trial.html" with title=application.app_date subheader=fieldTrial.name subtitle='application' edit_href="application-update" item=application delete_url='application-delete'%}
+
+<div class="col-md-6 offset-md-3">
+    <div class="card no-border" >
+      <div class="card-body-baas"> 
+        {% include "baaswebapp/item_list_template.html" with field='Application Date' value=application.app_date%}
+        {% include "baaswebapp/item_list_template.html" with field='DDT' value=application.ddt%}
+        {% include "baaswebapp/item_list_template.html" with field='BBCH' value=application.bbch%}
+        {% include "baaswebapp/item_list_template.html" with field='Comment' value=application.comment%}
+      </div>
+    </div>
+</div>
+
+{% endblock %}
