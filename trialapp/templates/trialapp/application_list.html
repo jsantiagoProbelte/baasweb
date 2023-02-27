@@ -10,13 +10,13 @@
     <div class="col-md-8 offset-md-2">
         <div class="card card-body-baas">
         <table class="table" id="table-items">
-            <thead><tr><th>Date</th><th>DAA</th><th>DAF</th><th>BBCH</th><th>Comment</th></tr></thead>
+            <thead><tr><th>Date</th><th>DAF</th><th>DAA</th><th>BBCH</th><th>Comment</th></tr></thead>
             <tbody>
         {% for item in object_list %}
             <tr id="item-{{item.id}}">
                 <td><a href="{% url 'application_api' item.id %}" class="btn btn-secondary">{{item.app_date}}</a></td>
-                <td>DAA-{{item.daa}}</td>
                 <td>DAF-{{item.daf}}</td>
+                <td>DAA-{{item.daa}}</td>
                 <td>{{item.bbch}}</strong></td>
                 <td>{{item.comment}}</td>
             </tr>

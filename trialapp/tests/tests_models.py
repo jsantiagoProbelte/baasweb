@@ -85,7 +85,12 @@ class TrialAppModelTest(TestCase):
         {
         'field_trial_id': 1,
         'comment': 'segunda aplication',
-        'app_date': '2022-07-07',
+        'app_date': '2022-07-17',
+        'bbch': 67},
+        {
+        'field_trial_id': 1,
+        'comment': 'segunda aplication',
+        'app_date': '2022-07-10',
         'bbch': 67
     }]
 

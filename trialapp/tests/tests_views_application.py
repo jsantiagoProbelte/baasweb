@@ -42,7 +42,7 @@ class ApplicationViewsTest(TestCase):
         application = Application.objects.get(
             app_date=applicationData['app_date'])
         self.assertEqual(application.daa, 0)
-        self.assertEqual(application.getName(), 'DAA-0')
+        self.assertEqual(application.getName(), 'DAF-0')
 
         # Editar y ver nuevo
         request = self._apiFactory.get('application-update')
@@ -95,7 +95,28 @@ class ApplicationViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         item2 = Application.objects.get(app_date=applicationData2['app_date'])
         daa = (item2.app_date - item.app_date).days
+        # Here daa and daf are the same
         self.assertTrue(item2.daa, daa)
+        self.assertTrue(item2.daf, daa)
+
+        # Let's create a new one in between the previous ones
+        applicationData3 = TrialAppModelTest.APPLICATION[2]
+        request = self._apiFactory.post('application-add', applicationData3)
+        self._apiFactory.setUser(request)
+        response = ApplicationCreateView.as_view()(
+            request, field_trial_id=self._fieldTrial.id)
+        self.assertEqual(response.status_code, 302)
+        item3 = Application.objects.get(app_date=applicationData3['app_date'])
+        daa = (item3.app_date - item.app_date).days
+        self.assertTrue(item3.daa, daa)
+        self.assertTrue(item3.daa, daa)
+        self.assertTrue(item3.getName(), 'DAF-{}'.format(daa))
+        # But now item2 daa get updated, but not daf
+        item2 = Application.objects.get(app_date=applicationData2['app_date'])
+        daa2 = (item2.app_date - item3.app_date).days
+        self.assertTrue(item2.daa, daa2)
+        daf2 = (item2.app_date - item.app_date).days
+        self.assertTrue(item2.daf, daf2)
 
         # Let's call application list
         getRequest = self._apiFactory.get('application-list')

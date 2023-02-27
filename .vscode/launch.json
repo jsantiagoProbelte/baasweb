@@ -71,7 +71,7 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                "trialapp.tests.tests_views_evaluation"
+                "trialapp.tests.tests_views_application"
             ],
             "django": true,
             "justMyCode": true

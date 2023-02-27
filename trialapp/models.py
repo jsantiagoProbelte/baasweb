@@ -286,7 +286,7 @@ class Application(ModelHelpers, models.Model):
             previous = application
 
     def getName(self):
-        return 'DAA-{}'.format(self.daa)
+        return 'DAF-{}'.format(self.daf)
 
     def get_absolute_url(self):
         return "/application_api/%i/" % self.id
