@@ -3,3 +3,4 @@ PyPDF2
 docx2txt
 # textract
 # nltk
+tabula-py
