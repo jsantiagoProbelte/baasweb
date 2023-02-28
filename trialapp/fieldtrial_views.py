@@ -112,8 +112,10 @@ class TrialModel():
             'contact': {'label': "Farmer", 'required': False, 'type': T_N},
             'cro': {'label': "CRO", 'required': False, 'type': T_N},
             'location': {'label': "City/Area", 'required': False, 'type': T_N},
-            # 'latitude_str': None,
-            # 'altitude': None,
+            'latitude': {'label': "Latitude", 'required': False,
+                         'type': T_N},
+            'longitude': {'label': "Longitude", 'required': False,
+                          'type': T_N},
         }
     }
 
@@ -303,6 +305,8 @@ class FieldTrialFormLayout(FormHelper):
                     Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
+                            Field('longitude', css_class='mb-2'),
+                            Field('latitude', css_class='mb-2'),
                             Field('cultivation', css_class='mb-2'),
                             Field('irrigation', css_class='mb-2'),
                             css_class="card-body-baas"),
@@ -329,7 +333,8 @@ class FieldTrialForm(forms.ModelForm):
             'distance_between_plants', 'distance_between_rows', 'number_rows',
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
-            'crop_age', 'seed_date', 'transplant_date')
+            'crop_age', 'seed_date', 'transplant_date', 'longitude',
+            'latitude')
 
     def __init__(self, *args, **kwargs):
         super(FieldTrialForm, self).__init__(*args, **kwargs)

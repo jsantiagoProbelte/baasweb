@@ -1,7 +1,6 @@
 
 
 mapboxgl.accessToken = 'pk.eyJ1IjoianNhbnRpYWdvLXByb2JlbHRlIiwiYSI6ImNsZThrajZuMTBnOHgzb25ic3NjcjE2dWEifQ.m26LzPlEAYHiIyIKtXV6QQ';
-var latlongContainer = $('#latlong')
 
 const map = new mapboxgl.Map({
     container: 'map',
@@ -79,6 +78,7 @@ const coordinatesGeocoder = function (query) {
     return geocodes;
     };
 
+var latlongContainer = $('#latlong')
 if (latlongContainer.length>0) {
 // Add the control to the map.
     map.addControl(
@@ -91,4 +91,11 @@ if (latlongContainer.length>0) {
         reverseGeocode: true
         })
         );
+}
+
+var show_maker = $('#show_marker')
+if (show_maker.length>0) {
+    const marker1 = new mapboxgl.Marker()
+    .setLngLat([longitude, latitude])
+    .addTo(map);
 }

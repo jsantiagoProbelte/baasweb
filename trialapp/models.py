@@ -99,8 +99,8 @@ class FieldTrial(ModelHelpers, models.Model):
     contact = models.CharField(max_length=100, null=True)
     cro = models.CharField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=True)
-    latitude_str = models.CharField(max_length=100, null=True)
-    latitude_str = models.CharField(max_length=100, null=True)
+    latitude = models.CharField(max_length=20, null=True)
+    longitude = models.CharField(max_length=20, null=True)
     altitude = models.IntegerField(null=True)
     irrigation = models.ForeignKey(Irrigation,
                                    on_delete=models.CASCADE, null=True)
