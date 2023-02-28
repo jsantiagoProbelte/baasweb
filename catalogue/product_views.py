@@ -90,7 +90,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
 class ProductApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['delete', 'get', 'post']
+    http_method_names = ['get']
     TAG_DIMENSIONS = 'dimensions'
     TAG_CROPS = 'crops'
     TAG_PLAGUES = 'plagues'

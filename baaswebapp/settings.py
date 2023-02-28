@@ -53,7 +53,8 @@ EXTENDED_APPS = [
 CUSTOM_APPS = [
     'baaswebapp',
     'trialapp',
-    'catalogue'
+    'catalogue',
+    'panel'
 ]
 
 INSTALLED_APPS = BASE_APPS + EXTENDED_APPS + CUSTOM_APPS

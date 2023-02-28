@@ -7,7 +7,6 @@
     {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'baaswebapp/img/probelte.png' %}"/>
     {% load bootstrap5 %}
-
     {# Load CSS and JavaScript #}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
@@ -17,11 +16,12 @@
     
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/baaswebapp.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/mapbox-gl-geocoder.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'mapbox-gl.css' %}" />
 
 </head>
 
 <body class="baas-body">
-
   <nav class="navbar navbar-expand-lg navbar-dark bg-custom-main">
     <div class="container-xl">
       <a class="navbar-brand" href="{% url 'home' %}">
@@ -86,6 +86,8 @@
   <script src="{% static 'baaswebapp/scripts/bootstrap.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/respond.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/chart.min.js' %}"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
   {% block scripts %}{% endblock %}
 <br/>
 <br/>

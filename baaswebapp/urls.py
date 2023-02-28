@@ -27,6 +27,7 @@ urlpatterns = [
     path('baaswebapp_index', views.baaswebapp_index, name='baaswebapp_index'),
     path('', include('trialapp.urls')),
     path('', include('catalogue.urls')),
+    path('', include('panel.urls')),
     path("logout", views.logout_request, name="logout"),
     path("login", views.login_request, name="login"),
     path('admin/', admin.site.urls),
