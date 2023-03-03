@@ -26,8 +26,88 @@ class TrialTags:
     KEY_TAGS = [RATING_DATE, SAMPLING_SIZE, RATING_TYPE]
     TAGS = [RATING_DATE, CROP_STAGE, RATING_TYPE, RATING_UNIT,
             INTERVAL, CROP_CODE, PEST_CODE]
-    CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach'}
+    SAMPLING_SIZE_ES = 'Numero submuestras'
+    CROP_CODE_ES = 'Código cultivo'
+    PEST_CODE_ES = 'Código Plaga'
+    RATING_DATE_ES = 'Fecha Valoración'
+    CROP_STAGE_ES = 'Estado del cultivo Mayoritario/Min/Max'
+    RATING_TYPE_ES = 'Descripción'
+    RATING_UNIT_ES = 'Rating Unit'
+    INTERVAL_ES = 'Trt-Eval Interval'
+    KEY_TAGS_ES = [RATING_DATE_ES, SAMPLING_SIZE_ES, RATING_TYPE_ES]
+    TAGS_ES = [RATING_DATE_ES, CROP_STAGE_ES, RATING_TYPE_ES, RATING_UNIT_ES,
+               INTERVAL_ES, CROP_CODE_ES, PEST_CODE_ES]
+    CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach', 
+             'LACSA': 'Letuce'}  # Lactuca sativa
     PESTS = {'BOTRCI': 'botrytis', 'MONIFG': 'Moniliosis'}
+
+    LANG_EN = 'EN'
+    LANG_ES = 'ES'
+
+    ALL_TAGS = {
+        LANG_EN: TAGS,
+        LANG_ES: TAGS_ES}
+
+    ALL_KEY_TAGS = {
+        LANG_EN: KEY_TAGS,
+        LANG_ES: KEY_TAGS_ES}
+
+    @classmethod
+    def getTags(cls, language):
+        return TrialTags.ALL_TAGS[language]
+
+    @classmethod
+    def getKeyTags(cls, language):
+        return TrialTags.ALL_KEY_TAGS[language]
+
+    @classmethod
+    def getRateDateTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.RATING_DATE
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.RATING_DATE_ES
+
+    @classmethod
+    def getRateTypeTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.RATING_TYPE
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.RATING_TYPE_ES
+
+    @classmethod
+    def getRateUnitTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.RATING_UNIT
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.RATING_UNIT_ES
+
+    @classmethod
+    def getPestTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.PEST_CODE
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.PEST_CODE_ES
+
+    @classmethod
+    def getCropTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.CROP_CODE
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.CROP_CODE_ES
+
+    @classmethod
+    def getIntervalTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.INTERVAL
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.INTERVAL_ES
+
+    @classmethod
+    def getStageTag(cls, language):
+        if language == TrialTags.LANG_EN:
+            return TrialTags.CROP_STAGE
+        elif language == TrialTags.LANG_ES:
+            return TrialTags.CROP_STAGE_ES
 
 
 class PdfImportExport_using_based_class(Exception):
@@ -51,7 +131,7 @@ class AssmtTable:
     _thesis = {}
     _createdThesis = []
 
-    def __init__(self, table, trial):
+    def __init__(self, table, trial, language=TrialTags.LANG_EN):
         self._table = table
         self._firstRowValuesNames = 1
         self._trial = trial
@@ -65,6 +145,7 @@ class AssmtTable:
         self._tagPositions = {}
         self._replicaDict = {}
         self._thesis = {}
+        self._language = language
 
     def prepareThesis(self):
         for thesis in Thesis.getObjects(self._trial):
@@ -134,8 +215,10 @@ class AssmtTable:
     def getPest(self):
         if self._trial.plague.name != ModelHelpers.UNKNOWN:
             return
+
+        pestCode = TrialTags.getPestTag(self._language)
         result = self.getKeyTrialValues(
-            Plague, TrialTags.PEST_CODE, TrialTags.PESTS)
+            Plague, pestCode, TrialTags.PESTS)
         if result:
             self._trial.plague = result
             self._trial.save()
@@ -143,8 +226,9 @@ class AssmtTable:
     def getCrop(self):
         if self._trial.crop.name != ModelHelpers.UNKNOWN:
             return
+        cropCode = TrialTags.getCropTag(self._language)
         result = self.getKeyTrialValues(
-            Crop, TrialTags.CROP_CODE, TrialTags.CROPS)
+            Crop, cropCode, TrialTags.CROPS)
         if result:
             self._trial.crop = result
             self._trial.save()
@@ -197,7 +281,7 @@ class AssmtTable:
         return self.getValueAtRow(columnName, position)
 
     def findTagPositions(self):
-        for tag in TrialTags.TAGS:
+        for tag in TrialTags.getTags(self._language):
             position = self.findRowPosition(self._firstColumnName, tag)
             if position is not None:
                 self._tagPositions[tag] = position
@@ -225,7 +309,8 @@ class AssmtTable:
             return None
 
     def correctDatePosition(self, columnName):
-        positionDate = self._tagPositions.get(TrialTags.RATING_DATE, None)
+        dateTag = TrialTags.getRateDateTag(self._language)
+        positionDate = self._tagPositions.get(dateTag, None)
         for i in range(1, positionDate):
             newPosition = positionDate - i
             theDateStr = self.getValueAtRow(columnName, newPosition)
@@ -241,16 +326,18 @@ class AssmtTable:
         # which is for date, because it is also the easier to identify
         # if we get it wrong
         self._correctPosition = 0
+        dateTag = TrialTags.getRateDateTag(self._language)
         theDateStr = self.getTagPositionValue(
-            columnName, TrialTags.RATING_DATE, None)
+            columnName, dateTag, None)
         theDate = self.getValidDate(theDateStr)
         if theDate:
             return theDate
         return self.correctDatePosition(columnName)
 
     def getCropStage(self, columnName):
+        stageTag = TrialTags.getStageTag(self._language)
         return self.getTagPositionValue(
-            columnName, TrialTags.CROP_STAGE, 'Undefined')
+            columnName, stageTag, 'Undefined')
 
     def isColumnWithValues(self, columnName):
         value1 = self._table.loc[self._firstRowValuesNames, columnName]
@@ -271,8 +358,9 @@ class AssmtTable:
             return None
 
         stage = self.getCropStage(columnName)
+        intervalTag = TrialTags.getIntervalTag(self._language)
         interval = self.getTagPositionValue(
-            columnName, TrialTags.INTERVAL, 'Unknown')
+            columnName, intervalTag, 'Unknown')
         if not interval:
             interval = "{}-({})".format(theDate, stage)
 
@@ -284,12 +372,14 @@ class AssmtTable:
 
     def extractAssessmentInfo(self, columnName):
         # Each column may have different assessment type and units
+        rateType = TrialTags.getRateTypeTag(self._language)
         typeName = self.getTagPositionValue(
-            columnName, TrialTags.RATING_TYPE, ModelHelpers.UNKNOWN)
+            columnName, rateType, ModelHelpers.UNKNOWN)
         type = AssessmentType.findOrCreate(name=typeName)
 
+        rateUnit = TrialTags.getRateUnitTag(self._language)
         unitName = self.getTagPositionValue(
-            columnName, TrialTags.RATING_UNIT, ModelHelpers.UNKNOWN)
+            columnName, rateUnit, ModelHelpers.UNKNOWN)
         unit = AssessmentUnit.findOrCreate(name=unitName)
 
         return TrialAssessmentSet.findOrCreate(
@@ -333,8 +423,8 @@ class AssmtTable:
 # Class for tables with multiple lines inside the header
 class AssmtTableMultiLineHeader(AssmtTable):
 
-    def __init__(self, table, trial):
-        super().__init__(table, trial)
+    def __init__(self, table, trial, language=TrialTags.LANG_EN):
+        super().__init__(table, trial, language=language)
 
     def findRowPosition(self, columnText, key):
         index = 0
@@ -418,8 +508,8 @@ class AssmtTableSimpleHeader(AssmtTable):
     _replicasColumnName = None
     _firstRowValuesNames = None
 
-    def __init__(self, table, trial):
-        super().__init__(table, trial)
+    def __init__(self, table, trial, language=TrialTags.LANG_EN):
+        super().__init__(table, trial, language=language)
         self._indexfirstColumnWithValues = None
         # there might be empty
         self.findColumnWithReplicaNames()
@@ -459,12 +549,12 @@ class AssmtTableSimpleHeader(AssmtTable):
                 value = self._table.loc[indexRow, columnName]
                 if isinstance(value, str):
                     if (not foundPlot) and \
-                       'Plot' in value:
+                       'Plot' in value or 'Parcela' in value:
                         foundPlot = True
                         positionPlot = indexRow
                         continue
                     if foundPlot and\
-                       'Mean' in value:
+                       ('Mean' in value or 'Promedio' in value):
                         self._indexReplicaColumn = index
                         self._replicasColumnName = columnName
                         self._firstRowValuesNames = positionPlot + 1
@@ -537,7 +627,7 @@ class AssmtTableSimpleHeader(AssmtTable):
                             indexReplica = 2
                             foundReplicas += 1
                 else:
-                    if 'Mean' in rowInfo:
+                    if 'Mean' in rowInfo or 'Promedio' in rowInfo:
                         expectThesis = True
                         continue
 
@@ -574,7 +664,7 @@ class AssmtTableSimpleHeader(AssmtTable):
             # There could be a nan
             if not isinstance(replicaInfo, str):
                 continue
-            if 'Mean' in replicaInfo:
+            if 'Mean' in replicaInfo or 'Promedio' in replicaInfo:
                 continue
             replica = self.findOrCreateReplica(
                     replicaInfo,
@@ -612,8 +702,9 @@ class ImportPdfTrial:
     _importedTable = 0
     _debug = False
 
-    def __init__(self, filename, debugInfo=False):
+    def __init__(self, filename, debugInfo=False, language=TrialTags.LANG_EN):
         self._filepath = filename
+        self._language = language
         self._debug = debugInfo
         self._evals = []
         self._trial = None
@@ -660,16 +751,17 @@ class ImportPdfTrial:
     def isValuesTable(self, table):
         # There are 2 observed views:
         # if the header contains multiple lines
+        self.printTable(table)
         leftTopHeader = table.columns[0]
         multiLine = None
         if len(leftTopHeader.split('\r')) == 1:
             multiLine = False
-            for key in TrialTags.KEY_TAGS:
+            for key in TrialTags.getKeyTags(self._language):
                 if not self.isKeyInTableRows(table, key, leftTopHeader):
                     return None
         else:
             multiLine = True
-            for key in TrialTags.KEY_TAGS:
+            for key in TrialTags.getKeyTags(self._language):
                 if not self.isKeyInTableColumns(table, key):
                     return None
         if multiLine:
@@ -711,7 +803,7 @@ class ImportPdfTrial:
 
         self.createTrial()
         for eval in evals:
-            evalTable = eval[0](eval[1], self._trial)
+            evalTable = eval[0](eval[1], self._trial, language=self._language)
             if evalTable.isValid():
                 self._evals.append(evalTable)
         return True
@@ -774,8 +866,11 @@ def importOne():
     # fileName = path+'20110302 BOTRYBEL EFICACIA CEBOLLA 04.pdf'
     # fileName = path+'20170501 BOTRYBEL EFICACIA FRESÓN 09.pdf'
     # fileName = path+'20170405 BOTRYBEL EFICACIA FRESÓN 10.pdf'
-    fileName = path+'20170329 BOTRYBEL EFICACIA FRESÓN 11.pdf'
-    importer = ImportPdfTrial(fileName, debugInfo=True)
+    # fileName = path+'20170329 BOTRYBEL EFICACIA FRESÓN 11.pdf'
+    path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/estudios/toimport/'
+    #fileName = path + '20220903 INFORME FINAL  PowerEkky WP Lechuga  BAAS.pdf'
+    fileName = path + '20220904 INFORME FINAL  PowerEkky WP Brocoli BAAS.pdf'
+    importer = ImportPdfTrial(fileName, debugInfo=True, language=TrialTags.LANG_ES)
     importer.run()
 
 
@@ -801,6 +896,7 @@ def importAll():
 
 def discoverReport(inDir, outDir, productos):
     for root, dirs, files in os.walk(os.path.realpath(inDir)):
+        print('\r {}'.format(root), end='')
         for filename in files:
             try:
                 foundProduct = False
@@ -812,6 +908,7 @@ def discoverReport(inDir, outDir, productos):
                     origin = root+'/'+str(filename)
                     outFile = outDir+'/'+str(filename)
                     shutil.copy2(origin, outFile)
+                    print('> {}'.format(filename))
                 else:
                     pass
             except Exception:
@@ -819,9 +916,11 @@ def discoverReport(inDir, outDir, productos):
 
 
 def discoverReports():
-    inDir = '/Volumes/marketing/EXTERNO BMOVE/ENSAYOS AGROBIOTECNOLÓGICOS/BELTHIRUL/'
-    outDir = '/Users/jsantiago/Documents/estudios/belthirul'
-    products = ['BELTHIRUL']
+    inDir = '/Volumes/marketing/EXTERNO BMOVE/ENSAYOS FUN BIOLOGICOS/'
+    #inDir = '/Volumes/marketing/EXTERNO BMOVE/'
+    # outDir = '/Users/jsantiago/Documents/estudios/belthirul'
+    outDir = '/Users/jsantiago/Documents/estudios/botrybel'
+    products = ['BOTRYBEL', 'PB001', 'PB050']
     discoverReport(inDir, outDir, products)
 
 
