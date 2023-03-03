@@ -37,7 +37,7 @@ class TrialTags:
     KEY_TAGS_ES = [RATING_DATE_ES, SAMPLING_SIZE_ES, RATING_TYPE_ES]
     TAGS_ES = [RATING_DATE_ES, CROP_STAGE_ES, RATING_TYPE_ES, RATING_UNIT_ES,
                INTERVAL_ES, CROP_CODE_ES, PEST_CODE_ES]
-    CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach', 
+    CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach',
              'LACSA': 'Letuce'}  # Lactuca sativa
     PESTS = {'BOTRCI': 'botrytis', 'MONIFG': 'Moniliosis'}
 
@@ -868,9 +868,10 @@ def importOne():
     # fileName = path+'20170405 BOTRYBEL EFICACIA FRESÓN 10.pdf'
     # fileName = path+'20170329 BOTRYBEL EFICACIA FRESÓN 11.pdf'
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/estudios/toimport/'
-    #fileName = path + '20220903 INFORME FINAL  PowerEkky WP Lechuga  BAAS.pdf'
+    # fileName = path + '20220903 INFORME FINAL  PowerEkky WP Lechuga  BAAS.pdf'
     fileName = path + '20220904 INFORME FINAL  PowerEkky WP Brocoli BAAS.pdf'
-    importer = ImportPdfTrial(fileName, debugInfo=True, language=TrialTags.LANG_ES)
+    importer = ImportPdfTrial(fileName, debugInfo=True,
+                              language=TrialTags.LANG_ES)
     importer.run()
 
 
@@ -917,7 +918,7 @@ def discoverReport(inDir, outDir, productos):
 
 def discoverReports():
     inDir = '/Volumes/marketing/EXTERNO BMOVE/ENSAYOS FUN BIOLOGICOS/'
-    #inDir = '/Volumes/marketing/EXTERNO BMOVE/'
+    # inDir = '/Volumes/marketing/EXTERNO BMOVE/'
     # outDir = '/Users/jsantiago/Documents/estudios/belthirul'
     outDir = '/Users/jsantiago/Documents/estudios/botrybel'
     products = ['BOTRYBEL', 'PB001', 'PB050']
