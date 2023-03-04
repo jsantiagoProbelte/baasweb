@@ -1,7 +1,7 @@
 # Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from catalogue.models import Product  # , Batch, Treatment, ProductVariant
+from catalogue.models import Product, Batch, Treatment, ProductVariant
 from trialapp.models import Crop, Plague, AssessmentType
 from trialapp.data_models import ThesisData, DataModel, ReplicaData
 from django.shortcuts import render, get_object_or_404
@@ -9,10 +9,11 @@ from rest_framework.views import APIView
 from baaswebapp.graphs import Graph
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
+from django.http import HttpResponseRedirect
 
 
 class ProductFormLayout(FormHelper):
@@ -144,7 +145,6 @@ class ProductApi(APIView):
                                       croplagues, graphPerRow,
                                       level)
             graphs.append(graphDim)
-
         return graphs, '', classGroup
 
     def fetchData(self, product, dimension, croplagues,
@@ -217,52 +217,327 @@ class ProductApi(APIView):
                        'fieldtrials': DataModel.getCountFieldTrials(product),
                        'filterData': filterData,
                        'graphs': graphs,
+                       'batches': Batch.getItems(product),
+                       'variants': ProductVariant.getItems(product),
+                       'treatments': Treatment.getItems(product),
                        'errors': errorgraphs,
                        'classGraphCol': classGraphCol,
                        'titleView': product.getName()})
 
-
-# class BatchForm(FormHelper):
-#     def __init__(self, new=True):
-#         super().__init__()
-#         title = 'New product' if new else 'Upate product'
-#         submitTxt = 'Create' if new else 'Save'
-#         self.add_layout(Layout(Div(
-#             HTML(title), css_class="h4 mt-4"),
-#             Div(Field('product', css_class='mb-3'),
-#                 Field('name', css_class='mb-3'),
-#                 Field('serial_number', css_class='mb-3'),
-#                 Field('rate', css_class='mb-3'),
-#                 Field('rate_unit', css_class='mb-3'),
-#                 FormActions(
-#                     Submit('submit', submitTxt, css_class="btn btn-info"),
-#                     css_class='text-sm-end'),
-#                 css_class="card-body-baas col-md-4 mt-2")
-#             ))
+    @classmethod
+    def url(cls, product_id):
+        return reverse('product_api',
+                       kwargs={'product_id': product_id})
 
 
-# class BatchCreateView(LoginRequiredMixin, CreateView):
-#     model = Batch
-#     fields = ['name', 'vendor', 'category']
-#     template_name = 'baaswebapp/model_edit_form.html'
+##############################
+# BATCH
+class BatchApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
 
-#     def get_form(self, form_class=None):
-#         form = super().get_form(form_class)
-#         form.helper = BatchForm()
-#         return form
+    def get(self, request, *args, **kwargs):
+        itemId = kwargs['pk']
+        template_name = 'catalogue/catalogue_model_show.html'
+        item = get_object_or_404(Batch, pk=itemId)
+        product = item.product_variant.product
+        subtitle = 'batch'
+        values = [{'name': 'name', 'value': item.name},
+                  {'name': 'Variant', 'value': item.product_variant},
+                  {'name': 'Serial Number', 'value': item.serial_number},
+                  {'name': 'rate & unit',
+                   'value': '{} {}'.format(item.rate, item.rate_unit)}]
+        return render(request, template_name,
+                      {'product': product,
+                       'values': values,
+                       'item': item,
+                       'subtitle': subtitle,
+                       'update_url': subtitle + '-update',
+                       'delete_url': subtitle + '-delete'})
 
 
-# class BatchUpdateView(LoginRequiredMixin, UpdateView):
-#     model = Batch
-#     fields = ['name', 'vendor', 'category']
-#     template_name = 'baaswebapp/model_edit_form.html'
+class BatchFormHelper(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New batch' if new else 'Update batch'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(
+                Field('name', css_class='mb-3'),
+                Field('product_variant', css_class='mb-3'),
+                Field('serial_number', css_class='mb-3'),
+                Field('rate', css_class='mb-3'),
+                Field('rate_unit', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', submitTxt, css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas mt-2")
+            ))
 
-#     def get_form(self, form_class=None):
-#         form = super().get_form(form_class)
-#         form.helper = BatchForm(new=False)
-#         return form
+
+class BatchForm(forms.ModelForm):
+    class Meta:
+        model = Batch
+        fields = ['name', 'serial_number', 'rate', 'rate_unit',
+                  'product_variant']
+
+    def __init__(self, *args, **kwargs):
+        product_id = kwargs.pop('product_id')
+        new = kwargs.pop('new')
+        super(BatchForm, self).__init__(*args, **kwargs)
+        self.fields['product_variant'].queryset =\
+            ProductVariant.objects.filter(product_id=product_id).order_by(
+                'name')
+        self.helper = BatchFormHelper(new=new)
+        self.fields['serial_number'].required = False
 
 
-# class BatchDeleteView(DeleteView):
-#     model = Batch
-#     success_url = reverse_lazy('product-list')
+class BatchCreateView(LoginRequiredMixin, CreateView):
+    form_class = BatchForm
+    template_name = 'baaswebapp/model_edit_form.html'
+    model = Batch
+
+    def get_form_kwargs(self):
+        kwargs = super(BatchCreateView, self).get_form_kwargs()
+        kwargs.update({'product_id': self.kwargs.get('product_id')})
+        kwargs.update({'new': True})
+        return kwargs
+
+    def form_valid(self, form):
+        if form.is_valid():
+            item = form.instance
+            item.product_id = self.kwargs["product_id"]
+            item.save()
+            return HttpResponseRedirect(
+                ProductApi.url(item.product_id))
+
+
+class BatchUpdateView(LoginRequiredMixin, UpdateView):
+    model = Batch
+    form_class = BatchForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(BatchUpdateView, self).get_form_kwargs()
+        batch = Batch.objects.get(id=self.kwargs.get('pk'))
+        product = batch.product_variant.product
+        kwargs.update({'product_id': product.id})
+        kwargs.update({'new': False})
+        return kwargs
+
+
+class BatchDeleteView(DeleteView):
+    model = Batch
+    template_name = 'catalogue/batch_delete.html'
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        product_id = self.object.product_variant.product_id
+        self.object.delete()
+        return HttpResponseRedirect(
+            ProductApi.url(product_id))
+
+
+##############################
+# ProductVariant
+class ProductVariantApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        itemId = kwargs['pk']
+        template_name = 'catalogue/catalogue_model_show.html'
+        item = get_object_or_404(ProductVariant, pk=itemId)
+        product = item.product
+        subtitle = 'product_variant'
+        values = [{'name': 'name', 'value': item.name},
+                  {'name': 'description', 'value': item.description}]
+        return render(request, template_name,
+                      {'product': product,
+                       'item': item,
+                       'values': values,
+                       'subtitle': subtitle,
+                       'update_url': subtitle + '-update',
+                       'delete_url': subtitle + '-delete'})
+
+
+class ProductVariantFormHelper(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New ProductVariant' if new else 'Update ProductVariant'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(
+                Field('name', css_class='mb-3'),
+                Field('description', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', submitTxt, css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas mt-2")
+            ))
+
+
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = ['name', 'description']
+
+    def __init__(self, *args, **kwargs):
+        new = kwargs.pop('new')
+        super(ProductVariantForm, self).__init__(*args, **kwargs)
+        self.helper = ProductVariantFormHelper(new=new)
+        self.fields['description'].required = False
+
+
+class ProductVariantCreateView(LoginRequiredMixin, CreateView):
+    model = ProductVariant
+    form_class = ProductVariantForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(ProductVariantCreateView, self).get_form_kwargs()
+        kwargs.update({'new': True})
+        return kwargs
+
+    def form_valid(self, form):
+        if form.is_valid():
+            item = form.instance
+            item.product_id = self.kwargs["product_id"]
+            item.save()
+            return HttpResponseRedirect(
+                ProductApi.url(item.product_id))
+
+
+class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
+    model = ProductVariant
+    form_class = ProductVariantForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(ProductVariantUpdateView, self).get_form_kwargs()
+        kwargs.update({'new': False})
+        return kwargs
+
+
+class ProductVariantDeleteView(DeleteView):
+    model = ProductVariant
+    template_name = 'catalogue/product_variant_delete.html'
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        product_id = self.object.product_id
+        self.object.delete()
+        return HttpResponseRedirect(
+            ProductApi.url(product_id))
+
+
+##############################
+# Treatment
+class TreatmentApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        itemId = kwargs['pk']
+        template_name = 'catalogue/catalogue_model_show.html'
+        item = get_object_or_404(Treatment, pk=itemId)
+        product = item.batch.product_variant.product
+        subtitle = 'treatment'
+        values = [{'name': 'name', 'value': item.name},
+                  {'name': 'batch', 'value': item.batch},
+                  {'name': 'rate & unit',
+                   'value': '{} {}'.format(item.rate, item.rate_unit)}]
+        return render(request, template_name,
+                      {'product': product,
+                       'values': values,
+                       'item': item,
+                       'subtitle': subtitle,
+                       'update_url': subtitle + '-update',
+                       'delete_url': subtitle + '-delete'})
+
+
+class TreatmentFormHelper(FormHelper):
+    def __init__(self, new=True):
+        super().__init__()
+        title = 'New Treatment' if new else 'Update Treatment'
+        submitTxt = 'Create' if new else 'Save'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(
+                Field('name', css_class='mb-3'),
+                Field('batch', css_class='mb-3'),
+                Field('rate', css_class='mb-3'),
+                Field('rate_unit', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', submitTxt, css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas mt-2")
+            ))
+
+
+class TreatmentForm(forms.ModelForm):
+    class Meta:
+        model = Treatment
+        fields = ['name', 'batch', 'rate', 'rate_unit']
+
+    def __init__(self, *args, **kwargs):
+        product_id = kwargs.pop('product_id')
+        new = kwargs.pop('new')
+        super(TreatmentForm, self).__init__(*args, **kwargs)
+        self.fields['batch'].queryset =\
+            Batch.objects.filter(
+                product_variant__product_id=product_id).order_by(
+                    'name')
+        self.helper = TreatmentFormHelper(new=new)
+
+
+class TreatmentCreateView(LoginRequiredMixin, CreateView):
+    model = Treatment
+    form_class = TreatmentForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(TreatmentCreateView, self).get_form_kwargs()
+        product_id = self.kwargs.get('product_id')
+        kwargs.update({'product_id': product_id})
+        kwargs.update({'new': True})
+        return kwargs
+
+    def form_valid(self, form):
+        if form.is_valid():
+            item = form.instance
+            item.product_id = self.kwargs["product_id"]
+            item.save()
+            return HttpResponseRedirect(
+                ProductApi.url(item.product_id))
+
+
+class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Treatment
+    form_class = TreatmentForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(TreatmentUpdateView, self).get_form_kwargs()
+        treatment = Treatment.objects.get(id=self.kwargs.get('pk'))
+        product = treatment.batch.product_variant.product
+        kwargs.update({'product_id': product.id})
+        kwargs.update({'new': False})
+        return kwargs
+
+
+class TreatmentDeleteView(DeleteView):
+    model = Treatment
+    template_name = 'catalogue/treatment_delete.html'
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        product_id = self.object.batch.product_variant.product_id
+        self.object.delete()
+        return HttpResponseRedirect(
+            ProductApi.url(product_id))

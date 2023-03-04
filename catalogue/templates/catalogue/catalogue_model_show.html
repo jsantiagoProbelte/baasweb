@@ -1,0 +1,28 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="col-md-6 offset-md-3">
+<h5 class="mt-4 text-muted">{{product.name}}</h5>
+<h2 class="fw-bold mt-4 mb-3">
+    {{item.name}}
+    <span class="text-muted ml-2">{{subtitle}}</span>
+    <span><div class="btn-group ms-2" role="group">
+        <a href="{% url update_url item.id %}" class="btn btn-secondary btn-sm fs-3 "
+                data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-1"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
+    </div></span>
+    <span> <div class="btn-group float-end" role="group">
+        <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
+        <a href="{% url 'product_api' product.id%}" class="btn btn-light fs-4"
+            data-toggle="tooltip" data-placement="top" title='Go to field trial'>{{product.name}}</a>
+    </div></span>
+</h2>
+<div class="card no-border mb-3" >
+    {% for itemValue in values %}
+        {% include "baaswebapp/item_list_template.html" with field=itemValue.name value=itemValue.value%}
+    {% endfor %}
+</div>
+{% endblock %}
+</div> 

@@ -23,6 +23,7 @@
 <div class="row">
     <div class="col-md-2">
       <div class="card no-border mb-3" >
+        <div class="card-header-baas h5">Product</div>
         <ul class="list-group list-group-flush">
           {% include "baaswebapp/item_list_template.html" with field='Category' value=product.category%}
           {% include "baaswebapp/item_list_template.html" with field='Vendor' value=product.vendor%}
@@ -32,9 +33,13 @@
         </li>
         </ul>
       </div>
-
+      {% include "catalogue/submodel_list.html" with title='Variants' add_url='product_variant-add' itemList=variants update_url='product_variant-api' %}
+      {% include "catalogue/submodel_list.html" with title='Batches' add_url='batch-add' itemList=batches update_url='batch-api'%}
     </div>
-    <div class="col-md-10">
+    <div class="col-md-2">
+      {% include "catalogue/submodel_list.html" with title='Known treatments' add_url='treatment-add' itemList=treatments update_url='treatment-api'%}
+    </div>
+    <div class="col-md-8">
       <div class="card no-border mb-3">
         <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
           {% csrf_token %}

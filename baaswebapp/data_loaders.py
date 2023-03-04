@@ -91,8 +91,7 @@ class TrialDbInitialLoader:
                 'Peach': {'other': 'Melocoton'},
                 'Carrot': {'other': 'Zanahoria'}},
             CropVariety: {
-                'Unknown': {'crop_id': 1}
-            },
+                'Unknown': {'crop_id': 1}},
             Plague: {
                 ModelHelpers.UNKNOWN: {'other': None},
                 "Mites": {"other": "Acaros"},

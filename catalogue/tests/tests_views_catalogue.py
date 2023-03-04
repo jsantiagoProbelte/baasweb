@@ -1,12 +1,18 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from catalogue.models import Product
+from catalogue.models import Product, ProductVariant, RateUnit,\
+    Batch, Treatment
 from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
     AssessmentUnit, Replica, Plague
 from trialapp.data_models import ThesisData, ReplicaData
 from catalogue.product_views import ProductListView, ProductApi,\
-    ProductCreateView, ProductUpdateView, ProductDeleteView
+    ProductCreateView, ProductUpdateView, ProductDeleteView,\
+    ProductVariantCreateView, ProductVariantUpdateView,\
+    ProductVariantDeleteView, BatchCreateView, BatchUpdateView,\
+    BatchDeleteView, TreatmentCreateView, TreatmentUpdateView,\
+    TreatmentDeleteView, TreatmentApi, BatchApi,\
+    ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
 
@@ -266,3 +272,93 @@ class ProductViewsTest(TestCase):
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No data found', count=2)
+
+    def alltogether(self, theClass, data, product,
+                    token, modelApi,
+                    createView, updateView, deleteView):
+        url_model = token+'-api'
+        url_add = token+'-add'
+        url_update = token+'-update'
+        url_delete = token+'-delete'
+        createGet = self._apiFactory.get(url_add, data=data)
+        self._apiFactory.setUser(createGet)
+        response = createView.as_view()(createGet,
+                                        product_id=product.id)
+        self.assertTrue(response.status_code, 200)
+
+        createPost = self._apiFactory.post(url_add, data=data)
+        self._apiFactory.setUser(createPost)
+        response = createView.as_view()(createPost,
+                                        product_id=product.id)
+        self.assertTrue(response.status_code, 302)
+        theItem = theClass.objects.get(name=data['name'])
+
+        modelGet = self._apiFactory.get(url_model)
+        self._apiFactory.setUser(modelGet)
+        response = modelApi.as_view()(modelGet,
+                                      pk=theItem.id)
+        self.assertTrue(response.status_code, 200)
+        self.assertContains(response, theItem.name)
+
+        updateGet = self._apiFactory.get(url_update)
+        self._apiFactory.setUser(updateGet)
+        response = updateView.as_view()(updateGet,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 200)
+
+        newName = 'newName'
+        updatePost = self._apiFactory.post(url_update, data={'name': newName})
+        self._apiFactory.setUser(updatePost)
+        response = updateView.as_view()(updatePost,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 302)
+        self.assertTrue(theClass.objects.get(id=theItem.id).name,
+                        newName)
+
+        deleteGet = self._apiFactory.get(url_delete)
+        self._apiFactory.setUser(deleteGet)
+        response = deleteView.as_view()(deleteGet,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 200)
+        self.assertTrue(theClass.objects.filter(id=theItem.id).exists())
+
+        deletePost = self._apiFactory.post(url_delete)
+        self._apiFactory.setUser(deletePost)
+        response = deleteView.as_view()(deletePost,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 302)
+        self.assertFalse(theClass.objects.filter(id=theItem.id).exists())
+
+    def test_ProductVariant(self):
+        product = Product.objects.create(name='A product')
+        data = {'name': 'vvvvv', 'description': 'description'}
+        self.alltogether(
+            ProductVariant, data, product, 'product_variant',
+            ProductVariantApi,
+            ProductVariantCreateView, ProductVariantUpdateView,
+            ProductVariantDeleteView)
+
+    def test_Batch(self):
+        product = Product.objects.create(name='A product')
+        variant = ProductVariant.objects.create(name='A variant',
+                                                product=product)
+        rateUnit = RateUnit.objects.create(name='unit')
+        data = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
+                'rate_unit': rateUnit.id, 'product_variant': variant.id}
+        self.alltogether(
+            Batch, data, product, 'batch', BatchApi,
+            BatchCreateView, BatchUpdateView, BatchDeleteView)
+
+    def test_Treatment(self):
+        product = Product.objects.create(name='A product')
+        variant = ProductVariant.objects.create(name='A variant',
+                                                product=product)
+        rateUnit = RateUnit.objects.create(name='unit')
+        batch = Batch.objects.create(
+            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
+               'rate_unit': rateUnit, 'product_variant': variant})
+        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id,
+                "batch": batch.id}
+        self.alltogether(
+            Treatment, data, product, 'treatment', TreatmentApi,
+            TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)

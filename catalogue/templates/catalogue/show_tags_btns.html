@@ -1,6 +1,5 @@
 <li class="list-group-item list-group-item-baas col-md-4">
     <label class="btn btn-sm btn-outline-secondary mb-2">{{title}}</label>
-
     {% for tag in tags%}
     <span>
         <input type="checkbox" class="btn-check" name="{{title}}-{{tag.id}}" id="btn-check-{{title}}-{{tag.id}}" value="{{title}}-{{tag.id}}" />
@@ -8,5 +7,4 @@
     </span>
     {% empty %}
     {% endfor %}
-
 </li>
