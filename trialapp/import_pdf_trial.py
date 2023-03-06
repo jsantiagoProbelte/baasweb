@@ -855,7 +855,7 @@ class ImportPdfTrial:
         return
 
 
-def importOne():
+def importOneOld():
     """Run administrative tasks."""
     # os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
     path = '/Users/jsantiago/Documents/estudios/botrybel/to be imported/'
@@ -867,11 +867,24 @@ def importOne():
     # fileName = path+'20170501 BOTRYBEL EFICACIA FRESÓN 09.pdf'
     # fileName = path+'20170405 BOTRYBEL EFICACIA FRESÓN 10.pdf'
     # fileName = path+'20170329 BOTRYBEL EFICACIA FRESÓN 11.pdf'
-    path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/estudios/toimport/'
+    path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data/estudios/toimport/'
     # fileName = path + '20220903 INFORME FINAL  PowerEkky WP Lechuga  BAAS.pdf'
-    fileName = path + '20220904 INFORME FINAL  PowerEkky WP Brocoli BAAS.pdf'
+    fileName = path + '20220905 INFORME FINAL  SoilEkky WP Lechuga  BAAS.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True,
                               language=TrialTags.LANG_ES)
+    importer.run()
+
+    fileName = path + '20220906 INFORME FINAL  SoilEkky WP Brocoli BAAS.pdf'
+    importer = ImportPdfTrial(fileName, debugInfo=True,
+                              language=TrialTags.LANG_ES)
+    importer.run()
+
+
+def importOne():
+    path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data/estudios/2022/'
+    fileName = path + '20220701 BELTHIRUL 16 SC PIMIENTO MURCIA 01.pdf'
+    importer = ImportPdfTrial(fileName, debugInfo=True,
+                              language=TrialTags.LANG_EN)
     importer.run()
 
 
@@ -884,7 +897,7 @@ def importReport(
 
 
 def importAll():
-    inDir = '/Users/jsantiago/Documents/estudios/belthirul'
+    inDir = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data/estudios/2022'
     for root, dirs, files in os.walk(os.path.realpath(inDir)):
         for filename in files:
             filepath = root+'/'+str(filename)
