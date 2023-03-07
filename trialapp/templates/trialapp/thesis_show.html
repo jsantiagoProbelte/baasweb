@@ -51,7 +51,7 @@
     <div class="card no-border" >
       <div class="card-body-baas">
             <h4>Treatment - Old style</h4>
-            <table class="table"><tbody id="table-items">
+            <table class="table"><tbody>
             <tr id="product_thesis">
                 {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
             </tr>
@@ -60,7 +60,6 @@
                     <td>{{item.product}}</td>
                     <td>{{item.rate}}</td>
                     <td>{{item.rate_unit}}</td>
-                    <td><a id='delete-item-{{item.id}}' class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>
                 </tr>
             {% empty %}
                 <p>No products yet.</p>
@@ -83,44 +82,5 @@
 
 {% block scripts %}
 <script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>
-$('.thesis-add-product-form').submit( function(){
-    var element=$(this)
-    var appendTable=$('#table-items')
-    return addProductToThesisCall(element,appendTable)
-});
 
-var manageItemEndPoint = '/manage_product_to_thesis_api';
-
-function addProductToThesisCall(element,appendTable) {
-    var dataJson={}
-    $(element.serializeArray()).each(function(index,obj){
-        dataJson[obj.name]=obj.value;
-    });
-    dataJson['thesis_id']=element.attr('id');
-    $.ajax({
-        type : element.attr('method'), 
-        url: manageItemEndPoint,
-        data: dataJson,
-        
-        success: function(data){
-            console.log("data");
-            appendTable.append(
-                '<tr id="item-'+data.id+'"><td>'+data.product+'</td>\
-                    <td>'+data.rate+'</td>\
-                    <td>'+data.rate_unit+'</td>\
-                    <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>\
-                </tr>'); /* response message */
-        },
-    
-        failure: function() {
-            alert('Error. Please reload');
-        }
-    });
-    return false;
-};
-
-
-
-</script>
 {% endblock %}
