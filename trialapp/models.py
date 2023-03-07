@@ -3,7 +3,7 @@ from django.db import models
 import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
-from catalogue.models import Product
+from catalogue.models import Product, Treatment
 
 
 class Crop(ModelHelpers, models.Model):
@@ -293,6 +293,40 @@ class Application(ModelHelpers, models.Model):
 
     def get_success_url(self):
         return "/applicationlist/%i/" % self.field_trial.id
+
+
+class TreatmentThesis(ModelHelpers, models.Model):
+    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
+
+    @classmethod
+    def getObjects(cls, thesis: Thesis):
+        return cls.objects \
+                .filter(thesis=thesis) \
+                .order_by('treatment__name')
+
+    @classmethod
+    def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
+        return cls.objects \
+                .filter(thesis__field_trial=fieldTrial) \
+                .order_by('treatment__name')
+
+    @classmethod
+    def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
+                                addNull=False, asDict=False):
+        return cls._getSelectList(
+            cls.getObjectsPerFieldTrial(fieldTrial),
+            asDict=asDict,
+            addNull=addNull)
+
+    @classmethod
+    def create_TreatmentThesis(cls, **kwargs):
+        return cls.objects.create(
+            thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
+            product=Treatment.objects.get(pk=kwargs['treatment_id']))
+
+    def getName(self):
+        return self.treatment.getName()
 
 
 class ProductThesis(ModelHelpers, models.Model):

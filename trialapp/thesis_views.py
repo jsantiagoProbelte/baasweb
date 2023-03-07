@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from catalogue.models import Product  # , Batch
 from trialapp.models import FieldTrial, ProductThesis, RateUnit,\
-    Thesis, Replica
+    Thesis, Replica, TreatmentThesis
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -37,6 +37,7 @@ class ThesisListView(LoginRequiredMixin, ListView):
                                                        new_list)}
 
 
+# TO BE DELETED
 class ManageProductToThesis(APIView):
     authentication_classes = []
     permission_classes = []
@@ -223,14 +224,77 @@ class ThesisApi(APIView):
         layout = LayoutTrial.showLayout(
             self._thesis.field_trial, None,
             Thesis.getObjects(trial), onlyThis=thesis_id)
+        addTreatmentView = TreatmentThesisCreateView(request=request)
+        addTreatmentForm = addTreatmentView.get_form()
         return render(
             request, template_name, {
                 'fieldTrial': trial,
                 'thesis': self._thesis,
                 'title': self._thesis.getTitle(),
                 'thesisVolume': self.getThesisVolume(),
+                'treatments': TreatmentThesis.getObjects(self._thesis),
+                'addTreatmentForm': addTreatmentForm,
                 'product_list': ProductThesis.getObjects(self._thesis),
-                'products': Product.getSelectList(asDict=True),
-                'rate_units': RateUnit.getSelectList(asDict=True),
+                # 'products': Product.getSelectList(asDict=True),
+                # 'rate_units': RateUnit.getSelectList(asDict=True),
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': layout})
+
+
+class TreatmentThesisFormLayout(FormHelper):
+    def __init__(self):
+        super().__init__()
+        title = 'Add treatment to thesis'
+        self.add_layout(Layout(Div(
+            HTML(title), css_class="h4 mt-4"),
+            Div(Field('treatment', css_class='mb-3'),
+                FormActions(
+                    Submit('submit', 'Add', css_class="btn btn-info"),
+                    css_class='text-sm-end'),
+                css_class="card-body-baas mt-2")
+            ))
+
+
+class TreatmentThesisForm(forms.ModelForm):
+    class Meta:
+        model = TreatmentThesis
+        fields = ('treatment',)
+
+
+class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
+    model = TreatmentThesis
+    form_class = TreatmentThesisForm
+    template_name = 'baaswebapp/model_edit_form.html'
+
+    def get_form(self, form_class=TreatmentThesisForm):
+        form = super().get_form(form_class)
+        form.helper = TreatmentThesisFormLayout()
+        return form
+
+    def form_valid(self, form):
+        if form.is_valid():
+            thesis_id = self.kwargs["thesis_id"]
+            treatmentThesis = form.instance
+            treatmentThesis.thesis_id = thesis_id
+            treatmentThesis.save()
+            return HttpResponseRedirect(self.get_success_url(thesis_id))
+
+    def get_success_url(self, thesis_id):
+        return reverse(
+            'thesis_api',
+            kwargs={'thesis_id': thesis_id})
+
+
+class TreatmentThesisDeleteView(DeleteView):
+    model = TreatmentThesis
+    success_url = reverse_lazy('thesis_api')
+    template_name = 'trialapp/treatment_thesis_delete.html'
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        thesis_id = self.object.thesis_id
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url(thesis_id))
+
+    def get_success_url(self, thesis_id):
+        return reverse('thesis_api', kwargs={'thesis_id': thesis_id})

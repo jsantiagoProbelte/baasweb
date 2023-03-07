@@ -1,12 +1,13 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, ProductThesis, Replica,\
-                            ApplicationMode
+from catalogue.models import Product, ProductVariant, Batch, Treatment,\
+    RateUnit
+from trialapp.models import FieldTrial, Thesis, Replica,\
+                            ApplicationMode, TreatmentThesis
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.thesis_views import ThesisCreateView, ThesisUpdateView,\
-                                  ThesisApi, ManageProductToThesis,\
-                                  ThesisDeleteView,\
-                                  ThesisListView
+from trialapp.thesis_views import\
+    ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView,\
+    ThesisListView, TreatmentThesisCreateView, TreatmentThesisDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -68,7 +69,7 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(thesis2.description, newdescription)
         self.assertEqual(response.status_code, 302)
 
-    def test_addProductThesis(self):
+    def test_addTreatmentThesis(self):
         thesisData = TrialAppModelTest.THESIS[0].copy()
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
@@ -79,30 +80,51 @@ class ThesisViewsTest(TestCase):
         thesis = Thesis.objects.get(name=thesisData['name'])
 
         # Lets add some products
-        productData = {'product': 1, 'rate_unit': 1, 'rate': 6,
-                       'thesis_id': thesis.id}
-        addProductThesisRequest = self._apiFactory.post(
-            '/manage_product_to_thesis_api',
-            data=productData)
-        self._apiFactory.setUser(addProductThesisRequest)
+        product = Product.objects.get(id=2)
+        variant = ProductVariant.objects.create(name='A variant',
+                                                product=product)
+        rateUnit = RateUnit.objects.create(name='unit')
+        batch = Batch.objects.create(
+            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
+               'rate_unit': rateUnit, 'product_variant': variant})
+        treatment = Treatment.objects.create(
+            **{"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit,
+                "batch": batch})
 
-        self.assertEqual(ProductThesis.objects.count(), 0)
-        apiView = ManageProductToThesis()
-        response = apiView.post(addProductThesisRequest)
-        self.assertEqual(response.status_code, 200)
-        thesisProducts = ProductThesis.objects.all()
-        self.assertEqual(len(thesisProducts), 1)
-        self.assertEqual(thesisProducts[0].thesis.name,
-                         thesis.name)
+        # TODO: Let;s add some ThesisTreatment
+        data = {'treatment': treatment.id}
+        token = 'treatment_thesis'
+        createView = TreatmentThesisCreateView
+        deleteView = TreatmentThesisDeleteView
+        theClass = TreatmentThesis
+        url_add = token+'-add'
+        url_delete = token+'-delete'
+        createGet = self._apiFactory.get(url_add, data=data)
+        self._apiFactory.setUser(createGet)
+        response = createView.as_view()(createGet,
+                                        thesis_id=thesis.id)
+        self.assertTrue(response.status_code, 200)
 
-        deleteData = {'item_id': thesisProducts[0].id}
-        deleteProductThesisRequest = self._apiFactory.post(
-            'manage_product_to_thesis_api',
-            data=deleteData)
-        response = apiView.delete(deleteProductThesisRequest)
-        self._apiFactory.setUser(deleteProductThesisRequest)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(ProductThesis.objects.count(), 0)
+        createPost = self._apiFactory.post(url_add, data=data)
+        self._apiFactory.setUser(createPost)
+        response = createView.as_view()(createPost,
+                                        thesis_id=thesis.id)
+        self.assertTrue(response.status_code, 302)
+        theItem = theClass.objects.get(treatment=treatment)
+
+        deleteGet = self._apiFactory.get(url_delete)
+        self._apiFactory.setUser(deleteGet)
+        response = deleteView.as_view()(deleteGet,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 200)
+        self.assertTrue(theClass.objects.filter(treatment=treatment).exists())
+
+        deletePost = self._apiFactory.post(url_delete)
+        self._apiFactory.setUser(deletePost)
+        response = deleteView.as_view()(deletePost,
+                                        pk=theItem.id)
+        self.assertTrue(response.status_code, 302)
+        self.assertFalse(theClass.objects.filter(treatment=treatment).exists())
 
     def test_thesis_api(self):
         # Creating thesis , but not with all attributres

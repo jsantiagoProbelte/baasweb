@@ -2,7 +2,8 @@ from django.contrib import admin
 # Register your models here.
 from trialapp.models import FieldTrial, Crop, TrialType, Project, Objective,\
     RateUnit, Plague, TrialStatus, AssessmentUnit, AssessmentType,\
-    ProductThesis, Irrigation, CropVariety, ApplicationMode, CultivationMethod
+    ProductThesis, Irrigation, CropVariety, ApplicationMode, CultivationMethod,\
+    TreatmentThesis
 
 
 class FieldTrialAdmin(admin.ModelAdmin):
@@ -25,3 +26,4 @@ admin.site.register(CropVariety)
 admin.site.register(Irrigation)
 admin.site.register(ApplicationMode)
 admin.site.register(CultivationMethod)
+admin.site.register(TreatmentThesis)

@@ -43,10 +43,13 @@ urlpatterns = [
         'thesis/delete/<int:pk>/',
         thesis_views.ThesisDeleteView.as_view(),
         name='thesis-delete'),
-    path(
-        'manage_product_to_thesis_api',
-        thesis_views.ManageProductToThesis.as_view(),
-        name='manage_product_to_thesis_api'),
+    # treatment in thesis
+    path('treatment_thesis/add/<int:thesis_id>/',
+         thesis_views.TreatmentThesisCreateView.as_view(),
+         name='treatment_thesis-add'),
+    path('treatment_thesis/delete/<int:pk>/',
+         thesis_views.TreatmentThesisDeleteView.as_view(),
+         name='treatment_thesis-delete'),
     # Evaluation urls
     path(
         'assessment_api/<int:evaluation_id>/',
