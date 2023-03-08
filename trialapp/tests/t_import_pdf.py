@@ -12,6 +12,7 @@ from trialapp.import_pdf_trial import ImportPdfTrial, TrialTags,\
 class ImportPdfTest(TestCase):
 
     _importer = None
+    _root = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data/estudios/testing/'
 
     def loader(self, filename, debug=False):
         importer = ImportPdfTrial(filename, debugInfo=debug)
@@ -22,12 +23,11 @@ class ImportPdfTest(TestCase):
 
     def setUp(self):
         TrialDbInitialLoader.loadInitialTrialValues()
-        root = '/Users/jsantiago/Code/scanfiles/import_trials/tests/fixtures/'
-        self._filename = root+'20150201 BOTRYBEL EFICACIA FRESÓN 01.pdf'
+        self._filename = self._root+'20150201 BOTRYBEL EFICACIA FRESÓN 01.pdf'
         self._filename2 = \
-            root+'20171102 BOTRYBEL EFICACIA CPCP PEPINO PORTUGAL 09.pdf'
+            self._root+'20171102 BOTRYBEL EFICACIA CPCP PEPINO PORTUGAL 09.pdf'
         self._filename3 = \
-            root+'20180302 BOTRYBEL EFICACIA FRUTAL DE HUESO 03.pdf'
+            self._root+'20180302 BOTRYBEL EFICACIA FRUTAL DE HUESO 03.pdf'
 
         # Thesis are in first column. They look like this:
         # '1 PB00112 mL/L'
@@ -303,8 +303,7 @@ class ImportPdfTest(TestCase):
 # noqa: E501 |  54 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 8,00            |
 
     def test_extractThesisReplicasSameColumn(self):
-        root = './trialapp/tests/fixtures/input/'
-        thisFilename = root+'20110202 BOTRYBEL EFICACIA FRESÓN 02.pdf'
+        thisFilename = self._root+'20110202 BOTRYBEL EFICACIA FRESÓN 02.pdf'
         importer = self.loader(thisFilename)
         firstTable = importer._evals[0]
         importer.printTable(firstTable._table)
@@ -320,8 +319,7 @@ class ImportPdfTest(TestCase):
             number=4).exists())
 
     def test_similarThesisnames(self):
-        root = './trialapp/tests/fixtures/input/'
-        thisFilename = root+'20170501 BOTRYBEL EFICACIA FRESÓN 09.pdf'
+        thisFilename = self._root+'20170501 BOTRYBEL EFICACIA FRESÓN 09.pdf'
         importer = self.loader(thisFilename)
         for table in importer._evals:
             table.prepareThesis()
@@ -332,8 +330,7 @@ class ImportPdfTest(TestCase):
         self.assertEqual(numberThesis, 5)
 
     def test_extractThesisName(self):
-        root = './trialapp/tests/fixtures/input/'
-        thisFilename = root+'20110202 BOTRYBEL EFICACIA FRESÓN 02.pdf'
+        thisFilename = self._root+'20110202 BOTRYBEL EFICACIA FRESÓN 02.pdf'
         importer = self.loader(thisFilename)
         tlb = importer._evals[0]
         number, name, firstReplica = tlb.extractThesisInfo(

@@ -19,7 +19,7 @@ class TrialDbInitialLoader:
             TrialType: [ModelHelpers.UNKNOWN, 'Development',
                         'Commercial Demo', 'Registry', 'Demand Generation'],
             TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
-                          'Anual Recurrence', 'Close'],
+                          'Anual Recurrence', 'Close', 'Imported'],
             Irrigation: [ModelHelpers.UNKNOWN, 'Dry', 'Manta',
                          'Aspersion', 'Drip', 'Hydroponic', 'Others'],
             ApplicationMode: [
