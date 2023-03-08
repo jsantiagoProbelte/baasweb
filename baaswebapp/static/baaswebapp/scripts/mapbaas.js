@@ -1,5 +1,6 @@
-var clickmarker;
-const form = document.getElementById("submit-recommendation")
+var clickMarker;
+const latitudeInput = document.getElementById("latinput")
+const longitudeInput = document.getElementById("longinput")
 mapboxgl.accessToken = 'pk.eyJ1IjoianNhbnRpYWdvLXByb2JlbHRlIiwiYSI6ImNsZThrajZuMTBnOHgzb25ic3NjcjE2dWEifQ.m26LzPlEAYHiIyIKtXV6QQ';
 
 const map = new mapboxgl.Map({
@@ -104,17 +105,38 @@ map.on('click', (e) => {
     // Copy coordinates array.
     const coordinates = e.lngLat;
     console.log(coordinates)
+    console.log()
 
-    if (!clickmarker) {
-        clickmarker = new mapboxgl.Marker()
+    if (!clickMarker) {
+        clickMarker = new mapboxgl.Marker()
         .setLngLat(coordinates)
         .addTo(map);
-        form.append("latitude", coordinates[0])
-        form.append("longitude", coordinates[1])
     } else {
-        form.setAttribute("latitude", coordinates[0])
-        form.setAttribute("longitude", coordinates[1])
-        clickmarker.setLngLat(coordinates)
+        clickMarker.setLngLat(coordinates)
     }
+    latitude  = coordinates["lat"]
+    longitude = coordinates["lng"]
 
 });
+
+function populateWeatherTable(data){
+    const dayCount = data[0]['coordinates'][0]['dates'].length;
+    const temperatures = data[0]['coordinates'][0]['dates'];
+    const humidities = data[1]['coordinates'][0]['dates'];
+
+    if(weatherTableBody.innerHTML){
+        weatherTableBody.innerHTML = ""
+    }
+    for (var i = 0; i < dayCount; i++){
+        var tableParent = document.createElement("tr")
+        tableParent.insertAdjacentHTML("beforeend", `<th scope="row">${i + 1}</th>`)
+        tableParent.insertAdjacentHTML("beforeend", `<td>${temperatures[i]['value']}</td>`)
+        tableParent.insertAdjacentHTML("beforeend", `<td>${humidities[i]['value']}</td>`)
+        weatherTableBody.appendChild(tableParent)
+        weatherTable.style.display = ""
+    }
+}
+
+function populateRiskTable(data){
+    //TODO
+}

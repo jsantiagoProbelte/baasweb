@@ -3,8 +3,11 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 import requests
 import json
-from datetime import timedelta, date
+from datetime import timedelta, datetime
+from django.http import JsonResponse
 import base64
+
+# Secret
 base64key = base64.b64encode(
     "probelte_arentz:z0GuO6Tk6l".encode("ascii")).decode("ascii")
 
@@ -27,13 +30,14 @@ class RecomenderApi(APIView):
         headers = {'Authorization': 'Basic ' + base64key}
         res = requests.get(
             'https://api.meteomatics.com/' +
-            str(date.today().isoformat()) + '--'
-            + str((date.today() + timedelta(days=5)).isoformat()) +
-            'P1D/t_min_2m_1h:C,absolute_humidity_2m:gm3/' + str(latitude) + ','
+            str(datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')) + '--'
+            + str((datetime.now() + timedelta(days=4)).strftime('%Y-%m-%dT%H:%M:%SZ')) +
+            ':P1D/t_min_2m_1h:C,absolute_humidity_2m:gm3/' +
+            str(latitude) + ','
             + str(longitude) + '/json?model=mix', headers=headers)
-        response = json.loads(res.text)
-        print(response)
-        return response
+        res_json = json.loads(res.content)
+        print(res_json)
+        return res_json
 
     def getLatLong(self, kwargs):
         latitude = RecomenderApi.DEFAULT_LATITUDE
@@ -64,7 +68,8 @@ class RecomenderApi(APIView):
         return render(request, RecomenderApi.TEMPLATE, data)
 
     def post(self, request, *args, **kwargs):
-        print(request)
-        # data = self.prepareData(kwargs)
-        # return render(request, RecomenderApi.TEMPLATE, data)
-        return
+        latitude = request.POST["latitude"]
+        longitude = request.POST["longitude"]
+        weather = self.fetchWeather(latitude, longitude)
+        risks = self.computeRisks()
+        return JsonResponse()

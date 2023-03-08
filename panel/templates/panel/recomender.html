@@ -9,11 +9,21 @@
     <div class="col-md-4">
         <div id="map" width="100%" style='height:500px'></div>
         <div id="latlong"></div>
-        <form id="submit-recommendation" action="{% url 'recomender' %}" method="POST">
-            {% csrf_token %}
-            {{ form|crispy }}
-        <input type="submit" name="get_recommendation" value="Get Recommendation" class="btn btn-primary btn-sm float-end"/>
-        </form>
+        <button id="fetch" type="button" class="btn btn-primary">Get Recommendation</button>
+    </div>
+    <div class="col-md-4">
+        <table class="table table-dark" id="weathertable" style="display: none">
+            <thead>
+              <tr>
+                <th scope="col">Day #</th>
+                <th scope="col">Temperature (°C)</th>
+                <th scope="col">Absolute humidity</th>
+              </tr>
+            </thead>
+            <tbody id="weathertablebody">
+            </tbody>
+        </table>
+        
     </div>
 
 </div>
@@ -23,6 +33,29 @@
 <script>
     var latitude={{latitude}};
     var longitude={{longitude}};
+    const weatherTable = document.getElementById('weathertable')
+    const weatherTableBody = document.getElementById('weathertablebody')
+
+    document.getElementById("fetch").addEventListener("click", fetchRecs, false);
+    function fetchRecs() {
+        const formData = new FormData()
+        formData.append('latitude', latitude)
+        formData.append('longitude', longitude)
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+        fetch("{% url 'recomender' %}", {
+            method: "POST",
+            body: formData
+          })
+          .then(response => response.json())
+            .then(data => {
+                populateWeatherTable(data['data'])
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
 </script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
