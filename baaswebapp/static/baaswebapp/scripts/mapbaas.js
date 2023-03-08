@@ -1,5 +1,5 @@
-
-
+var clickmarker;
+const form = document.getElementById("submit-recommendation")
 mapboxgl.accessToken = 'pk.eyJ1IjoianNhbnRpYWdvLXByb2JlbHRlIiwiYSI6ImNsZThrajZuMTBnOHgzb25ic3NjcjE2dWEifQ.m26LzPlEAYHiIyIKtXV6QQ';
 
 const map = new mapboxgl.Map({
@@ -99,3 +99,22 @@ if (show_maker.length>0) {
     .setLngLat([longitude, latitude])
     .addTo(map);
 }
+
+map.on('click', (e) => {
+    // Copy coordinates array.
+    const coordinates = e.lngLat;
+    console.log(coordinates)
+
+    if (!clickmarker) {
+        clickmarker = new mapboxgl.Marker()
+        .setLngLat(coordinates)
+        .addTo(map);
+        form.append("latitude", coordinates[0])
+        form.append("longitude", coordinates[1])
+    } else {
+        form.setAttribute("latitude", coordinates[0])
+        form.setAttribute("longitude", coordinates[1])
+        clickmarker.setLngLat(coordinates)
+    }
+
+});
