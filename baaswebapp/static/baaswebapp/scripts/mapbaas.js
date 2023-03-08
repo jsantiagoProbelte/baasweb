@@ -122,7 +122,9 @@ map.on('click', (e) => {
 function populateWeatherTable(data){
     const dayCount = data[0]['coordinates'][0]['dates'].length;
     const temperatures = data[0]['coordinates'][0]['dates'];
-    const humidities = data[1]['coordinates'][0]['dates'];
+    const dewTemperatures = data[1]['coordinates'][0]['dates'];
+    const humidities = data[2]['coordinates'][0]['dates'];
+
 
     if(weatherTableBody.innerHTML){
         weatherTableBody.innerHTML = ""
@@ -131,7 +133,9 @@ function populateWeatherTable(data){
         var tableParent = document.createElement("tr")
         tableParent.insertAdjacentHTML("beforeend", `<th scope="row">${i + 1}</th>`)
         tableParent.insertAdjacentHTML("beforeend", `<td>${temperatures[i]['value']}</td>`)
+        tableParent.insertAdjacentHTML("beforeend", `<td>${dewTemperatures[i]['value']}</td>`)
         tableParent.insertAdjacentHTML("beforeend", `<td>${humidities[i]['value']}</td>`)
+    
         weatherTableBody.appendChild(tableParent)
         weatherTable.style.display = ""
     }

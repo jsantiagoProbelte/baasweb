@@ -32,7 +32,7 @@ class RecomenderApi(APIView):
             'https://api.meteomatics.com/' +
             str(datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')) + '--'
             + str((datetime.now() + timedelta(days=4)).strftime('%Y-%m-%dT%H:%M:%SZ')) +
-            ':P1D/t_min_2m_1h:C,absolute_humidity_2m:gm3/' +
+            ':P1D/t_min_2m_1h:C,dew_point_2m:C,absolute_humidity_2m:gm3/' +
             str(latitude) + ','
             + str(longitude) + '/json?model=mix', headers=headers)
         res_json = json.loads(res.content)
@@ -71,5 +71,5 @@ class RecomenderApi(APIView):
         latitude = request.POST["latitude"]
         longitude = request.POST["longitude"]
         weather = self.fetchWeather(latitude, longitude)
-        risks = self.computeRisks()
-        return JsonResponse()
+        risks = self.computeRisks(weather)
+        return JsonResponse(weather)
