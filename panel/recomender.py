@@ -36,7 +36,6 @@ class RecomenderApi(APIView):
             str(latitude) + ','
             + str(longitude) + '/json?model=mix', headers=headers)
         res_json = json.loads(res.content)
-        print(res_json)
         return res_json
 
     def getLatLong(self, kwargs):

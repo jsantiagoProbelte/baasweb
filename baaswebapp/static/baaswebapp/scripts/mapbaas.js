@@ -81,17 +81,27 @@ const coordinatesGeocoder = function (query) {
 
 var latlongContainer = $('#latlong')
 if (latlongContainer.length>0) {
-// Add the control to the map.
-    map.addControl(
-        new MapboxGeocoder({
+    geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         localGeocoder: coordinatesGeocoder,
-        zoom: 4,
+        zoom: 12,
         placeholder: 'Search location',
-        mapboxgl: mapboxgl,
         reverseGeocode: true
-        })
-        );
+    })
+    // Add the control to the map.
+    map.addControl(geocoder);
+    geocoder.on('result', function(e) {
+        console.log(e.result.center)
+        if (!clickMarker) {
+            clickMarker = new mapboxgl.Marker()
+            .setLngLat(e.result.center)
+            .addTo(map);
+        } else {
+            clickMarker.setLngLat(e.result.center)
+        }
+        latitude  = e.result.center[1]
+        longitude = e.result.center[0]
+    })
 }
 
 var show_maker = $('#show_marker')
@@ -104,9 +114,6 @@ if (show_maker.length>0) {
 map.on('click', (e) => {
     // Copy coordinates array.
     const coordinates = e.lngLat;
-    console.log(coordinates)
-    console.log()
-
     if (!clickMarker) {
         clickMarker = new mapboxgl.Marker()
         .setLngLat(coordinates)
