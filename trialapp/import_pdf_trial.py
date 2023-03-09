@@ -851,7 +851,7 @@ class ImportPdfTrial:
 
     def run(self):
         if not self.walkThrough():
-            return
+            return False
         print(".......................................")
         for table in self._evals:
             self.printTable(table._table)
@@ -861,7 +861,11 @@ class ImportPdfTrial:
         print('Imported tables {}/{}'.format(
             self._importedTable,
             len(self._evals)))
-        return
+        if self._importedTable > 0:
+            return True
+        else:
+            self._trial.delete()
+            return False
 
 
 def importOneOld():
@@ -907,15 +911,25 @@ def importReport(
 
 def importAll():
     inDir = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-            '/estudios/2022'
+            '/estudios/todo/belthirul/'
+    moveDir = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/'\
+              'Data/estudios/imported/'
     for root, dirs, files in os.walk(os.path.realpath(inDir)):
         for filename in files:
+            move = False
             filepath = root+'/'+str(filename)
-            try:
-                importer = ImportPdfTrial(filepath, debugInfo=True)
-                importer.run()
-            except Exception:
-                print("[EEE]{}".format(filename))
+            nameTrial = filename.split('.')[0]
+            if FieldTrial.objects.filter(name=nameTrial).exists():
+                move = True
+            else:
+                try:
+                    importer = ImportPdfTrial(filepath, debugInfo=True)
+                    move = importer.run()
+                except Exception:
+                    print("[EEE]{}".format(filename))
+            if move and moveDir:
+                target = moveDir + str(filename)
+                shutil.move(filepath, target)
 
 
 def discoverReport(inDir, outDir, productos):
@@ -950,14 +964,14 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/todo/belthirul/'
+           '/estudios/todo/botrybel/'
     fileName = path + '201210404 BELTHIRUL FRESA ITALIA 2.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 
 
 if __name__ == '__main__':
-    importOne()
+    # importOne()
     # importOneMapa()
     # discoverReports()
-    # importAll()
+    importAll()
