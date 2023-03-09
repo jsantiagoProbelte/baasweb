@@ -39,6 +39,17 @@ COLOR_bs_text_color_table = '#fff'
 COLOR_bg_color = '#282828'
 COLOR_bg_color_cards = '#333333'
 
+ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
+              COLOR_blue, COLOR_grey, COLOR_black, COLOR_bio_morado,
+              COLOR_morado,
+              COLOR_violeta, COLOR_bs_blue, COLOR_bs_indigo, COLOR_bs_purple,
+              COLOR_bs_pink, COLOR_bs_red,  COLOR_bs_orange, COLOR_bs_yellow,
+              COLOR_bs_green, COLOR_bs_teal, COLOR_bs_cyan, COLOR_bs_white,
+              COLOR_bs_gray, COLOR_bs_gray_dark, COLOR_bs_primary,
+              COLOR_bs_secondary, COLOR_bs_success, COLOR_bs_info,
+              COLOR_bs_warning, COLOR_bs_danger, COLOR_bs_light,
+              COLOR_bs_dark, COLOR_bs_text_color, COLOR_bg_color]
+
 
 class Graph:
     _graphData = []
@@ -347,9 +358,11 @@ class GraphStat():
 
     def prepareData(self):
         statColors = {}
+        lenColors = len(ALL_COLORS)
         datasetKeys = list(self._rawDataDict.keys())
         for index in range(0, len(datasetKeys)):
-            statColors[datasetKeys[index]] = Graph.COLOR_LIST[index+1]
+            position = index % lenColors
+            statColors[datasetKeys[index]] = ALL_COLORS[position]
 
         theDataTraces = [{
             "name": datasetKey,

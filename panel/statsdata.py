@@ -18,7 +18,7 @@ class StatsDataApi(APIView):
 
     def getFieldtrialStats(self,
                            keyName='trial_status__name',
-                           title='Trials per status',
+                           title='trials per Status',
                            product=None):
         lastMonth = BaaSHelpers.lastXMonthDateIso(StatsDataApi.LAST_MONTHS)
         filterCriteria = {'created__gt': lastMonth}
@@ -49,10 +49,13 @@ class StatsDataApi(APIView):
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
         stats = [
-            {'title': '({}) Trials'.format(totalTrials),
+            {'title': '({}) Lasts {} months trials distributions by creation'
+                      ' date'.format(totalTrials, StatsDataApi.LAST_MONTHS),
              'graphs': [self.getFieldtrialStats(),
                         self.getFieldtrialStats(keyName='product__name',
-                                                title='Trials per product')]}
+                                                title='trials per Product'),
+                        self.getFieldtrialStats(keyName='crop__name',
+                                                title='trials per Crop')]}
         ]
         data = {'stats': stats}
         return render(request, StatsDataApi.TEMPLATE, data)
