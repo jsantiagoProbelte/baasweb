@@ -25,6 +25,8 @@ from trialapp.forms import MyDateInput
 
 class FieldTrialFilter(django_filters.FilterSet):
 
+    trial_status = django_filters.ModelChoiceFilter(
+        queryset=TrialStatus.objects.all().order_by('name'))
     objective = django_filters.ModelChoiceFilter(
         queryset=Objective.objects.all().order_by('name'))
     crop = django_filters.ModelChoiceFilter(
@@ -36,7 +38,7 @@ class FieldTrialFilter(django_filters.FilterSet):
 
     class Meta:
         model = FieldTrial
-        fields = ['objective', 'product', 'crop', 'plague']
+        fields = ['trial_status', 'objective', 'product', 'crop', 'plague']
 
 
 class TrialModel():
