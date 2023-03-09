@@ -16,9 +16,10 @@ class StatsDataApi(APIView):
     def getDatapointStats(self):
         pass
 
-    def getFieldtrialStats(self,
+    def getTrialMonthStats(self,
                            keyName='trial_status__name',
                            title='trials per Status',
+                           orientation='v',
                            product=None):
         lastMonth = BaaSHelpers.lastXMonthDateIso(StatsDataApi.LAST_MONTHS)
         filterCriteria = {'created__gt': lastMonth}
@@ -43,18 +44,50 @@ class StatsDataApi(APIView):
 
         # prepare data to display
         graph = GraphStat(title, datasets, labels,
+                          orientation=orientation,
+                          xAxis='month', yAxis='# trials')
+        return graph.plot()
+
+    def getTrialTotalStats(self,
+                           keyName='trial_status__name',
+                           title='trials per Status',
+                           orientation='h'):
+        query = FieldTrial.objects.values(keyName)\
+            .annotate(Count('id')).all()\
+            .order_by(keyName)
+
+        dataset = {}
+        # Sorting in array of values per keyName
+        labels = []
+        for item in query:
+            datasetKey = item[keyName]
+            datasetKey = 'Unknown' if datasetKey is None else datasetKey
+            dataset[datasetKey] = item['id__count']
+            labels.append(datasetKey)
+
+        # prepare data to display
+        graph = GraphStat(title, {keyName: dataset}, labels,
+                          orientation=orientation,
+                          showLegend=False,
                           xAxis='month', yAxis='# trials')
         return graph.plot()
 
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
         stats = [
-            {'title': '({}) Lasts {} months trials distributions by creation'
-                      ' date'.format(totalTrials, StatsDataApi.LAST_MONTHS),
-             'graphs': [self.getFieldtrialStats(),
-                        self.getFieldtrialStats(keyName='product__name',
+            {'title': '({}) Totals trials'
+                      ' date'.format(totalTrials),
+             'graphs': [self.getTrialTotalStats(),
+                        self.getTrialTotalStats(keyName='product__name',
                                                 title='trials per Product'),
-                        self.getFieldtrialStats(keyName='crop__name',
+                        self.getTrialTotalStats(keyName='crop__name',
+                                                title='trials per Crop')]},
+            {'title': 'Last {} months trials distributions by created month'
+                      ' date'.format(StatsDataApi.LAST_MONTHS),
+             'graphs': [self.getTrialMonthStats(),
+                        self.getTrialMonthStats(keyName='product__name',
+                                                title='trials per Product'),
+                        self.getTrialMonthStats(keyName='crop__name',
                                                 title='trials per Crop')]}
         ]
         data = {'stats': stats}
