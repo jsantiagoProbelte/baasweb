@@ -6,13 +6,14 @@ from trialapp.models import Crop, Plague, FieldTrial,\
                             Thesis, Replica
 from trialapp.data_models import ReplicaData
 from trialapp.import_pdf_trial import ImportPdfTrial, TrialTags,\
-    AssmtTableMultiLineHeader, AssmtTableSimpleHeader
+     AssmtTableSimpleHeader
 
 
 class ImportPdfTest(TestCase):
 
     _importer = None
-    _root = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data/estudios/testing/'
+    _root = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/'\
+            'Data/estudios/testing/'
 
     def loader(self, filename, debug=False):
         importer = ImportPdfTrial(filename, debugInfo=debug)
@@ -170,11 +171,11 @@ class ImportPdfTest(TestCase):
 
     def test_skipRTableNoReplicas(self):
         importer = self.loader(self._filename2)
-        firstTable = importer._evals[1]
-        self.assertTrue(isinstance(firstTable, AssmtTableMultiLineHeader))
-        firstTable.prepareThesis()
-        replicasNumber = firstTable.extractThesis()
-        self.assertEqual(replicasNumber, 0)
+        # This process will skip any statistical table
+        for anyTable in importer._evals:
+            anyTable.prepareThesis()
+            replicasNumber = anyTable.extractThesis()
+            self.assertTrue(replicasNumber > 0)
 
     def test_extractEvaluations(self):
         importer = self.loader(self._filename)
@@ -244,63 +245,63 @@ class ImportPdfTest(TestCase):
         self.assertEqual(len(replicasOne), 4)
         self.assertEqual(replicasOne[0].name, '106')
 
-# noqa: E501 |    | Pest Type                     |   Unnamed: 0 | Unnamed: 1   |   Unnamed: 2 | D  Disease      | D  Disease.1    | D  Disease.2    |
-#            |---:|:------------------------------|-------------:|:-------------|-------------:|:----------------|:----------------|:----------------|
-# noqa: E501 |  0 | Pest Code                     |          nan | nan          |          nan | MONIFG          | MONIFG          | MONIFG          |
-# noqa: E501 |  1 | Pest Scientific Name          |          nan | nan          |          nan | Monilinia fruc> | Monilinia fruc> | Monilinia fruc> |
-# noqa: E501 |  2 | Pest Name                     |          nan | nan          |          nan | Blossom blight> | Blossom blight> | Blossom blight> |
-# noqa: E501 |  3 | Crop Code                     |          nan | nan          |          nan | PRNPS           | PRNPS           | PRNPS           |
-# noqa: E501 |  4 | BBCH Scale                    |          nan | nan          |          nan | BSTO            | BSTO            | BSTO            |
-# noqa: E501 |  5 | Crop Scientific Name          |          nan | nan          |          nan | Prunus persica  | Prunus persica  | Prunus persica  |
-# noqa: E501 |  6 | Crop Name                     |          nan | nan          |          nan | Peach           | Peach           | Peach           |
-# noqa: E501 |  7 | Crop Variety                  |          nan | nan          |          nan | Rojo de Albesa  | Rojo de Albesa  | Rojo de Albesa  |
-# noqa: E501 |  8 | Part Rated                    |          nan | nan          |          nan | FRUIT  P        | FRUIT  P        | FRUIT  P        |
-# noqa: E501 |  9 | Rating Date                   |          nan | nan          |          nan | 01/09/2018      | 08/09/2018      | 15/09/2018      |
-# noqa: E501 |  10 | Rating Type                   |          nan | nan          |          nan | PESINC          | PESINC          | PESINC          |
-# noqa: E501 |  11 | Rating Unit                   |          nan | nan          |          nan | %               | %               | %               |
-# noqa: E501 |  12 | Sample Size, Unit             |          nan | nan          |          nan | 100FRUIT        | 100FRUIT        | 100FRUIT        |
-# noqa: E501 |  13 | Collection Basis, Unit        |          nan | nan          |          nan | 1PLOT           | 1PLOT           | 1PLOT           |
-# noqa: E501 |  14 | Number of Subsamples          |          nan | nan          |          nan | 1               | 1               | 1               |
-# noqa: E501 |  15 | Crop Stage Majority           |          nan | nan          |          nan | 81              | 85-87           | 87-89           |
-# noqa: E501 |  16 | Crop Stage Scale              |          nan | nan          |          nan | BBCH            | BBCH            | BBCH            |
-# noqa: E501 |  17 | Footnote Number               |          nan | nan          |          nan | 3               | 3               | 3               |
-# noqa: E501 |  18 | Days After First/Last Applic. |          nan | nan          |          nan | 159149          | 1667            | 1737            |
-# noqa: E501 |  19 | Trt-Eval Interval             |          nan | nan          |          nan | 0 DA-C          | 0 DA-D          | 7 DA-D          |
-# noqa: E501 |  20 | Plant-Eval Interval           |          nan | nan          |          nan | nan             | nan             | nan             |
-# noqa: E501 |  21 | ARM Action Codes              |          nan | nan          |          nan | TIO[17]         | TIO[22]         | TIO[27]         |
-# noqa: E501 |  22 | Number of Decimals            |          nan | nan          |          nan | 2               | 2               | 2               |
-# noqa: E501 |  23 | Trt Treatment Rate            |          nan | Appl         |          nan | nan             | nan             | nan             |
-# noqa: E501 |  24 | No. Name Rate Unit            |          nan | Code Plot    |          nan | 19              | 24              | 29              |
-# noqa: E501 |  25 | 1PB001 4,0 L/ha               |          nan | ABCD 105     |          nan | 0,00            | 0,00            | 4,00            |
-# noqa: E501 |  26 | nan                           |          nan | 202          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  27 | nan                           |          nan | 306          |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  28 | nan                           |          nan | 405          |          nan | 0,00            | 0,00            | 3,00            |
-# noqa: E501 |  29 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 2,50            |
-# noqa: E501 |  30 | 2PB001 8,0 L/ha               |          nan | ABCD 102     |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  31 | nan                           |          nan | 204          |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  32 | nan                           |          nan | 303          |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  33 | nan                           |          nan | 406          |          nan | 0,00            | 0,00            | 3,00            |
-# noqa: E501 |  34 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 2,25            |
-# noqa: E501 |  35 | 3PB001 15,0 L/ha              |          nan | ABCD 101     |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  36 | nan                           |          nan | 203          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  37 | nan                           |          nan | 304          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  38 | nan                           |          nan | 403          |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  39 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,25            |
-# noqa: E501 |  40 | 4PB050 4,0 kg/ha              |          nan | ABCD 104     |          nan | 0,00            | 0,00            | 3,00            |
-# noqa: E501 |  41 | nan                           |          nan | 201          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  42 | nan                           |          nan | 301          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  43 | nan                           |          nan | 402          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  44 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,50            |
-# noqa: E501 |  45 | 5SERENADE MAX 4,0 kg/ha       |          nan | ABCD 103     |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  46 | nan                           |          nan | 206          |          nan | 0,00            | 0,00            | 2,00            |
-# noqa: E501 |  47 | nan                           |          nan | 302          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  48 | nan                           |          nan | 401          |          nan | 0,00            | 0,00            | 1,00            |
-# noqa: E501 |  49 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,50            |
-# noqa: E501 |  50 | 6Untreated Check              |          nan | 106          |          nan | 0,00            | 0,00            | 8,00            |
-# noqa: E501 |  51 | nan                           |          nan | 205          |          nan | 0,00            | 0,00            | 7,00            |
-# noqa: E501 |  52 | nan                           |          nan | 305          |          nan | 0,00            | 0,00            | 9,00            |
-# noqa: E501 |  53 | nan                           |          nan | 404          |          nan | 0,00            | 0,00            | 8,00            |
-# noqa: E501 |  54 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 8,00            |
+# # noqa: E501 |    | Pest Type                     |   Unnamed: 0 | Unnamed: 1   |   Unnamed: 2 | D  Disease      | D  Disease.1    | D  Disease.2    |
+# # noqa: E501 |---:|:------------------------------|-------------:|:-------------|-------------:|:----------------|:----------------|:----------------|
+# # noqa: E501 |  0 | Pest Code                     |          nan | nan          |          nan | MONIFG          | MONIFG          | MONIFG          |
+# # noqa: E501 |  1 | Pest Scientific Name          |          nan | nan          |          nan | Monilinia fruc> | Monilinia fruc> | Monilinia fruc> |
+# # noqa: E501 |  2 | Pest Name                     |          nan | nan          |          nan | Blossom blight> | Blossom blight> | Blossom blight> |
+# # noqa: E501 |  3 | Crop Code                     |          nan | nan          |          nan | PRNPS           | PRNPS           | PRNPS           |
+# # noqa: E501 |  4 | BBCH Scale                    |          nan | nan          |          nan | BSTO            | BSTO            | BSTO            |
+# # noqa: E501 |  5 | Crop Scientific Name          |          nan | nan          |          nan | Prunus persica  | Prunus persica  | Prunus persica  |
+# # noqa: E501 |  6 | Crop Name                     |          nan | nan          |          nan | Peach           | Peach           | Peach           |
+# # noqa: E501 |  7 | Crop Variety                  |          nan | nan          |          nan | Rojo de Albesa  | Rojo de Albesa  | Rojo de Albesa  |
+# # noqa: E501 |  8 | Part Rated                    |          nan | nan          |          nan | FRUIT  P        | FRUIT  P        | FRUIT  P        |
+# # noqa: E501 |  9 | Rating Date                   |          nan | nan          |          nan | 01/09/2018      | 08/09/2018      | 15/09/2018      |
+# # noqa: E501 |  10 | Rating Type                   |          nan | nan          |          nan | PESINC          | PESINC          | PESINC          |
+# # noqa: E501 |  11 | Rating Unit                   |          nan | nan          |          nan | %               | %               | %               |
+# # noqa: E501 |  12 | Sample Size, Unit             |          nan | nan          |          nan | 100FRUIT        | 100FRUIT        | 100FRUIT        |
+# # noqa: E501 |  13 | Collection Basis, Unit        |          nan | nan          |          nan | 1PLOT           | 1PLOT           | 1PLOT           |
+# # noqa: E501 |  14 | Number of Subsamples          |          nan | nan          |          nan | 1               | 1               | 1               |
+# # noqa: E501 |  15 | Crop Stage Majority           |          nan | nan          |          nan | 81              | 85-87           | 87-89           |
+# # noqa: E501 |  16 | Crop Stage Scale              |          nan | nan          |          nan | BBCH            | BBCH            | BBCH            |
+# # noqa: E501 |  17 | Footnote Number               |          nan | nan          |          nan | 3               | 3               | 3               |
+# # noqa: E501 |  18 | Days After First/Last Applic. |          nan | nan          |          nan | 159149          | 1667            | 1737            |
+# # noqa: E501 |  19 | Trt-Eval Interval             |          nan | nan          |          nan | 0 DA-C          | 0 DA-D          | 7 DA-D          |
+# # noqa: E501 |  20 | Plant-Eval Interval           |          nan | nan          |          nan | nan             | nan             | nan             |
+# # noqa: E501 |  21 | ARM Action Codes              |          nan | nan          |          nan | TIO[17]         | TIO[22]         | TIO[27]         |
+# # noqa: E501 |  22 | Number of Decimals            |          nan | nan          |          nan | 2               | 2               | 2               |
+# # noqa: E501 |  23 | Trt Treatment Rate            |          nan | Appl         |          nan | nan             | nan             | nan             |
+# # noqa: E501 |  24 | No. Name Rate Unit            |          nan | Code Plot    |          nan | 19              | 24              | 29              |
+# # noqa: E501 |  25 | 1PB001 4,0 L/ha               |          nan | ABCD 105     |          nan | 0,00            | 0,00            | 4,00            |
+# # noqa: E501 |  26 | nan                           |          nan | 202          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  27 | nan                           |          nan | 306          |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  28 | nan                           |          nan | 405          |          nan | 0,00            | 0,00            | 3,00            |
+# # noqa: E501 |  29 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 2,50            |
+# # noqa: E501 |  30 | 2PB001 8,0 L/ha               |          nan | ABCD 102     |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  31 | nan                           |          nan | 204          |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  32 | nan                           |          nan | 303          |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  33 | nan                           |          nan | 406          |          nan | 0,00            | 0,00            | 3,00            |
+# # noqa: E501 |  34 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 2,25            |
+# # noqa: E501 |  35 | 3PB001 15,0 L/ha              |          nan | ABCD 101     |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  36 | nan                           |          nan | 203          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  37 | nan                           |          nan | 304          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  38 | nan                           |          nan | 403          |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  39 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,25            |
+# # noqa: E501 |  40 | 4PB050 4,0 kg/ha              |          nan | ABCD 104     |          nan | 0,00            | 0,00            | 3,00            |
+# # noqa: E501 |  41 | nan                           |          nan | 201          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  42 | nan                           |          nan | 301          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  43 | nan                           |          nan | 402          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  44 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,50            |
+# # noqa: E501 |  45 | 5SERENADE MAX 4,0 kg/ha       |          nan | ABCD 103     |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  46 | nan                           |          nan | 206          |          nan | 0,00            | 0,00            | 2,00            |
+# # noqa: E501 |  47 | nan                           |          nan | 302          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  48 | nan                           |          nan | 401          |          nan | 0,00            | 0,00            | 1,00            |
+# # noqa: E501 |  49 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 1,50            |
+# # noqa: E501 |  50 | 6Untreated Check              |          nan | 106          |          nan | 0,00            | 0,00            | 8,00            |
+# # noqa: E501 |  51 | nan                           |          nan | 205          |          nan | 0,00            | 0,00            | 7,00            |
+# # noqa: E501 |  52 | nan                           |          nan | 305          |          nan | 0,00            | 0,00            | 9,00            |
+# # noqa: E501 |  53 | nan                           |          nan | 404          |          nan | 0,00            | 0,00            | 8,00            |
+# # noqa: E501 |  54 | nan                           |          nan | Mean =       |          nan | 0,00            | 0,00            | 8,00            |
 
     def test_extractThesisReplicasSameColumn(self):
         thisFilename = self._root+'20110202 BOTRYBEL EFICACIA FRESÓN 02.pdf'
@@ -391,3 +392,10 @@ class ImportPdfTest(TestCase):
         self.assertEqual(
             tlb.extractReplicasNames(info),
             ['106', '204', '301', '403'])
+
+    def test_differentLanguages(self):
+        thisFilename = self._root + \
+            '20220905 INFORME FINAL  SoilEkky WP Lechuga  BAAS.pdf'
+        importer = self.loader(thisFilename)
+        importer.run()
+        self.assertTrue('C; LACSA', importer._trial.crop.name)
