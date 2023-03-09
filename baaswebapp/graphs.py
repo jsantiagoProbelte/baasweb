@@ -326,3 +326,89 @@ class Graph:
             thisGraph['traces'] = traces
             graphs.append(thisGraph)
         return graphs
+
+
+class GraphStat():
+    def __init__(self, title, rawDataDict, labels,
+                 xAxis='month', yAxis='# trials', orientation='v'):
+        self._graphData = None
+        self._title = title
+        self._orientation = orientation
+        self._labels = labels
+        self._rawDataDict = rawDataDict
+        self._xAxis = xAxis
+        self._yAxis = yAxis
+        self._showTitle = True
+        self._showLegend = True
+
+    def plot(self):
+        self.prepareData()
+        return self.figure()
+
+    def prepareData(self):
+        statColors = {}
+        datasetKeys = list(self._rawDataDict.keys())
+        for index in range(0, len(datasetKeys)):
+            statColors[datasetKeys[index]] = Graph.COLOR_LIST[index+1]
+
+        theDataTraces = [{
+            "name": datasetKey,
+            'y': [self._rawDataDict[datasetKey][label]
+                  for label in self._labels],
+            'x': [label for label in self._labels],
+            'marker_color': statColors[datasetKey],
+            } for datasetKey in self._rawDataDict]
+        self._graphData = {
+            "title": self._title,
+            'x_axis': self._xAxis,
+            'y_axis': self._yAxis,
+            'traces': theDataTraces}
+
+    def figure(self, typeFigure=Graph.BAR):
+        showLegend = True
+        data = None
+        fig = go.Figure()
+
+        for trace in self._graphData['traces']:
+            name = trace['name']
+            color = trace['marker_color']
+            if self._orientation == 'v':
+                x = trace['x']
+                y = trace['y']
+            else:
+                x = trace['y']
+                y = trace['x']
+
+            showLegend = self._showLegend
+            data = go.Bar(orientation=self._orientation,
+                          name=name, marker={'color': color},
+                          x=x, y=y)
+            fig.add_trace(data)
+
+        # Update layout for graph object Figure
+        if self._orientation == 'v':
+            xaxis_title = self._graphData['x_axis']
+            yaxis_title = self._graphData['y_axis']
+        else:
+            xaxis_title = self._graphData['y_axis']
+            yaxis_title = self._graphData['x_axis']
+
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            title_text=self._graphData['title'] if self._showTitle else '',
+            showlegend=showLegend,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-1,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
+
+        # Turn graph object into local plotly graph
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj

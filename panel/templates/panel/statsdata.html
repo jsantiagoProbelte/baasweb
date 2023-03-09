@@ -1,0 +1,26 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+<h1>Stats Data</h1>
+{% for stat in stats %}
+    <div class="card no-border mb-3">
+        <div class="card-header-baas h5">
+            {{stat.title}}
+        </div>
+        <ul class="list-group list-group-horizontal">
+            {% for graph in stat.graphs %}
+            <li class="list-group-item list-group-item-baas col-md-4">
+                {{graph|safe}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+{% endblock %}  
+
+{% block scripts %}
+
+{% endblock %}  
