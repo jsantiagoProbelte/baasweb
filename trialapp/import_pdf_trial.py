@@ -580,6 +580,22 @@ class AssmtTableSimpleHeader(AssmtTable):
                 self._trial.save()
         return fReplicas
 
+    def foundData(self, indexRow):
+        for indexColumn in range(2, self._numberColumns):
+            lastColumn = self._columns[indexColumn]
+            dataInfo = self._table.loc[indexRow, lastColumn]
+            if isinstance(dataInfo, str):
+                return True
+        return False
+
+    def makeReplica(self, replicaName, replicaNumber, replicaPosition, thesis):
+        replica = self.findOrCreateReplica(replicaName, replicaNumber, thesis)
+        if replica is not None:
+            self._replicaDict[replicaPosition] = replica
+            return True
+        else:
+            return False
+
     def extractThesisAndReplicaSameColumn(self):
         # Replica names are in same column as thesis but in different lines
         # expect for the first replica
@@ -588,6 +604,7 @@ class AssmtTableSimpleHeader(AssmtTable):
         foundThesis = 0
         indexReplica = 1
         expectThesis = True
+        replicaName = None
 
         for indexRow in range(self._firstRowValuesNames, self._numberRows):
             rowInfo = self._table.loc[indexRow, self._firstColumnName]
@@ -596,14 +613,7 @@ class AssmtTableSimpleHeader(AssmtTable):
                 # For instance check last column. Like Botrybel FRESON 3
                 # It may be that last column is empty (See
                 #  20220701 BELTHIRUL 16 SC PIMIENTO MURCIA 01)
-                foundData = False
-                for indexColumn in range(2, self._numberColumns):
-                    lastColumn = self._columns[indexColumn]
-                    dataInfo = self._table.loc[indexRow, lastColumn]
-                    if isinstance(dataInfo, str):
-                        foundData = True
-                        break
-                if not foundData:
+                if not self.foundData(indexRow):
                     continue
 
                 # Now, we believe there is data here
@@ -611,32 +621,26 @@ class AssmtTableSimpleHeader(AssmtTable):
                     if TrialTags.isMeanTag(rowInfo):
                         expectThesis = True
                         continue
-                    nmb, tN, fRN = self.extractThesisInfo(rowInfo)
+                    nmb, tN, replicaName = self.extractThesisInfo(rowInfo)
                     if tN is not None:  # thesisName
                         # Register Thesis
-                        foundThesis += 1
                         if nmb is None:
                             nmb = foundThesis
                         lastThesis = self.findOrCreateThesis(tN, nmb)
-                        replica = self.findOrCreateReplica(fRN, 1, lastThesis)
-                        if replica is not None:
-                            self._replicaDict[indexRow] = replica
-                            expectThesis = False
-                            indexReplica = 2
-                            foundReplicas += 1
+                        expectThesis = False
+                        foundThesis += 1
+                        indexReplica = 1
+                    else:
+                        continue
                 else:
                     if TrialTags.isMeanTag(rowInfo):
                         expectThesis = True
                         continue
-
-                    replica = self.findOrCreateReplica(
-                            rowInfo,
-                            indexReplica,
-                            lastThesis)
-                    if replica is not None:
-                        self._replicaDict[indexRow] = replica
-                        indexReplica += 1
-                        foundReplicas += 1
+                    replicaName = rowInfo
+                if self.makeReplica(replicaName, indexReplica, indexRow,
+                                    lastThesis):
+                    indexReplica += 1
+                    foundReplicas += 1
 
         return foundReplicas, foundThesis
 
