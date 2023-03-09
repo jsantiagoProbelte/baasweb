@@ -75,15 +75,14 @@ class StatsDataApi(APIView):
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
         stats = [
-            {'title': '({}) Totals trials'
-                      ' date'.format(totalTrials),
+            {'title': '({}) Totals trials'.format(totalTrials),
              'graphs': [self.getTrialTotalStats(),
                         self.getTrialTotalStats(keyName='product__name',
                                                 title='trials per Product'),
                         self.getTrialTotalStats(keyName='crop__name',
                                                 title='trials per Crop')]},
             {'title': 'Last {} months trials distributions by created month'
-                      ' date'.format(StatsDataApi.LAST_MONTHS),
+                      .format(StatsDataApi.LAST_MONTHS),
              'graphs': [self.getTrialMonthStats(),
                         self.getTrialMonthStats(keyName='product__name',
                                                 title='trials per Product'),
