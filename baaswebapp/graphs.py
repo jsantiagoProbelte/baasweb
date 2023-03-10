@@ -376,7 +376,7 @@ class GraphStat():
         else:
             # use labels for colors
             colorPerLabel = True
-            # assume same order from labels in totals and months datasetkeys 
+            # assume same order from labels in totals and months datasetkeys
             # since it is the same dimension, so the colors on boths grpahs
             # should match.
             statColors = list(self.prepareColors(self._labels).values())
