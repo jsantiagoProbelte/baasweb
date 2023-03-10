@@ -1,6 +1,8 @@
 from django.db import models
 from baaswebapp.models import ModelHelpers
 
+DEFAULT = 'default'
+
 
 class Vendor(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -38,8 +40,8 @@ class ProductVariant(ModelHelpers, models.Model):
 
 
 class Batch(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    serial_number = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True)
+    serial_number = models.CharField(max_length=100, null=True)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
     product_variant = models.ForeignKey(ProductVariant,
@@ -65,5 +67,33 @@ class Treatment(ModelHelpers, models.Model):
         return Treatment.objects.filter(
             batch__product_variant__product=product).order_by('name')
 
+    @classmethod
+    def displayItems(cls, product):
+        display = []
+        for item in cls.getItems(product):
+            display.append({'name': item.getName(short=True),
+                            'id': item.id})
+        return display
+
     def get_absolute_url(self):
         return "/treatment/%i/" % self.id
+
+    def getName(self, short=False):
+        if self.name:
+            return self.name
+        else:
+            productName = ''
+            if not short:
+                productName = self.batch.product_variant.product.name
+            varianName = self.batch.product_variant.name
+            if DEFAULT in varianName:
+                varianName = ''
+            rateUnitName = '{} {}'.format(self.rate, self.rate_unit.name)
+            batchName = self.batch.name
+            if not short and DEFAULT in batchName:
+                batchName = ''
+            return '{} {} {} {}'.format(
+                   productName,
+                   varianName,
+                   batchName,
+                   rateUnitName)

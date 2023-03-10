@@ -219,7 +219,7 @@ class ProductApi(APIView):
                        'graphs': graphs,
                        'batches': Batch.getItems(product),
                        'variants': ProductVariant.getItems(product),
-                       'treatments': Treatment.getItems(product),
+                       'treatments': Treatment.displayItems(product),
                        'errors': errorgraphs,
                        'classGraphCol': classGraphCol,
                        'titleView': product.getName()})
@@ -292,6 +292,7 @@ class BatchForm(forms.ModelForm):
                 'name')
         self.helper = BatchFormHelper(new=new)
         self.fields['serial_number'].required = False
+        self.fields['name'].required = False
 
 
 class BatchCreateView(LoginRequiredMixin, CreateView):

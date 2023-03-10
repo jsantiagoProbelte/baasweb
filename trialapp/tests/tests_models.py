@@ -2,7 +2,7 @@ from django.test import TestCase
 from baaswebapp.models import ModelHelpers
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Crop, Plague,\
-                            ProductThesis, Thesis, Evaluation,\
+                            Thesis, Evaluation,\
                             TrialAssessmentSet,\
                             AssessmentType, AssessmentUnit,\
                             Sample, Replica, TrialType
@@ -158,11 +158,6 @@ class TrialAppModelTest(TestCase):
             **TrialAppModelTest.THESIS[0])
         self.assertEqual(thesis666.name,
                          TrialAppModelTest.THESIS[0]['name'])
-
-        productThesis = ProductThesis.create_ProductThesis(
-            **TrialAppModelTest.PRODUCT_THESIS[0])
-        self.assertEqual(productThesis.rate,
-                         TrialAppModelTest.PRODUCT_THESIS[0]['rate'])
 
     def test_names(self):
         for model in TrialDbInitialLoader.initialTrialModelValues():

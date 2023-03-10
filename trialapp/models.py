@@ -328,50 +328,8 @@ class TreatmentThesis(ModelHelpers, models.Model):
     def getName(self):
         return self.treatment.getName()
 
-
-class ProductThesis(ModelHelpers, models.Model):
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.DecimalField(max_digits=10, decimal_places=2)
-    rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, thesis: Thesis):
-        return cls.objects \
-                .filter(thesis=thesis) \
-                .order_by('product__name')
-
-    @classmethod
-    def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
-        objects = []
-        for thesis in Thesis.getObjects(fieldTrial):
-            for productThesis in ProductThesis.getObjects(thesis):
-                objects.append(productThesis)
-        return objects
-
-    @classmethod
-    def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
-                                addNull=False, asDict=False):
-        return cls._getSelectList(
-            cls.getObjectsPerFieldTrial(fieldTrial),
-            asDict=asDict,
-            addNull=addNull)
-
-    @classmethod
-    def create_ProductThesis(cls, **kwargs):
-        return cls.objects.create(
-            thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
-            product=Product.objects.get(pk=kwargs['product_id']),
-            rate=kwargs['rate'],
-            rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id']))
-
-    def getName(self):
-        return ('[{}-{}] <{}, {} {}>').format(
-            self.thesis.number,
-            self.thesis.name,
-            self.product.name,
-            self.rate,
-            self.rate_unit.name)
+    def __str__(self):
+        return self.getName()
 
 
 class Replica(ModelHelpers, models.Model):
@@ -506,23 +464,6 @@ class Evaluation(ModelHelpers, models.Model):
     def getTitle(self):
         return "[{}] {}".format(self.evaluation_date,
                                 self.name)
-
-
-# This collects which products are included in each evaluation
-class ProductEvaluation(models.Model):
-    product_thesis = models.ForeignKey(ProductThesis, on_delete=models.CASCADE)
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE,
-                               null=True)
-    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, evaluation: Evaluation):
-        return cls.objects \
-                .filter(evaluation=evaluation) \
-                .order_by('thesis__number', 'product_thesis__product__name')
-
-    def getName(self):
-        return self.product_thesis.getName()
 
 
 """

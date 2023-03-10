@@ -2,12 +2,10 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from catalogue.models import Product  # , Batch
-from trialapp.models import FieldTrial, ProductThesis, RateUnit,\
+from trialapp.models import FieldTrial,\
     Thesis, Replica, TreatmentThesis
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
@@ -35,48 +33,6 @@ class ThesisListView(LoginRequiredMixin, ListView):
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
                                                        new_list)}
-
-
-# TO BE DELETED
-class ManageProductToThesis(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = [
-        'delete', 'post']
-
-    def post(self, request, format=None):
-        thesis_id = request.POST['thesis_id'].split('-')[-1]
-        thesis = get_object_or_404(Thesis, pk=thesis_id)
-        product_id = request.POST['product']
-        product = get_object_or_404(Product, pk=product_id)
-        rate = request.POST['rate']
-        rate_unit_id = request.POST['rate_unit']
-        rateUnit = get_object_or_404(RateUnit, pk=rate_unit_id)
-        # batch_id = request.POST['batch']
-        # batch = get_object_or_404(Batch, pk=batch_id)
-
-        productThesis = ProductThesis(
-            thesis=thesis,
-            # batch=batch,
-            product=product,
-            rate_unit=rateUnit,
-            rate=rate)
-        productThesis.save()
-        responseData = {
-            'id': productThesis.id,
-            'product': product.name,
-            # 'batch': batch.name,
-            'rate_unit': rateUnit.name,
-            'rate': rate}
-        return Response(responseData)
-
-    def delete(self, request, *args, **kwargs):
-        productThesis = ProductThesis.objects.get(
-            pk=request.POST['item_id'])
-        productThesis.delete()
-
-        response_data = {'msg': 'Product was deleted.'}
-        return Response(response_data, status=200)
 
 
 class ThesisFormLayout(FormHelper):
@@ -226,17 +182,17 @@ class ThesisApi(APIView):
             Thesis.getObjects(trial), onlyThis=thesis_id)
         addTreatmentView = TreatmentThesisCreateView(request=request)
         addTreatmentForm = addTreatmentView.get_form()
+        treatments = [{'name': tt.getName(), 'id': tt.id}
+                      for tt in TreatmentThesis.getObjects(self._thesis)]
+
         return render(
             request, template_name, {
                 'fieldTrial': trial,
                 'thesis': self._thesis,
                 'title': self._thesis.getTitle(),
                 'thesisVolume': self.getThesisVolume(),
-                'treatments': TreatmentThesis.getObjects(self._thesis),
+                'treatments': treatments,
                 'addTreatmentForm': addTreatmentForm,
-                'product_list': ProductThesis.getObjects(self._thesis),
-                # 'products': Product.getSelectList(asDict=True),
-                # 'rate_units': RateUnit.getSelectList(asDict=True),
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': layout})
 

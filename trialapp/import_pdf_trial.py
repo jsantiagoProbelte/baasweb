@@ -730,7 +730,7 @@ class ImportPdfTrial:
                 return True
         return False
 
-    def isProductThesisTable(self, table):
+    def isTreatmentTable(self, table):
         return self.isKeyInTableColumns(table, 'Product')
 
     def isThesisTable(self, table):
@@ -790,7 +790,7 @@ class ImportPdfTrial:
             #     self._thesis = table
             #     self.log('>>> thesis table')
             #     continue
-            # if self.isProductThesisTable(table):
+            # if self.isTratementTable(table):
             #     self._products = table
             #     self.log('>>> product table')
             #     continue
@@ -866,6 +866,38 @@ class ImportPdfTrial:
         else:
             self._trial.delete()
             return False
+
+
+# def createThesisTreatments():
+#     defaultRateUnit = RateUnit.findOrCreate(name=DEFAULT)
+#         # Identify a formulation
+#         variantName = DEFAULT
+#         for key in ['WP', 'PB060', 'PB001', 'PB050']:
+#             if key in tProd.thesis.name:
+#                 variantName = key
+#         variantObj = ProductVariant.findOrCreate(
+#             name=variantName, product=tProd.product)
+
+#         # Idenfify Batch
+#         batch = Batch.findOrCreate(product_variant=variantObj,
+#                                     name=DEFAULT,
+#                                     serial_number=DEFAULT,
+#                                     rate=0,
+#                                     rate_unit=defaultRateUnit)
+#         thisRateUnit = RateUnit.findOrCreate(name=tProd.rate_unit.name)
+
+#         # Treatment
+#         treatment = Treatment.findOrCreate(batch=batch,
+#                                             rate_unit=thisRateUnit,
+#                                             rate=tProd.rate)
+
+#         TreatmentThesis.findOrCreate(thesis=tProd.thesis,
+#                                         treatment=treatment)
+
+#         print('>>>>[Created] {}\t{}\t{}\t'.format(
+#                 treatment.batch.name,
+#                 treatment.rate_unit.name,
+#                 treatment.rate))
 
 
 def importOneOld():
@@ -971,7 +1003,6 @@ def importOne():
 
 
 if __name__ == '__main__':
-    # importOne()
+    importOne()
     # importOneMapa()
     # discoverReports()
-    importAll()

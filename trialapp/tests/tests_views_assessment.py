@@ -1,6 +1,6 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, ProductThesis,\
+from trialapp.models import FieldTrial,\
      Thesis, Evaluation, TrialAssessmentSet, AssessmentType, AssessmentUnit,\
      Replica
 from trialapp.tests.tests_models import TrialAppModelTest
@@ -22,8 +22,6 @@ class EvaluationViewsTest(TestCase):
             **TrialAppModelTest.FIELDTRIALS[0])
         for thesis in TrialAppModelTest.THESIS:
             Thesis.create_Thesis(**thesis)
-        for productThesis in TrialAppModelTest.PRODUCT_THESIS:
-            ProductThesis.create_ProductThesis(**productThesis)
         self._units = [TrialAssessmentSet.objects.create(
             field_trial=self._fieldTrial,
             type=AssessmentType.objects.get(pk=i),
