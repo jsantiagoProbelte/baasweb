@@ -16,20 +16,16 @@ class StatsDataApi(APIView):
     def getDatapointStats(self):
         pass
 
-    def getTrialMonthStats(self,
-                           keyName='trial_status__name',
-                           title='trials per Status',
-                           orientation='v',
-                           product=None):
+    def getTrialMonthStats(self, dimension):
+        keyName = '{}__name'.format(dimension)
+        yAxis = 'last {} months created trials'.format(
+            StatsDataApi.LAST_MONTHS)
         lastMonth = BaaSHelpers.lastXMonthDateIso(StatsDataApi.LAST_MONTHS)
         filterCriteria = {'created__gt': lastMonth}
-        if product:
-            filterCriteria['product'] = product
         query = FieldTrial.objects.values('created__month', keyName)\
             .annotate(Count('id'))\
             .filter(**filterCriteria)\
             .order_by(keyName, 'created__month')
-
         datasets = {}
         labels = BaaSHelpers.getLastMonthsInOrder(StatsDataApi.LAST_MONTHS)
         # Sorting in array of values per keyName,month
@@ -41,17 +37,12 @@ class StatsDataApi(APIView):
                 datasets[datasetKey] = {label: 0 for label in labels}
             if month in labels:
                 datasets[datasetKey][month] += item['id__count']
-
         # prepare data to display
-        graph = GraphStat(title, datasets, labels,
-                          orientation=orientation,
-                          xAxis='month', yAxis='# trials')
-        return graph.plot()
+        return GraphStat(datasets, labels, orientation='v',
+                         xAxis='month', yAxis=yAxis).plot()
 
-    def getTrialTotalStats(self,
-                           keyName='trial_status__name',
-                           title='trials per Status',
-                           orientation='h'):
+    def getTrialTotalStats(self, dimension):
+        keyName = '{}__name'.format(dimension)
         query = FieldTrial.objects.values(keyName)\
             .annotate(Count('id')).all()\
             .order_by(keyName)
@@ -66,28 +57,23 @@ class StatsDataApi(APIView):
             labels.append(datasetKey)
 
         # prepare data to display
-        graph = GraphStat(title, {keyName: dataset}, labels,
-                          orientation=orientation,
-                          showLegend=False,
-                          xAxis='month', yAxis='# trials')
-        return graph.plot()
+        return GraphStat({keyName: dataset}, labels,
+                         orientation='h',
+                         showLegend=False, showTitle=False,
+                         xAxis=dimension, yAxis='total trials').plot()
+
+    def generateDataDimension(self, dimension):
+        return {'title': 'Product trial distribution',
+                'total': self.getTrialTotalStats(dimension),
+                'time': self.getTrialMonthStats(dimension)}
 
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
-        stats = [
-            {'title': '({}) Totals trials'.format(totalTrials),
-             'graphs': [self.getTrialTotalStats(),
-                        self.getTrialTotalStats(keyName='product__name',
-                                                title='trials per Product'),
-                        self.getTrialTotalStats(keyName='crop__name',
-                                                title='trials per Crop')]},
-            {'title': 'Last {} months trials distributions by created month'
-                      .format(StatsDataApi.LAST_MONTHS),
-             'graphs': [self.getTrialMonthStats(),
-                        self.getTrialMonthStats(keyName='product__name',
-                                                title='trials per Product'),
-                        self.getTrialMonthStats(keyName='crop__name',
-                                                title='trials per Crop')]}
-        ]
-        data = {'stats': stats}
+
+        stats = [[self.generateDataDimension('trial_status'),
+                  self.generateDataDimension('product')],
+                 [self.generateDataDimension('crop'),
+                  self.generateDataDimension('plague')]]
+
+        data = {'stats': stats, 'totalTrials': totalTrials}
         return render(request, StatsDataApi.TEMPLATE, data)

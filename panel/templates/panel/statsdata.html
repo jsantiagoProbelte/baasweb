@@ -4,20 +4,29 @@
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
-<h1>Stats Data</h1>
-{% for stat in stats %}
-    <div class="card no-border mb-3">
-        <div class="card-header-baas h5">
-            {{stat.title}}
+<h1 class="mt-4">Stats data
+<span class="h3 text-muted">{{totalTrials}} total trials</span></h1>
+{% for statRow in stats %}
+    <div class="row">
+    {% for block in statRow %}
+        <div class="col-md-6">
+            <div class="card no-border mb-3">
+                <div class="card-header-baas h5">
+                    {{block.title}}
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{block.total|safe}}
+                    </div>
+                    <div class="col-md-8">
+                        {{block.time|safe}}
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul class="list-group list-group-horizontal">
-            {% for graph in stat.graphs %}
-            <li class="list-group-item list-group-item-baas col-md-4">
-                {{graph|safe}}
-            </li>
-            {% endfor %}
-        </ul>
+    {% endfor %}
     </div>
+
 {% endfor %}
 {% endblock %}  
 

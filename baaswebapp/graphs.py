@@ -340,7 +340,8 @@ class Graph:
 
 
 class GraphStat():
-    def __init__(self, title, rawDataDict, labels, showLegend=True,
+    def __init__(self, rawDataDict, labels, showLegend=True,
+                 title=None, showTitle=False,
                  xAxis='month', yAxis='# trials', orientation='v'):
         self._graphData = None
         self._title = title
@@ -349,7 +350,7 @@ class GraphStat():
         self._rawDataDict = rawDataDict
         self._xAxis = xAxis
         self._yAxis = yAxis
-        self._showTitle = True
+        self._showTitle = showTitle
         self._showLegend = showLegend
 
     def plot(self):
