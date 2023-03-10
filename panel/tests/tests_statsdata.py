@@ -24,4 +24,4 @@ class StatsDataTest(TestCase):
         self.assertEqual(response.status_code, 200)
         counts = FieldTrial.objects.count()
         self.assertTrue(counts > 0)
-        self.assertContains(response, 'total trials')
+        self.assertContains(response, '{} total trials'.format(counts))

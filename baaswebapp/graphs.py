@@ -357,26 +357,40 @@ class GraphStat():
         self.prepareData()
         return self.figure()
 
-    def prepareData(self):
+    def prepareColors(self, theList):
         statColors = {}
         lenColors = len(ALL_COLORS)
-        datasetKeys = list(self._rawDataDict.keys())
-        for index in range(0, len(datasetKeys)):
+        for index in range(0, len(theList)):
             position = index % lenColors
-            statColors[datasetKeys[index]] = ALL_COLORS[position]
+            statColors[theList[index]] = ALL_COLORS[position]
+        return statColors
+
+    def prepareData(self):
+        statColors = {}
+        colorPerLabel = False
+        if len(self._rawDataDict) > 1:
+            # use datasetKeys for colors
+            colorPerLabel = False
+            datasetKeys = list(self._rawDataDict.keys())
+            statColors = self.prepareColors(datasetKeys)
+        else:
+            # use labels for colors
+            colorPerLabel = True
+            # assume same order from labels in totals and months datasetkeys 
+            # since it is the same dimension, so the colors on boths grpahs
+            # should match.
+            statColors = list(self.prepareColors(self._labels).values())
 
         theDataTraces = [{
             "name": datasetKey,
             'y': [self._rawDataDict[datasetKey][label]
                   for label in self._labels],
             'x': [label for label in self._labels],
-            'marker_color': statColors[datasetKey],
+            'marker_color': statColors if colorPerLabel
+            else statColors[datasetKey]
             } for datasetKey in self._rawDataDict]
-        self._graphData = {
-            "title": self._title,
-            'x_axis': self._xAxis,
-            'y_axis': self._yAxis,
-            'traces': theDataTraces}
+        self._graphData = {"title": self._title, 'traces': theDataTraces,
+                           'x_axis': self._xAxis, 'y_axis': self._yAxis}
 
     def figure(self, typeFigure=Graph.BAR):
         showLegend = True
