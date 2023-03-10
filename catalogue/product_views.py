@@ -292,7 +292,6 @@ class BatchForm(forms.ModelForm):
                 'name')
         self.helper = BatchFormHelper(new=new)
         self.fields['serial_number'].required = False
-        self.fields['name'].required = False
 
 
 class BatchCreateView(LoginRequiredMixin, CreateView):
@@ -494,6 +493,7 @@ class TreatmentForm(forms.ModelForm):
             Batch.objects.filter(
                 product_variant__product_id=product_id).order_by(
                     'name')
+        self.fields['name'].required = False
         self.helper = TreatmentFormHelper(new=new)
 
 
