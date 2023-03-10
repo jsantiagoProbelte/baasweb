@@ -4,9 +4,10 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
 from baaswebapp.models import ModelHelpers
-from catalogue.models import Product, ProductCategory, Vendor
+from catalogue.models import Product, ProductCategory, Vendor, Batch,\
+    ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
-                            Project, Objective, RateUnit, AssessmentType,\
+                            Project, Objective, AssessmentType,\
                             AssessmentUnit, Plague, Crop, FieldTrial,\
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
@@ -39,7 +40,7 @@ class TrialDbInitialLoader:
                       '-- No Product --'],
             CultivationMethod: [
                 ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
-            RateUnit: ['Kg/hectare', 'Liters/hectare'],
+            RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT],
             AssessmentUnit: [
                 '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
                 'Number', 'SPAD', 'Kilograms', 'Meters',
@@ -210,6 +211,17 @@ class TrialDbInitialLoader:
 
                 theObject = modelo(**thisObj)
                 theObject.save(using=location)
+
+        # Created untreated product, batch, etc...
+        defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
+        noproduct = Product.objects.create(name='No Product')
+        novariant = ProductVariant.objects.create(product=noproduct,
+                                                  name=DEFAULT)
+        nobatch = Batch.objects.create(name=DEFAULT,
+                                       rate=0, rate_unit=defaultRateUnit,
+                                       product_variant=novariant)
+        Treatment.objects.create(name=UNTREATED, batch=nobatch,
+                                 rate=0, rate_unit=defaultRateUnit)
 
 
 class TrialStats:

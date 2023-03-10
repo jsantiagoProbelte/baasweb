@@ -15,6 +15,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.forms import MyDateInput
+from catalogue.models import Treatment
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -43,6 +44,7 @@ class ThesisFormLayout(FormHelper):
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(Field('name', css_class='mb-3'),
+                Field('treatment', css_class='mb-3'),
                 Field('number_applications', css_class='mb-3'),
                 Field('interval', css_class='mb-3'),
                 Field('first_application', css_class='mb-3'),
@@ -59,7 +61,7 @@ class ThesisForm(forms.ModelForm):
     class Meta:
         model = Thesis
         fields = ('name', 'number_applications', 'interval', 'mode',
-                  'description', 'first_application')
+                  'description', 'first_application', 'treatment')
 
     def __init__(self, *args, **kwargs):
         super(ThesisForm, self).__init__(*args, **kwargs)
@@ -70,6 +72,8 @@ class ThesisForm(forms.ModelForm):
         self.fields['number_applications'].required = False
         self.fields['description'].required = False
         self.fields['interval'].label = 'Days between application'
+        self.fields['treatment'].queryset =\
+            Treatment.objects.all().order_by('batch__product_variant__product')
 
 
 class ThesisCreateView(LoginRequiredMixin, CreateView):
@@ -88,7 +92,14 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
             thesis = form.instance
             thesis.number = Thesis.objects.filter(
                 field_trial_id=thesis.field_trial_id).count()+1
+            treatment = thesis.treatment
+            thesis.treatment = None
             thesis.save()
+
+            # Take the treatment and add it to the TreatmentThesis
+            TreatmentThesis.objects.create(
+                treatment=treatment,
+                thesis=thesis)
 
             # Create replicas
             Replica.createReplicas(thesis,
@@ -103,12 +114,29 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
             kwargs={'field_trial_id': self.kwargs["field_trial_id"]})
 
 
+class ThesisFormUpdate(forms.ModelForm):
+    class Meta:
+        model = Thesis
+        fields = ('name', 'number_applications', 'interval', 'mode',
+                  'description', 'first_application')
+
+    def __init__(self, *args, **kwargs):
+        super(ThesisFormUpdate, self).__init__(*args, **kwargs)
+        self.fields['first_application'].required = False
+        self.fields['first_application'].widget = MyDateInput()
+        self.fields['mode'].required = False
+        self.fields['interval'].required = False
+        self.fields['number_applications'].required = False
+        self.fields['description'].required = False
+        self.fields['interval'].label = 'Days between application'
+
+
 class ThesisUpdateView(LoginRequiredMixin, UpdateView):
     model = Thesis
-    form_class = ThesisForm
+    form_class = ThesisFormUpdate
     template_name = 'baaswebapp/model_edit_form.html'
 
-    def get_form(self, form_class=ThesisForm):
+    def get_form(self, form_class=ThesisFormUpdate):
         form = super().get_form(form_class)
         form.helper = ThesisFormLayout(new=False)
         return form

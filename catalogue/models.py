@@ -2,6 +2,7 @@ from django.db import models
 from baaswebapp.models import ModelHelpers
 
 DEFAULT = 'default'
+UNTREATED = 'Untreated'
 
 
 class Vendor(ModelHelpers, models.Model):

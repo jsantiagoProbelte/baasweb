@@ -45,10 +45,6 @@ class TrialType(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class RateUnit(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-
-
 class ApplicationMode(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -204,6 +200,10 @@ class Thesis(ModelHelpers, models.Model):
     first_application = models.DateField(null=True)
     mode = models.ForeignKey(ApplicationMode,
                              on_delete=models.CASCADE, null=True)
+    # This is shadow treatment to allow to be edited in ThesisCreate
+    # but actually is stored in TreatmentThesis
+    treatment = models.ForeignKey(Treatment,
+                                  on_delete=models.CASCADE, null=True)
 
     @classmethod
     def getObjects(cls, field_trial):
