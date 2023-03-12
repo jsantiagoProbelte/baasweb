@@ -48,6 +48,23 @@ class RecomenderApi(APIView):
         return latitude, longitude
 
     def computeRisks(self, weather):
+        c = 0.5
+        daycount = len(weather[0]['coordinates'][0]['dates'])
+        temperatures = weather[0]['coordinates'][0]['dates']
+        dew_temperatures = weather[1]['coordinates'][0]['dates']
+        lwd = []
+        botrytis_risks = []
+        for i in range(daycount):
+            lwd.append((temperatures[i]['value'] -
+                       dew_temperatures[i]['value']) * c)
+
+        for i in range(daycount):
+            temp = temperatures[i]['value']
+            risk = -4.268 - 0.0901 * lwd[i] + 0.294 * lwd[i] * temp - \
+                2.35 * 10 - 5 * lwd[i] * (temp ** 3)
+            botrytis_risks.append(risk)
+
+        print(botrytis_risks)
         return {
             'Risks': ['Day1', 'Day2', 'Day3', 'Day4', 'Day5'],
             'Botrytis': ['High', 'Low', 'Medium', 'Low', 'High'],
@@ -59,8 +76,7 @@ class RecomenderApi(APIView):
         weather = self.fetchTestWeather(latitude, longitude)
         return {'latitude': latitude,
                 'longitude': longitude,
-                'weather': weather,
-                'risk': self.computeRisks(weather)}
+                'weather': weather}
 
     def get(self, request, *args, **kwargs):
         data = self.prepareData(kwargs)
@@ -69,6 +85,6 @@ class RecomenderApi(APIView):
     def post(self, request, *args, **kwargs):
         latitude = request.POST["latitude"]
         longitude = request.POST["longitude"]
-        weather = self.fetchWeather(latitude, longitude)
+        weather = self.fetchWeather(latitude, longitude)['data']
         risks = self.computeRisks(weather)
-        return JsonResponse(weather)
+        return JsonResponse(weather, safe=False)
