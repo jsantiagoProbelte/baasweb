@@ -18,7 +18,7 @@ class TrialDbInitialLoader:
     def initialTrialModelValues(cls):
         return {
             TrialType: [ModelHelpers.UNKNOWN, 'Development',
-                        'Commercial Demo', 'Registry', 'Demand Generation'],
+                        'Commercial Demo', 'Registry', 'Technical Demo'],
             TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
                           'Anual Recurrence', 'Close', 'Imported'],
             Irrigation: [ModelHelpers.UNKNOWN, 'Dry', 'Manta',
