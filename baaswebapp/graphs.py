@@ -268,8 +268,7 @@ class Graph:
             'marker_color': self.getTraceColor(dataPoint),
             'marker_symbol': self.getTraceSymbol(dataPoint),
             'x': [],
-            'y': []
-        }
+            'y': []}
 
     def getX(self, dataPoint, xAxis, code):
         if xAxis == Graph.L_THESIS:

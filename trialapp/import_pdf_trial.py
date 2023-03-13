@@ -9,9 +9,10 @@ django.setup()
 from baaswebapp.models import ModelHelpers  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
     Thesis, Replica, TrialAssessmentSet, AssessmentType, AssessmentUnit,\
-    Evaluation, TrialStatus, TrialType  # noqa: E402
+    Evaluation, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
 from trialapp.data_models import ReplicaData  # noqa: E402
-from catalogue.models import Product  # noqa: E402
+from catalogue.models import Product, Treatment, Batch, ProductVariant,\
+    UNTREATED, DEFAULT, RateUnit  # noqa: E402
 
 
 class TrialTags:
@@ -868,36 +869,123 @@ class ImportPdfTrial:
             return False
 
 
-# def createThesisTreatments():
-#     defaultRateUnit = RateUnit.findOrCreate(name=DEFAULT)
-#         # Identify a formulation
-#         variantName = DEFAULT
-#         for key in ['WP', 'PB060', 'PB001', 'PB050']:
-#             if key in tProd.thesis.name:
-#                 variantName = key
-#         variantObj = ProductVariant.findOrCreate(
-#             name=variantName, product=tProd.product)
+untreated = Treatment.objects.get(name=UNTREATED)
+defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
+rateUnits = {unit.name: unit for unit in RateUnit.objects.all()}
+variants = {v.name: v for v in ProductVariant.objects.all()}
 
-#         # Idenfify Batch
-#         batch = Batch.findOrCreate(product_variant=variantObj,
-#                                     name=DEFAULT,
-#                                     serial_number=DEFAULT,
-#                                     rate=0,
-#                                     rate_unit=defaultRateUnit)
-#         thisRateUnit = RateUnit.findOrCreate(name=tProd.rate_unit.name)
 
-#         # Treatment
-#         treatment = Treatment.findOrCreate(batch=batch,
-#                                             rate_unit=thisRateUnit,
-#                                             rate=tProd.rate)
+def importThesis(thesis, scanInit, product, variant):
+    thesisName = thesis.name
+    product = thesis.field_trial.product
 
-#         TreatmentThesis.findOrCreate(thesis=tProd.thesis,
-#                                         treatment=treatment)
+    nameVariant = thesisName[0:scanInit]
+    if thesisName[scanInit] in ['A', 'B', 'C' 'D', 'E', 'F', 'G']:
+        nameVariant += thesisName[scanInit]
+        scanInit += 1
+    variantObject = variants.get(nameVariant, None)
+    batch = None
+    if variantObject is None:
+        # Lets add it, assume it is the main product
+        variantObject = ProductVariant.findOrCreate(
+            name=nameVariant,
+            product=product)
+        variants[nameVariant] = variantObject
+        # let create a default batch
+        batch = Batch.findOrCreate(name=DEFAULT,
+                                   rate=0,
+                                   rate_unit=defaultRateUnit,
+                                   product_variant=variantObject)
+    else:
+        batch = Batch.findOrCreate(name=DEFAULT,
+                                   rate=0,
+                                   rate_unit=defaultRateUnit,
+                                   product_variant=variantObject)
 
-#         print('>>>>[Created] {}\t{}\t{}\t'.format(
-#                 treatment.batch.name,
-#                 treatment.rate_unit.name,
-#                 treatment.rate))
+    if thesisName[scanInit] != ' ':
+        thesisName = thesisName[0:scanInit]+' '+thesisName[scanInit:-1]
+        thesis.name = thesisName
+        thesis.save()
+
+    # let's find the dosis
+    dosis = ''
+    for index in range(scanInit+1, len(thesisName)):
+        chart = thesisName[index]
+        if chart.isdigit():
+            dosis += chart
+        elif chart in ['.', ',']:
+            dosis += '.'
+        elif chart == ' ':
+            index += 1
+            break
+        else:
+            break
+
+    # let's find the unit, let's assume the rest of the name
+    # is the unit
+    unitStr = thesisName[index:]
+
+    theRateUnit = defaultRateUnit
+    if len(unitStr) > 1:
+        theRateUnit = rateUnits.get(unitStr, None)
+        if theRateUnit is None:
+            theRateUnit = RateUnit.findOrCreate(name=unitStr)
+            rateUnits[unitStr] = theRateUnit
+
+    # let's create the treatment
+    treatment = Treatment.findOrCreate(batch=batch,
+                                       rate=dosis,
+                                       rate_unit=theRateUnit)
+    TreatmentThesis.findOrCreate(thesis=thesis,
+                                 treatment=treatment)
+    print('>>>>[Created] {}\n{}\t{}\t{}\t'.format(
+        product.name,
+        batch.name,
+        unitStr,
+        treatment.rate))
+    return True
+
+
+def createThesisTreatments():
+    total = 0
+    withTreatments = 0
+    created = 0
+
+    for thesis in Thesis.objects.all():
+        total += 1
+        treatments = TreatmentThesis.objects.filter(thesis=thesis)
+        if treatments:
+            withTreatments += 1
+            continue
+
+        if 'Untreat' in thesis.name:
+            TreatmentThesis.objects.create(treatment=untreated,
+                                           thesis=thesis)
+            continue
+
+        thesisName = thesis.name
+        if thesisName == 'PB001 8mL/L':
+            print('lo encontre')
+
+        print('\r[{}]{}'.format(thesis.id, thesisName))
+
+        toImport = False
+        if thesisName[:2] == 'PB' and thesisName[2:5].isdigit() and\
+           len(thesisName) > 10:
+            toImport = True
+            # This is a PBXXX product.
+            # Let's added as a formulation
+            scanInit = 5
+        elif 'Serenade' in thesisName or 'SERENADE' in thesisName:
+            toImport = True
+            scanInit = 8
+
+        if toImport:
+            if importThesis(thesis, scanInit):
+                created += 1
+
+    print("Scan {}, with treatment{}, created {}".format(
+        total, withTreatments, created))
 
 
 def importOneOld():
@@ -1003,6 +1091,7 @@ def importOne():
 
 
 if __name__ == '__main__':
-    importOne()
+    createThesisTreatments()
+    # importOne()
     # importOneMapa()
     # discoverReports()

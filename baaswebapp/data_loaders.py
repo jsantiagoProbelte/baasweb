@@ -40,7 +40,7 @@ class TrialDbInitialLoader:
                       '-- No Product --'],
             CultivationMethod: [
                 ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
-            RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT],
+            RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT, 'ml/l'],
             AssessmentUnit: [
                 '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
                 'Number', 'SPAD', 'Kilograms', 'Meters',
@@ -214,7 +214,7 @@ class TrialDbInitialLoader:
 
         # Created untreated product, batch, etc...
         defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
-        noproduct = Product.objects.create(name='No Product')
+        noproduct = Product.objects.create(name=UNTREATED)
         novariant = ProductVariant.objects.create(product=noproduct,
                                                   name=DEFAULT)
         nobatch = Batch.objects.create(name=DEFAULT,
