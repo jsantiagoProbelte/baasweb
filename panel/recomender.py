@@ -30,13 +30,13 @@ class RecomenderApi(APIView):
         headers = {'Authorization': 'Basic ' + base64key}
         res = requests.get(
             'https://api.meteomatics.com/' +
-            str(datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')) + '--'
-            + str((datetime.now() + timedelta(days=4)).strftime('%Y-%m-%dT%H:%M:%SZ')) +
-            ':P1D/t_min_2m_1h:C,dew_point_2m:C,absolute_humidity_2m:gm3/' +
+            datetime.now().strftime('%Y-%m-%dT00:00:00Z') +
+            'P5D:PT1H/t_min_2m_1h:C,dew_point_2m:C,absolute_humidity_2m:gm3/' +
             str(latitude) + ','
             + str(longitude) + '/json?model=mix', headers=headers)
         res_json = json.loads(res.content)
-        return res_json
+
+        return self.formatWeather(res_json)
 
     def getLatLong(self, kwargs):
         latitude = RecomenderApi.DEFAULT_LATITUDE
@@ -49,9 +49,9 @@ class RecomenderApi(APIView):
 
     def computeRisks(self, weather):
         c = 0.5
-        daycount = len(weather[0]['coordinates'][0]['dates'])
-        temperatures = weather[0]['coordinates'][0]['dates']
-        dew_temperatures = weather[1]['coordinates'][0]['dates']
+        daycount = len(weather['temperatures'])
+        temperatures = weather['temperatures']
+        dew_temperatures = weather['dew_temperatures']
         lwd = []
         botrytis_risks = []
         for i in range(daycount):
@@ -64,7 +64,7 @@ class RecomenderApi(APIView):
                 2.35 * 10 - 5 * lwd[i] * (temp ** 3)
             botrytis_risks.append(risk)
 
-        print(botrytis_risks)
+        # print(botrytis_risks)
         return {
             'Risks': ['Day1', 'Day2', 'Day3', 'Day4', 'Day5'],
             'Botrytis': ['High', 'Low', 'Medium', 'Low', 'High'],
@@ -78,6 +78,48 @@ class RecomenderApi(APIView):
                 'longitude': longitude,
                 'weather': weather}
 
+    def formatWeather(self, res_json):
+        temperatures = res_json['data'][0]['coordinates'][0]['dates']
+        dew_temperatures = res_json['data'][1]['coordinates'][0]['dates']
+        humidities = res_json['data'][2]['coordinates'][0]['dates']
+
+        # Meteomatics always returns 1 hour extra, so we pop it.
+        temperatures.pop()
+        dew_temperatures.pop()
+        humidities.pop()
+
+        return {
+            'temperatures': temperatures,
+            'dew_temperatures': dew_temperatures,
+            'humidities': humidities
+        }
+
+    def formatDaily(self, weather):
+        offset = 12
+        temperatures = weather['temperatures']
+        dew_temperatures = weather['dew_temperatures']
+        humidities = weather['humidities']
+
+        daily_temperatures = []
+        daily_dew = []
+        daily_humidity = []
+
+        for i in range(len(temperatures)):
+            if i % 24 == 0:
+                daily_temperatures.append(temperatures[i + offset])
+                daily_dew.append(dew_temperatures[i + offset])
+                daily_humidity.append(humidities[i + offset])
+                print(temperatures[i + offset]['date'])
+
+        return {
+            'temperatures': daily_temperatures,
+            'dew_temperatures': daily_dew,
+            'humidities': daily_humidity
+        }
+
+    def formatHourly(self, weather):
+        return
+
     def get(self, request, *args, **kwargs):
         data = self.prepareData(kwargs)
         return render(request, RecomenderApi.TEMPLATE, data)
@@ -85,6 +127,8 @@ class RecomenderApi(APIView):
     def post(self, request, *args, **kwargs):
         latitude = request.POST["latitude"]
         longitude = request.POST["longitude"]
-        weather = self.fetchWeather(latitude, longitude)['data']
-        risks = self.computeRisks(weather)
-        return JsonResponse(weather, safe=False)
+        weather = self.fetchWeather(latitude, longitude)
+        daily_weather = self.formatDaily(weather)
+        risks = self.computeRisks(daily_weather)
+
+        return JsonResponse(daily_weather, safe=False)

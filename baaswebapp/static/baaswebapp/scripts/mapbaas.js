@@ -127,10 +127,11 @@ map.on('click', (e) => {
 });
 
 function populateWeatherTable(data){
-    const dayCount = data[0]['coordinates'][0]['dates'].length;
-    const temperatures = data[0]['coordinates'][0]['dates'];
-    const dewTemperatures = data[1]['coordinates'][0]['dates'];
-    const humidities = data[2]['coordinates'][0]['dates'];
+    console.log(data)
+    const dayCount = data['temperatures'].length ;
+    const temperatures = data['temperatures'];
+    const dewTemperatures = data['dew_temperatures'];
+    const humidities = data['humidities'];
 
 
     if(weatherTableBody.innerHTML){
