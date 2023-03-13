@@ -15,16 +15,14 @@
 </h2>
 
 
-
 {% if errors %}
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-3">
       <div class="card no-border mb-3" >
-        <div class="card-header-baas h5">Product</div>
-        <ul class="list-group list-group-flush">
+        <ul class="list-group list-group-horizontal">
           {% include "baaswebapp/item_list_template.html" with field='Category' value=product.category%}
           {% include "baaswebapp/item_list_template.html" with field='Vendor' value=product.vendor%}
           <li class="list-group-item list-group-item-baas">
@@ -33,12 +31,53 @@
         </li>
         </ul>
       </div>
-      {% include "catalogue/submodel_list.html" with title='Variants' add_url='product_variant-add' itemList=variants update_url='product_variant-api' %}
-      {% include "catalogue/submodel_list.html" with title='Batches' add_url='batch-add' itemList=batches update_url='batch-api'%}
+      <div class="card no-border mb-3">
+        <div class="card-header-baas h5">Variants, batches and treatments</div>
+        <ul class="list-group list-group-flush">
+        {% for variant in variants %}
+          <li class="list-group-item list-group-item-baas">
+            <a class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" href="{% url 'product_variant-api' variant.id%}">{{variant.name}}</a>
+            <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#variant-block-{{variant.id}}" aria-expanded="false" aria-controls="collapseExample">
+              ...
+            </button>
+            <ul class="list-group list-group-flush collapse" id="variant-block-{{variant.id}}">
+            {% for batch in variant.batches %}
+              <li class="list-group-item list-group-item-baas">
+                <a class="btn btn-dark btn-sm" href="{% url 'batch-api' batch.id%}">{{batch.name}}</a>
+                <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#batch-block-{{batch.id}}" aria-expanded="false" aria-controls="collapseExample">
+                  ...
+                </button>
+                <ul class="list-group list-group-flush collapse" id="batch-block-{{batch.id}}">
+                {% for treatment in batch.treatments %}
+                  <li class="list-group-item list-group-item-baas">
+                    <a class="btn btn-dark btn-sm" href="{% url 'treatment-api' treatment.id%}">{{treatment.name}}</a>
+                  </li>
+                {% endfor %}
+                <li class="list-group-item list-group-item-baas">
+                  <a href="{% url 'treatment-add' batch.id %}" class="btn btn-dark btn-sm fs-3"
+                     data-toggle="tooltip" data-placement="top" title='Create treatment'>+</a>
+                  <small>add treatment</small>
+                </li>
+                </ul>
+              </li>
+            {% endfor %}
+            <li class="list-group-item list-group-item-baas">
+              <a href="{% url 'batch-add' variant.id %}" class="btn btn-dark btn-sm fs-3"
+                 data-toggle="tooltip" data-placement="top" title='Create batch'>+</a>
+              <small>add batch</small>
+            </li>
+            </ul>
+          </li>
+        {% endfor %}
+        <li class="list-group-item list-group-item-baas">
+          <a href="{% url 'product_variant-add' product.id %}" class="btn btn-dark btn-sm fs-3"
+          data-toggle="tooltip" data-placement="top" title='Create product'>&#43;</a>
+          <small>add product variant</small>
+        </li>
+        </ul>
+      </div>
     </div>
-    <div class="col-md-2">
-      {% include "catalogue/submodel_list.html" with title='Known treatments' add_url='treatment-add' itemList=treatments update_url='treatment-api'%}
-    </div>
+
     <div class="col-md-8">
       <div class="card no-border mb-3">
         <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
@@ -74,6 +113,5 @@
         </div>
       {% endfor %}
     </div>
-  </div>
 </div>
 {% endblock %}

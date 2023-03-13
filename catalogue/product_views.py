@@ -207,6 +207,23 @@ class ProductApi(APIView):
         else:
             return 'No data found'
 
+    def getProductTree(self, product):
+        data = []
+        for variant in ProductVariant.getItems(product):
+            variantItem = {'name': variant.name, 'id': variant.id,
+                           'batches': []}
+            for batch in Batch.objects.filter(
+                         product_variant=variant).order_by('name'):
+                batchItem = {'name': batch.name,
+                             'id': batch.id, 'treatments': []}
+                for treatment in Treatment.objects.filter(
+                                 batch=batch).order_by('name'):
+                    batchItem['treatments'].append(
+                        {'name': treatment.getName(), 'id': treatment.id})
+                variantItem['batches'].append(batchItem)
+            data.append(variantItem)
+        return data
+
     def get(self, request, *args, **kwargs):
         product_id = None
         product_id = kwargs['product_id']
@@ -228,9 +245,7 @@ class ProductApi(APIView):
                        'fieldtrials': DataModel.getCountFieldTrials(product),
                        'filterData': filterData,
                        'graphs': graphs,
-                       'batches': Batch.getItems(product),
-                       'variants': ProductVariant.getItems(product),
-                       'treatments': Treatment.displayItems(product),
+                       'variants': self.getProductTree(product),
                        'errors': errorgraphs,
                        'classGraphCol': classGraphCol,
                        'titleView': product.getName()})

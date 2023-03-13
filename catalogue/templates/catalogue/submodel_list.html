@@ -3,6 +3,7 @@
         <a href="{% url add_url product.id %}" class="btn btn-secondary btn-sm fs-3 float-end"
         data-toggle="tooltip" data-placement="top" title='Create {{title}}'>&#43;</a>
     </div>
+    <div class="overflow-scroll">
         {% for item in itemList%}
             <li class="list-group-item list-group-item-baas">
                 <a class="btn btn-dark btn-sm" href="{% url update_url item.id%}">{{item.name}}</a>
@@ -10,4 +11,5 @@
         {% empty %}
         <small>none created yet</small>
         {% endfor %}
+    </div>
 </div>
