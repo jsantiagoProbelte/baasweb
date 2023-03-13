@@ -31,7 +31,7 @@ class ModelHelpers:
 
     @classmethod
     def getSelectList(cls, addNull=False, asDict=False):
-        return cls._getSelectList(cls.getObjects(),
+        return cls._getSelectList(cls.getObjects().order_by('name'),
                                   addNull=addNull,
                                   asDict=asDict)
 
