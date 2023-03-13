@@ -495,6 +495,8 @@ class TreatmentForm(forms.ModelForm):
                     'name')
         self.fields['name'].required = False
         self.helper = TreatmentFormHelper(new=new)
+        self.fields['rate'].label = 'Dosis'
+        self.fields['rate_unit'].label = 'Dosis Unit'
 
 
 class TreatmentCreateView(LoginRequiredMixin, CreateView):
