@@ -373,6 +373,11 @@ class FieldTrialForm(forms.ModelForm):
                 elif typeField == TrialModel.T_T:
                     self.fields['comments_criteria'].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
+        # Querysets
+        self.fields['crop'].queryset = Crop.objects.all().order_by('name')
+        self.fields['plague'].queryset = Plague.objects.all().order_by('name')
+        self.fields['crop_variety'].queryset = CropVariety.objects.all(
+            ).order_by('name')
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):
