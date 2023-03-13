@@ -24,7 +24,7 @@ class Product(ModelHelpers, models.Model):
                                  null=True)
 
     def get_absolute_url(self):
-        return "/product_api/%i/" % self.id
+        return "/product/%i/" % self.id
 
 
 class ProductVariant(ModelHelpers, models.Model):
