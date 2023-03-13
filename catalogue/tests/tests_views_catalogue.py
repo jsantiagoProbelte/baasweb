@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit,\
-    Batch, Treatment
+    Batch, Treatment, DEFAULT
 from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
     AssessmentUnit, Replica, Plague
@@ -292,6 +292,21 @@ class ProductViewsTest(TestCase):
                                         product_id=product.id)
         self.assertTrue(response.status_code, 302)
         theItem = theClass.objects.get(name=data['name'])
+
+        if theClass == Product:
+            # Check the default creation of variant and bach
+            variants = ProductVariant.getItems(theItem)
+            self.assertTrue(len(variants) == 1)
+            self.assertTrue(DEFAULT in variants[0].name)
+            batches = Batch.getItems(theItem)
+            self.assertTrue(len(batches) == 1)
+            self.assertTrue(DEFAULT in batches[0].name)
+
+        if theClass == ProductVariant:
+            # Check the default creation of variant and bach
+            items = Batch.objects.filter(product_variant=theItem)
+            self.assertTrue(len(items) == 1)
+            self.assertTrue(DEFAULT in items[0].name)
 
         modelGet = self._apiFactory.get(url_model)
         self._apiFactory.setUser(modelGet)

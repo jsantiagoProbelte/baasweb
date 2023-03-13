@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from baaswebapp.graphs import Graph
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
@@ -48,6 +48,17 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(form_class)
         form.helper = ProductFormLayout()
         return form
+
+    def form_valid(self, form):
+        if form.is_valid():
+            item = form.instance
+            item.save()
+
+            # Let's create default variant and default batch
+            variant = ProductVariant.createDefault(item)
+            Batch.createDefault(variant)
+
+            return HttpResponseRedirect(item.get_absolute_url())
 
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
@@ -224,11 +235,6 @@ class ProductApi(APIView):
                        'classGraphCol': classGraphCol,
                        'titleView': product.getName()})
 
-    @classmethod
-    def url(cls, product_id):
-        return reverse('product_api',
-                       kwargs={'product_id': product_id})
-
 
 ##############################
 # BATCH
@@ -310,8 +316,8 @@ class BatchCreateView(LoginRequiredMixin, CreateView):
             item = form.instance
             item.product_id = self.kwargs["product_id"]
             item.save()
-            return HttpResponseRedirect(
-                ProductApi.url(item.product_id))
+            product = Product.objects.get(id=item.product_id)
+            return HttpResponseRedirect(product.get_absolute_url())
 
 
 class BatchUpdateView(LoginRequiredMixin, UpdateView):
@@ -334,10 +340,9 @@ class BatchDeleteView(DeleteView):
 
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
-        product_id = self.object.product_variant.product_id
+        product = self.object.product_variant.product
         self.object.delete()
-        return HttpResponseRedirect(
-            ProductApi.url(product_id))
+        return HttpResponseRedirect(product.get_absolute_url())
 
 
 ##############################
@@ -408,8 +413,8 @@ class ProductVariantCreateView(LoginRequiredMixin, CreateView):
             item = form.instance
             item.product_id = self.kwargs["product_id"]
             item.save()
-            return HttpResponseRedirect(
-                ProductApi.url(item.product_id))
+            Batch.createDefault(item)
+            return HttpResponseRedirect(item.product.get_absolute_url())
 
 
 class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
@@ -429,10 +434,9 @@ class ProductVariantDeleteView(DeleteView):
 
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
-        product_id = self.object.product_id
+        product = self.object.product
         self.object.delete()
-        return HttpResponseRedirect(
-            ProductApi.url(product_id))
+        return HttpResponseRedirect(product.get_absolute_url())
 
 
 ##############################
@@ -516,8 +520,8 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item = form.instance
             item.product_id = self.kwargs["product_id"]
             item.save()
-            return HttpResponseRedirect(
-                ProductApi.url(item.product_id))
+            product = Product.objects.get(id=item.product_id)
+            return HttpResponseRedirect(product.get_absolute_url())
 
 
 class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
@@ -542,5 +546,5 @@ class TreatmentDeleteView(DeleteView):
         self.object = self.get_object()
         product_id = self.object.batch.product_variant.product_id
         self.object.delete()
-        return HttpResponseRedirect(
-            ProductApi.url(product_id))
+        product = Product.objects.get(id=product_id)
+        return HttpResponseRedirect(product.get_absolute_url())

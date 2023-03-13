@@ -16,6 +16,10 @@ class ProductCategory(ModelHelpers, models.Model):
 class RateUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
+    @classmethod
+    def getDefault(cls):
+        return RateUnit.objects.get(name=DEFAULT)
+
 
 class Product(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -39,6 +43,12 @@ class ProductVariant(ModelHelpers, models.Model):
     def getItems(cls, product):
         return ProductVariant.objects.filter(product=product).order_by('name')
 
+    @classmethod
+    def createDefault(cls, product):
+        return cls.objects.create(
+            product=product, name=DEFAULT + ' variant',
+            description=DEFAULT + 'variant for' + product.name)
+
 
 class Batch(ModelHelpers, models.Model):
     name = models.CharField(max_length=100, null=True)
@@ -55,6 +65,15 @@ class Batch(ModelHelpers, models.Model):
 
     def get_absolute_url(self):
         return "/batch/%i/" % self.id
+
+    @classmethod
+    def createDefault(cls, variant):
+        name = DEFAULT + ' batch for ' + variant.name
+
+        return cls.objects.create(
+            product_variant=variant, rate=0,
+            rate_unit=RateUnit.getDefault(),
+            name=name)
 
 
 class Treatment(ModelHelpers, models.Model):
