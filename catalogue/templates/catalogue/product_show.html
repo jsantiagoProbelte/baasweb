@@ -1,12 +1,15 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 {% block content %}
+<h5 class="mt-4 ms-4 text-muted">{{product.category}} - {{product.vendor}}</h5>
 <h2 class="fw-bold mt-4 ms-4 mb-3">
   {{product.name}}
   <span class="text-muted ml-2">product</span>
   <span> <div class="btn-group float-end " role="group">
       <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
           data-toggle="tooltip" data-placement="top" title='Go to product list'>&#8679;</a>
+      <a class="btn btn-dark" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}} # trials</a>
       <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3"
           data-toggle="tooltip" data-placement="top" title='Edit product'>&#10000;</a>
       <a href="{% url 'product-delete' product.id %}" class="btn btn-warning btn-sm fs-3"
@@ -19,18 +22,8 @@
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 
-<div class="row">
-    <div class="col-md-3">
-      <div class="card no-border mb-3" >
-        <ul class="list-group list-group-horizontal">
-          {% include "baaswebapp/item_list_template.html" with field='Category' value=product.category%}
-          {% include "baaswebapp/item_list_template.html" with field='Vendor' value=product.vendor%}
-          <li class="list-group-item list-group-item-baas">
-            <span class='text-muted small'># trials</span>
-            <span class='float-end'><a class="btn btn-sm btn-info" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}}</a></span>
-        </li>
-        </ul>
-      </div>
+<div class="row ms-4">
+    <div class="col-md-3 ">
       <div class="card no-border mb-3">
         <div class="card-header-baas h5">Variants, batches and treatments</div>
         <ul class="list-group list-group-flush">
@@ -78,7 +71,7 @@
       </div>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-md-9">
       <div class="card no-border mb-3">
         <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
           {% csrf_token %}

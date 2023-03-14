@@ -1,4 +1,3 @@
-# Create your views here.
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalogue.models import Product, Batch, Treatment, ProductVariant
