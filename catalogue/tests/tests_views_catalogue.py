@@ -4,7 +4,7 @@ from catalogue.models import Product, ProductVariant, RateUnit,\
     Batch, Treatment, DEFAULT
 from trialapp.models import FieldTrial,\
     Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
-    AssessmentUnit, Replica, Plague
+    AssessmentUnit, Replica
 from trialapp.data_models import ThesisData, ReplicaData
 from catalogue.product_views import ProductListView, ProductApi,\
     ProductCreateView, ProductUpdateView, ProductDeleteView,\
@@ -160,17 +160,15 @@ class ProductViewsTest(TestCase):
                         unit=unit,
                         reference=thesis)
                     value += 500.10
-        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
-        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
-        dimensionId = 'dimensions-{}'.format(self._units[0].id)
+
         levelId = 'level-thesis'
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plagues': self._fieldTrials[0].plague.id,
+                  ProductApi.TAG_LEVEL: 'thesis',
+                  ProductApi.TAG_DIMENSIONS: self._units[0].id})
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
@@ -183,9 +181,8 @@ class ProductViewsTest(TestCase):
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  plagueId: plagueId,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'plagues': self._fieldTrials[0].plague.id,
+                  'dimensions': self._units[0].id})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
                                **{'product_id': productid})
@@ -196,8 +193,8 @@ class ProductViewsTest(TestCase):
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plague': self._fieldTrials[0].plague.id,
                   levelId: levelId})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
@@ -231,29 +228,20 @@ class ProductViewsTest(TestCase):
 
     def test_showProduct_Replica_graph(self):
         productid = 1
-        plagues = Plague.getObjects()
-        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
-        plague2 = 'crops-{}'.format(plagues[2].id)
-        plague3 = 'crops-{}'.format(plagues[3].id)
-        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
-        dimensionId = 'dimensions-{}'.format(self._units[0].id)
-        levelId = 'level-replica'
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
-                  plague2: plague2,
-                  plague3: plague3,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plagues': self._fieldTrials[0].plague.id,
+                  'dimensions': self._units[0].id,
+                  })
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No data found', count=3)
+        self.assertContains(response, 'No data found', count=1)
         self.assertEqual(ReplicaData.objects.count(), 0)
 
         # Le's add data
@@ -271,7 +259,7 @@ class ProductViewsTest(TestCase):
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No data found', count=2)
+        self.assertContains(response, 'No data found', count=0)
 
     def alltogether(self, theClass, data, product,
                     token, modelApi,

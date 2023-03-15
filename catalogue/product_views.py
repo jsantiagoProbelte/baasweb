@@ -106,7 +106,7 @@ class ProductApi(APIView):
     TAG_CROPS = 'crops'
     TAG_PLAGUES = 'plagues'
     TAG_LEVEL = 'level'
-    FILTER_DATA = [TAG_DIMENSIONS, TAG_CROPS, TAG_PLAGUES, TAG_LEVEL]
+    FILTER_DATA = [TAG_CROPS, TAG_DIMENSIONS, TAG_PLAGUES, TAG_LEVEL]
 
     def identifyObjectFilter(self, tags):
         dimensions = []
@@ -114,17 +114,17 @@ class ProductApi(APIView):
         plagues = []
         level = Graph.L_REPLICA
         for tag in tags:
-            tagTypes = tag.split('-')
-            tagType = tagTypes[0]
-            if tagType in ProductApi.FILTER_DATA:
-                tagId = tagTypes[1]
-                if tagType == ProductApi.TAG_CROPS:
+            if tag in ProductApi.FILTER_DATA:
+                tagId = tags[tag]
+                if tagId == 'None' or tagId == '':
+                    continue
+                if tag == ProductApi.TAG_CROPS:
                     crops.append(Crop.objects.get(pk=tagId))
-                if tagType == ProductApi.TAG_DIMENSIONS:
+                if tag == ProductApi.TAG_DIMENSIONS:
                     dimensions.append(AssessmentType.objects.get(pk=tagId))
-                if tagType == ProductApi.TAG_PLAGUES:
+                if tag == ProductApi.TAG_PLAGUES:
                     plagues.append(Plague.objects.get(pk=tagId))
-                if tagType == ProductApi.TAG_LEVEL:
+                if tag == ProductApi.TAG_LEVEL:
                     if tagId == Graph.L_THESIS:
                         level = Graph.L_THESIS
                     elif tagId == Graph.L_REPLICA:
@@ -223,19 +223,30 @@ class ProductApi(APIView):
             data.append(variantItem)
         return data
 
+    def filterData(self, filterValues, product):
+        filterData = []
+        for tag in ProductApi.FILTER_DATA:
+            current = filterValues.get(tag, '')
+            values = None
+            if tag == ProductApi.TAG_CROPS:
+                values = DataModel.getCrops(product)
+            elif tag == ProductApi.TAG_PLAGUES:
+                values = DataModel.getPlagues(product)
+            elif tag == ProductApi.TAG_DIMENSIONS:
+                values = DataModel.dimensionsValues(product)
+            if values:
+                filterData.append({
+                    'name': tag,
+                    'current': int(current) if current != '' else '',
+                    'values': values})
+        return filterData
+
     def get(self, request, *args, **kwargs):
         product_id = None
         product_id = kwargs['product_id']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
-
-        filterData = [
-            {'name': ProductApi.TAG_CROPS,
-             'values': DataModel.getCrops(product)},
-            {'name': ProductApi.TAG_PLAGUES,
-             'values': DataModel.getPlagues(product)},
-            {'name': ProductApi.TAG_DIMENSIONS,
-             'values': DataModel.dimensionsValues(product)}]
+        filterData = self.filterData(request.GET, product)
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         return render(request, template_name,

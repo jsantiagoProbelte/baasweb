@@ -71,4 +71,4 @@ class ModelHelpers:
                 continue
             if found not in values:
                 values[found] = name
-        return [{'id': id, 'name': values[id]} for id in values]
+        return [{'value': id, 'name': values[id]} for id in values]

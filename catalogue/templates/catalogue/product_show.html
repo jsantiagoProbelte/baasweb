@@ -73,20 +73,27 @@
 
     <div class="col-md-9">
       <div class="card no-border mb-3">
+        
+        <div class="card-header-baas h5">
+            Data points
+        </div>
         <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
           {% csrf_token %}
           {{ form|crispy }}
-        <div class="card-header-baas h5">
-            Data points
-            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm float-end"/>
-        </div>
-          <ul class="list-group list-group-horizontal">
+          <ul class="list-group list-group-horizontal mt-4 mb-4">
             {% for tagValues in filterData %}
-              {% include "catalogue/show_tags_btns.html" with title=tagValues.name tags=tagValues.values %}
+
+              <div class="form-floating col-md-2 ms-2 me-2">
+                {% include 'baaswebapp/input_select_template.html' with tag=tagValues.name item_id='new' currentValue=tagValues.current selectOptions=tagValues.values addNull=True tag=tagValues.name selectOptions=tagValues.values %}
+                <label class='mb-2' for="floatingInputValue">{{tagValues.name}}</label>
+              </div>
+             
             {% endfor %}
+            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm ms-4 me-4"/>
           </ul>
         </form>
       </div>
+
       
       {% for graphDim in graphs %}
         <div class="card no-border mb-3">
