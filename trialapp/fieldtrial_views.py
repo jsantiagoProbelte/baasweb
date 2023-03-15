@@ -24,7 +24,7 @@ from trialapp.forms import MyDateInput
 
 
 class FieldTrialFilter(django_filters.FilterSet):
-
+    name = django_filters.CharFilter(lookup_expr='icontains')
     trial_status = django_filters.ModelChoiceFilter(
         queryset=TrialStatus.objects.all().order_by('name'))
     trial_type = django_filters.ModelChoiceFilter(
@@ -40,8 +40,8 @@ class FieldTrialFilter(django_filters.FilterSet):
 
     class Meta:
         model = FieldTrial
-        fields = ['trial_status', 'trial_type', 'objective', 'product', 'crop',
-                  'plague']
+        fields = ['name', 'trial_status', 'trial_type', 'objective', 'product',
+                  'crop', 'plague']
 
 
 class TrialModel():
@@ -153,7 +153,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
-            if paramId:
+            if paramIdName == 'name':
+                filter_kwargs['name__icontains'] = paramId
+            elif paramId:
                 filter_kwargs['{}__id'.format(paramIdName)] = paramId
         new_list = []
         orderBy = paramsReplyTemplate.copy()
