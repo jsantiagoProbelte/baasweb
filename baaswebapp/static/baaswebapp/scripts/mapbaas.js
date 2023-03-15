@@ -150,5 +150,18 @@ function populateWeatherTable(data){
 }
 
 function populateRiskTable(data){
-    //TODO
+    const dayCount = data['botrytis'].length ;
+    const botrytisRisks = data['botrytis'];
+
+    if(riskTableBody.innerHTML){
+        riskTableBody.innerHTML = ""
+    }
+    for (var i = 0; i < dayCount; i++){
+        var tableParent = document.createElement("tr")
+        tableParent.insertAdjacentHTML("beforeend", `<th scope="row">${i + 1}</th>`)
+        tableParent.insertAdjacentHTML("beforeend", `<td>${botrytisRisks[i]}</td>`)
+    
+        riskTableBody.appendChild(tableParent)
+        riskTable.style.display = ""
+    }
 }

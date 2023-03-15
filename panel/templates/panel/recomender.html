@@ -22,6 +22,18 @@
                 <tbody id="weathertablebody">
                 </tbody>
             </table>
+            <table class="table table-dark" id="risktable">
+                <thead>
+                    <tr>
+                        <th scope="col">Day #</th>
+                        <th scope="col">Botrytis Risk</th>
+                        <th scope="col">Other Risk</th>
+                        <th scope="col">Another Risk</th>
+                    </tr>
+                </thead>
+                <tbody id="risktablebody">
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock content %}
@@ -32,6 +44,10 @@
     const weatherTable = document.getElementById('weathertable')
     const weatherTableBody = document.getElementById('weathertablebody')
 
+    const riskTable = document.getElementById('risktable')
+    const riskTableBody = document.getElementById('risktablebody')
+
+    riskTable.style.display = "none"
     weatherTable.style.display = "none"
 
     document.getElementById("fetch").addEventListener("click", fetchRecs, false);
@@ -46,7 +62,8 @@
           })
           .then(response => response.json())
             .then(data => {
-                populateWeatherTable(data)
+                populateWeatherTable(data['daily_weather'])
+                populateRiskTable(data['risks'])
             })
             .catch(error => {
                 console.error('Error:', error);
