@@ -153,7 +153,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
-            if paramIdName == 'name':
+            if paramIdName == 'name' and paramId:
                 filter_kwargs['name__icontains'] = paramId
             elif paramId:
                 filter_kwargs['{}__id'.format(paramIdName)] = paramId
