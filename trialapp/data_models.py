@@ -1,7 +1,7 @@
 from django.db import models
 from baaswebapp.models import ModelHelpers
 from trialapp.models import Evaluation, TrialAssessmentSet, FieldTrial,\
-                            Thesis, Sample, Replica
+                            Thesis, Sample, Replica, AssessmentType
 
 
 class DataModel(ModelHelpers):
@@ -72,7 +72,9 @@ class DataModel(ModelHelpers):
         tag_name = '{}__name'.format(tag)
         results = FieldTrial.objects.filter(product=product).values(
             tag_id, tag_name)
-        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
+        theArray, theIds = ModelHelpers.extractDistincValues(results, tag_id,
+                                                             tag_name)
+        return theArray
 
     @classmethod
     def getCrops(cls, product):
@@ -83,7 +85,7 @@ class DataModel(ModelHelpers):
         return cls.distinctValues(product, 'plague')
 
     @classmethod
-    def dimensionsValues(cls, product):
+    def dimensionsValues(cls, product, as_array=True):
         results = FieldTrial.objects.filter(product=product).values('id')
         ids = [value['id'] for value in results]
         tag = 'type'
@@ -91,8 +93,13 @@ class DataModel(ModelHelpers):
         tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
         results = TrialAssessmentSet.objects.filter(
-            field_trial_id__in=ids).values(tag_id, tag_name)
-        return ModelHelpers.extractDistincValues(results, tag_id, tag_name)
+                field_trial_id__in=ids).values(tag_id, tag_name)
+        dimensions, theIds = ModelHelpers.extractDistincValues(results, tag_id,
+                                                               tag_name)
+        if as_array:
+            return dimensions
+        else:
+            return AssessmentType.objects.filter(id__in=theIds)
 
     @classmethod
     def getCountFieldTrials(cls, product):

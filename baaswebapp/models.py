@@ -71,4 +71,5 @@ class ModelHelpers:
                 continue
             if found not in values:
                 values[found] = name
-        return [{'value': id, 'name': values[id]} for id in values]
+        dimensionsDic = [{'value': id, 'name': values[id]} for id in values]
+        return dimensionsDic, list(values.keys())

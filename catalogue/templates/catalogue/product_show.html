@@ -17,11 +17,6 @@
   </span>
 </h2>
 
-
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
-
 <div class="row ms-4">
     <div class="col-md-3 ">
       <div class="card no-border mb-3">
@@ -94,24 +89,27 @@
         </form>
       </div>
 
+      {% if errors %}
+        <div class="alert alert-primary" role="alert">{{errors}}</div>
+      {% endif %}
       
-      {% for graphDim in graphs %}
-        <div class="card no-border mb-3">
-          <div class="card-header-baas h5">
-            {{graphDim.name}}
-          </div>
+      <div class="card no-border mb-3">
+        <div class="card-header-baas h5">
+          {{titleGraph}}
+        </div>
+        {% for graphDim in graphs %}
           {% for graphRow in graphDim.values %}
-            <ul class="list-group list-group-horizontal">
+            <ul class="list-group list-group-horizontal mb-4">
               {% for item in graphRow %}
               <li class="list-group-item list-group-item-baas {{classGraphCol}}">
-                <h6 class="mt-2 mb-2">{{item.name}}</h6>
                 {{item.graph|safe}}
               </li>
               {% endfor %}
             </ul>
           {% endfor %}
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      
     </div>
 </div>
 {% endblock %}

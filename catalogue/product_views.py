@@ -28,8 +28,7 @@ class ProductFormLayout(FormHelper):
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
-                css_class="card-body-baas mt-2")
-            ))
+                css_class="card-body-baas mt-2")))
 
 
 class ProductForm(forms.ModelForm):
@@ -136,10 +135,12 @@ class ProductApi(APIView):
             return [], '', 'col-md-12'
         dimensions, crops, plagues, level = self.identifyObjectFilter(tags)
         classGroup = Graph.classColGraphs(len(crops), graphPerRow)
-        if len(dimensions) == 0:
-            return [], 'Please select dimensions', classGroup
         if len(crops) == 0:
             return [], 'Please select crop', classGroup
+
+        if len(dimensions) == 0:
+            # Use all available dimensions
+            dimensions = DataModel.dimensionsValues(product, as_array=False)
 
         croplagues = []
         for crop in crops:
@@ -150,19 +151,30 @@ class ProductApi(APIView):
                 croplagues.append([crop, None])
 
         graphs = []
+        notFound = ''
         for dimension in dimensions:
             graphDim = self.fetchData(product, dimension,
                                       croplagues, graphPerRow,
                                       level)
-            graphs.append(graphDim)
+            if len(graphDim['values']):
+                graphs.append(graphDim)
+            else:
+                notFound += dimension.getName() + ', '
+        if len(notFound) > 0:
+            textNotFound = '<div class="alert alert-warning" role="alert">'\
+                           'Data not found for ' + notFound + ' dimensions.'\
+                           '</div>'
+
+            graphs.append(
+                {'name': 'Not Found',
+                 'values': [[{'name': 'Not Found', 'graph': textNotFound}]]})
         return graphs, '', classGroup
 
     def fetchData(self, product, dimension, croplagues,
                   graphPerRow, level):
-        graphDim = {'name': "{}".format(dimension.name),
+        graphDim = {'name': "{}".format(dimension.getName()),
                     'values': []}
         lastRow = []
-
         for croplague in croplagues:
             # Get graph
             crop = croplague[0]
@@ -171,12 +183,12 @@ class ProductApi(APIView):
             if plague:
                 nameItem += '-' + plague.name
             graph = self.computeGraph(product, crop, plague, dimension, level)
-
-            item = {'name': nameItem, 'graph': graph}
-            lastRow.append(item)
-            if len(lastRow) % graphPerRow == 0:
-                graphDim['values'].append(lastRow)
-                lastRow = []
+            if graph:
+                item = {'name': nameItem, 'graph': graph}
+                lastRow.append(item)
+                if len(lastRow) % graphPerRow == 0:
+                    graphDim['values'].append(lastRow)
+                    lastRow = []
 
         if len(lastRow) > 0:
             graphDim['values'].append(lastRow)
@@ -204,7 +216,7 @@ class ProductApi(APIView):
                 graphPlotsT, classGraphT = graphT.violin()
             return graphPlotsT[0][0]
         else:
-            return 'No data found'
+            return None
 
     def getProductTree(self, product):
         data = []
@@ -225,28 +237,40 @@ class ProductApi(APIView):
 
     def filterData(self, filterValues, product):
         filterData = []
+        titleGraph = ''
         for tag in ProductApi.FILTER_DATA:
             current = filterValues.get(tag, '')
+            currentValue = ''
             values = None
             if tag == ProductApi.TAG_CROPS:
                 values = DataModel.getCrops(product)
+                if current != '':
+                    currentValue = Crop.objects.get(id=current).getName()
             elif tag == ProductApi.TAG_PLAGUES:
                 values = DataModel.getPlagues(product)
+                if current != '':
+                    currentValue = Plague.objects.get(id=current).getName()
             elif tag == ProductApi.TAG_DIMENSIONS:
                 values = DataModel.dimensionsValues(product)
+                if current != '':
+                    currentValue = AssessmentType.objects.get(
+                        id=current).getName()
             if values:
                 filterData.append({
                     'name': tag,
                     'current': int(current) if current != '' else '',
                     'values': values})
-        return filterData
+            if currentValue != '':
+                titleGraph += currentValue + ' - '
+
+        return filterData, titleGraph
 
     def get(self, request, *args, **kwargs):
         product_id = None
         product_id = kwargs['product_id']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
-        filterData = self.filterData(request.GET, product)
+        filterData, titleGraph = self.filterData(request.GET, product)
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         return render(request, template_name,
@@ -254,6 +278,7 @@ class ProductApi(APIView):
                        'deleteProductForm': ProductDeleteView(),
                        'fieldtrials': DataModel.getCountFieldTrials(product),
                        'filterData': filterData,
+                       'titleGraph': titleGraph,
                        'graphs': graphs,
                        'variants': self.getProductTree(product),
                        'errors': errorgraphs,

@@ -200,7 +200,7 @@ class ProductViewsTest(TestCase):
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Please select dimensions')
+        self.assertNotContains(response, 'Please select dimensions')
 
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
@@ -241,7 +241,7 @@ class ProductViewsTest(TestCase):
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No data found', count=1)
+        self.assertContains(response, 'No data found', count=0)
         self.assertEqual(ReplicaData.objects.count(), 0)
 
         # Le's add data
