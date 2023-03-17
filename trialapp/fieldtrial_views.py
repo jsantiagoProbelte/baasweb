@@ -379,6 +379,7 @@ class FieldTrialForm(forms.ModelForm):
                     self.fields['comments_criteria'].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
         # Querysets
+        self.fields['product'].queryset = Product.objects.all().order_by('name')
         self.fields['crop'].queryset = Crop.objects.all().order_by('name')
         self.fields['plague'].queryset = Plague.objects.all().order_by('name')
         self.fields['crop_variety'].queryset = CropVariety.objects.all(
