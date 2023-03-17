@@ -23,7 +23,7 @@ class ThesisPanelApi(APIView):
                 data[nameTrial] = {'id': thesis.field_trial.id, 'thesis': []}
                 foundTrials += 1
             data[nameTrial]['thesis'].append(
-                {'id': thesis.id, 'name': thesis.name})
+                {'id': thesis.id, 'name': thesis.getTitle()})
         return {'data': [{'name': name,
                           'id': data[name]['id'],
                           'thesis': data[name]['thesis']}

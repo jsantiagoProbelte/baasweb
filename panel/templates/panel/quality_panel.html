@@ -13,6 +13,8 @@
         <a href="{% url 'thesis_api' thesis.id %}" >{{thesis.name}}</a>
     {% endfor %}
 <br/><br/>
+{% empty %}
+<p>No related trials, thesis found</p>
 {% endfor %}
 
 {% endblock %}

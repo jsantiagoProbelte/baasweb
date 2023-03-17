@@ -1,7 +1,7 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalogue.models import Product, Batch, Treatment, ProductVariant
-from trialapp.models import Crop, Plague, AssessmentType
+from trialapp.models import Crop, Plague, AssessmentType, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -506,10 +506,33 @@ class TreatmentApi(APIView):
                   {'name': 'batch', 'value': item.batch},
                   {'name': 'rate & unit',
                    'value': '{} {}'.format(item.rate, item.rate_unit)}]
+        thesiss = TreatmentThesis.objects.filter(treatment=item)
+        extraData = {}
+        foundTrials = 0
+        foundThesis = 0
+        for thesist in thesiss:
+            thesis = thesist.thesis
+            trial = thesis.field_trial
+            nameTrial = trial.name
+            if nameTrial not in extraData:
+                extraData[nameTrial] = {'id': trial.id,
+                                        'thesis': []}
+                foundTrials += 1
+            foundThesis += 1
+            extraData[nameTrial]['thesis'].append(
+                {'id': thesis.id, 'name': thesis.getTitle()})
+        foundRelations = [{'name': name,
+                           'id': extraData[name]['id'],
+                           'thesis': extraData[name]['thesis']}
+                          for name in extraData]
+
         return render(request, template_name,
                       {'product': product,
                        'values': values,
                        'item': item,
+                       'foundTrials': foundTrials,
+                       'foundThesis': foundThesis,
+                       'foundRelations': foundRelations,
                        'subtitle': subtitle,
                        'update_url': subtitle + '-update',
                        'delete_url': subtitle + '-delete'})
