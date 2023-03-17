@@ -233,8 +233,7 @@ class ProductViewsTest(TestCase):
             data={'show_data': 'show_data',
                   'crops': self._fieldTrials[0].crop.id,
                   'plagues': self._fieldTrials[0].plague.id,
-                  'dimensions': self._units[0].id,
-                  })
+                  'dimensions': self._units[0].id})
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
@@ -261,7 +260,7 @@ class ProductViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No data found', count=0)
 
-    def alltogether(self, theClass, data, product,
+    def alltogether(self, theClass, data, reference,
                     token, modelApi,
                     createView, updateView, deleteView):
         url_model = token+'-api'
@@ -271,13 +270,13 @@ class ProductViewsTest(TestCase):
         createGet = self._apiFactory.get(url_add, data=data)
         self._apiFactory.setUser(createGet)
         response = createView.as_view()(createGet,
-                                        product_id=product.id)
+                                        reference_id=reference.id)
         self.assertTrue(response.status_code, 200)
 
         createPost = self._apiFactory.post(url_add, data=data)
         self._apiFactory.setUser(createPost)
         response = createView.as_view()(createPost,
-                                        product_id=product.id)
+                                        reference_id=reference.id)
         self.assertTrue(response.status_code, 302)
         theItem = theClass.objects.get(name=data['name'])
 
@@ -347,9 +346,9 @@ class ProductViewsTest(TestCase):
                                                 product=product)
         rateUnit = RateUnit.objects.create(name='unit')
         data = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
-                'rate_unit': rateUnit.id, 'product_variant': variant.id}
+                'rate_unit': rateUnit.id}
         self.alltogether(
-            Batch, data, product, 'batch', BatchApi,
+            Batch, data, variant, 'batch', BatchApi,
             BatchCreateView, BatchUpdateView, BatchDeleteView)
 
     def test_Treatment(self):
@@ -360,8 +359,7 @@ class ProductViewsTest(TestCase):
         batch = Batch.objects.create(
             **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
                'rate_unit': rateUnit, 'product_variant': variant})
-        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id,
-                "batch": batch.id}
+        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id}
         self.alltogether(
-            Treatment, data, product, 'treatment', TreatmentApi,
+            Treatment, data, batch, 'treatment', TreatmentApi,
             TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)
