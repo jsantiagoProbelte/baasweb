@@ -20,7 +20,7 @@ class ThesisPanelApi(APIView):
             foundTreatments += 1
             nameTrial = thesis.field_trial.name
             if nameTrial not in data:
-                data[nameTrial] = {'id': thesis.field_trial.id, 'thesis':[]}
+                data[nameTrial] = {'id': thesis.field_trial.id, 'thesis': []}
                 foundTrials += 1
             data[nameTrial]['thesis'].append(
                 {'id': thesis.id, 'name': thesis.name})
