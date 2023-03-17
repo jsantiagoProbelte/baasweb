@@ -9,12 +9,8 @@
 {% for trial in data %}
     <h5>{{trial.name}}</h5>
     {% for thesis in trial.thesis %}
-        <a href="{% url 'thesis-update' thesis.id %}" >{{thesis.name}}</a>
+        <a href="{% url 'thesis_api' thesis.id %}" >{{thesis.name}}</a>
     {% endfor %}
 {% endfor %}
 
-{% endblock %}  
-
-{% block scripts %}
-
-{% endblock %}  
+{% endblock %}
