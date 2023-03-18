@@ -6,6 +6,7 @@ import json
 from datetime import timedelta, datetime
 from django.http import JsonResponse
 import base64
+import math
 
 # Secret
 base64key = base64.b64encode(
@@ -47,22 +48,20 @@ class RecomenderApi(APIView):
             longitude = kwargs['longitude']
         return latitude, longitude
 
-    def computeRisks(self, weather):
-        c = 0.5
+    def computeRisks(self, weather, lwd):
         count = len(weather['temperatures'])
         temperatures = weather['temperatures']
         dew_temperatures = weather['dew_temperatures']
-        lwd = []
         botrytis_risks = []
-        for i in range(count):
-            lwd.append((temperatures[i]['value'] -
-                       dew_temperatures[i]['value']) * c)
 
         for i in range(count):
             temp = temperatures[i]['value']
-            risk = -4.268 - 0.0901 * lwd[i] + 0.294 * lwd[i] * temp - \
-                2.35 * 10 - 5 * lwd[i] * (temp ** 3)
-            botrytis_risks.append(risk)
+
+            risk = -4.268 - (0.0901 *
+                             lwd[i]) + (0.294 * lwd[i] * temp) - \
+                ((2.35 * lwd[i] * (temp ** 3)) / 100000)
+            final_risk = math.exp(risk) / (1 + math.exp(risk))
+            botrytis_risks.append(self.formatRisk(final_risk))
 
         return {
             'botrytis': botrytis_risks
@@ -74,6 +73,13 @@ class RecomenderApi(APIView):
             'Procesionary': ['Low', 'Low', 'High', 'Low', 'Low'],
         }
         """
+
+    def formatRisk(self, risk):
+        if risk > 0.8:
+            return "High"
+        if risk > 0.4:
+            return "Medium"
+        return "Low"
 
     def prepareData(self, kwargs):
         latitude, longitude = self.getLatLong(kwargs)
@@ -112,7 +118,6 @@ class RecomenderApi(APIView):
                 daily_temperatures.append(temperatures[i + offset])
                 daily_dew.append(dew_temperatures[i + offset])
                 daily_humidity.append(humidities[i + offset])
-                print(temperatures[i + offset]['date'])
 
         return {
             'temperatures': daily_temperatures,
@@ -120,8 +125,25 @@ class RecomenderApi(APIView):
             'humidities': daily_humidity
         }
 
-    def formatHourly(self, weather):
-        return
+    def calculateLWD(self, weather):
+        threshold = 2
+        count = len(weather['temperatures'])
+        temperatures = weather['temperatures']
+        dew_temperatures = weather['dew_temperatures']
+        lwd = []
+        daily_lwd = 0
+        for i in range(count):
+            deficit = abs(dew_temperatures[i]
+                          ['value'] - temperatures[i]['value'])
+            if deficit < threshold:
+                daily_lwd += 1
+
+            if (i + 1) % 24 == 0:
+                lwd.append(daily_lwd)
+                daily_lwd = 0
+
+        print(lwd)
+        return lwd
 
     def get(self, request, *args, **kwargs):
         data = self.prepareData(kwargs)
@@ -131,7 +153,8 @@ class RecomenderApi(APIView):
         latitude = request.POST["latitude"]
         longitude = request.POST["longitude"]
         weather = self.fetchWeather(latitude, longitude)
+        lwd = self.calculateLWD(weather)
         daily_weather = self.formatDaily(weather)
-        risks = self.computeRisks(daily_weather)
+        risks = self.computeRisks(daily_weather, lwd)
 
         return JsonResponse({'daily_weather': daily_weather, 'risks': risks}, safe=False)
