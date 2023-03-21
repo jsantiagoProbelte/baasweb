@@ -187,4 +187,5 @@ class RecomenderApi(APIView):
         daily_weather = self.formatDaily(weather)
         risks = self.computeRisks(daily_weather, lwd)
 
-        return JsonResponse({'daily_weather': daily_weather, 'risks': risks}, safe=False)
+        return JsonResponse({'daily_weather': daily_weather, 'risks': risks},
+                            safe=False)
