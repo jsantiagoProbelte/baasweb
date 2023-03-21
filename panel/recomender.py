@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 import requests
 import json
-from datetime import timedelta, datetime
+from datetime import datetime
 from django.http import JsonResponse
 import base64
 import math
@@ -53,8 +53,10 @@ class RecomenderApi(APIView):
         return self.formatWeather(res_json)
 
     def fetchOpenWeather(self, latitude, longitude):
-        res = requests.get('https://api.open-meteo.com/v1/forecast?latitude=' + str(
-            latitude) + '&longitude=' + str(longitude) + '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m&forecast_days=5')
+        res = requests.get('https://api.open-meteo.com/v1/forecast?latitude='
+                           + str(latitude) + '&longitude=' + str(longitude) +
+                           '&hourly=temperature_2m,relativehumidity_2m,'
+                           'dewpoint_2m&forecast_days=5')
         res_json = json.loads(res.content)
 
         return self.formatOpenWeather(res_json)
@@ -145,7 +147,6 @@ class RecomenderApi(APIView):
     def computeRisks(self, weather, lwd):
         count = len(weather['temperatures'])
         temperatures = weather['temperatures']
-        dew_temperatures = weather['dew_temperatures']
         botrytis_risks = []
 
         for i in range(count):
