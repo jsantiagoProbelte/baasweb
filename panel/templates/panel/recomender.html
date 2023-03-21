@@ -1,26 +1,78 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
-<h1>Product Recommender</h1>
-<div class="row">
-    <div class="col-md-4">
-        <div id="map" width="100%" style='height:500px'></div>
-        <div id="latlong"></div>
-        
+    {% if errors %}<div class="alert alert-primary" role="alert">{{ errors }}</div>{% endif %}
+    <h1>Product Recommender</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div id="map" style="height: 500px" width="100%" s></div>
+            <div id="latlong"></div>
+            <button id="fetch" type="button" class="btn btn-primary">Get Recommendation</button>
+        </div>
+        <div class="col-md-4">
+            <table class="table table-dark" id="weathertable">
+                <thead>
+                    <tr>
+                        <th scope="col">Day #</th>
+                        <th scope="col">Temperature (°C)</th>
+                        <th scope="col">Dew temperature (°C)</th>
+                        <th scope="col">Absolute humidity</th>
+                    </tr>
+                </thead>
+                <tbody id="weathertablebody">
+                </tbody>
+            </table>
+            <table class="table table-dark" id="risktable">
+                <thead>
+                    <tr>
+                        <th scope="col">Day #</th>
+                        <th scope="col">Botrytis Risk</th>
+                        <th scope="col">Other Risk</th>
+                        <th scope="col">Another Risk</th>
+                    </tr>
+                </thead>
+                <tbody id="risktablebody">
+                </tbody>
+            </table>
+        </div>
     </div>
-
-</div>
-{% endblock %}  
-
+{% endblock content %}
 {% block scripts %}
-<script>
+    <script>
     var latitude={{latitude}};
     var longitude={{longitude}};
-</script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
-<script src='/static/baaswebapp/scripts/mapbaas.js'></script>
-{% endblock %}  
+    const weatherTable = document.getElementById('weathertable')
+    const weatherTableBody = document.getElementById('weathertablebody')
+
+    const riskTable = document.getElementById('risktable')
+    const riskTableBody = document.getElementById('risktablebody')
+
+    riskTable.style.display = "none"
+    weatherTable.style.display = "none"
+
+    document.getElementById("fetch").addEventListener("click", fetchRecs, false);
+    function fetchRecs() {
+        const formData = new FormData()
+        formData.append('latitude', latitude)
+        formData.append('longitude', longitude)
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+        fetch("{% url 'recomender' %}", {
+            method: "POST",
+            body: formData
+          })
+          .then(response => response.json())
+            .then(data => {
+                populateWeatherTable(data['daily_weather'])
+                populateRiskTable(data['risks'])
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+    </script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <script src='/static/baaswebapp/scripts/mapbaas.js'></script>
+{% endblock scripts %}
