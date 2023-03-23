@@ -60,8 +60,18 @@ class TrialTags:
     TAG_MEANS = ['Mean', 'Promedio']
 
     CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach',
-             'LACSA': 'Letuce'}  # Lactuca sativa
-    PESTS = {'BOTRCI': 'botrytis', 'MONIFG': 'Moniliosis'}
+             'LACSA': 'Lettuce', 'C; LACSA': 'Lettuce', 'ALLAM': 'Garlic',
+             'BRSOL': 'Wild Cabbage', 'C; BRSOK': 'Brocoli',
+             'LYPES': 'Tomato', 'FRAS': 'Strawberry',
+             'CPSAN': 'Bell Pepper', 'C; TRZDS': "Durum Wheat",
+             'MABSD': 'Apple', 'RUBID': 'Red Raspberry',
+             'VACCO': 'Blueberry', 'BRSOB': 'Cauliflower',
+             'ATICH': 'Kiwi', 'CIDCL': '',
+             'C; VITVI': 'Grape', 'VITVI': 'Grape', 'ALLCE': "Onion"}
+    PESTS = {'BOTRCI': 'botrytis', 'MONIFG': 'Moniliosis',
+             'PUCCSP': 'Wheat yellow rust', 'CARPPO': 'Codling moth',
+             'BOTRSP': 'botrytis', 'HELIAR': 'Helicoverpa armigera',
+             'ARGTSP': }
 
     @classmethod
     def isMeanTag(cls, value):
