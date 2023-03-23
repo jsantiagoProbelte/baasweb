@@ -71,7 +71,7 @@ class TrialTags:
     PESTS = {'BOTRCI': 'botrytis', 'MONIFG': 'Moniliosis',
              'PUCCSP': 'Wheat yellow rust', 'CARPPO': 'Codling moth',
              'BOTRSP': 'botrytis', 'HELIAR': 'Helicoverpa armigera',
-             'ARGTSP': }
+             'ARGTSP': 'Moth - Argyrotaenia ljungiana'}
 
     @classmethod
     def isMeanTag(cls, value):
