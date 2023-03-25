@@ -71,10 +71,19 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                "catalogue.tests.tests_views_catalogue"
+                "panel.tests.tests_statsdata"
+                // "trialapp.tests.tests_views_data"
+                // "catalogue.tests.tests_views_catalogue"
             ],
             "django": true,
             "justMyCode": true
+        },
+        {
+            "name": "migrate UNits",
+            "type": "python",
+            "request": "launch",
+            "module": "trialapp.migrateUnits",
+            "justMyCode": true,
         },
     ]
 }

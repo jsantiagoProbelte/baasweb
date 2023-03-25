@@ -1,5 +1,6 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant
 from trialapp.models import Crop, Plague, AssessmentType, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData
@@ -195,7 +196,7 @@ class ProductApi(APIView):
         return graphDim
 
     def computeGraph(self, product, crop, plague,
-                     assessmentType, level):
+                     rateType, level):
         dataClass = None
         # Fetch Data
         if level == Graph.L_THESIS:
@@ -203,11 +204,11 @@ class ProductApi(APIView):
         elif level == Graph.L_REPLICA:
             dataClass = ReplicaData
 
-        dataPointsT, trialAssessmentSets = dataClass.getDataPointsProduct(
-            product, crop, plague, assessmentType)
+        dataPointsT = dataClass.getDataPointsProduct(
+            product, crop, plague, rateType)
 
         if dataPointsT:
-            graphT = Graph(level, trialAssessmentSets, dataPointsT,
+            graphT = Graph(level, [rateType], dataPointsT,
                            xAxis=Graph.L_DATE, combineTrialAssessments=True)
             if level == Graph.L_THESIS:
                 graphPlotsT, classGraphT = graphT.scatter()
@@ -252,7 +253,7 @@ class ProductApi(APIView):
             elif tag == ProductApi.TAG_DIMENSIONS:
                 values = DataModel.dimensionsValues(product)
                 if current != '':
-                    currentValue = AssessmentType.objects.get(
+                    currentValue = RateTypeUnit.objects.get(
                         id=current).getName()
             if values:
                 filterData.append({

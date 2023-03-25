@@ -7,9 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from django.contrib.auth.decorators import login_required
 from trialapp.models import\
-    Evaluation, FieldTrial, Thesis, TrialAssessmentSet, Project, Objective,\
+    FieldTrial, Thesis, Project, Objective,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
+from trialapp.data_models import Assessment
 from django.shortcuts import render, get_object_or_404, redirect
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
@@ -164,10 +165,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
             **filter_kwargs).order_by('-code', 'name')
         filter = FieldTrialFilter(self.request.GET)
         for item in objectList:
-            evaluations = Evaluation.objects.filter(field_trial=item).count()
+            assessments = Assessment.objects.filter(field_trial=item).count()
             thesis = Thesis.objects.filter(field_trial=item).count()
-            results = TrialAssessmentSet.objects.\
-                filter(field_trial=item).count()
             new_list.append({
                 'code': item.code,
                 'name': item.name,
@@ -178,8 +177,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
                 'id': item.id,
-                'results': results,
-                'evaluations': evaluations,
+                'assessments': assessments,
                 'thesis': thesis})
         return {'object_list': new_list,
                 'titleList': '({}) Field trials'.format(len(objectList)),
@@ -220,12 +218,11 @@ class FieldTrialApi(APIView):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
         numberThesis = len(thesisTrial)
-        assessments = Evaluation.getObjects(fieldTrial)
-        trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
+        assessments = Assessment.getObjects(fieldTrial)
         dataTrial = self.prepareDataItems(fieldTrial)
         for item in assessments:
             dataTrial['Assessments'].append(
-                {'name': item.getName(), 'value': item.evaluation_date})
+                {'value': item.getContext(), 'name': item.assessment_date})
         for item in Application.getObjects(fieldTrial):
             dataTrial['Applications'].append(
                 {'name': item.getName(), 'value': item.app_date})
@@ -235,7 +232,6 @@ class FieldTrialApi(APIView):
                        'titleView': fieldTrial.getName(),
                        'dataTrial': dataTrial,
                        'thesisTrial': thesisTrial,
-                       'units': trialAssessmentSets,
                        'numberThesis': numberThesis,
                        'rowsReplicaHeader': headerRows,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,

@@ -3,7 +3,7 @@ To create db execute this in python manage.py shell
 from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
-from baaswebapp.models import ModelHelpers
+from baaswebapp.models import ModelHelpers, RateTypeUnit
 from catalogue.models import Product, ProductCategory, Vendor, Batch,\
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
@@ -186,7 +186,12 @@ class TrialDbInitialLoader:
                 "Trips": {"other": "Trips"},
                 "Absolute tutta": {"other": "Tutta Absoluta"},
                 "Vallico (Lolium)": {"other": "Vallico (Lolium)"},
-                "YESCA DE LA VID": {"other": "Yesca De La Vid"}}}
+                "YESCA DE LA VID": {"other": "Yesca De La Vid"}},
+            RateTypeUnit: {
+                ModelHelpers.UNKNOWN: {'unit': ModelHelpers.UNKNOWN},
+                'PESINC': {'unit': 'NUMBER'},
+                'PESSEV': {'unit': 'Range 0-5'},
+                'PLANT LENGHT': {'unit': 'cm'}}}
 
     # Use location='shhtunnel_db'
     @classmethod

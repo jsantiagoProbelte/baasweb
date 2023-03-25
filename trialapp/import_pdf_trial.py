@@ -280,13 +280,13 @@ class AssmtTable:
         for columnIndex in range(self._indexfirstColumnWithValues,
                                  self._numberColumns):
             columnName = self._columns[columnIndex]
-            evaluation = self.extractEvaluationInfo(columnName)
-            if evaluation is None:
+            assessment = self.extractEvaluationInfo(columnName)
+            if assessment is None:
                 # Abort
                 continue
             assessmentSet = self.extractAssessmentInfo(columnName)
             self.extractAssessmentData(
-                columnName, evaluation, assessmentSet)
+                columnName, assessment, assessmentSet)
 
     def getValidDate(self, dateStr):
         # check if this is date
@@ -347,14 +347,14 @@ class AssmtTable:
     def extractEvaluationInfo(self, columnName):
         # Validate that we have values in these column
         if not self.isColumnWithValues(columnName):
-            print('>>>>> Cannot find evaluation')
+            print('>>>>> Cannot find assessment')
             return None
 
-        # Each evaluation is in a different column
+        # Each assessment is in a different column
         theDate = self.getRatingDate(columnName)
         if theDate is None:
             # Abort
-            print('>>>>> Cannot find evaluation date')
+            print('>>>>> Cannot find assessment date')
             return None
 
         stage = self.getCropStage(columnName)
@@ -366,7 +366,7 @@ class AssmtTable:
 
         return Evaluation.findOrCreate(
                 name=interval,
-                evaluation_date=theDate,
+                assessment_date=theDate,
                 field_trial=self._trial,
                 crop_stage_majority=stage)
 
@@ -395,12 +395,12 @@ class AssmtTable:
             else:
                 return None
 
-    def saveDataPoint(self, value, evaluation, assessmentSet, replica):
+    def saveDataPoint(self, value, assessment, assessmentSet, replica):
         valueFloat = self.convertToFloat(value)
         if valueFloat is not None:
             ReplicaData.findOrCreate(
                 value=self.convertToFloat(valueFloat),
-                evaluation=evaluation,
+                assessment=assessment,
                 unit=assessmentSet,
                 reference=replica)
         else:
@@ -479,7 +479,7 @@ class AssmtTableMultiLineHeader(AssmtTable):
                 self._trial.save()
         return foundReplicas
 
-    def extractAssessmentData(self, columnName, evaluation,
+    def extractAssessmentData(self, columnName, assessment,
                               assessmentSet):
         # Explore all the rows of this columns to extract data
         for index in range(1, self._numberRows):
@@ -494,7 +494,7 @@ class AssmtTableMultiLineHeader(AssmtTable):
                 # Remember the last item is the average value
                 if replicaIndex in replicas:
                     self.saveDataPoint(
-                        value, evaluation,
+                        value, assessment,
                         assessmentSet, replicas[replicaIndex])
                     replicaIndex += 1
 
@@ -689,7 +689,7 @@ class AssmtTableSimpleHeader(AssmtTable):
                 foundReplicas += 1
         return foundReplicas, foundThesis
 
-    def extractAssessmentData(self, columnName, evaluation,
+    def extractAssessmentData(self, columnName, assessment,
                               assessmentSet):
         # Explore all the rows of this columns to extract data
         for index in self._replicaDict:
@@ -699,7 +699,7 @@ class AssmtTableSimpleHeader(AssmtTable):
             # and also the number of the thesis. It could be different
             # if the layout of the table is different
             self.saveDataPoint(
-                        value, evaluation,
+                        value, assessment,
                         assessmentSet, replica)
 
 

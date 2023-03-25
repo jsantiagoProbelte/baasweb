@@ -1,7 +1,7 @@
 from math import ceil
 import random
-from trialapp.models import FieldTrial, Replica, Thesis,\
-                            Evaluation
+from trialapp.models import FieldTrial, Replica, Thesis
+from trialapp.data_models import Assessment
 
 
 class LayoutTrial:
@@ -23,7 +23,7 @@ class LayoutTrial:
         return deck, (rows, blocks)
 
     @classmethod
-    def setDeckCell(cls, replica: Replica, evaluation,
+    def setDeckCell(cls, replica: Replica, assessment,
                     onlyThis=None):
         if replica is None:
             return {'name': '-',
@@ -36,7 +36,7 @@ class LayoutTrial:
             return {'name': replica.getShortName(),
                     'replica_id': replica.id,
                     'number': number,
-                    'id': replica.generateReplicaDataSetId(evaluation)}
+                    'id': replica.generateReplicaDataSetId(assessment)}
 
     @classmethod
     def headerLayout(cls, fieldTrial: FieldTrial):
@@ -51,7 +51,7 @@ class LayoutTrial:
 
     @classmethod
     def showLayout(cls, fieldTrial: FieldTrial,
-                   evaluation: Evaluation, thesisTrial,
+                   assessment: Assessment, thesisTrial,
                    onlyThis=None):
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
@@ -62,7 +62,7 @@ class LayoutTrial:
                    (replica.pos_x <= rows) and (replica.pos_y <= columns):
                     deck[replica.pos_x-1][replica.pos_y-1] =\
                         LayoutTrial.setDeckCell(
-                            replica, evaluation,
+                            replica, assessment,
                             onlyThis=onlyThis)
         return deck
 

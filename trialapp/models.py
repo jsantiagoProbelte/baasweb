@@ -53,11 +53,13 @@ class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
+# TO DELETE
 class AssessmentUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
 
 
+# TO DELETE
 class AssessmentType(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
@@ -369,10 +371,10 @@ class Replica(ModelHelpers, models.Model):
         return "Thesis {} - Replica {}".format(
             self.thesis.name, self.getKey())
 
-    def generateReplicaDataSetId(self, evaluation):
-        evaluationId = evaluation.id if evaluation else 'null'
+    def generateReplicaDataSetId(self, assessment):
+        assessmentId = assessment.id if assessment else 'null'
         return 'replica-data-set-{}-{}'.format(
-            evaluationId, self.id)
+            assessmentId, self.id)
 
     # create the replicas asociated with this
     @classmethod
@@ -479,6 +481,7 @@ Results aggregation
 
 
 # This collects which assessment units are used in each fieldtrial
+# TO DELETE
 class TrialAssessmentSet(ModelHelpers, models.Model):
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     type = models.ForeignKey(AssessmentType, on_delete=models.CASCADE)

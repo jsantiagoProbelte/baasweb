@@ -66,11 +66,11 @@ class ImportPdfTest(TestCase):
         firstTable.findTagPositions()
         columnToExplore = firstTable._columns[
             firstTable._indexfirstColumnWithValues]
-        evaluation = firstTable.extractEvaluationInfo(columnToExplore)
-        self.assertEqual(evaluation.evaluation_date,
+        assesment = firstTable.extractEvaluationInfo(columnToExplore)
+        self.assertEqual(assesment.assessment_date,
                          datetime(2018, 1, 9, 0, 0))
-        self.assertEqual(evaluation.crop_stage_majority, '81')
-        self.assertEqual(evaluation.name, '0 DA-C')
+        self.assertEqual(assesment.crop_stage_majority, '81')
+        self.assertEqual(assesment.name, '0 DA-C')
 
         assessmentSet = firstTable.extractAssessmentInfo(columnToExplore)
         self.assertEqual(assessmentSet.unit.name, '%')
@@ -88,7 +88,7 @@ class ImportPdfTest(TestCase):
         self.assertEqual(thesis[0].number, 1)
 
         firstTable.extractAssessmentData(
-            columnToExplore, evaluation, assessmentSet)
+            columnToExplore, assesment, assessmentSet)
         replicaData = ReplicaData.objects.all()
         self.assertEqual(len(firstTable._replicaDict.keys()),
                          len(replicaData))
@@ -105,26 +105,26 @@ class ImportPdfTest(TestCase):
 
         # Load last columns
         columnToExplore2 = firstTable._columns[firstTable._numberColumns-1]
-        evaluation2 = firstTable.extractEvaluationInfo(columnToExplore2)
-        self.assertEqual(evaluation2.evaluation_date,
+        assesment2 = firstTable.extractEvaluationInfo(columnToExplore2)
+        self.assertEqual(assesment2.assessment_date,
                          datetime(2018, 9, 15, 0, 0))
-        self.assertEqual(evaluation2.crop_stage_majority, '87-89')
-        self.assertEqual(evaluation2.name, '7 DA-D')
+        self.assertEqual(assesment2.crop_stage_majority, '87-89')
+        self.assertEqual(assesment2.name, '7 DA-D')
 
         assessmentSet2 = firstTable.extractAssessmentInfo(columnToExplore2)
         self.assertEqual(assessmentSet2.unit.name, '%')
         self.assertEqual(assessmentSet2.type.name, 'PESINC')
 
         firstTable.extractAssessmentData(
-            columnToExplore2, evaluation2, assessmentSet2)
+            columnToExplore2, assesment2, assessmentSet2)
 
         firstReplicaLastColumn = ReplicaData.objects.filter(
-            reference=firstReplica, evaluation=evaluation2,
+            reference=firstReplica, assesment=assesment2,
             unit=assessmentSet2)
         self.assertEqual(firstReplicaLastColumn[0].value, 4.00)
 
         lastReplicaLastColumn = ReplicaData.objects.filter(
-            reference=lastReplica, evaluation=evaluation2,
+            reference=lastReplica, assesment=assesment2,
             unit=assessmentSet2)
         self.assertEqual(lastReplicaLastColumn[0].value, 8.00)
 
@@ -200,12 +200,12 @@ class ImportPdfTest(TestCase):
         # Days After First/Last Applic.\r
         # Trt-Eval Interval\rARM Action Codes\rNumber of Decimals'
 
-        evaluation = firstTable.extractEvaluationInfo(columnName)
-        self.assertEqual(evaluation.evaluation_date,
+        assesment = firstTable.extractEvaluationInfo(columnName)
+        self.assertEqual(assesment.assessment_date,
                          datetime(2015, 2, 18, 0, 0))
-        self.assertEqual(evaluation.crop_stage_majority,
+        self.assertEqual(assesment.crop_stage_majority,
                          '85')
-        self.assertEqual(evaluation.name,
+        self.assertEqual(assesment.name,
                          '0 DA-A')
         assessmentSet = firstTable.extractAssessmentInfo(columnName)
         self.assertEqual(assessmentSet.unit.name, 'NUMBER')
@@ -219,7 +219,7 @@ class ImportPdfTest(TestCase):
         self.assertEqual(firstTable.convertToFloat('3.145a'),
                          None)
         firstTable.extractAssessmentData(
-            columnName, evaluation, assessmentSet)
+            columnName, assesment, assessmentSet)
         replicaData = ReplicaData.objects.all()
         numberData = 0
         for key in firstTable._replicaDict:
