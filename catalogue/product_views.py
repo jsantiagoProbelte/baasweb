@@ -2,7 +2,7 @@ from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant
-from trialapp.models import Crop, Plague, AssessmentType, TreatmentThesis
+from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -120,7 +120,7 @@ class ProductApi(APIView):
                 if tag == ProductApi.TAG_CROPS:
                     crops.append(Crop.objects.get(pk=tagId))
                 if tag == ProductApi.TAG_DIMENSIONS:
-                    dimensions.append(AssessmentType.objects.get(pk=tagId))
+                    dimensions.append(RateTypeUnit.objects.get(pk=tagId))
                 if tag == ProductApi.TAG_PLAGUES:
                     plagues.append(Plague.objects.get(pk=tagId))
                 if tag == ProductApi.TAG_LEVEL:
@@ -567,7 +567,8 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item.batch_id = self.kwargs["reference_id"]
             item.save()
             batch = Batch.objects.get(id=item.batch_id)
-            return HttpResponseRedirect(batch.product_variant.get_absolute_url())
+            return HttpResponseRedirect(
+                batch.product_variant.get_absolute_url())
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)

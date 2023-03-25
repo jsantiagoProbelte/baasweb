@@ -50,7 +50,7 @@ urlpatterns = [
     path('treatment_thesis/delete/<int:pk>/',
          thesis_views.TreatmentThesisDeleteView.as_view(),
          name='treatment_thesis-delete'),
-    # Evaluation urls
+    # Assessment urls
     path(
         'assessment_api/<int:assessment_id>/',
         assessment_views.AssessmentApi.as_view(),

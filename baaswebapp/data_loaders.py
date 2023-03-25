@@ -7,8 +7,7 @@ from baaswebapp.models import ModelHelpers, RateTypeUnit
 from catalogue.models import Product, ProductCategory, Vendor, Batch,\
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
-                            Project, Objective, AssessmentType,\
-                            AssessmentUnit, Plague, Crop, FieldTrial,\
+                            Project, Objective, Plague, Crop, FieldTrial,\
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
 
@@ -41,16 +40,6 @@ class TrialDbInitialLoader:
             CultivationMethod: [
                 ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
             RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT, 'ml/l'],
-            AssessmentUnit: [
-                '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
-                'Number', 'SPAD', 'Kilograms', 'Meters',
-                'EWRS;1;9', 'Severity;0;5'],
-            AssessmentType: [
-                '# Galls', '# Nematodes', 'P-phosphate',
-                'K-Potassium', 'Fruit firmness', '°Brix',
-                'Fruit size', 'Yield', 'Fruit weight',
-                'N-Nitrogen', 'Greenness', 'Plant height',
-                'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN'],
             ProductCategory: [
                 'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide',
                 'Other'],

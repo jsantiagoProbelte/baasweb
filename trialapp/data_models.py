@@ -1,7 +1,6 @@
 from django.db import models
 from baaswebapp.models import ModelHelpers, RateTypeUnit
-from trialapp.models import Evaluation, TrialAssessmentSet, FieldTrial,\
-                            Thesis, Sample, Replica
+from trialapp.models import FieldTrial, Thesis, Sample, Replica
 
 
 class Assessment(ModelHelpers, models.Model):
@@ -44,18 +43,11 @@ class Assessment(ModelHelpers, models.Model):
 
 
 class DataModel(ModelHelpers):
-    # TO DELETE
     @classmethod
     def generateDataPointId(cls, level, assessment,
                             reference, fakeId=0):
         return 'data-point-{}-{}-{}-{}'.format(
             level, assessment.id, reference.id, fakeId)
-
-    # @classmethod
-    # def generateDataPointId(cls, level, assessment,
-    #                     reference, fakeId=0):
-    # return 'data-point-{}-{}-{}-{}'.format(
-    #     level, assessment.id, reference.id, fakeId)
 
     @classmethod
     def setDataPoint(cls, reference, assessment, value):
@@ -78,12 +70,6 @@ class DataModel(ModelHelpers):
     def getDataPoints(cls, assessment):
         return cls.objects \
                   .filter(assessment=assessment)
-
-    @classmethod
-    def getDataPointsAssSet(cls, evaluation, assSet):
-        return cls.objects \
-                  .filter(evaluation=evaluation,
-                          unit=assSet)
 
     @classmethod
     def getDataPointsAssessment(cls, assessment):
@@ -112,7 +98,7 @@ class DataModel(ModelHelpers):
             field_trial_id__in=fieldTrialIds,
             rate_type_id=rateType.id).all()
         setIds = [item.id for item in assessments]
-        dataSets = cls.objects.filter(unit_id__in=setIds)
+        dataSets = cls.objects.filter(assessment_id__in=setIds)
         return dataSets
 
     @classmethod
@@ -158,17 +144,9 @@ class DataModel(ModelHelpers):
 class ThesisData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
     assessment = models.ForeignKey(Assessment,
-                                   on_delete=models.CASCADE,
-                                   null=True)
+                                   on_delete=models.CASCADE)
     reference = models.ForeignKey(Thesis,
                                   on_delete=models.CASCADE)
-    # TO DELETE
-    unit = models.ForeignKey(TrialAssessmentSet,
-                             on_delete=models.CASCADE,
-                             null=True)
-    evaluation = models.ForeignKey(Evaluation,
-                                   on_delete=models.CASCADE,
-                                   null=True)
 
 
 class ReplicaData(DataModel, models.Model):
@@ -176,15 +154,7 @@ class ReplicaData(DataModel, models.Model):
     reference = models.ForeignKey(Replica,
                                   on_delete=models.CASCADE)
     assessment = models.ForeignKey(Assessment,
-                                   on_delete=models.CASCADE,
-                                   null=True)
-    # TO DELETE
-    unit = models.ForeignKey(TrialAssessmentSet,
-                             on_delete=models.CASCADE,
-                             null=True)
-    evaluation = models.ForeignKey(Evaluation,
-                                   on_delete=models.CASCADE,
-                                   null=True)
+                                   on_delete=models.CASCADE)
 
 
 class SampleData(DataModel, models.Model):
@@ -192,15 +162,7 @@ class SampleData(DataModel, models.Model):
     reference = models.ForeignKey(Sample,
                                   on_delete=models.CASCADE)
     assessment = models.ForeignKey(Assessment,
-                                   on_delete=models.CASCADE,
-                                   null=True)
-    # TO DELETE
-    evaluation = models.ForeignKey(Evaluation,
-                                   on_delete=models.CASCADE,
-                                   null=True)
-    unit = models.ForeignKey(TrialAssessmentSet,
-                             on_delete=models.CASCADE,
-                             null=True)
+                                   on_delete=models.CASCADE)
 
     @classmethod
     def getDataPointsPerSampleNumber(cls, assessment, number):

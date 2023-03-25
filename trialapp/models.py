@@ -53,18 +53,6 @@ class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-# TO DELETE
-class AssessmentUnit(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-
-
-# TO DELETE
-class AssessmentType(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-
-
 class TrialStatus(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -441,57 +429,3 @@ class Sample(ModelHelpers, models.Model):
             Sample.objects.create(
                 number=number+1,
                 replica=replica)
-
-
-# This collects which moments in times, do we evaluate the thesis
-class Evaluation(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    evaluation_date = models.DateField()
-    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    crop_stage_majority = models.CharField(max_length=25)
-
-    @classmethod
-    def getObjects(cls, field_trial):
-        return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('evaluation_date')
-
-    def getName(self):
-        return "{}-BBCH".format(
-            self.crop_stage_majority)
-
-    def get_absolute_url(self):
-        return "/assessment_api/%i/" % self.id
-
-    def getTitle(self):
-        return "[{}] {}".format(self.evaluation_date,
-                                self.name)
-
-
-"""
-Results aggregation
-* (RawResult) Value at plant
-* (ReplicaResult) Value at Replica (as aggregation of plant' values)
-* (AplicationResult) Value at Evaluation connected with a Thesis
-    (as aggregation of replica' values)
-* (EvaluationMeasurement) An evaluation/treatment could have multiple
-    measurements. This one connects to the evaluation / treatment together
-    with the unit
-"""
-
-
-# This collects which assessment units are used in each fieldtrial
-# TO DELETE
-class TrialAssessmentSet(ModelHelpers, models.Model):
-    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    type = models.ForeignKey(AssessmentType, on_delete=models.CASCADE)
-    unit = models.ForeignKey(AssessmentUnit, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, fieldTrial):
-        return cls.objects \
-                  .filter(field_trial=fieldTrial) \
-                  .order_by('unit__name')
-
-    def getName(self):
-        return '{} ({})'.format(self.type.name, self.unit.name)

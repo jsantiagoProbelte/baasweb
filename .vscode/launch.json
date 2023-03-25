@@ -71,9 +71,9 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                "panel.tests.tests_statsdata"
+                // "panel.tests.tests_statsdata"
                 // "trialapp.tests.tests_views_data"
-                // "catalogue.tests.tests_views_catalogue"
+                "catalogue.tests.tests_views_catalogue"
             ],
             "django": true,
             "justMyCode": true

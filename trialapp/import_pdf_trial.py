@@ -6,11 +6,10 @@ import shutil
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 
-from baaswebapp.models import ModelHelpers  # noqa: E402
+from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
-    Thesis, Replica, TrialAssessmentSet, AssessmentType, AssessmentUnit,\
-    Evaluation, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
-from trialapp.data_models import ReplicaData  # noqa: E402
+    Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
+from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant,\
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
 
@@ -280,13 +279,13 @@ class AssmtTable:
         for columnIndex in range(self._indexfirstColumnWithValues,
                                  self._numberColumns):
             columnName = self._columns[columnIndex]
-            assessment = self.extractEvaluationInfo(columnName)
+            rateType = self.extractRateTypeInfo(columnName)
+            assessment = self.extractEvaluationInfo(columnName, rateType)
             if assessment is None:
                 # Abort
                 continue
-            assessmentSet = self.extractAssessmentInfo(columnName)
             self.extractAssessmentData(
-                columnName, assessment, assessmentSet)
+                columnName, assessment, rateType)
 
     def getValidDate(self, dateStr):
         # check if this is date
@@ -344,7 +343,7 @@ class AssmtTable:
             return True
         return False
 
-    def extractEvaluationInfo(self, columnName):
+    def extractEvaluationInfo(self, columnName, rateType):
         # Validate that we have values in these column
         if not self.isColumnWithValues(columnName):
             print('>>>>> Cannot find assessment')
@@ -364,24 +363,22 @@ class AssmtTable:
         if not interval:
             interval = "{}-({})".format(theDate, stage)
 
-        return Evaluation.findOrCreate(
+        return Assessment.findOrCreate(
                 name=interval,
                 assessment_date=theDate,
                 field_trial=self._trial,
+                rate_type=rateType,
                 crop_stage_majority=stage)
 
-    def extractAssessmentInfo(self, columnName):
+    def extractRateTypeInfo(self, columnName):
         # Each column may have different assessment type and units
         typeName = self.getTagPositionValue(
             columnName, TrialTags.TAG_TYPES, ModelHelpers.UNKNOWN)
-        type = AssessmentType.findOrCreate(name=typeName)
-
         unitName = self.getTagPositionValue(
             columnName, TrialTags.TAG_UNITS, ModelHelpers.UNKNOWN)
-        unit = AssessmentUnit.findOrCreate(name=unitName)
+        rate_type = RateTypeUnit.findOrCreate(name=typeName, unit=unitName)
 
-        return TrialAssessmentSet.findOrCreate(
-                type=type, unit=unit, field_trial=self._trial)
+        return rate_type
 
     def convertToFloat(self, decStr):
         try:

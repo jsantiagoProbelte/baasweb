@@ -1,7 +1,6 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis,\
-    TrialAssessmentSet, AssessmentType, AssessmentUnit
+from trialapp.models import FieldTrial, Thesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView
@@ -42,10 +41,6 @@ class FieldTrialViewsTest(TestCase):
         self.assertNotContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
 
-        TrialAssessmentSet.objects.create(
-            field_trial=fieldTrial,
-            type=AssessmentType.objects.get(pk=1),
-            unit=AssessmentUnit.objects.get(pk=1))
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
