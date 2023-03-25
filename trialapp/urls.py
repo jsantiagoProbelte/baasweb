@@ -52,7 +52,7 @@ urlpatterns = [
          name='treatment_thesis-delete'),
     # Evaluation urls
     path(
-        'assessment_api/<int:evaluation_id>/',
+        'assessment_api/<int:assessment_id>/',
         assessment_views.AssessmentApi.as_view(),
         name='assessment_api'),
     path(
@@ -71,16 +71,8 @@ urlpatterns = [
         name='assessment-delete'),
     # Data & measurements apis
     path(
-        'trial_assessment_set_list/<int:field_trial_id>/',
-        data_views.showTrialAssessmentSetIndex,
-        name='trial-assessment-set-list'),
-    path(
-        'manage_trial_assessment_set_api',
-        data_views.ManageTrialAssessmentSet.as_view(),
-        name='manage_trial_assessment_set_api'),
-    path(
         'set_data_point',
-        data_views.SetDataEvaluation.as_view(),
+        data_views.SetDataAssessment.as_view(),
         name='set_data_point'),
     # Application urls
     path(

@@ -41,9 +41,6 @@ class FieldTrialViewsTest(TestCase):
         self.assertNotContains(response, 'No Field Trial yet.')
         self.assertNotContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
-        self.assertContains(
-            response,
-            'Please define types and units')
 
         TrialAssessmentSet.objects.create(
             field_trial=fieldTrial,

@@ -1,3 +1,5 @@
+from django.db import models
+
 
 class ModelHelpers:
     NULL_STRING = '------'
@@ -73,3 +75,15 @@ class ModelHelpers:
                 values[found] = name
         dimensionsDic = [{'value': id, 'name': values[id]} for id in values]
         return dimensionsDic, list(values.keys())
+
+
+class RateTypeUnit(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+    unit = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, null=True)
+
+    def getName(self):
+        return '{} ({})'.format(self.name, self.unit)
+
+    def __str__(self):
+        return self.getName()

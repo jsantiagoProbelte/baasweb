@@ -76,39 +76,3 @@ function delete_item(item_id){
     }
 };
 
-
-$('.evaluation-add-product-form').submit( function(){
-    var element=$(this)
-    var appendTable=$('#table-items')
-    return addProductToevaluationCall(element,appendTable)
-});
-
-
-// To add products to treatments
-var manageItemEndPoint = '/manage_product_to_evaluation_api';
-
-function addProductToevaluationCall(element,appendTable) {
-    var dataJson={}
-    $(element.serializeArray()).each(function(index,obj){
-        dataJson[obj.name]=obj.value;
-    });
-    dataJson['evaluation_id']=element.attr('id');
-    $.ajax({
-        type : element.attr('method'), 
-        url: manageItemEndPoint,
-        data: dataJson,
-        
-        success: function(data){
-            console.log("data");
-            appendTable.append(
-                '<tr id="item-'+data.id+'"><td>'+data.name+'</td>\
-                <td><a id="delete-item-'+data.id+'" class="btn btn-warning btn-sm btn-sm fs-1">-</a></td>\
-                </tr>'); /* response message */
-        },
-    
-        failure: function() {
-            alert('Error. Please reload');
-        }
-    });
-    return false;
-};

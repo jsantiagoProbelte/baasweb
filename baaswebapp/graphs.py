@@ -80,7 +80,7 @@ class Graph:
                   COLOR_bs_warning, COLOR_bs_danger,
                   COLOR_bs_green, COLOR_bs_secondary]
 
-    def __init__(self, level, trialAssessments,
+    def __init__(self, level, rateTypes,
                  dataPoints, xAxis=L_THESIS,
                  combineTrialAssessments=False,
                  showTitle=True):
@@ -89,10 +89,10 @@ class Graph:
         self._showTitle = showTitle
         self._combineTrialAssessments = combineTrialAssessments
         if self._combineTrialAssessments:
-            self._graphData = self.buildDataOneGraph(trialAssessments,
+            self._graphData = self.buildDataOneGraph(rateTypes,
                                                      dataPoints, xAxis=xAxis)
         else:
-            self._graphData = self.buildData(trialAssessments,
+            self._graphData = self.buildData(rateTypes,
                                              dataPoints, xAxis=xAxis)
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
@@ -109,12 +109,6 @@ class Graph:
 
     def violin(self):
         return self.preparePlots(typeFigure=Graph.VIOLIN)
-
-    def adaptative(self, variants, threshold=3):
-        if variants > threshold:
-            return self.violin()
-        else:
-            return self.scatter()
 
     def draw(self, level):
         if level == Graph.L_THESIS:
@@ -274,7 +268,7 @@ class Graph:
         if xAxis == Graph.L_THESIS:
             return self.getTraceName(dataPoint, code)
         if xAxis == Graph.L_DATE:
-            return dataPoint.evaluation.evaluation_date
+            return dataPoint.assessment.assessment_date
 
     def buildData(self, trialAssessments,
                   dataPoints, xAxis=L_THESIS):
@@ -287,27 +281,26 @@ class Graph:
 
         for setAss in trialAssessments:
             thisGraph = {
-                'title': setAss.type.name,
+                'title': setAss.name,
                 'x_axis': xAxis,
-                'y_axis': setAss.unit.name,
+                'y_axis': setAss.unit,
                 'traces': []}
             unitId = setAss.id
-            code = setAss.field_trial.code
+            code = dataPoints[0].assessment.field_trial.code
             traces = {}
             for dataPoint in dataPoints:
-                if setAss.id == dataPoint.unit.id:
-                    traceId = self.traceId(dataPoint, unitId)
-                    if traceId not in traces:
-                        traces[traceId] = self.prepareTrace(dataPoint, code)
-                    traces[traceId]['y'].append(dataPoint.value)
-                    traces[traceId]['x'].append(self.getX(
-                        dataPoint, xAxis, code))
+                traceId = self.traceId(dataPoint, unitId)
+                if traceId not in traces:
+                    traces[traceId] = self.prepareTrace(dataPoint, code)
+                traces[traceId]['y'].append(dataPoint.value)
+                traces[traceId]['x'].append(self.getX(
+                    dataPoint, xAxis, code))
             if len(traces) > 0:
                 thisGraph['traces'] = traces
                 graphs.append(thisGraph)
         return graphs
 
-    def buildDataOneGraph(self, trialAssessments,
+    def buildDataOneGraph(self, rateTypes,
                           dataPoints, xAxis=L_THESIS):
         # This is for diplay purposes. [[,],[,]...]
         # It has to follow the order of references
@@ -315,17 +308,17 @@ class Graph:
         graphs = []
         if dataPoints is None or len(dataPoints) == 0:
             return []
-        referenceTrialAssessmentSet = trialAssessments[0]
+        rateType = rateTypes[0]
         thisGraph = {
-            'title': referenceTrialAssessmentSet.type.name,
+            'title': rateType.name,
             'x_axis': xAxis,
-            'y_axis': referenceTrialAssessmentSet.unit.name,
+            'y_axis': rateType.unit,
             'traces': []}
         traces = {}
         for dataPoint in dataPoints:
             # TODO: there could be data with different units
-            unitId = dataPoint.unit.id
-            code = dataPoint.unit.field_trial.code
+            unitId = dataPoint.assessment.rate_type.id
+            code = dataPoint.assessment.field_trial.code
             traceId = self.traceId(dataPoint, unitId)
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(dataPoint, code)
