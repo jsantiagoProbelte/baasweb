@@ -7,9 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from django.contrib.auth.decorators import login_required
 from trialapp.models import\
-    Evaluation, FieldTrial, Thesis, TrialAssessmentSet, Project, Objective,\
+    FieldTrial, Thesis, Project, Objective,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
+from trialapp.data_models import Assessment
 from django.shortcuts import render, get_object_or_404, redirect
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
@@ -24,7 +25,11 @@ from trialapp.forms import MyDateInput
 
 
 class FieldTrialFilter(django_filters.FilterSet):
-
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    trial_status = django_filters.ModelChoiceFilter(
+        queryset=TrialStatus.objects.all().order_by('name'))
+    trial_type = django_filters.ModelChoiceFilter(
+        queryset=TrialType.objects.all().order_by('name'))
     objective = django_filters.ModelChoiceFilter(
         queryset=Objective.objects.all().order_by('name'))
     crop = django_filters.ModelChoiceFilter(
@@ -36,7 +41,8 @@ class FieldTrialFilter(django_filters.FilterSet):
 
     class Meta:
         model = FieldTrial
-        fields = ['objective', 'product', 'crop', 'plague']
+        fields = ['name', 'trial_status', 'trial_type', 'objective', 'product',
+                  'crop', 'plague']
 
 
 class TrialModel():
@@ -148,7 +154,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
-            if paramId:
+            if paramIdName == 'name' and paramId:
+                filter_kwargs['name__icontains'] = paramId
+            elif paramId:
                 filter_kwargs['{}__id'.format(paramIdName)] = paramId
         new_list = []
         orderBy = paramsReplyTemplate.copy()
@@ -157,10 +165,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
             **filter_kwargs).order_by('-code', 'name')
         filter = FieldTrialFilter(self.request.GET)
         for item in objectList:
-            evaluations = Evaluation.objects.filter(field_trial=item).count()
+            assessments = Assessment.objects.filter(field_trial=item).count()
             thesis = Thesis.objects.filter(field_trial=item).count()
-            results = TrialAssessmentSet.objects.\
-                filter(field_trial=item).count()
             new_list.append({
                 'code': item.code,
                 'name': item.name,
@@ -171,8 +177,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
                 'id': item.id,
-                'results': results,
-                'evaluations': evaluations,
+                'assessments': assessments,
                 'thesis': thesis})
         return {'object_list': new_list,
                 'titleList': '({}) Field trials'.format(len(objectList)),
@@ -213,12 +218,11 @@ class FieldTrialApi(APIView):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
         numberThesis = len(thesisTrial)
-        assessments = Evaluation.getObjects(fieldTrial)
-        trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
+        assessments = Assessment.getObjects(fieldTrial)
         dataTrial = self.prepareDataItems(fieldTrial)
         for item in assessments:
             dataTrial['Assessments'].append(
-                {'name': item.getName(), 'value': item.evaluation_date})
+                {'value': item.getContext(), 'name': item.assessment_date})
         for item in Application.getObjects(fieldTrial):
             dataTrial['Applications'].append(
                 {'name': item.getName(), 'value': item.app_date})
@@ -228,7 +232,6 @@ class FieldTrialApi(APIView):
                        'titleView': fieldTrial.getName(),
                        'dataTrial': dataTrial,
                        'thesisTrial': thesisTrial,
-                       'units': trialAssessmentSets,
                        'numberThesis': numberThesis,
                        'rowsReplicaHeader': headerRows,
                        'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
@@ -371,6 +374,13 @@ class FieldTrialForm(forms.ModelForm):
                 elif typeField == TrialModel.T_T:
                     self.fields['comments_criteria'].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
+        # Querysets
+        self.fields['product'].queryset = Product.objects.all().order_by(
+            'name')
+        self.fields['crop'].queryset = Crop.objects.all().order_by('name')
+        self.fields['plague'].queryset = Plague.objects.all().order_by('name')
+        self.fields['crop_variety'].queryset = CropVariety.objects.all(
+            ).order_by('name')
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):

@@ -3,11 +3,11 @@ To create db execute this in python manage.py shell
 from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
-from baaswebapp.models import ModelHelpers
-from catalogue.models import Product, ProductCategory, Vendor
+from baaswebapp.models import ModelHelpers, RateTypeUnit
+from catalogue.models import Product, ProductCategory, Vendor, Batch,\
+    ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
-                            Project, Objective, RateUnit, AssessmentType,\
-                            AssessmentUnit, Plague, Crop, FieldTrial,\
+                            Project, Objective, Plague, Crop, FieldTrial,\
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
 
@@ -17,9 +17,9 @@ class TrialDbInitialLoader:
     def initialTrialModelValues(cls):
         return {
             TrialType: [ModelHelpers.UNKNOWN, 'Development',
-                        'Commercial Demo', 'Registry', 'Demand Generation'],
+                        'Commercial Demo', 'Registry', 'Technical Demo'],
             TrialStatus: [ModelHelpers.UNKNOWN, 'Open', 'In Progress',
-                          'Anual Recurrence', 'Close'],
+                          'Anual Recurrence', 'Close', 'Imported'],
             Irrigation: [ModelHelpers.UNKNOWN, 'Dry', 'Manta',
                          'Aspersion', 'Drip', 'Hydroponic', 'Others'],
             ApplicationMode: [
@@ -39,17 +39,7 @@ class TrialDbInitialLoader:
                       '-- No Product --'],
             CultivationMethod: [
                 ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
-            RateUnit: ['Kg/hectare', 'Liters/hectare'],
-            AssessmentUnit: [
-                '%; 0; 100', '%UNCK; -; -', 'Fruit Size',
-                'Number', 'SPAD', 'Kilograms', 'Meters',
-                'EWRS;1;9', 'Severity;0;5'],
-            AssessmentType: [
-                '# Galls', '# Nematodes', 'P-phosphate',
-                'K-Potassium', 'Fruit firmness', '°Brix',
-                'Fruit size', 'Yield', 'Fruit weight',
-                'N-Nitrogen', 'Greenness', 'Plant height',
-                'CONTRO', 'PESINC', 'PESSEV', 'PHYGEN'],
+            RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT, 'ml/l'],
             ProductCategory: [
                 'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide',
                 'Other'],
@@ -185,7 +175,12 @@ class TrialDbInitialLoader:
                 "Trips": {"other": "Trips"},
                 "Absolute tutta": {"other": "Tutta Absoluta"},
                 "Vallico (Lolium)": {"other": "Vallico (Lolium)"},
-                "YESCA DE LA VID": {"other": "Yesca De La Vid"}}}
+                "YESCA DE LA VID": {"other": "Yesca De La Vid"}},
+            RateTypeUnit: {
+                ModelHelpers.UNKNOWN: {'unit': ModelHelpers.UNKNOWN},
+                'PESINC': {'unit': 'NUMBER'},
+                'PESSEV': {'unit': 'Range 0-5'},
+                'PLANT LENGHT': {'unit': 'cm'}}}
 
     # Use location='shhtunnel_db'
     @classmethod
@@ -210,6 +205,17 @@ class TrialDbInitialLoader:
 
                 theObject = modelo(**thisObj)
                 theObject.save(using=location)
+
+        # Created untreated product, batch, etc...
+        defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
+        noproduct = Product.objects.create(name=UNTREATED)
+        novariant = ProductVariant.objects.create(product=noproduct,
+                                                  name=DEFAULT)
+        nobatch = Batch.objects.create(name=DEFAULT,
+                                       rate=0, rate_unit=defaultRateUnit,
+                                       product_variant=novariant)
+        Treatment.objects.create(name=UNTREATED, batch=nobatch,
+                                 rate=0, rate_unit=defaultRateUnit)
 
 
 class TrialStats:
