@@ -37,7 +37,7 @@ def generateTestWeather(temperatures, dew_temperatures, humidities):
     for i in range(len(temperatures)):
         weather['temperatures'].append({'value': temperatures[i]})
         weather['dew_temperatures'].append({'value': dew_temperatures[i]})
-        if humidities != None:
+        if humidities is not None:
             weather['humidities'].append({'value': humidities[i]})
 
     return weather

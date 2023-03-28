@@ -1,7 +1,5 @@
 import requests
-from datetime import datetime
 import json
-import base64
 
 
 def fetchOpenWeather(latitude, longitude):
