@@ -2,22 +2,6 @@ import requests
 from datetime import datetime
 import json
 import base64
-# Secret
-base64key = base64.b64encode(
-    "probelte_arentz:z0GuO6Tk6l".encode("ascii")).decode("ascii")
-
-
-def fetchWeather(latitude, longitude):
-    headers = {'Authorization': 'Basic ' + base64key}
-    res = requests.get(
-        'https://api.meteomatics.com/' +
-        datetime.now().strftime('%Y-%m-%dT00:00:00Z') +
-        'P5D:PT1H/t_min_2m_1h:C,dew_point_2m:C,absolute_humidity_2m:gm3/' +
-        str(latitude) + ','
-        + str(longitude) + '/json?model=mix', headers=headers)
-    res_json = json.loads(res.content)
-
-    return formatWeather(res_json)
 
 
 def fetchOpenWeather(latitude, longitude):
@@ -26,23 +10,6 @@ def fetchOpenWeather(latitude, longitude):
     res_json = json.loads(res.content)
 
     return formatOpenWeather(res_json)
-
-
-def formatWeather(res_json):
-    temperatures = res_json['data'][0]['coordinates'][0]['dates']
-    dew_temperatures = res_json['data'][1]['coordinates'][0]['dates']
-    humidities = res_json['data'][2]['coordinates'][0]['dates']
-
-    # Meteomatics always returns 1 hour extra, so we pop it.
-    temperatures.pop()
-    dew_temperatures.pop()
-    humidities.pop()
-
-    return {
-        'temperatures': temperatures,
-        'dew_temperatures': dew_temperatures,
-        'humidities': humidities
-    }
 
 
 def formatOpenWeather(res_json):
@@ -100,3 +67,36 @@ def seperateTemperatures(weather):
             daily_temperatures = []
 
     return formatted_temperatures
+
+
+"""
+def fetchWeather(latitude, longitude):
+    headers = {'Authorization': 'Basic ' + base64key}
+    res = requests.get(
+        'https://api.meteomatics.com/' +
+        datetime.now().strftime('%Y-%m-%dT00:00:00Z') +
+        'P5D:PT1H/t_min_2m_1h:C,dew_point_2m:C,absolute_humidity_2m:gm3/' +
+        str(latitude) + ','
+        + str(longitude) + '/json?model=mix', headers=headers)
+    res_json = json.loads(res.content)
+
+    return formatWeather(res_json)
+"""
+
+"""
+def formatWeather(res_json):
+    temperatures = res_json['data'][0]['coordinates'][0]['dates']
+    dew_temperatures = res_json['data'][1]['coordinates'][0]['dates']
+    humidities = res_json['data'][2]['coordinates'][0]['dates']
+
+    # Meteomatics always returns 1 hour extra, so we pop it.
+    temperatures.pop()
+    dew_temperatures.pop()
+    humidities.pop()
+
+    return {
+        'temperatures': temperatures,
+        'dew_temperatures': dew_temperatures,
+        'humidities': humidities
+    }
+"""

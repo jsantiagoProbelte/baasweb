@@ -6,9 +6,6 @@ from django.http import JsonResponse
 import panel.weatherhelper as weatherhelper
 import panel.riskcalc as riskcalc
 
-# open-meteo or meteomatics
-PROVIDER = "open-meteo"
-
 
 class RecomenderApi(APIView):
     authentication_classes = []
@@ -24,14 +21,8 @@ class RecomenderApi(APIView):
     def post(self, request, *args, **kwargs):
         latitude = request.POST["latitude"]
         longitude = request.POST["longitude"]
-        weather = []
 
-        if PROVIDER == 'meteomatics':
-            weather = weatherhelper.fetchWeather(latitude, longitude)
-        else:
-            weather = weatherhelper.fetchOpenWeather(latitude, longitude)
-
-        lwd = riskcalc.calculateLWD(weather)
+        weather = weatherhelper.fetchOpenWeather(latitude, longitude)
         daily_weather = weatherhelper.formatDaily(weather)
         risks = riskcalc.computeRisks(weather)
 
