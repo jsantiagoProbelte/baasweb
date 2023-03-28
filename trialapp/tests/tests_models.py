@@ -2,11 +2,8 @@ from django.test import TestCase
 from baaswebapp.models import ModelHelpers
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Crop, Plague,\
-                            ProductThesis, Thesis, Evaluation,\
-                            TrialAssessmentSet,\
-                            AssessmentType, AssessmentUnit,\
-                            Sample, Replica, TrialType
-from trialapp.data_models import ThesisData, SampleData
+                            Thesis, Sample, Replica, TrialType
+from trialapp.data_models import ThesisData, SampleData, Assessment
 import datetime
 
 
@@ -69,11 +66,12 @@ class TrialAppModelTest(TestCase):
         'rate_unit_id': 1}
     ]
 
-    EVALUATION = [{
+    ASSESSMENT = [{
         'field_trial_id': 1,
         'name': 'Primera aplication',
-        'evaluation_date': '2022-07-01',
-        'crop_stage_majority': 66
+        'assessment_date': '2022-07-01',
+        'crop_stage_majority': 66,
+        'rate_type': 2,
     }]
 
     APPLICATION = [{
@@ -159,11 +157,6 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(thesis666.name,
                          TrialAppModelTest.THESIS[0]['name'])
 
-        productThesis = ProductThesis.create_ProductThesis(
-            **TrialAppModelTest.PRODUCT_THESIS[0])
-        self.assertEqual(productThesis.rate,
-                         TrialAppModelTest.PRODUCT_THESIS[0]['rate'])
-
     def test_names(self):
         for model in TrialDbInitialLoader.initialTrialModelValues():
             instance = model.objects.get(pk=1)
@@ -174,24 +167,19 @@ class TrialAppModelTest(TestCase):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
         thesis = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        assSet = TrialAssessmentSet.objects.create(
-            field_trial=fieldTrial,
-            type=AssessmentType.objects.get(pk=1),
-            unit=AssessmentUnit.objects.get(pk=1))
-        evaluation = Evaluation.objects.create(
+        assessment = Assessment.objects.create(
             name='eval1',
-            evaluation_date='2022-12-15',
+            assessment_date='2022-12-15',
             field_trial=fieldTrial,
+            rate_type_id=1,
             crop_stage_majority=65)
-        dataPoints = ThesisData.getDataPoints(evaluation)
+        dataPoints = ThesisData.getDataPoints(assessment)
         self.assertEqual(len(dataPoints), 0)
-        ThesisData.setDataPoint(thesis, evaluation, assSet, 33)
-        dataPoints = ThesisData.getDataPoints(evaluation)
+        ThesisData.setDataPoint(thesis, assessment, 33)
+        dataPoints = ThesisData.getDataPoints(assessment)
         self.assertEqual(len(dataPoints), 1)
-        ThesisData.setDataPoint(thesis, evaluation, assSet, 66)
+        ThesisData.setDataPoint(thesis, assessment, 66)
         self.assertEqual(len(dataPoints), 1)
-        assset = TrialAssessmentSet.getObjects(fieldTrial)
-        self.assertEqual(assset[0].unit, assSet.unit)
 
         toCreate = 4
         Replica.createReplicas(thesis, toCreate)
@@ -233,13 +221,12 @@ class TrialAppModelTest(TestCase):
                 selectedSample.number))
 
         SampleData.objects.create(
-            evaluation=evaluation,
+            assessment=assessment,
             reference=selectedSample,
-            unit=assset[0],
             value=66)
 
         sampleData = SampleData.getDataPointsPerSampleNumber(
-            evaluation, assset[0], selectedReplica.number)
+            assessment, selectedReplica.number)
         self.assertEqual(len(sampleData), 1)
 
     def test_fieldTrial_planDensity(self):

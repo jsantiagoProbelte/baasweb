@@ -39,6 +39,17 @@ COLOR_bs_text_color_table = '#fff'
 COLOR_bg_color = '#282828'
 COLOR_bg_color_cards = '#333333'
 
+ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
+              COLOR_blue, COLOR_grey, COLOR_black, COLOR_bio_morado,
+              COLOR_morado,
+              COLOR_violeta, COLOR_bs_blue, COLOR_bs_indigo, COLOR_bs_purple,
+              COLOR_bs_pink, COLOR_bs_red,  COLOR_bs_orange, COLOR_bs_yellow,
+              COLOR_bs_green, COLOR_bs_teal, COLOR_bs_cyan, COLOR_bs_white,
+              COLOR_bs_gray, COLOR_bs_gray_dark, COLOR_bs_primary,
+              COLOR_bs_secondary, COLOR_bs_success, COLOR_bs_info,
+              COLOR_bs_warning, COLOR_bs_danger, COLOR_bs_light,
+              COLOR_bs_dark, COLOR_bs_text_color, COLOR_bg_color]
+
 
 class Graph:
     _graphData = []
@@ -69,7 +80,7 @@ class Graph:
                   COLOR_bs_warning, COLOR_bs_danger,
                   COLOR_bs_green, COLOR_bs_secondary]
 
-    def __init__(self, level, trialAssessments,
+    def __init__(self, level, rateTypes,
                  dataPoints, xAxis=L_THESIS,
                  combineTrialAssessments=False,
                  showTitle=True):
@@ -78,10 +89,10 @@ class Graph:
         self._showTitle = showTitle
         self._combineTrialAssessments = combineTrialAssessments
         if self._combineTrialAssessments:
-            self._graphData = self.buildDataOneGraph(trialAssessments,
+            self._graphData = self.buildDataOneGraph(rateTypes,
                                                      dataPoints, xAxis=xAxis)
         else:
-            self._graphData = self.buildData(trialAssessments,
+            self._graphData = self.buildData(rateTypes,
                                              dataPoints, xAxis=xAxis)
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
@@ -98,12 +109,6 @@ class Graph:
 
     def violin(self):
         return self.preparePlots(typeFigure=Graph.VIOLIN)
-
-    def adaptative(self, variants, threshold=3):
-        if variants > threshold:
-            return self.violin()
-        else:
-            return self.scatter()
 
     def draw(self, level):
         if level == Graph.L_THESIS:
@@ -257,14 +262,13 @@ class Graph:
             'marker_color': self.getTraceColor(dataPoint),
             'marker_symbol': self.getTraceSymbol(dataPoint),
             'x': [],
-            'y': []
-        }
+            'y': []}
 
     def getX(self, dataPoint, xAxis, code):
         if xAxis == Graph.L_THESIS:
             return self.getTraceName(dataPoint, code)
         if xAxis == Graph.L_DATE:
-            return dataPoint.evaluation.evaluation_date
+            return dataPoint.assessment.assessment_date
 
     def buildData(self, trialAssessments,
                   dataPoints, xAxis=L_THESIS):
@@ -277,27 +281,26 @@ class Graph:
 
         for setAss in trialAssessments:
             thisGraph = {
-                'title': setAss.type.name,
+                'title': setAss.name,
                 'x_axis': xAxis,
-                'y_axis': setAss.unit.name,
+                'y_axis': setAss.unit,
                 'traces': []}
             unitId = setAss.id
-            code = setAss.field_trial.code
+            code = dataPoints[0].assessment.field_trial.code
             traces = {}
             for dataPoint in dataPoints:
-                if setAss.id == dataPoint.unit.id:
-                    traceId = self.traceId(dataPoint, unitId)
-                    if traceId not in traces:
-                        traces[traceId] = self.prepareTrace(dataPoint, code)
-                    traces[traceId]['y'].append(dataPoint.value)
-                    traces[traceId]['x'].append(self.getX(
-                        dataPoint, xAxis, code))
+                traceId = self.traceId(dataPoint, unitId)
+                if traceId not in traces:
+                    traces[traceId] = self.prepareTrace(dataPoint, code)
+                traces[traceId]['y'].append(dataPoint.value)
+                traces[traceId]['x'].append(self.getX(
+                    dataPoint, xAxis, code))
             if len(traces) > 0:
                 thisGraph['traces'] = traces
                 graphs.append(thisGraph)
         return graphs
 
-    def buildDataOneGraph(self, trialAssessments,
+    def buildDataOneGraph(self, rateTypes,
                           dataPoints, xAxis=L_THESIS):
         # This is for diplay purposes. [[,],[,]...]
         # It has to follow the order of references
@@ -305,17 +308,17 @@ class Graph:
         graphs = []
         if dataPoints is None or len(dataPoints) == 0:
             return []
-        referenceTrialAssessmentSet = trialAssessments[0]
+        rateType = rateTypes[0]
         thisGraph = {
-            'title': referenceTrialAssessmentSet.type.name,
+            'title': rateType.name,
             'x_axis': xAxis,
-            'y_axis': referenceTrialAssessmentSet.unit.name,
+            'y_axis': rateType.unit,
             'traces': []}
         traces = {}
         for dataPoint in dataPoints:
             # TODO: there could be data with different units
-            unitId = dataPoint.unit.id
-            code = dataPoint.unit.field_trial.code
+            unitId = dataPoint.assessment.rate_type.id
+            code = dataPoint.assessment.field_trial.code
             traceId = self.traceId(dataPoint, unitId)
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(dataPoint, code)
@@ -326,3 +329,106 @@ class Graph:
             thisGraph['traces'] = traces
             graphs.append(thisGraph)
         return graphs
+
+
+class GraphStat():
+    def __init__(self, rawDataDict, labels, showLegend=True,
+                 title=None, showTitle=False,
+                 xAxis='month', yAxis='# trials', orientation='v'):
+        self._graphData = None
+        self._title = title
+        self._orientation = orientation
+        self._labels = labels
+        self._rawDataDict = rawDataDict
+        self._xAxis = xAxis
+        self._yAxis = yAxis
+        self._showTitle = showTitle
+        self._showLegend = showLegend
+
+    def plot(self):
+        self.prepareData()
+        return self.figure()
+
+    def prepareColors(self, theList):
+        statColors = {}
+        lenColors = len(ALL_COLORS)
+        for index in range(0, len(theList)):
+            position = index % lenColors
+            statColors[theList[index]] = ALL_COLORS[position]
+        return statColors
+
+    def prepareData(self):
+        statColors = {}
+        colorPerLabel = False
+        if len(self._rawDataDict) > 1:
+            # use datasetKeys for colors
+            colorPerLabel = False
+            datasetKeys = list(self._rawDataDict.keys())
+            statColors = self.prepareColors(datasetKeys)
+        else:
+            # use labels for colors
+            colorPerLabel = True
+            # assume same order from labels in totals and months datasetkeys
+            # since it is the same dimension, so the colors on boths grpahs
+            # should match.
+            statColors = list(self.prepareColors(self._labels).values())
+
+        theDataTraces = [{
+            "name": datasetKey,
+            'y': [self._rawDataDict[datasetKey][label]
+                  for label in self._labels],
+            'x': [label for label in self._labels],
+            'marker_color': statColors if colorPerLabel
+            else statColors[datasetKey]
+            } for datasetKey in self._rawDataDict]
+        self._graphData = {"title": self._title, 'traces': theDataTraces,
+                           'x_axis': self._xAxis, 'y_axis': self._yAxis}
+
+    def figure(self, typeFigure=Graph.BAR):
+        showLegend = True
+        data = None
+        fig = go.Figure()
+
+        for trace in self._graphData['traces']:
+            name = trace['name']
+            color = trace['marker_color']
+            if self._orientation == 'v':
+                x = trace['x']
+                y = trace['y']
+            else:
+                x = trace['y']
+                y = trace['x']
+
+            showLegend = self._showLegend
+            data = go.Bar(orientation=self._orientation,
+                          name=name, marker={'color': color},
+                          x=x, y=y)
+            fig.add_trace(data)
+
+        # Update layout for graph object Figure
+        if self._orientation == 'v':
+            xaxis_title = self._graphData['x_axis']
+            yaxis_title = self._graphData['y_axis']
+        else:
+            xaxis_title = self._graphData['y_axis']
+            yaxis_title = self._graphData['x_axis']
+
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            title_text=self._graphData['title'] if self._showTitle else '',
+            showlegend=showLegend,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-1,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
+
+        # Turn graph object into local plotly graph
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj

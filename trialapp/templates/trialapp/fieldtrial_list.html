@@ -10,22 +10,34 @@
     <form method="get" class="">
         <div class="row">
             <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.name.label_tag }}
+                {% render_field filter.form.name class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_status.label_tag }}
+                {% render_field filter.form.trial_status class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_type.label_tag }}
+                {% render_field filter.form.trial_type class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
                 {{ filter.form.objective.label_tag }}
                 {% render_field filter.form.objective class="form-control" %}
             </div>
-            <div class="form-group col-sm-2 col-md-2">
+            <div class="form-group col-sm-1 col-md-1">
                 {{ filter.form.product.label_tag }}
                 {% render_field filter.form.product class="form-control" %}
             </div>
-            <div class="form-group col-sm-2 col-md-2">
+            <div class="form-group col-sm-1 col-md-1">
                 {{ filter.form.crop.label_tag }}
                 {% render_field filter.form.crop class="form-control" %}
             </div>
-            <div class="form-group col-sm-2 col-md-2">
+            <div class="form-group col-sm-1 col-md-1">
                 {{ filter.form.plague.label_tag }}
                 {% render_field filter.form.plague class="form-control" %}
             </div>
-            <div class="form-group col-sm-2 col-md-2">
+            <div class="form-group col-sm-1 col-md-1">
                 <button type="submit" class="btn btn-info mt-4">Search</button>
             </div>
         </div>
@@ -39,9 +51,8 @@
         <tr>
             <th>Status</th>
             <th>Name</th>
-            <th>Unit Types</th>
             <th>Thesis</th>
-            <th>Assessments</th>
+            <th>Data</th>
             <th>Keywords</th>
         </tr>
     </thead>
@@ -53,18 +64,11 @@
             <span>{{item.name}}</span>
         </td>
         <td>
-            <a class="badge btn btn-outline-secondary fs-5" href="{% url 'trial-assessment-set-list' item.id%}">{{item.results}} &#10000;</a>
-        </td>
-        <td>
-            {% if item.results > 0 %}
-                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
-            {% else %}
-                <small>Please define types and units</small>
-            {% endif %}
+            <a class="badge btn btn-outline-secondary fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
         </td>
         <td>
             {% if item.thesis > 0 %}
-                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'assessment-list' item.id%}">{{item.evaluations}} &#43;</a>
+                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'assessment-list' item.id%}">{{item.assessments}} &#43;</a>
             {% else %}
                 <small>Please define thesis first</small>
             {% endif %}

@@ -1,17 +1,16 @@
 from django.test import TestCase
+from baaswebapp.models import RateTypeUnit
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, ProductThesis,\
-     Thesis, Evaluation, TrialAssessmentSet, AssessmentType, AssessmentUnit,\
-     Replica
+from trialapp.models import FieldTrial, Thesis, Replica
+from trialapp.data_models import Assessment, ThesisData, ReplicaData
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.data_models import ThesisData, ReplicaData
 from trialapp.assessment_views import\
     AssessmentUpdateView, AssessmentCreateView,\
     AssessmentApi, AssessmentListView, AssessmentDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
-class EvaluationViewsTest(TestCase):
+class AssessmentViewsTest(TestCase):
 
     _apiFactory = None
 
@@ -22,14 +21,9 @@ class EvaluationViewsTest(TestCase):
             **TrialAppModelTest.FIELDTRIALS[0])
         for thesis in TrialAppModelTest.THESIS:
             Thesis.create_Thesis(**thesis)
-        for productThesis in TrialAppModelTest.PRODUCT_THESIS:
-            ProductThesis.create_ProductThesis(**productThesis)
-        self._units = [TrialAssessmentSet.objects.create(
-            field_trial=self._fieldTrial,
-            type=AssessmentType.objects.get(pk=i),
-            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 3)]
+        self._unit = RateTypeUnit.objects.get(id=1)
 
-    def test_evaluation_emply_list(self):
+    def test_assessment_emply_list(self):
         request = self._apiFactory.get('assessment-list')
         self._apiFactory.setUser(request)
         response = AssessmentListView.as_view()(
@@ -50,53 +44,53 @@ class EvaluationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one assessment
-        evaluationData = TrialAppModelTest.EVALUATION[0]
+        assessmentData = TrialAppModelTest.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add',
-                                        data=evaluationData)
+                                        data=assessmentData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
             request, field_trial_id=self._fieldTrial.id)
-        evaluation = Evaluation.objects.get(name=evaluationData['name'])
-        self.assertEqual(evaluation.name, evaluationData['name'])
+        assessment = Assessment.objects.get(name=assessmentData['name'])
+        self.assertEqual(assessment.name, assessmentData['name'])
         self.assertEqual(response.status_code, 302)
-        # TODO: self.assertContains(response, evaluation.evaluation_date)
+        # TODO: self.assertContains(response, assessment.assessment_date)
 
         # Editar y ver nuevo
         request = self._apiFactory.get(
-            'assessment-update', args=[evaluation.id])
+            'assessment-update', args=[assessment.id])
         self._apiFactory.setUser(request)
         response = AssessmentUpdateView.as_view()(
             request,
-            pk=evaluation.id)
+            pk=assessment.id)
         self.assertNotContains(response, 'New')
         self.assertContains(response, 'Edit')
-        self.assertContains(response, evaluationData['name'])
+        self.assertContains(response, assessmentData['name'])
         self.assertEqual(response.status_code, 200)
 
         newName = 'otro name'
-        evaluationData['name'] = newName
+        assessmentData['name'] = newName
         requestPost = self._apiFactory.post(
-            'assessment-update', data=evaluationData)
+            'assessment-update', data=assessmentData)
         self._apiFactory.setUser(requestPost)
         response = AssessmentUpdateView.as_view()(
-            requestPost, pk=evaluation.id)
+            requestPost, pk=assessment.id)
         self.assertEqual(response.status_code, 302)
-        # TO DO: self.assertContains(response, evaluation.getTitle())
+        # TO DO: self.assertContains(response, assessment.getTitle())
 
     def test_AssessmentApi(self):
         # Creating thesis , but not with all attributres
-        itemData = TrialAppModelTest.EVALUATION[0]
+        itemData = TrialAppModelTest.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add', itemData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
             request, field_trial_id=self._fieldTrial.id)
         self.assertEqual(response.status_code, 302)
-        item = Evaluation.objects.get(name=itemData['name'])
+        item = Assessment.objects.get(name=itemData['name'])
 
         getRequest = self._apiFactory.get('thesis_api')
         apiView = AssessmentApi()
         response = apiView.get(getRequest,
-                               **{'evaluation_id': item.id})
+                               **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.name)
 
@@ -114,23 +108,23 @@ class EvaluationViewsTest(TestCase):
         response = AssessmentDeleteView.as_view()(deleteRequest,
                                                   pk=deletedId)
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Evaluation.objects.filter(pk=deletedId).exists())
+        self.assertFalse(Assessment.objects.filter(pk=deletedId).exists())
 
     def test_AssessmentApiGetData(self):
-        evaluationData = TrialAppModelTest.EVALUATION[0]
-        request = self._apiFactory.post('evaluation-add',
-                                        data=evaluationData)
+        assessmentData = TrialAppModelTest.ASSESSMENT[0]
+        request = self._apiFactory.post('assessment-add',
+                                        data=assessmentData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
             request, field_trial_id=self._fieldTrial.id)
         self.assertEqual(response.status_code, 302)
-        item = Evaluation.objects.get(name=evaluationData['name'])
+        item = Assessment.objects.get(name=assessmentData['name'])
         self.assertEqual(item.getName(), '66-BBCH')
 
         apiView = AssessmentApi()
         getRequest = self._apiFactory.get('assessment_api')
         response = apiView.get(getRequest,
-                               **{'evaluation_id': item.id})
+                               **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         # No data, it enables samples views
         self.assertContains(
@@ -140,13 +134,12 @@ class EvaluationViewsTest(TestCase):
         # Lets add data on thesis
         for thesis in Thesis.getObjects(self._fieldTrial):
             ThesisData.objects.create(
-                value=66, reference=thesis,
-                unit=self._units[0], evaluation=item)
+                value=66, reference=thesis, assessment=item)
 
         apiView = AssessmentApi()
         getRequest = self._apiFactory.get('assessment_api')
         response = apiView.get(getRequest,
-                               **{'evaluation_id': item.id})
+                               **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
@@ -156,19 +149,18 @@ class EvaluationViewsTest(TestCase):
         Replica.createReplicas(thesis, 4)
         for replica in Replica.getObjects(thesis):
             ReplicaData.objects.create(
-                value=66, reference=replica,
-                unit=self._units[0], evaluation=item)
+                value=66, reference=replica, assessment=item)
 
         apiView = AssessmentApi()
         getRequest = self._apiFactory.get('assessment_api')
         response = apiView.get(getRequest,
-                               **{'evaluation_id': item.id})
+                               **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
             '"nav-link active" id="v-pills-replica-tab"')
 
-        # if we go to evaluation list, we show thesis as active
+        # if we go to assessment list, we show thesis as active
         request = self._apiFactory.get('assessment-list')
         self._apiFactory.setUser(request)
         response = AssessmentListView.as_view()(

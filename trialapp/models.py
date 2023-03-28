@@ -45,26 +45,12 @@ class TrialType(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class RateUnit(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-
-
 class ApplicationMode(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
 class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
-
-
-class AssessmentUnit(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-
-
-class AssessmentType(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
 
 
 class TrialStatus(ModelHelpers, models.Model):
@@ -204,6 +190,10 @@ class Thesis(ModelHelpers, models.Model):
     first_application = models.DateField(null=True)
     mode = models.ForeignKey(ApplicationMode,
                              on_delete=models.CASCADE, null=True)
+    # This is shadow treatment to allow to be edited in ThesisCreate
+    # but actually is stored in TreatmentThesis
+    treatment = models.ForeignKey(Treatment,
+                                  on_delete=models.CASCADE, null=True)
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -328,50 +318,8 @@ class TreatmentThesis(ModelHelpers, models.Model):
     def getName(self):
         return self.treatment.getName()
 
-
-class ProductThesis(ModelHelpers, models.Model):
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.DecimalField(max_digits=10, decimal_places=2)
-    rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, thesis: Thesis):
-        return cls.objects \
-                .filter(thesis=thesis) \
-                .order_by('product__name')
-
-    @classmethod
-    def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
-        objects = []
-        for thesis in Thesis.getObjects(fieldTrial):
-            for productThesis in ProductThesis.getObjects(thesis):
-                objects.append(productThesis)
-        return objects
-
-    @classmethod
-    def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
-                                addNull=False, asDict=False):
-        return cls._getSelectList(
-            cls.getObjectsPerFieldTrial(fieldTrial),
-            asDict=asDict,
-            addNull=addNull)
-
-    @classmethod
-    def create_ProductThesis(cls, **kwargs):
-        return cls.objects.create(
-            thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
-            product=Product.objects.get(pk=kwargs['product_id']),
-            rate=kwargs['rate'],
-            rate_unit=RateUnit.objects.get(pk=kwargs['rate_unit_id']))
-
-    def getName(self):
-        return ('[{}-{}] <{}, {} {}>').format(
-            self.thesis.number,
-            self.thesis.name,
-            self.product.name,
-            self.rate,
-            self.rate_unit.name)
+    def __str__(self):
+        return self.getName()
 
 
 class Replica(ModelHelpers, models.Model):
@@ -411,10 +359,10 @@ class Replica(ModelHelpers, models.Model):
         return "Thesis {} - Replica {}".format(
             self.thesis.name, self.getKey())
 
-    def generateReplicaDataSetId(self, evaluation):
-        evaluationId = evaluation.id if evaluation else 'null'
+    def generateReplicaDataSetId(self, assessment):
+        assessmentId = assessment.id if assessment else 'null'
         return 'replica-data-set-{}-{}'.format(
-            evaluationId, self.id)
+            assessmentId, self.id)
 
     # create the replicas asociated with this
     @classmethod
@@ -481,73 +429,3 @@ class Sample(ModelHelpers, models.Model):
             Sample.objects.create(
                 number=number+1,
                 replica=replica)
-
-
-# This collects which moments in times, do we evaluate the thesis
-class Evaluation(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    evaluation_date = models.DateField()
-    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    crop_stage_majority = models.CharField(max_length=25)
-
-    @classmethod
-    def getObjects(cls, field_trial):
-        return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('evaluation_date')
-
-    def getName(self):
-        return "{}-BBCH".format(
-            self.crop_stage_majority)
-
-    def get_absolute_url(self):
-        return "/assessment_api/%i/" % self.id
-
-    def getTitle(self):
-        return "[{}] {}".format(self.evaluation_date,
-                                self.name)
-
-
-# This collects which products are included in each evaluation
-class ProductEvaluation(models.Model):
-    product_thesis = models.ForeignKey(ProductThesis, on_delete=models.CASCADE)
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE,
-                               null=True)
-    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, evaluation: Evaluation):
-        return cls.objects \
-                .filter(evaluation=evaluation) \
-                .order_by('thesis__number', 'product_thesis__product__name')
-
-    def getName(self):
-        return self.product_thesis.getName()
-
-
-"""
-Results aggregation
-* (RawResult) Value at plant
-* (ReplicaResult) Value at Replica (as aggregation of plant' values)
-* (AplicationResult) Value at Evaluation connected with a Thesis
-    (as aggregation of replica' values)
-* (EvaluationMeasurement) An evaluation/treatment could have multiple
-    measurements. This one connects to the evaluation / treatment together
-    with the unit
-"""
-
-
-# This collects which assessment units are used in each fieldtrial
-class TrialAssessmentSet(ModelHelpers, models.Model):
-    field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
-    type = models.ForeignKey(AssessmentType, on_delete=models.CASCADE)
-    unit = models.ForeignKey(AssessmentUnit, on_delete=models.CASCADE)
-
-    @classmethod
-    def getObjects(cls, fieldTrial):
-        return cls.objects \
-                  .filter(field_trial=fieldTrial) \
-                  .order_by('unit__name')
-
-    def getName(self):
-        return '{} ({})'.format(self.type.name, self.unit.name)

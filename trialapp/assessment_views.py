@@ -2,8 +2,10 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from trialapp.models import FieldTrial, Evaluation, TrialAssessmentSet
-from trialapp.data_models import ThesisData, ReplicaData, SampleData
+from baaswebapp.models import RateTypeUnit
+from trialapp.models import FieldTrial
+from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
+    Assessment
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
@@ -20,7 +22,7 @@ from trialapp.forms import MyDateInput
 
 
 class AssessmentListView(LoginRequiredMixin, ListView):
-    model = Evaluation
+    model = Assessment
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
     template_name = 'trialapp/assessment_list.html'
@@ -30,18 +32,18 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         # from call on server
         field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        new_list = Evaluation.getObjects(fieldTrial)
+        new_list = Assessment.getObjects(fieldTrial)
+        rateSets = Assessment.getRateSets(new_list)
 
-        trialAssessmentSets = TrialAssessmentSet.getObjects(fieldTrial)
         # Replica data
         dataPointsR = ReplicaData.getDataPointsFieldTrial(fieldTrial)
-        graphR = Graph(Graph.L_REPLICA, trialAssessmentSets, dataPointsR,
+        graphR = Graph(Graph.L_REPLICA, rateSets, dataPointsR,
                        xAxis=Graph.L_DATE)
         graphPlotsR, classGraphR = graphR.violin()
 
         # Thesis data
         dataPointsT = ThesisData.getDataPointsFieldTrial(fieldTrial)
-        graphT = Graph(Graph.L_THESIS, trialAssessmentSets, dataPointsT,
+        graphT = Graph(Graph.L_THESIS, rateSets, dataPointsT,
                        xAxis=Graph.L_DATE)
         graphPlotsT, classGraphT = graphT.scatter()
 
@@ -57,7 +59,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
 
         # Sample data
         dataPointsS = SampleData.getDataPointsFieldTrial(fieldTrial)
-        graphS = Graph(Graph.L_SAMPLE, trialAssessmentSets, dataPointsS,
+        graphS = Graph(Graph.L_SAMPLE, rateSets, dataPointsS,
                        xAxis=Graph.L_DATE)
         graphPlotsS, classGraphS = graphS.violin()
 
@@ -80,8 +82,9 @@ class AssessmentFormLayout(FormHelper):
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(Field('name', css_class='mb-3'),
-                Field('evaluation_date', css_class='mb-3'),
+                Field('assessment_date', css_class='mb-3'),
                 Field('crop_stage_majority', css_class='mb-3'),
+                Field('rate_type', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -91,17 +94,20 @@ class AssessmentFormLayout(FormHelper):
 
 class AssessmentForm(forms.ModelForm):
     class Meta:
-        model = Evaluation
-        fields = ('name', 'crop_stage_majority', 'evaluation_date')
+        model = Assessment
+        fields = ('name', 'crop_stage_majority', 'assessment_date',
+                  'rate_type')
 
     def __init__(self, *args, **kwargs):
         super(AssessmentForm, self).__init__(*args, **kwargs)
-        self.fields['evaluation_date'].widget = MyDateInput()
+        self.fields['assessment_date'].widget = MyDateInput()
         self.fields['crop_stage_majority'].label = 'Crop Stage Majority (BBCH)'
+        self.fields['rate_type'].queryset =\
+            RateTypeUnit.objects.all().order_by('name')
 
 
 class AssessmentCreateView(LoginRequiredMixin, CreateView):
-    model = Evaluation
+    model = Assessment
     form_class = AssessmentForm
     template_name = 'baaswebapp/model_edit_form.html'
 
@@ -115,18 +121,11 @@ class AssessmentCreateView(LoginRequiredMixin, CreateView):
             form.instance.field_trial_id = self.kwargs["field_trial_id"]
             assessment = form.instance
             assessment.save()
-            return HttpResponseRedirect(
-                self.get_success_url(
-                    assessment.field_trial.id))
-
-    def get_success_url(self, field_trial_id):
-        return reverse(
-            'assessment-list',
-            kwargs={'field_trial_id': field_trial_id})
+            return HttpResponseRedirect(assessment.get_absolute_url())
 
 
 class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
-    model = Evaluation
+    model = Assessment
     form_class = AssessmentForm
     template_name = 'baaswebapp/model_edit_form.html'
 
@@ -137,7 +136,7 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class AssessmentDeleteView(DeleteView):
-    model = Evaluation
+    model = Assessment
     template_name = 'trialapp/assessment_delete.html'
     _field_trial_id = None
 
@@ -160,7 +159,7 @@ class AssessmentApi(APIView):
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/assessment_show.html'
-        evaluation_id = kwargs.get('evaluation_id', None)
-        dataHelper = DataHelper(evaluation_id)
-        dataEvaluation = dataHelper.showDataEvaluation()
-        return render(request, template_name, dataEvaluation)
+        assessment_id = kwargs.get('assessment_id', None)
+        dataHelper = DataHelper(assessment_id)
+        dataAssessment = dataHelper.showDataAssessment()
+        return render(request, template_name, dataAssessment)

@@ -9,15 +9,16 @@
     <div class="col-md-4">
         <div class="card card-body-baas">
         <table class="table">
-            <thead><tr><th>Date</th><th>Name</th><th>Crop Stage</th></tr></thead>
+            <thead><tr><th>Date</th><th>Name</th><th>Crop Stage</th><th>Rate type (unit)</th></tr></thead>
             <tbody>
         {% for item in object_list %}
             <tr id="item-{{item.id}}">
                 <td><a href="{% url 'assessment_api' item.id %}" class="btn btn-secondary">
-                    {{item.evaluation_date}}
+                    {{item.assessment_date}}
                 </a></td>
                 <td>{{item.name}}</td>
                 <td>{{item.crop_stage_majority}} BBCH</td>
+                <td>{{item.rate_type}}</td>
             </tr>
             </tbody>    
         {% empty %}

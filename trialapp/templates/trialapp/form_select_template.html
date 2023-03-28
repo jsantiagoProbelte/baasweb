@@ -1,7 +1,0 @@
-{% load crispy_forms_tags %}
-
-<form id="form-select-template-{{tag}}-{{item_id}}" class='form-select-template mb-3 mt-1' method="POST">
-    {% csrf_token %}
-    {{ form|crispy }}
-    {% include "trialapp/input_select_template.html" with tag=tag item_id=item_id  currentValue=currentValue selectOptions=selectOptions addNull=addNull%}
-</form>

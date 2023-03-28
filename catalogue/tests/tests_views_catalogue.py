@@ -1,11 +1,10 @@
 from django.test import TestCase
+from baaswebapp.models import RateTypeUnit
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit,\
-    Batch, Treatment
-from trialapp.models import FieldTrial,\
-    Thesis, Evaluation, TrialAssessmentSet, AssessmentType,\
-    AssessmentUnit, Replica, Plague
-from trialapp.data_models import ThesisData, ReplicaData
+    Batch, Treatment, DEFAULT
+from trialapp.models import FieldTrial, Thesis, Replica
+from trialapp.data_models import ThesisData, ReplicaData, Assessment
 from catalogue.product_views import ProductListView, ProductApi,\
     ProductCreateView, ProductUpdateView, ProductDeleteView,\
     ProductVariantCreateView, ProductVariantUpdateView,\
@@ -73,7 +72,7 @@ class ProductViewsTest(TestCase):
     _products = []
     _fieldTrials = []
     _theses = []
-    _evaluations = []
+    _assessments = []
     _units = []
 
     def setUp(self):
@@ -88,14 +87,13 @@ class ProductViewsTest(TestCase):
             # thesis['field_trial_id'] = fieldTrial.id
             self._theses.append(Thesis.create_Thesis(**thesis))
 
-        self._units = [TrialAssessmentSet.objects.create(
-            field_trial=self._fieldTrials[0],
-            type=AssessmentType.objects.get(pk=i),
-            unit=AssessmentUnit.objects.get(pk=i)) for i in range(1, 4)]
+        rateTypes = RateTypeUnit.objects.all()
+        self._units = [rateTypes[i] for i in range(1, 4)]
 
-        self._evaluations = [Evaluation.objects.create(
+        self._assessments = [Assessment.objects.create(
             name='eval{}'.format(i),
-            evaluation_date='2023-0{}-15'.format(i),
+            assessment_date='2023-0{}-15'.format(i),
+            rate_type=self._units[0],
             field_trial=self._fieldTrials[0],
             crop_stage_majority=65+i) for i in range(1, 3)]
 
@@ -152,25 +150,22 @@ class ProductViewsTest(TestCase):
         value = 1000.10
         self.assertEqual(ThesisData.objects.count(), 0)
         for thesis in self._theses:
-            for evaluation in self._evaluations:
+            for assessment in self._assessments:
                 for unit in self._units:
                     ThesisData.objects.create(
                         value=value,
-                        evaluation=evaluation,
-                        unit=unit,
+                        assessment=assessment,
                         reference=thesis)
                     value += 500.10
-        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
-        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
-        dimensionId = 'dimensions-{}'.format(self._units[0].id)
+
         levelId = 'level-thesis'
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plagues': self._fieldTrials[0].plague.id,
+                  ProductApi.TAG_LEVEL: 'thesis',
+                  ProductApi.TAG_DIMENSIONS: self._units[0].id})
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
@@ -183,9 +178,8 @@ class ProductViewsTest(TestCase):
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  plagueId: plagueId,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'plagues': self._fieldTrials[0].plague.id,
+                  'dimensions': self._units[0].id})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
                                **{'product_id': productid})
@@ -196,14 +190,14 @@ class ProductViewsTest(TestCase):
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plague': self._fieldTrials[0].plague.id,
                   levelId: levelId})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Please select dimensions')
+        self.assertNotContains(response, 'Please select dimensions')
 
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
@@ -231,49 +225,38 @@ class ProductViewsTest(TestCase):
 
     def test_showProduct_Replica_graph(self):
         productid = 1
-        plagues = Plague.getObjects()
-        cropId = 'crops-{}'.format(self._fieldTrials[0].crop.id)
-        plague2 = 'crops-{}'.format(plagues[2].id)
-        plague3 = 'crops-{}'.format(plagues[3].id)
-        plagueId = 'plagues-{}'.format(self._fieldTrials[0].plague.id)
-        dimensionId = 'dimensions-{}'.format(self._units[0].id)
-        levelId = 'level-replica'
         request = self._apiFactory.get(
             'product_api',
             data={'show_data': 'show_data',
-                  cropId: cropId,
-                  plagueId: plagueId,
-                  plague2: plague2,
-                  plague3: plague3,
-                  dimensionId: dimensionId,
-                  levelId: levelId})
+                  'crops': self._fieldTrials[0].crop.id,
+                  'plagues': self._fieldTrials[0].plague.id,
+                  'dimensions': self._units[0].id})
         self._apiFactory.setUser(request)
 
         apiView = ProductApi()
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No data found', count=3)
+        self.assertContains(response, 'No data found', count=0)
         self.assertEqual(ReplicaData.objects.count(), 0)
 
         # Le's add data
         value = 1000.10
         Replica.createReplicas(self._theses[0], 4)
         for replica in Replica.getObjects(self._theses[0]):
-            for evaluation in self._evaluations:
+            for assessment in self._assessments:
                 for unit in self._units:
                     ReplicaData.objects.create(
                         value=value,
-                        evaluation=evaluation,
-                        unit=unit,
+                        assessment=assessment,
                         reference=replica)
                     value += 500.10
         response = apiView.get(request,
                                **{'product_id': productid})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No data found', count=2)
+        self.assertContains(response, 'No data found', count=0)
 
-    def alltogether(self, theClass, data, product,
+    def alltogether(self, theClass, data, reference,
                     token, modelApi,
                     createView, updateView, deleteView):
         url_model = token+'-api'
@@ -283,15 +266,30 @@ class ProductViewsTest(TestCase):
         createGet = self._apiFactory.get(url_add, data=data)
         self._apiFactory.setUser(createGet)
         response = createView.as_view()(createGet,
-                                        product_id=product.id)
+                                        reference_id=reference.id)
         self.assertTrue(response.status_code, 200)
 
         createPost = self._apiFactory.post(url_add, data=data)
         self._apiFactory.setUser(createPost)
         response = createView.as_view()(createPost,
-                                        product_id=product.id)
+                                        reference_id=reference.id)
         self.assertTrue(response.status_code, 302)
         theItem = theClass.objects.get(name=data['name'])
+
+        if theClass == Product:
+            # Check the default creation of variant and bach
+            variants = ProductVariant.getItems(theItem)
+            self.assertTrue(len(variants) == 1)
+            self.assertTrue(DEFAULT in variants[0].name)
+            batches = Batch.getItems(theItem)
+            self.assertTrue(len(batches) == 1)
+            self.assertTrue(DEFAULT in batches[0].name)
+
+        if theClass == ProductVariant:
+            # Check the default creation of variant and bach
+            items = Batch.objects.filter(product_variant=theItem)
+            self.assertTrue(len(items) == 1)
+            self.assertTrue(DEFAULT in items[0].name)
 
         modelGet = self._apiFactory.get(url_model)
         self._apiFactory.setUser(modelGet)
@@ -344,10 +342,23 @@ class ProductViewsTest(TestCase):
                                                 product=product)
         rateUnit = RateUnit.objects.create(name='unit')
         data = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
-                'rate_unit': rateUnit.id, 'product_variant': variant.id}
+                'rate_unit': rateUnit.id}
         self.alltogether(
-            Batch, data, product, 'batch', BatchApi,
+            Batch, data, variant, 'batch', BatchApi,
             BatchCreateView, BatchUpdateView, BatchDeleteView)
+
+        cdata = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
+                 'rate_unit_id': rateUnit.id, 'product_variant_id': variant.id}
+        created = Batch.objects.create(**cdata)
+        items = Batch.getItems(product)
+        self.assertTrue(len(items) > 0)
+
+        for item in items:
+            if item.id == created.id:
+                self.assertEqual(item.name,
+                                 created.name)
+                self.assertTrue('batch' in
+                                created.get_absolute_url())
 
     def test_Treatment(self):
         product = Product.objects.create(name='A product')
@@ -357,8 +368,48 @@ class ProductViewsTest(TestCase):
         batch = Batch.objects.create(
             **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
                'rate_unit': rateUnit, 'product_variant': variant})
-        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id,
-                "batch": batch.id}
+        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id}
         self.alltogether(
-            Treatment, data, product, 'treatment', TreatmentApi,
+            Treatment, data, batch, 'treatment', TreatmentApi,
             TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)
+
+        cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
+                 'batch_id': batch.id}
+        treatment = Treatment.objects.create(**cdata)
+        treatments = Treatment.getItems(product)
+        self.assertTrue(len(treatments) > 0)
+
+        displays = Treatment.displayItems(product)
+        self.assertEqual(len(treatments), len(displays))
+
+        for item in displays:
+            for treatment in treatments:
+                if treatment.id == item['id']:
+                    self.assertEqual(item['name'],
+                                     treatment.getName())
+                    self.assertTrue('treatment' in
+                                    treatment.get_absolute_url())
+
+        cdata = {"name": '', 'rate': 1, 'rate_unit_id': rateUnit.id,
+                 'batch_id': batch.id}
+        treatment2 = Treatment.objects.create(**cdata)
+        self.assertTrue(product.name in treatment2.getName())
+        self.assertFalse(product.name in treatment2.getName(short=True))
+
+    def test_ProductApi(self):
+        product = Product.objects.create(name='A product')
+        variant = ProductVariant.objects.create(name='A variant',
+                                                product=product)
+        rateUnit = RateUnit.objects.create(name='unit')
+        batch = Batch.objects.create(
+            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
+               'rate_unit': rateUnit, 'product_variant': variant})
+        cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
+                 'batch_id': batch.id}
+        Treatment.objects.create(**cdata)
+
+        # ProductApi
+        api = ProductApi()
+        tree = api.getProductTree(product)
+        self.assertTrue(tree[0]['name'] == variant.name)
+        self.assertTrue('batches' in tree[0])

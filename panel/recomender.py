@@ -1,6 +1,7 @@
 # Create your views here.
 from django.shortcuts import render
 from rest_framework.views import APIView
+
 from django.http import JsonResponse
 
 import panel.weatherhelper as weatherhelper
@@ -26,4 +27,5 @@ class RecomenderApi(APIView):
         daily_weather = weatherhelper.formatDaily(weather)
         risks = riskcalc.computeRisks(weather)
 
-        return JsonResponse({'daily_weather': daily_weather, 'risks': risks}, safe=False)
+        return JsonResponse({'daily_weather': daily_weather, 'risks': risks},
+                            safe=False)

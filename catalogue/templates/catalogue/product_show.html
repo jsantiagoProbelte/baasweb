@@ -1,12 +1,15 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 {% block content %}
+<h5 class="mt-4 ms-4 text-muted">{{product.category}} - {{product.vendor}}</h5>
 <h2 class="fw-bold mt-4 ms-4 mb-3">
   {{product.name}}
   <span class="text-muted ml-2">product</span>
   <span> <div class="btn-group float-end " role="group">
       <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
           data-toggle="tooltip" data-placement="top" title='Go to product list'>&#8679;</a>
+      <a class="btn btn-dark" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}} # trials</a>
       <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3"
           data-toggle="tooltip" data-placement="top" title='Edit product'>&#10000;</a>
       <a href="{% url 'product-delete' product.id %}" class="btn btn-warning btn-sm fs-3"
@@ -14,66 +17,99 @@
   </span>
 </h2>
 
-
-
-{% if errors %}
-<div class="alert alert-primary" role="alert">{{errors}}</div>
-{% endif %}
-
-<div class="row">
-    <div class="col-md-2">
-      <div class="card no-border mb-3" >
-        <div class="card-header-baas h5">Product</div>
+<div class="row ms-4">
+    <div class="col-md-3 ">
+      <div class="card no-border mb-3">
+        <div class="card-header-baas h5">Variants, batches and treatments</div>
         <ul class="list-group list-group-flush">
-          {% include "baaswebapp/item_list_template.html" with field='Category' value=product.category%}
-          {% include "baaswebapp/item_list_template.html" with field='Vendor' value=product.vendor%}
+        {% for variant in variants %}
           <li class="list-group-item list-group-item-baas">
-            <span class='text-muted small'># trials</span>
-            <span class='float-end'><a class="btn btn-sm btn-info" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}}</a></span>
+            <a class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" href="{% url 'product_variant-api' variant.id%}">{{variant.name}}</a>
+            <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#variant-block-{{variant.id}}" aria-expanded="false" aria-controls="collapseExample">
+              ...
+            </button>
+            <ul class="list-group list-group-flush collapse" id="variant-block-{{variant.id}}">
+            {% for batch in variant.batches %}
+              <li class="list-group-item list-group-item-baas">
+                <a class="btn btn-dark btn-sm" href="{% url 'batch-api' batch.id%}">{{batch.name}}</a>
+                <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#batch-block-{{batch.id}}" aria-expanded="false" aria-controls="collapseExample">
+                  ...
+                </button>
+                <ul class="list-group list-group-flush collapse" id="batch-block-{{batch.id}}">
+                {% for treatment in batch.treatments %}
+                  <li class="list-group-item list-group-item-baas">
+                    <a class="btn btn-dark btn-sm" href="{% url 'treatment-api' treatment.id%}">{{treatment.name}}</a>
+                  </li>
+                {% endfor %}
+                <li class="list-group-item list-group-item-baas">
+                  <a href="{% url 'treatment-add' batch.id %}" class="btn btn-dark btn-sm fs-3"
+                     data-toggle="tooltip" data-placement="top" title='Create treatment'>+</a>
+                  <small>add treatment</small>
+                </li>
+                </ul>
+              </li>
+            {% endfor %}
+            <li class="list-group-item list-group-item-baas">
+              <a href="{% url 'batch-add' variant.id %}" class="btn btn-dark btn-sm fs-3"
+                 data-toggle="tooltip" data-placement="top" title='Create batch'>+</a>
+              <small>add batch</small>
+            </li>
+            </ul>
+          </li>
+        {% endfor %}
+        <li class="list-group-item list-group-item-baas">
+          <a href="{% url 'product_variant-add' product.id %}" class="btn btn-dark btn-sm fs-3"
+          data-toggle="tooltip" data-placement="top" title='Create product'>&#43;</a>
+          <small>add product variant</small>
         </li>
         </ul>
       </div>
-      {% include "catalogue/submodel_list.html" with title='Variants' add_url='product_variant-add' itemList=variants update_url='product_variant-api' %}
-      {% include "catalogue/submodel_list.html" with title='Batches' add_url='batch-add' itemList=batches update_url='batch-api'%}
     </div>
-    <div class="col-md-2">
-      {% include "catalogue/submodel_list.html" with title='Known treatments' add_url='treatment-add' itemList=treatments update_url='treatment-api'%}
-    </div>
-    <div class="col-md-8">
+
+    <div class="col-md-9">
       <div class="card no-border mb-3">
+        
+        <div class="card-header-baas h5">
+            Data points
+        </div>
         <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
           {% csrf_token %}
           {{ form|crispy }}
-        <div class="card-header-baas h5">
-            Data points
-            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm float-end"/>
-        </div>
-          <ul class="list-group list-group-horizontal">
+          <ul class="list-group list-group-horizontal mt-4 mb-4">
             {% for tagValues in filterData %}
-              {% include "catalogue/show_tags_btns.html" with title=tagValues.name tags=tagValues.values %}
+
+              <div class="form-floating col-md-2 ms-2 me-2">
+                {% include 'baaswebapp/input_select_template.html' with tag=tagValues.name item_id='new' currentValue=tagValues.current selectOptions=tagValues.values addNull=True tag=tagValues.name selectOptions=tagValues.values %}
+                <label class='mb-2' for="floatingInputValue">{{tagValues.name}}</label>
+              </div>
+             
             {% endfor %}
+            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm ms-4 me-4"/>
           </ul>
         </form>
       </div>
+
+      {% if errors %}
+        <div class="alert alert-primary" role="alert">{{errors}}</div>
+      {% endif %}
       
-      {% for graphDim in graphs %}
-        <div class="card no-border mb-3">
-          <div class="card-header-baas h5">
-            {{graphDim.name}}
-          </div>
+      <div class="card no-border mb-3">
+        <div class="card-header-baas h5">
+          {{titleGraph}}
+        </div>
+        {% for graphDim in graphs %}
           {% for graphRow in graphDim.values %}
-            <ul class="list-group list-group-horizontal">
+            <ul class="list-group list-group-horizontal mb-4">
               {% for item in graphRow %}
               <li class="list-group-item list-group-item-baas {{classGraphCol}}">
-                <h6 class="mt-2 mb-2">{{item.name}}</h6>
                 {{item.graph|safe}}
               </li>
               {% endfor %}
             </ul>
           {% endfor %}
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      
     </div>
-  </div>
 </div>
 {% endblock %}

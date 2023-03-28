@@ -1,0 +1,20 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}
+<h1 class="mt-4">Stats data
+<span class="h3 text-muted">({{foundTrials}}) total trials ({{foundTreatments}}) thesis</span></h1>
+{% for trial in data %}
+    <a class='btn btn-info' href="{% url 'fieldtrial_api' trial.id %}" >{{trial.name}}</a>
+    <br/>
+    {% for thesis in trial.thesis %}
+        <a href="{% url 'thesis_api' thesis.id %}" >{{thesis.name}}</a>
+    {% endfor %}
+<br/><br/>
+{% empty %}
+<p>No related trials, thesis found</p>
+{% endfor %}
+
+{% endblock %}

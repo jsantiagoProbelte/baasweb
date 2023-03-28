@@ -1,3 +1,5 @@
+from django.db import models
+
 
 class ModelHelpers:
     NULL_STRING = '------'
@@ -31,7 +33,7 @@ class ModelHelpers:
 
     @classmethod
     def getSelectList(cls, addNull=False, asDict=False):
-        return cls._getSelectList(cls.getObjects(),
+        return cls._getSelectList(cls.getObjects().order_by('name'),
                                   addNull=addNull,
                                   asDict=asDict)
 
@@ -71,4 +73,17 @@ class ModelHelpers:
                 continue
             if found not in values:
                 values[found] = name
-        return [{'id': id, 'name': values[id]} for id in values]
+        dimensionsDic = [{'value': id, 'name': values[id]} for id in values]
+        return dimensionsDic, list(values.keys())
+
+
+class RateTypeUnit(ModelHelpers, models.Model):
+    name = models.CharField(max_length=100)
+    unit = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, null=True)
+
+    def getName(self):
+        return '{} ({})'.format(self.name, self.unit)
+
+    def __str__(self):
+        return self.getName()

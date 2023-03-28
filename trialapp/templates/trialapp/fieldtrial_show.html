@@ -21,18 +21,6 @@
     {% include "trialapp/card_values.html" with title='Location' dataItems=dataTrial.Location link='assessment-list' classColumn='classColumn2'%}
   </div>
   <div class="col-md-3">
-    <div class="card no-border mb-3" >
-      <div class="card-header-baas h5">
-          <a class="btn btn-secondary btn-sm fs-5" href="{% url 'trial-assessment-set-list' fieldTrial.id%}">Units</a>
-      </div>
-      <ul class="list-group list-group-flush"></ul>
-        {% for item in units %}
-          {% include "baaswebapp/item_list_template.html" with field=item.unit.name value=item.type.name%}
-        {% empty %}
-          <p>No units yet.</p>
-        {% endfor %}
-      </ul>
-    </div>
     {% include "trialapp/card_values.html" with title='Assessments' dataItems=dataTrial.Assessments link='assessment-list' classColumn='classColumn2'%}
     {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn2'%}
   </div>

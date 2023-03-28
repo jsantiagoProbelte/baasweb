@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, Batch, Treatment,\
-    RateUnit
+    RateUnit, UNTREATED
 from trialapp.models import FieldTrial, Thesis, Replica,\
                             ApplicationMode, TreatmentThesis
 from trialapp.tests.tests_models import TrialAppModelTest
@@ -21,6 +21,7 @@ class ThesisViewsTest(TestCase):
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
+        self._untreated = Treatment.objects.get(name=UNTREATED)
 
     def test_editfieldtrial(self):
         request = self._apiFactory.get(
@@ -37,6 +38,7 @@ class ThesisViewsTest(TestCase):
 
         # Create one field trial
         thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
@@ -71,6 +73,7 @@ class ThesisViewsTest(TestCase):
 
     def test_addTreatmentThesis(self):
         thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
@@ -128,7 +131,8 @@ class ThesisViewsTest(TestCase):
 
     def test_thesis_api(self):
         # Creating thesis , but not with all attributres
-        thesisData = TrialAppModelTest.THESIS[0]
+        thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData['treatment'] = self._untreated.id
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
         response = ThesisCreateView.as_view()(

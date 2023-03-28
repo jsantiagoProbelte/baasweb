@@ -34,7 +34,7 @@
               <ul class="list-group list-group-flush">
                 {% for treatment in treatments %}
                 <li class="list-group-item list-group-item-baas">
-                    {{treatment}}
+                    {{treatment.name}}
                     <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-4"
                         data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a></span>
                 </li>
@@ -47,28 +47,7 @@
               </ul>
         </div>
     </div>
-    {% if product_list %}
-    <div class="card no-border" >
-      <div class="card-body-baas">
-            <h4>Treatment - Old style</h4>
-            <table class="table"><tbody>
-            <tr id="product_thesis">
-                {% include "trialapp/thesis_add_product.html" with thesis_id=thesis_id products=products rate_units=rate_units%}
-            </tr>
-            {% for item in product_list %}
-                <tr id="item-{{item.id}}">
-                    <td>{{item.product}}</td>
-                    <td>{{item.rate}}</td>
-                    <td>{{item.rate_unit}}</td>
-                </tr>
-            {% empty %}
-                <p>No products yet.</p>
-            {% endfor %}
-            
-            </tbody></table>
-      </div>
-    </div>
-    {% endif %}
+    
     <div class="card card-body-baas mt-3">
         <h4>Thesis Volumen</h4>
         <p>{{thesisVolume.value}} <span class="text-muted">{{thesisVolume.detail}} </span></p>
