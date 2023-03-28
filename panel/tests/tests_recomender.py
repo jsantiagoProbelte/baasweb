@@ -1,6 +1,8 @@
 from django.test import TestCase
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from panel.recomender import RecomenderApi
+import json
+from datetime import date
 
 
 class RecommenderTest(TestCase):
@@ -11,10 +13,18 @@ class RecommenderTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
 
     def test_recomender_api(self):
-        # Creating thesis , but not with all attributres
         request = self._apiFactory.get('recomender')
         self._apiFactory.setUser(request)
         response = RecomenderApi.as_view()(request)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'var latitude=38.03467;')
-        self.assertContains(response, 'var longitude=-1.189287;')
+
+    def test_post(self):
+        request = self._apiFactory.post(
+            'recomender', {'latitude': 90, 'longitude': 90})
+        self._apiFactory.setUser(request)
+        response = RecomenderApi.as_view()(request)
+        data = json.loads(response.content)
+        today = date.today().strftime("%Y-%m-%dT12:00")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['daily_weather']
+                         ['temperatures'][0]['date'], today)

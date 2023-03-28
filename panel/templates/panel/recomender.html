@@ -27,8 +27,7 @@
                     <tr>
                         <th scope="col">Day #</th>
                         <th scope="col">Botrytis Risk</th>
-                        <th scope="col">Other Risk</th>
-                        <th scope="col">Another Risk</th>
+                        <th scope="col">Pests Risk</th>
                     </tr>
                 </thead>
                 <tbody id="risktablebody">
@@ -39,8 +38,8 @@
 {% endblock content %}
 {% block scripts %}
     <script>
-    var latitude={{latitude}};
-    var longitude={{longitude}};
+    var latitude= 38.034670;
+    var longitude= -1.189287;
     const weatherTable = document.getElementById('weathertable')
     const weatherTableBody = document.getElementById('weathertablebody')
 
@@ -62,6 +61,7 @@
           })
           .then(response => response.json())
             .then(data => {
+                console.log(data)
                 populateWeatherTable(data['daily_weather'])
                 populateRiskTable(data['risks'])
             })
@@ -69,8 +69,6 @@
                 console.error('Error:', error);
             });
     }
-
-
     </script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>

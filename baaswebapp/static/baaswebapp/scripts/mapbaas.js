@@ -123,6 +123,7 @@ map.on('click', (e) => {
     }
     latitude  = coordinates["lat"]
     longitude = coordinates["lng"]
+    console.log(coordinates)
 
 });
 
@@ -152,6 +153,7 @@ function populateWeatherTable(data){
 function populateRiskTable(data){
     const dayCount = data['botrytis'].length ;
     const botrytisRisks = data['botrytis'];
+    const pestRisks = data['pests'];
 
     if(riskTableBody.innerHTML){
         riskTableBody.innerHTML = ""
@@ -160,6 +162,7 @@ function populateRiskTable(data){
         var tableParent = document.createElement("tr")
         tableParent.insertAdjacentHTML("beforeend", `<th scope="row">${i + 1}</th>`)
         tableParent.insertAdjacentHTML("beforeend", `<td>${botrytisRisks[i]}</td>`)
+        tableParent.insertAdjacentHTML("beforeend", `<td>${pestRisks[i]}</td>`)
     
         riskTableBody.appendChild(tableParent)
         riskTable.style.display = ""
