@@ -28,13 +28,13 @@
   </div>
   <div class="tab-content" id="v-pills-tabContent">
     <div class="tab-pane fade {{thesis_tab}}" id="v-pills-thesis" role="tabpanel" aria-labelledby="v-pills-thesis-tab">
-      {% include 'trialapp/data_replica_form_graph.html' with dataPointsForm=dataPointsT%}
+      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsT%}
     </div>
     <div class="tab-pane fade show {{replica_tab}}" id="v-pills-replica" role="tabpanel" aria-labelledby="v-pills-replica-tab">
-      {% include 'trialapp/data_replica_form_graph.html' with dataPointsForm=dataPointsR%}
+      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsR%}
     </div>
     <div class="tab-pane fade {{sample_tab}}" id="v-pills-sample" role="tabpanel" aria-labelledby="v-pills-sample-tab">
-      {% include 'trialapp/data_replica_form_graph.html' with dataPointsForm=dataPointsS%}
+      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsS%}
     </div>
     <div class="tab-pane fade" id="v-pills-stats" role="tabpanel" aria-labelledby="v-pills-stats-tab">
       <h5>Statistics and significance</h5>
