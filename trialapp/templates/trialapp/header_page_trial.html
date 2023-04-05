@@ -1,5 +1,20 @@
 {% if subheader %}
-<h5 class="mt-4 ms-4 text-muted">{{subheader}}</h5>
+<h5 class="mt-4 ms-4 text-muted">{{subheader}}
+    <span> <div class="btn-group float-end" role="group">
+        <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
+        <a href="{% url 'fieldtrial_api' fieldTrial.id%}" class="btn btn-light"
+            data-toggle="tooltip" data-placement="top" title='Go to field trial'>{{fieldTrial.code}}</a>
+        <a href="{% url 'thesis-list' fieldTrial.id%}" class="btn btn-dark "
+            data-toggle="tooltip" data-placement="top" title='Thesis list'>Thesis</a>
+        <a href="{% url 'assessment-list' fieldTrial.id%}" class="btn btn-dark"
+            data-toggle="tooltip" data-placement="top" title='View assessments data'>data</a>
+        <a href="{% url 'application-list' fieldTrial.id%}" class="btn btn-dark "
+            data-toggle="tooltip" data-placement="top" title='Units list'>Applications</a>
+
+
+    </div></span>
+</h5>
 {% endif %}
 <h2 class="fw-bold mt-4 ms-4 mb-3">
     {{title}}
@@ -23,19 +38,7 @@
             data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
         {% endif %}
     </div></span>
-    <span> <div class="btn-group float-end" role="group">
-        <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
-            data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
-        <a href="{% url 'fieldtrial_api' fieldTrial.id%}" class="btn btn-light fs-4"
-            data-toggle="tooltip" data-placement="top" title='Go to field trial'>{{fieldTrial.code}}</a>
-        <a href="{% url 'thesis-list' fieldTrial.id%}" class="btn btn-dark "
-            data-toggle="tooltip" data-placement="top" title='Thesis list'>Thesis</a>
-        <a href="{% url 'application-list' fieldTrial.id%}" class="btn btn-dark "
-            data-toggle="tooltip" data-placement="top" title='Units list'>Applications</a>
-        <a href="{% url 'assessment-list' fieldTrial.id%}" class="btn btn-dark"
-            data-toggle="tooltip" data-placement="top" title='View assessments data'>data</a>
 
-    </div></span>
 </h2>
 
 

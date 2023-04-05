@@ -140,10 +140,13 @@ class DataHelper:
     def showDataPerLevel(self, level, onlyThisData=False):
         references = None
         subtitle = 'Assessment'
+        colspan = self._fieldTrial.replicas_per_thesis
         if level == Graph.L_THESIS:
             references = self._thesisTrial
+            colspan = 1
         elif level == Graph.L_REPLICA:
             references = self._replicas
+
         elif level == Graph.L_SAMPLE:
             references = self._replicas
             subtitle = 'Samples'
@@ -159,6 +162,7 @@ class DataHelper:
         dataPointsList = [{
             'title': self._assessment.rate_type.getName(),
             'subtitle': subtitle,
+            'colspan': colspan,
             'header': header, 'errors': '',
             'graph': graph, 'rows': rows}]
         totalPoints += pointsInGraph

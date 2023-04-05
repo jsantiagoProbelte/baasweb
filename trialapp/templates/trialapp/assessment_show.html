@@ -3,11 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
 {% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='assessment' edit_href="assessment-update" item=assessment delete_url='assessment-delete'%}
 
 <div class="card card-body-baas mt-2">
-  <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-    <ul class="text-sm-end">
+  <div class="row">
+    <div class="col-md-6">
       <table><tr>
         <td>
         {% include "baaswebapp/item_list_template.html" with field='Name' value=assessment.name%}
@@ -17,15 +18,19 @@
         {% include "baaswebapp/item_list_template.html" with field='Crop Stage Majority' value=assessment.crop_stage_majority%}
         </td>
         </tr></table>
-    </ul>
-    <a class="nav-link {{thesis_nav}}" id="v-pills-thesis-tab" data-toggle="pill" href="#v-pills-thesis" role="tab" aria-controls="v-pills-thesis" aria-selected="true">
-      <span class="fs-2">&#9776;</span> Thesis data</a>
-    <a class="nav-link {{replica_nav}}" id="v-pills-replica-tab" data-toggle="pill" href="#v-pills-replica" role="tab" aria-controls="v-pills-replica" aria-selected="false">
-      <span class="fs-2">&#9783;</span> Replica data</a>
-    <a class="nav-link {{sample_nav}}" id="v-pills-sample-tab" data-toggle="pill" href="#v-pills-sample" role="tab" aria-controls="v-pills-sample" aria-selected="false">
-      <span class="fs-2 me-2">&#9880;</span>Sample data</a>
-    
+    </div>
+    <div class="col-md-6">
+      <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link {{thesis_nav}}" id="v-pills-thesis-tab" data-toggle="pill" href="#v-pills-thesis" role="tab" aria-controls="v-pills-thesis" aria-selected="true">
+          <span class="fs-2">&#9776;</span> Thesis data</a>
+        <a class="nav-link {{replica_nav}}" id="v-pills-replica-tab" data-toggle="pill" href="#v-pills-replica" role="tab" aria-controls="v-pills-replica" aria-selected="false">
+          <span class="fs-2">&#9783;</span> Replica data</a>
+        <a class="nav-link {{sample_nav}}" id="v-pills-sample-tab" data-toggle="pill" href="#v-pills-sample" role="tab" aria-controls="v-pills-sample" aria-selected="false">
+          <span class="fs-2 me-2">&#9880;</span>Sample data</a>
+      </div>
+    </div>
   </div>
+  
   <div class="tab-content" id="v-pills-tabContent">
     <div class="tab-pane fade {{thesis_tab}}" id="v-pills-thesis" role="tabpanel" aria-labelledby="v-pills-thesis-tab">
       {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsT%}

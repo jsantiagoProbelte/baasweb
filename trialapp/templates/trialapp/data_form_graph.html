@@ -1,27 +1,30 @@
 {% load crispy_forms_tags %}
 
-
 {% for dataPointReference in dataPointsForm %}
     {% if dataPointReference.errors %}
     <div class="alert alert-info">{{dataPointReference.errors}}</div>
     {% else %}
-    <div class="card card-body-baas mt-3">
+    <div class="card card-body-baas">
         <h3>{{dataPointReference.title}}</h3>
-        <table>
-            <thead><tr>
-            <td><small>{{dataPointReference.subtitle}}</small></td>
+        <div class="table-container">
+        <table class="data-table">
+            <thead><tr><td></td>
             {% for itemHeader in dataPointReference.header %}
-            <td class="bg-custom-{{itemHeader.color}}">
-                {{itemHeader.index}}<br/>
-                {{itemHeader.name}}<br/>
-            </td>
+                {% if itemHeader.index %}
+                <td class="bg-custom-{{itemHeader.color}}" colspan="{{dataPointReference.colspan}}">{{itemHeader.index}} </td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+            <tr><td><small>{{dataPointReference.subtitle}}</small></td>
+            {% for itemHeader in dataPointReference.header %}
+                <td class="bg-custom-{{itemHeader.color}} text-right td-control-baas">{{itemHeader.name}}</td>
             {% endfor %}
             </tr></thead>
         <tbody>
         {% for evaluationSet in dataPointReference.rows %}
-            <tr><td>{{evaluationSet.index}}</td>
+            <tr><td class="td-control-baas">{{evaluationSet.index}}</td>
             {% for dataPointValue in evaluationSet.dataPoints %}
-            <td><form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
+            <td class="td-control-baas"><form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
                 class='form-data-input-template'  method="POST">
                 {% csrf_token %}
                 <input type="text" name="data-point"
@@ -33,12 +36,11 @@
             {% endfor %}
             </tr>
         {% endfor %}
-        </tbody></table>
+        </tbody></table></div>
         {{dataPointReference.graph|safe}}
     </div>
     {% endif %}
 {% empty %}
-    <p>No unit types defined. Go <span>
-        <a class="badge btn btn-info fs-5" href="{% url 'trial-assessment-set-list' assessment.field_trial_id%}">here</a></span></p>
+    <p>Data avialable yet</p>
 {% endfor %}
 

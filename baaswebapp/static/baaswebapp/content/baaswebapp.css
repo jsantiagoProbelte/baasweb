@@ -328,3 +328,39 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
 .classColumn4 {
   column-count: 4;
 }
+
+.table-container {
+  width: 100%; 
+  overflow: auto;
+  height: 200px;
+}
+
+.data-table {
+  width:100%;
+  table-layout:auto;
+}
+
+.data-table td {
+  width: 15rem;
+  background-color: grey;
+}
+
+/* SCROLLTABLE */
+.form-control-baas {
+  display: block;
+  width: 5rem;
+  padding: 0.2rem 0.2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #fff;
+  background-color: #3e3f3a;
+  background-clip: padding-box;
+  /* border: 1px solid #ced4da; */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  float: right !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
