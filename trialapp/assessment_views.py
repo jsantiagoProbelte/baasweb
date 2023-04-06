@@ -9,7 +9,7 @@ from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
-from baaswebapp.graphs import Graph
+from baaswebapp.graphs import Graph, OneGraph
 from trialapp.data_views import DataHelper
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
@@ -20,51 +20,77 @@ from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.forms import MyDateInput
 
+CLASS_DATA_LEVEL = {
+        Graph.L_REPLICA: ReplicaData,
+        Graph.L_SAMPLE: SampleData,
+        Graph.L_THESIS: ThesisData}
+
 
 class AssessmentListView(LoginRequiredMixin, ListView):
     model = Assessment
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
     template_name = 'trialapp/assessment_list.html'
+    _trial = None
+
+    def getGraphData(self, level, rateSets, ratedParts, columns=2):
+        graphs = []
+        rowGraphs = []
+        foundData = 0
+        for rateSet in rateSets:
+            for ratedPart in ratedParts:
+                classDataModel = CLASS_DATA_LEVEL[level]
+                assVIds = Assessment.objects.filter(
+                    field_trial_id=self._trial.id,
+                    part_rated=ratedPart,
+                    rate_type=rateSet).values('id')
+                assIds = [value['id'] for value in assVIds]
+                dataPoints = classDataModel.getAssessmentDataPoints(assIds)
+                if len(dataPoints):
+                    foundData += 1
+                    graph = OneGraph(level, rateSet, ratedPart, dataPoints)
+                    if len(rowGraphs) == columns:
+                        graphs.append(rowGraphs)
+                        rowGraphs = []
+                    rowGraphs.append(graph.draw())
+        if len(rowGraphs) > 0:
+            graphs.append(rowGraphs)
+        classGraph = OneGraph.classColGraphs(foundData, columns)
+        return graphs, classGraph
 
     def get_context_data(self, **kwargs):
         field_trial_id = None
         # from call on server
         field_trial_id = self.kwargs['field_trial_id']
-        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        new_list = Assessment.getObjects(fieldTrial)
+        self._trial = get_object_or_404(FieldTrial, pk=field_trial_id)
+        new_list = Assessment.getObjects(self._trial)
         rateSets = Assessment.getRateSets(new_list)
+        ratedParts = Assessment.getRatedParts(new_list)
 
         # Replica data
-        dataPointsR = ReplicaData.getDataPointsFieldTrial(fieldTrial)
-        graphR = Graph(Graph.L_REPLICA, rateSets, dataPointsR,
-                       xAxis=Graph.L_DATE)
-        graphPlotsR, classGraphR = graphR.violin()
+        graphPlotsR, classGraphR = self.getGraphData(
+            Graph.L_REPLICA, rateSets, ratedParts)
 
         # Thesis data
-        dataPointsT = ThesisData.getDataPointsFieldTrial(fieldTrial)
-        graphT = Graph(Graph.L_THESIS, rateSets, dataPointsT,
-                       xAxis=Graph.L_DATE)
-        graphPlotsT, classGraphT = graphT.scatter()
+        graphPlotsT, classGraphT = self.getGraphData(
+            Graph.L_THESIS, rateSets, ratedParts)
 
         show_active_replica = 'show active'
         show_active_thesis = ''
         active_replica = 'active'
         active_thesis = ''
-        if dataPointsT.count() > 0:
+        if len(graphPlotsT) > 0:
             show_active_thesis = 'show active'
             show_active_replica = ''
             active_replica = ''
             active_thesis = 'active'
 
         # Sample data
-        dataPointsS = SampleData.getDataPointsFieldTrial(fieldTrial)
-        graphS = Graph(Graph.L_SAMPLE, rateSets, dataPointsS,
-                       xAxis=Graph.L_DATE)
-        graphPlotsS, classGraphS = graphS.violin()
+        graphPlotsS, classGraphS = self.getGraphData(
+            Graph.L_SAMPLE, rateSets, ratedParts)
 
         return {'object_list': new_list,
-                'fieldTrial': fieldTrial,
+                'fieldTrial': self._trial,
                 'show_active_thesis': show_active_thesis,
                 'show_active_replica': show_active_replica,
                 'active_replica': active_replica,

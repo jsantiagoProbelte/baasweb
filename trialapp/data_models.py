@@ -41,6 +41,14 @@ class Assessment(ModelHelpers, models.Model):
                 rateUnits[assessment.rate_type.id] = assessment.rate_type
         return list(rateUnits.values())
 
+    @classmethod
+    def getRatedParts(cls, assessments):
+        ratedParts = {}
+        for assessment in assessments:
+            if assessment.part_rated not in ratedParts:
+                ratedParts[assessment.part_rated] = assessment.part_rated
+        return list(ratedParts.values())
+
 
 class DataModel(ModelHelpers):
     @classmethod
@@ -79,8 +87,11 @@ class DataModel(ModelHelpers):
     @classmethod
     def getDataPointsFieldTrial(cls, fieldTrial):
         assIds = [item.id for item in Assessment.getObjects(fieldTrial)]
-        return cls.objects \
-                  .filter(assessment_id__in=assIds)
+        return cls.getAssessmentDataPoints(assIds)
+
+    @classmethod
+    def getAssessmentDataPoints(cls, assIds):
+        return cls.objects.filter(assessment_id__in=assIds)
 
     @classmethod
     def getDataPointsProduct(cls, product, crop, plague, rateType):
