@@ -85,6 +85,7 @@ class AssessmentFormLayout(FormHelper):
                 Field('assessment_date', css_class='mb-3'),
                 Field('crop_stage_majority', css_class='mb-3'),
                 Field('rate_type', css_class='mb-3'),
+                Field('part_rated', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -96,7 +97,7 @@ class AssessmentForm(forms.ModelForm):
     class Meta:
         model = Assessment
         fields = ('name', 'crop_stage_majority', 'assessment_date',
-                  'rate_type')
+                  'rate_type', 'part_rated')
 
     def __init__(self, *args, **kwargs):
         super(AssessmentForm, self).__init__(*args, **kwargs)
@@ -104,6 +105,7 @@ class AssessmentForm(forms.ModelForm):
         self.fields['crop_stage_majority'].label = 'Crop Stage Majority (BBCH)'
         self.fields['rate_type'].queryset =\
             RateTypeUnit.objects.all().order_by('name')
+        self.fields['part_rated'].required = False
 
 
 class AssessmentCreateView(LoginRequiredMixin, CreateView):
