@@ -4,7 +4,7 @@ from trialapp.data_models import DataModel, ThesisData,\
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from baaswebapp.graphs import Graph
+from baaswebapp.graphs import Graph, OneGraph
 
 
 class SetDataAssessment(APIView):
@@ -125,11 +125,10 @@ class DataHelper:
         # Calculate graph
         pointsInGraphs = len(pointForGraph)
         if pointsInGraphs > 1:
-            graph = Graph(level, [assSet],
-                          pointForGraph, showTitle=False)
-            graphPlots, classGraph = graph.draw(level)
-            # We only expect one
-            graph = graphPlots[0][0]
+            graphHelper = OneGraph(
+                level, assSet,
+                self._assessment.part_rated, pointForGraph)
+            graph = graphHelper.draw()
         return rows, graph, pointsInGraphs
 
     TOKEN_LEVEL = {
