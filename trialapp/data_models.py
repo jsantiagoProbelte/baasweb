@@ -15,7 +15,7 @@ class Assessment(ModelHelpers, models.Model):
     def getObjects(cls, field_trial):
         return cls.objects \
                 .filter(field_trial=field_trial) \
-                .order_by('assessment_date')
+                .order_by('assessment_date', 'rate_type', 'part_rated')
 
     def getName(self):
         return "{}-BBCH".format(
