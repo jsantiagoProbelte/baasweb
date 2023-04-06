@@ -5,7 +5,7 @@ from trialapp.models import FieldTrial, Thesis, Replica, Sample
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
     SampleData, Assessment
-from baaswebapp.graphs import Graph
+from baaswebapp.graphs import GraphTrial
 from trialapp.data_views import DataHelper, SetDataAssessment
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
@@ -45,10 +45,10 @@ class DataViewsTest(TestCase):
     def test_setData(self):
         dataHelper = DataHelper(self._assessment.id)
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_THESIS, onlyThisData=True)
+            GraphTrial.L_THESIS, onlyThisData=True)
         self.assertEqual(totalPoints, 0)
 
-        token = DataHelper.TOKEN_LEVEL[Graph.L_THESIS]
+        token = DataHelper.TOKEN_LEVEL[GraphTrial.L_THESIS]
         self.assertEqual(token, 'dataPointsT')
         self.assertEqual(len(dataPointList[token]), 1)
         self.assertEqual(
@@ -65,13 +65,13 @@ class DataViewsTest(TestCase):
         self.assertEqual(len(itemIds), len(theses))
         for thesis in theses:
             idInput = DataModel.generateDataPointId(
-                Graph.L_THESIS, self._assessment, thesis)
+                GraphTrial.L_THESIS, self._assessment, thesis)
             self.assertTrue(idInput in itemIds)
 
         # Le's add data
         self.assertEqual(ThesisData.objects.count(), 0)
         addData = {'data_point_id': DataModel.generateDataPointId(
-                    Graph.L_THESIS, self._assessment,
+                    GraphTrial.L_THESIS, self._assessment,
                     self._theses[0]),
                    'data-point': 33}
         addDataPoint = self._apiFactory.post(
@@ -91,7 +91,7 @@ class DataViewsTest(TestCase):
 
         # modify
         addData = {'data_point_id': DataModel.generateDataPointId(
-                    Graph.L_THESIS, self._assessment,
+                    GraphTrial.L_THESIS, self._assessment,
                     self._theses[0],
                     ),
                    'data-point': 66}
@@ -106,7 +106,7 @@ class DataViewsTest(TestCase):
 
         # add new point
         addData = {'data_point_id': DataModel.generateDataPointId(
-            Graph.L_THESIS, self._assessment,
+            GraphTrial.L_THESIS, self._assessment,
             self._theses[1],
             ),
             'data-point': 99}
@@ -119,17 +119,16 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[1].value, 99)
 
         dataPoints = ThesisData.getDataPoints(self._assessment)
-        graph = Graph(Graph.L_THESIS, self._units, dataPoints)
-        graphToDisplay, classGraph = graph.bar()
-        self.assertEqual(len(graphToDisplay), 1)
-        self.assertEqual(classGraph, 'col-md-6')
-        graphToDisplay, classGraph = graph.scatter()
-        self.assertEqual(len(graphToDisplay), 1)
-        self.assertEqual(classGraph, 'col-md-6')
+        graph = GraphTrial(GraphTrial.L_THESIS, self._units[0],
+                           'part', dataPoints)
+        graphToDisplay = graph.bar()
+        self.assertTrue(graphToDisplay is not None)
+        graphToDisplay = graph.scatter()
+        self.assertTrue(graphToDisplay is not None)
 
         # Let's query via the DataHelper
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_THESIS, onlyThisData=True)
+            GraphTrial.L_THESIS, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
 
     def test_graph_logic(self):
@@ -155,16 +154,16 @@ class DataViewsTest(TestCase):
             reference=sample,
             value=66)
 
-        graphT = Graph(Graph.L_THESIS, self._units, [dPT])
-        graphR = Graph(Graph.L_REPLICA, self._units, [dPR])
-        graphS = Graph(Graph.L_SAMPLE, self._units, [dPS])
+        graphT = GraphTrial(GraphTrial.L_THESIS, unit, 'part', [dPT])
+        graphR = GraphTrial(GraphTrial.L_REPLICA, unit, 'part', [dPR])
+        graphS = GraphTrial(GraphTrial.L_SAMPLE, unit, 'part', [dPS])
         traceId = unit.id
         code = thesis.field_trial.code
-        self.assertEqual(graphT.traceId(dPT, traceId),
+        self.assertEqual(graphT.traceId(dPT),
                          "{}".format(thesis.number))
-        self.assertEqual(graphR.traceId(dPR, traceId),
+        self.assertEqual(graphR.traceId(dPR),
                          "{}".format(thesis.number))
-        self.assertEqual(graphS.traceId(dPS, traceId),
+        self.assertEqual(graphS.traceId(dPS),
                          "{}".format(replica.number))
 
         self.assertEqual(graphT.getTraceName(dPT, code), thesis.name)
@@ -172,38 +171,38 @@ class DataViewsTest(TestCase):
         self.assertEqual(graphS.getTraceName(dPS, code), thesis.name)
 
         graphT._combineTrialAssessments = True
-        self.assertEqual(graphT.traceId(dPT, traceId),
+        self.assertEqual(graphT.traceId(dPT),
                          "{}-{}".format(thesis.number, traceId))
         self.assertEqual(graphT.getTraceName(dPT, code),
                          "{}-{}".format(thesis.name, code))
 
-        color = Graph.COLOR_LIST[thesis.number]
+        color = GraphTrial.COLOR_LIST[thesis.number]
         self.assertEqual(graphT.getTraceColor(dPT), color)
         self.assertEqual(graphR.getTraceColor(dPR), color)
         self.assertEqual(graphS.getTraceColor(dPS), color)
 
-        symbolT = Graph.SYMBOL_LIST[2]
-        symbolR = Graph.SYMBOL_LIST[replica.number]
+        symbolT = GraphTrial.SYMBOL_LIST[2]
+        symbolR = GraphTrial.SYMBOL_LIST[replica.number]
         self.assertEqual(graphT.getTraceSymbol(dPT), symbolT)
         self.assertEqual(graphR.getTraceSymbol(dPR), symbolR)
         self.assertEqual(graphS.getTraceSymbol(dPS), symbolR)
 
-        graphSOne = Graph(Graph.L_SAMPLE, self._units, [dPS],
-                          combineTrialAssessments=True)
-        self.assertEqual(graphSOne.traceId(dPS, traceId),
+        graphSOne = GraphTrial(GraphTrial.L_SAMPLE, self._units[0], 'part',
+                               [dPS], combineTrialAssessments=True)
+        self.assertEqual(graphSOne.traceId(dPS),
                          "{}-{}".format(replica.number, self._units[0].id))
 
     def test_setReplicaData(self):
         dataHelper = DataHelper(self._assessment.id)
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_REPLICA, onlyThisData=True)
+            GraphTrial.L_REPLICA, onlyThisData=True)
         self.assertEqual(totalPoints, 0)
         # self.assertContains(response, 'assessment, add data per thesis')
         replicas = Replica.getFieldTrialObjects(
             self._fieldTrial)
         self.assertGreater(len(replicas), 0)
 
-        token = DataHelper.TOKEN_LEVEL[Graph.L_REPLICA]
+        token = DataHelper.TOKEN_LEVEL[GraphTrial.L_REPLICA]
         self.assertEqual(token, 'dataPointsR')
         self.assertEqual(len(dataPointList[token]), 1)
         self.assertEqual(
@@ -219,7 +218,7 @@ class DataViewsTest(TestCase):
         self.assertEqual(len(itemIds), len(replicas))
         for thesis in replicas:
             idInput = DataModel.generateDataPointId(
-                Graph.L_REPLICA, self._assessment, thesis)
+                GraphTrial.L_REPLICA, self._assessment, thesis)
             self.assertTrue(idInput in itemIds)
 
         # Le's add data
@@ -267,14 +266,14 @@ class DataViewsTest(TestCase):
 
         dataHelper = DataHelper(self._assessment.id)
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_REPLICA, onlyThisData=True)
+            GraphTrial.L_REPLICA, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
 
     def test_setSampleData(self):
         dataHelper = DataHelper(self._assessment.id)
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_SAMPLE, onlyThisData=True)
-        token = DataHelper.TOKEN_LEVEL[Graph.L_SAMPLE]
+            GraphTrial.L_SAMPLE, onlyThisData=True)
+        token = DataHelper.TOKEN_LEVEL[GraphTrial.L_SAMPLE]
         self.assertEqual(token, 'dataPointsS')
         self.assertTrue(
             'Number of samples per replica' in
@@ -289,8 +288,8 @@ class DataViewsTest(TestCase):
         dataHelper._fieldTrial = self._fieldTrial
 
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_SAMPLE, onlyThisData=True)
-        token = DataHelper.TOKEN_LEVEL[Graph.L_SAMPLE]
+            GraphTrial.L_SAMPLE, onlyThisData=True)
+        token = DataHelper.TOKEN_LEVEL[GraphTrial.L_SAMPLE]
         self.assertEqual(token, 'dataPointsS')
         self.assertFalse(
             'Number of samples per replica' in
@@ -322,7 +321,7 @@ class DataViewsTest(TestCase):
         # in the same row, we get all the samples for the sample number
         for replica in replicas:
             idInput = DataModel.generateDataPointId(
-                Graph.L_SAMPLE, self._assessment, replica, fakeSmpId)
+                GraphTrial.L_SAMPLE, self._assessment, replica, fakeSmpId)
             self.assertTrue(idInput in itemIds)
 
         # Le's add data
@@ -380,7 +379,7 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[1].value, 99)
 
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
-            Graph.L_SAMPLE, onlyThisData=True)
+            GraphTrial.L_SAMPLE, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
         self.assertEqual(totalPoints, Sample.objects.count())
         self.assertEqual(totalPoints, SampleData.objects.count())

@@ -3,10 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant
 from trialapp.models import Crop, Plague, TreatmentThesis
-from trialapp.data_models import ThesisData, DataModel, ReplicaData
+from trialapp.data_models import ThesisData, DataModel, ReplicaData, Assessment
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from baaswebapp.graphs import Graph
+from baaswebapp.graphs import GraphTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
@@ -111,7 +111,7 @@ class ProductApi(APIView):
         dimensions = []
         crops = []
         plagues = []
-        level = Graph.L_REPLICA
+        level = GraphTrial.L_REPLICA
         for tag in tags:
             if tag in ProductApi.FILTER_DATA:
                 tagId = tags[tag]
@@ -124,17 +124,17 @@ class ProductApi(APIView):
                 if tag == ProductApi.TAG_PLAGUES:
                     plagues.append(Plague.objects.get(pk=tagId))
                 if tag == ProductApi.TAG_LEVEL:
-                    if tagId == Graph.L_THESIS:
-                        level = Graph.L_THESIS
-                    elif tagId == Graph.L_REPLICA:
-                        level = Graph.L_REPLICA
+                    if tagId == GraphTrial.L_THESIS:
+                        level = GraphTrial.L_THESIS
+                    elif tagId == GraphTrial.L_REPLICA:
+                        level = GraphTrial.L_REPLICA
         return dimensions, crops, plagues, level
 
     def calcularGraphs(self, product, tags, graphPerRow=2):
         if 'show_data' not in tags:
             return [], '', 'col-md-12'
         dimensions, crops, plagues, level = self.identifyObjectFilter(tags)
-        classGroup = Graph.classColGraphs(len(crops), graphPerRow)
+        classGroup = GraphTrial.classColGraphs(len(crops), graphPerRow)
         if len(crops) == 0:
             return [], 'Please select crop', classGroup
 
@@ -152,6 +152,7 @@ class ProductApi(APIView):
 
         graphs = []
         notFound = ''
+
         for dimension in dimensions:
             graphDim = self.fetchData(product, dimension,
                                       croplagues, graphPerRow,
@@ -182,13 +183,22 @@ class ProductApi(APIView):
             nameItem = crop.name
             if plague:
                 nameItem += '-' + plague.name
-            graph = self.computeGraph(product, crop, plague, dimension, level)
-            if graph:
-                item = {'name': nameItem, 'graph': graph}
-                lastRow.append(item)
-                if len(lastRow) % graphPerRow == 0:
-                    graphDim['values'].append(lastRow)
-                    lastRow = []
+
+            ratedParts = Assessment.getRatedPartsProduct(
+                product, crop, plague, dimension)
+
+            for ratedPart in ratedParts:
+                if ratedPart:
+                    nameItem += '-' + ratedPart
+                graph, fieldTrials = self.computeGraph(
+                    product, crop, plague, dimension, level, ratedPart)
+                if graph:
+                    item = {'name': nameItem, 'graph': graph,
+                            'trials': fieldTrials}
+                    lastRow.append(item)
+                    if len(lastRow) > graphPerRow:
+                        graphDim['values'].append(lastRow)
+                        lastRow = []
 
         if len(lastRow) > 0:
             graphDim['values'].append(lastRow)
@@ -196,27 +206,24 @@ class ProductApi(APIView):
         return graphDim
 
     def computeGraph(self, product, crop, plague,
-                     rateType, level):
+                     rateType, level, ratedPart):
         dataClass = None
         # Fetch Data
-        if level == Graph.L_THESIS:
+        if level == GraphTrial.L_THESIS:
             dataClass = ThesisData
-        elif level == Graph.L_REPLICA:
+        elif level == GraphTrial.L_REPLICA:
             dataClass = ReplicaData
 
-        dataPointsT = dataClass.getDataPointsProduct(
-            product, crop, plague, rateType)
+        dataPointsT, fieldTrials = dataClass.getDataPointsProduct(
+            product, crop, plague, rateType, ratedPart)
 
         if dataPointsT:
-            graphT = Graph(level, [rateType], dataPointsT,
-                           xAxis=Graph.L_DATE, combineTrialAssessments=True)
-            if level == Graph.L_THESIS:
-                graphPlotsT, classGraphT = graphT.scatter()
-            elif level == Graph.L_REPLICA:
-                graphPlotsT, classGraphT = graphT.violin()
-            return graphPlotsT[0][0]
+            graphT = GraphTrial(level, rateType, ratedPart, dataPointsT,
+                                xAxis=GraphTrial.L_DATE,
+                                combineTrialAssessments=False)
+            return graphT.draw(), fieldTrials
         else:
-            return None
+            return None, None
 
     def getProductTree(self, product):
         data = []

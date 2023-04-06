@@ -9,7 +9,7 @@ from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
-from baaswebapp.graphs import Graph, OneGraph
+from baaswebapp.graphs import GraphTrial
 from trialapp.data_views import DataHelper
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
@@ -21,9 +21,9 @@ from django import forms
 from trialapp.forms import MyDateInput
 
 CLASS_DATA_LEVEL = {
-        Graph.L_REPLICA: ReplicaData,
-        Graph.L_SAMPLE: SampleData,
-        Graph.L_THESIS: ThesisData}
+        GraphTrial.L_REPLICA: ReplicaData,
+        GraphTrial.L_SAMPLE: SampleData,
+        GraphTrial.L_THESIS: ThesisData}
 
 
 class AssessmentListView(LoginRequiredMixin, ListView):
@@ -48,14 +48,14 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 dataPoints = classDataModel.getAssessmentDataPoints(assIds)
                 if len(dataPoints):
                     foundData += 1
-                    graph = OneGraph(level, rateSet, ratedPart, dataPoints)
+                    graph = GraphTrial(level, rateSet, ratedPart, dataPoints)
                     if len(rowGraphs) == columns:
                         graphs.append(rowGraphs)
                         rowGraphs = []
                     rowGraphs.append(graph.draw())
         if len(rowGraphs) > 0:
             graphs.append(rowGraphs)
-        classGraph = OneGraph.classColGraphs(foundData, columns)
+        classGraph = GraphTrial.classColGraphs(foundData, columns)
         return graphs, classGraph
 
     def get_context_data(self, **kwargs):
@@ -69,11 +69,11 @@ class AssessmentListView(LoginRequiredMixin, ListView):
 
         # Replica data
         graphPlotsR, classGraphR = self.getGraphData(
-            Graph.L_REPLICA, rateSets, ratedParts)
+            GraphTrial.L_REPLICA, rateSets, ratedParts)
 
         # Thesis data
         graphPlotsT, classGraphT = self.getGraphData(
-            Graph.L_THESIS, rateSets, ratedParts)
+            GraphTrial.L_THESIS, rateSets, ratedParts)
 
         show_active_replica = 'show active'
         show_active_thesis = ''
@@ -87,7 +87,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
 
         # Sample data
         graphPlotsS, classGraphS = self.getGraphData(
-            Graph.L_SAMPLE, rateSets, ratedParts)
+            GraphTrial.L_SAMPLE, rateSets, ratedParts)
 
         return {'object_list': new_list,
                 'fieldTrial': self._trial,

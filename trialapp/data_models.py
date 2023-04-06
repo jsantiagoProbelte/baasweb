@@ -49,6 +49,25 @@ class Assessment(ModelHelpers, models.Model):
                 ratedParts[assessment.part_rated] = assessment.part_rated
         return list(ratedParts.values())
 
+    @classmethod
+    def getRatedPartsProduct(cls, product, crop, plague,
+                             dimension):
+        criteria = {
+            'field_trial__product_id': product.id,
+            'rate_type_id': dimension.id}
+        if crop:
+            criteria['field_trial__crop_id'] = crop.id
+        if plague:
+            criteria['field_trial__plague_id'] = plague.id
+
+        parts = cls.objects.filter(**criteria).values('part_rated')
+        partsDict = {}
+        for item in parts:
+            thisPart = item['part_rated']
+            if thisPart not in partsDict:
+                partsDict[thisPart] = thisPart
+        return list(partsDict.keys())
+
 
 class DataModel(ModelHelpers):
     @classmethod
@@ -94,23 +113,28 @@ class DataModel(ModelHelpers):
         return cls.objects.filter(assessment_id__in=assIds)
 
     @classmethod
-    def getDataPointsProduct(cls, product, crop, plague, rateType):
-        filterTrials = {'product__id': product.id,
-                        'crop__id': crop.id}
+    def getDataPointsProduct(cls, product, crop, plague, rateType, ratedPart):
+
+        criteria = {
+            'field_trial__product_id': product.id,
+            'rate_type_id': rateType.id,
+            'part_rated': ratedPart}
+        if crop:
+            criteria['field_trial__crop_id'] = crop.id
         if plague:
-            filterTrials['plague__id'] = plague.id
+            criteria['field_trial__plague_id'] = plague.id
 
-        fieldTrials = FieldTrial.objects.filter(**filterTrials).values('id')
-        if len(fieldTrials) == 0:
-            return [], []
-        fieldTrialIds = [item['id'] for item in fieldTrials]
-
-        assessments = Assessment.objects.filter(
-            field_trial_id__in=fieldTrialIds,
-            rate_type_id=rateType.id).all()
+        assessments = Assessment.objects.filter(**criteria).order_by(
+            'field_trial_id')
         setIds = [item.id for item in assessments]
+        trials = {}
+        for assessment in assessments:
+            if assessment.field_trial_id not in trials:
+                trials[assessment.field_trial_id] = assessment.field_trial.code
         dataSets = cls.objects.filter(assessment_id__in=setIds)
-        return dataSets
+        fieldTrials = [{'id': trialId, 'code': trials[trialId]}
+                       for trialId in trials]
+        return dataSets, fieldTrials
 
     @classmethod
     def distinctValues(cls, product, tag):

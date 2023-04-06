@@ -102,7 +102,16 @@
             <ul class="list-group list-group-horizontal mb-4">
               {% for item in graphRow %}
               <li class="list-group-item list-group-item-baas {{classGraphCol}}">
-                {{item.graph|safe}}
+                <div class="row">
+                  <div class="col-md-11">
+                    {{item.graph|safe}}
+                  </div>
+                  <div class="col-md-1">
+                    {% for trial in item.trials %}
+                      <a href="{% url 'fieldtrial_api' trial.id%}" class="btn btn-sm btn-dark mb-2">{{trial.code}}</a>
+                      {% endfor %}
+                  </div>
+                </div>
               </li>
               {% endfor %}
             </ul>
