@@ -49,8 +49,12 @@ class DataHelper:
     def prepareHeader(self, references):
         header = []
         lastIndex = "Bla"
+        colspans = {}
         for reference in references:
             thisIndex = reference.getReferenceIndexDataInput()
+            if thisIndex not in colspans:
+                colspans[thisIndex] = 0
+            colspans[thisIndex] += 1
             if lastIndex == thisIndex:
                 thisIndex = ''
             else:
@@ -60,7 +64,13 @@ class DataHelper:
                 'color': reference.getBackgroundColor(),
                 'name': reference.getKey(),
                 'id': reference.id})
-        return header
+        newHeader = []
+        for item in header:
+            thisIndex = item['index']
+            if thisIndex != '':
+                item['colspan'] = colspans[thisIndex]
+            newHeader.append(item)
+        return newHeader
 
     CLSDATAS = {
         GraphTrial.L_REPLICA: ReplicaData,
@@ -139,10 +149,8 @@ class DataHelper:
     def showDataPerLevel(self, level, onlyThisData=False):
         references = None
         subtitle = 'Assessment'
-        colspan = self._fieldTrial.replicas_per_thesis
         if level == GraphTrial.L_THESIS:
             references = self._thesisTrial
-            colspan = 1
         elif level == GraphTrial.L_REPLICA:
             references = self._replicas
 
@@ -161,7 +169,6 @@ class DataHelper:
         dataPointsList = [{
             'title': self._assessment.rate_type.getName(),
             'subtitle': subtitle,
-            'colspan': colspan,
             'header': header, 'errors': '',
             'graph': graph, 'rows': rows}]
         totalPoints += pointsInGraph

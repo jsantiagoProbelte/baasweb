@@ -11,7 +11,7 @@
             <thead><tr><td></td>
             {% for itemHeader in dataPointReference.header %}
                 {% if itemHeader.index %}
-                <td class="bg-custom-{{itemHeader.color}}" colspan="{{dataPointReference.colspan}}">{{itemHeader.index}} </td>
+                <td class="bg-custom-{{itemHeader.color}}" colspan="{{itemHeader.colspan}}">{{itemHeader.index}} </td>
                 {% endif %}
             {% endfor %}
             </tr>
