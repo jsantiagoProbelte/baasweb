@@ -2,7 +2,7 @@ from django.test import TestCase
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from panel.recomender import RecomenderApi
 import json
-from datetime import date
+from datetime import datetime, timezone
 
 
 class RecommenderTest(TestCase):
@@ -24,7 +24,7 @@ class RecommenderTest(TestCase):
         self._apiFactory.setUser(request)
         response = RecomenderApi.as_view()(request)
         data = json.loads(response.content)
-        today = date.today().strftime("%Y-%m-%dT12:00")
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%dT12:00")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['daily_weather']
                          ['temperatures'][0]['date'], today)
