@@ -1,6 +1,6 @@
 from django.test import TestCase
 import panel.weatherhelper as weatherhelper
-from datetime import date
+from datetime import datetime, timezone
 import random
 
 
@@ -13,7 +13,7 @@ def generateTestTemperatures(length):
 
 class WeatherTest(TestCase):
     def test_fetchOpenWeather(self):
-        today = date.today().strftime("%Y-%m-%dT00:00")
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%dT00:00")
         weather = weatherhelper.fetchOpenWeather(90, 90)
         # TEMP DISABLED self.assertEqual(weather['temperatures'][0]['date'],
         # today)
