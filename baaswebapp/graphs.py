@@ -1,6 +1,8 @@
 
 from plotly.offline import plot
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+
 # from plotly.validators.scatter.marker import SymbolValidator
 
 COLOR_main_color = '#a500a5'
@@ -49,6 +51,35 @@ ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_bs_secondary, COLOR_bs_success, COLOR_bs_info,
               COLOR_bs_warning, COLOR_bs_danger, COLOR_bs_light,
               COLOR_bs_dark, COLOR_bs_text_color, COLOR_bg_color]
+
+
+class WeatherGraph:
+    def __init__(self, dates, temps, precip):
+        self.dates = dates
+        self.temps = temps
+        self.precip = precip
+        return
+
+    def draw(self):
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(go.Scatter(x=self.dates, y=self.temps, name='Mean Temperature (°C)',
+                      line=dict(color='firebrick', width=4)))
+        fig.add_bar(x=self.dates, y=self.precip,
+                    name='Precipitation (mm)', marker=dict(color='royalblue', opacity=0.3), secondary_y=True)
+        fig.update_layout(dict(bargap=0.4))
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            showlegend=False
+        )
+        fig.update_xaxes(title_text="Date")
+        fig.update_yaxes(title_text="Mean Temperature (°C)", secondary_y=False)
+        fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=True)
+
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
 
 
 class GraphTrial:
@@ -141,7 +172,7 @@ class GraphTrial:
                               x=x, y=y)
             elif typeFigure == GraphTrial.SCATTER:
                 markerMode = 'lines+markers' if self._xAxis == GraphTrial.L_DATE\
-                                             else 'markers'
+                    else 'markers'
                 data = go.Scatter(name=name, x=x, y=y,
                                   marker={'color': color, 'symbol': symbol},
                                   mode=markerMode, marker_size=15)
@@ -183,7 +214,7 @@ class GraphTrial:
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
-    @classmethod
+    @ classmethod
     def classColGraphs(cls, rcolumns, max_columns):
         rcolumns = 1 if rcolumns == 0 else rcolumns
         columns = max_columns if max_columns < rcolumns else rcolumns
@@ -276,7 +307,8 @@ class GraphTrial:
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(dataPoint, code)
             traces[traceId]['y'].append(dataPoint.value)
-            traces[traceId]['x'].append(self.getX(dataPoint, self._xAxis, code))
+            traces[traceId]['x'].append(
+                self.getX(dataPoint, self._xAxis, code))
         if len(traces) > 0:
             return {
                 'title': self._title,
@@ -335,7 +367,7 @@ class GraphStat():
             'x': [label for label in self._labels],
             'marker_color': statColors if colorPerLabel
             else statColors[datasetKey]
-            } for datasetKey in self._rawDataDict]
+        } for datasetKey in self._rawDataDict]
         self._graphData = {"title": self._title, 'traces': theDataTraces,
                            'x_axis': self._xAxis, 'y_axis': self._yAxis}
 

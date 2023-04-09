@@ -6,10 +6,11 @@ from baaswebapp.models import RateTypeUnit
 from trialapp.models import FieldTrial
 from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
     Assessment
+from catalogue.models import Weather
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
-from baaswebapp.graphs import GraphTrial
+from baaswebapp.graphs import GraphTrial, WeatherGraph
 from trialapp.data_views import DataHelper
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
@@ -21,9 +22,9 @@ from django import forms
 from trialapp.forms import MyDateInput
 
 CLASS_DATA_LEVEL = {
-        GraphTrial.L_REPLICA: ReplicaData,
-        GraphTrial.L_SAMPLE: SampleData,
-        GraphTrial.L_THESIS: ThesisData}
+    GraphTrial.L_REPLICA: ReplicaData,
+    GraphTrial.L_SAMPLE: SampleData,
+    GraphTrial.L_THESIS: ThesisData}
 
 
 class AssessmentListView(LoginRequiredMixin, ListView):
@@ -58,6 +59,24 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         classGraph = GraphTrial.classColGraphs(foundData, columns)
         return graphs, classGraph
 
+    def getWeatherData(self):
+        assessments = Assessment.getObjects(self._trial)
+        weather_data = []
+        for assessment in assessments:
+            weather = Weather.objects.filter(
+                date=assessment.assessment_date, latitude=self._trial.latitude,
+                longitude=self._trial.longitude)
+            if weather:
+                weather_data.append(weather.first())
+        return weather_data
+
+    def graphWeatherData(self, weather_data):
+        temps = [o.mean_temp for o in weather_data]
+        dates = [o.date for o in weather_data]
+        precip = [o.precipitation for o in weather_data]
+        graph = WeatherGraph(dates, temps, precip).draw()
+        return graph
+
     def get_context_data(self, **kwargs):
         field_trial_id = None
         # from call on server
@@ -88,7 +107,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         # Sample data
         graphPlotsS, classGraphS = self.getGraphData(
             GraphTrial.L_SAMPLE, rateSets, ratedParts)
-
+        weatherData = self.getWeatherData()
+        weatherGraph = self.graphWeatherData(weatherData)
         return {'object_list': new_list,
                 'fieldTrial': self._trial,
                 'show_active_thesis': show_active_thesis,
@@ -97,7 +117,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'active_thesis': active_thesis,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
-                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS}
+                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS,
+                'weatherGraph': weatherGraph}
 
 
 class AssessmentFormLayout(FormHelper):
@@ -116,7 +137,7 @@ class AssessmentFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")
-            ))
+        ))
 
 
 class AssessmentForm(forms.ModelForm):

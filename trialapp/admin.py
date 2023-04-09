@@ -4,6 +4,7 @@ from trialapp.models import FieldTrial, Crop, TrialType, Project, Objective,\
     Plague, TrialStatus, Irrigation, CropVariety, ApplicationMode,\
     CultivationMethod, TreatmentThesis
 from trialapp.data_models import Assessment
+from catalogue.models import Weather
 
 
 class FieldTrialAdmin(admin.ModelAdmin):
@@ -23,3 +24,4 @@ admin.site.register(Irrigation)
 admin.site.register(ApplicationMode)
 admin.site.register(CultivationMethod)
 admin.site.register(TreatmentThesis)
+admin.site.register(Weather)

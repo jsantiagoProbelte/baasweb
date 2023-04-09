@@ -198,8 +198,8 @@ class Thesis(ModelHelpers, models.Model):
     @classmethod
     def getObjects(cls, field_trial):
         return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('number')
+            .filter(field_trial=field_trial) \
+            .order_by('number')
 
     @classmethod
     def create_Thesis(cls, **kwargs):
@@ -213,7 +213,7 @@ class Thesis(ModelHelpers, models.Model):
             number_applications=kwargs['number_applications'],
             interval=kwargs['interval'],
             first_application=kwargs['first_application']
-            )
+        )
         if 'mode' in kwargs:
             thesis.mode = kwargs['mode']
             thesis.save()
@@ -252,8 +252,8 @@ class Application(ModelHelpers, models.Model):
     @classmethod
     def getObjects(cls, field_trial):
         return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('app_date')
+            .filter(field_trial=field_trial) \
+            .order_by('app_date')
 
     def daysBetween(self, fromDate):
         return (self.app_date-fromDate).days
@@ -292,14 +292,14 @@ class TreatmentThesis(ModelHelpers, models.Model):
     @classmethod
     def getObjects(cls, thesis: Thesis):
         return cls.objects \
-                .filter(thesis=thesis) \
-                .order_by('treatment__name')
+            .filter(thesis=thesis) \
+            .order_by('treatment__name')
 
     @classmethod
     def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
         return cls.objects \
-                .filter(thesis__field_trial=fieldTrial) \
-                .order_by('treatment__name')
+            .filter(thesis__field_trial=fieldTrial) \
+            .order_by('treatment__name')
 
     @classmethod
     def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
@@ -332,8 +332,8 @@ class Replica(ModelHelpers, models.Model):
     @classmethod
     def getObjects(cls, thesis: Thesis):
         return cls.objects \
-                .filter(thesis=thesis) \
-                .order_by('number')
+            .filter(thesis=thesis) \
+            .order_by('number')
 
     def getName(self):
         if self.name:
@@ -378,11 +378,11 @@ class Replica(ModelHelpers, models.Model):
     def getFieldTrialObjects(cls, field_trial):
         ids = Thesis.objects.filter(
             field_trial=field_trial
-            ).order_by('number').values_list('id', flat=True)
+        ).order_by('number').values_list('id', flat=True)
 
         return Replica.objects.filter(
             thesis_id__in=ids
-            ).order_by('thesis__number', 'number')
+        ).order_by('thesis__number', 'number')
 
     def getReferenceIndexDataInput(self):
         return self.thesis.getName()
@@ -398,8 +398,8 @@ class Sample(ModelHelpers, models.Model):
     @classmethod
     def getObjects(cls, replica: Replica):
         return cls.objects \
-                .filter(replica=replica) \
-                .order_by('number')
+            .filter(replica=replica) \
+            .order_by('number')
 
     def getName(self):
         return ('[{}-{}] {}-({})').format(

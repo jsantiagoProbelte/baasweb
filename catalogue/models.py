@@ -1,8 +1,42 @@
 from django.db import models
 from baaswebapp.models import ModelHelpers
+import urllib.parse
+import requests
 
 DEFAULT = 'default'
 UNTREATED = 'Untreated'
+
+
+class Weather(ModelHelpers, models.Model):
+    date = models.DateField()
+    latitude = models.DecimalField(decimal_places=20, max_digits=100)
+    longitude = models.DecimalField(decimal_places=15, max_digits=100)
+
+    max_temp = models.DecimalField(decimal_places=5, max_digits=100)
+    min_temp = models.DecimalField(decimal_places=5, max_digits=100)
+    mean_temp = models.DecimalField(decimal_places=5, max_digits=100)
+    precipitation = models.DecimalField(decimal_places=5, max_digits=100)
+    precipitation_hours = models.DecimalField(
+        decimal_places=5, max_digits=100)
+    max_wind_speed = models.DecimalField(decimal_places=5, max_digits=100)
+
+    def fetchWeather(self):
+        url = 'https://archive-api.open-meteo.com/v1/archive?daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum,precipitation_hours,windspeed_10m_max&timezone=auto&'
+        params = {'latitude': self.latitude,
+                  'longitude': self.longitude,
+                  'start_date': self.date,
+                  'end_date': self.date}
+        url += (urllib.parse.urlencode(params))
+        res = requests.get(url)
+        weather = res.json()['daily']
+        self.max_temp, self.min_temp, self.mean_temp = weather[
+            'temperature_2m_max'][0], weather['temperature_2m_min'][0], weather['temperature_2m_mean'][0],
+        self.precipitation, self.precipitation_hours, self.max_wind_speed = weather[
+            'precipitation_sum'][0], weather['precipitation_hours'][0], weather['windspeed_10m_max'][0]
+        return
+
+    def __str__(self):
+        return str(self.date)
 
 
 class Vendor(ModelHelpers, models.Model):
