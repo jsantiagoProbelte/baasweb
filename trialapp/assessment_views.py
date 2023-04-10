@@ -149,7 +149,8 @@ class AssessmentCreateView(LoginRequiredMixin, CreateView):
             form.instance.field_trial_id = self.kwargs["field_trial_id"]
             assessment = form.instance
             assessment.save()
-            return HttpResponseRedirect(assessment.get_absolute_url())
+            Assessment.computeDDT(assessment.field_trial)
+            return HttpResponseRedirect(assessment.get_success_url())
 
 
 class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
@@ -162,22 +163,29 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
         form.helper = AssessmentFormLayout(new=False)
         return form
 
+    def form_valid(self, form):
+        if form.is_valid():
+            assessment = form.instance
+            assessment.save()
+            Assessment.computeDDT(assessment.field_trial)
+            return HttpResponseRedirect(assessment.get_success_url())
+
 
 class AssessmentDeleteView(DeleteView):
     model = Assessment
     template_name = 'trialapp/assessment_delete.html'
-    _field_trial_id = None
 
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
-        self._field_trial_id = self.object.field_trial_id
+        trial = self.object.field_trial
         self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())
+        Assessment.computeDDT(trial)
+        return HttpResponseRedirect(self.get_success_url(trial.id))
 
-    def get_success_url(self):
+    def get_success_url(self, trial_id):
         return reverse(
             'assessment-list',
-            kwargs={'field_trial_id': self._field_trial_id})
+            kwargs={'field_trial_id': trial_id})
 
 
 class AssessmentApi(APIView):

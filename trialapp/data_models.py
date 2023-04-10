@@ -34,6 +34,9 @@ class Assessment(ModelHelpers, models.Model):
         return "[{}] {}".format(self.assessment_date,
                                 self.name)
 
+    def get_success_url(self):
+        return "/assessment_list/%i/" % self.field_trial.id
+
     @classmethod
     def getRateSets(cls, assessments):
         rateUnits = {}
