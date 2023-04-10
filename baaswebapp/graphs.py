@@ -141,8 +141,10 @@ class GraphTrial:
                               name=name, marker={'color': color},
                               x=x, y=y)
             elif typeFigure == GraphTrial.SCATTER:
-                markerMode = 'lines+markers' if self._xAxis == GraphTrial.L_DATE\
-                                             else 'markers'
+                if self._xAxis == GraphTrial.L_DATE:
+                    markerMode = 'lines+markers'
+                else:
+                    markerMode = 'markers'
                 data = go.Scatter(name=name, x=x, y=y,
                                   marker={'color': color, 'symbol': symbol},
                                   mode=markerMode, marker_size=15)
@@ -279,7 +281,8 @@ class GraphTrial:
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(dataPoint, code)
             traces[traceId]['y'].append(dataPoint.value)
-            traces[traceId]['x'].append(self.getX(dataPoint, self._xAxis, code))
+            traces[traceId]['x'].append(
+                self.getX(dataPoint, self._xAxis, code))
         if len(traces) > 0:
             return {
                 'title': self._title,
