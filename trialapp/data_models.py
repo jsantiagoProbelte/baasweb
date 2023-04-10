@@ -10,6 +10,7 @@ class Assessment(ModelHelpers, models.Model):
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.CharField(max_length=25)
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
+    daf = models.IntegerField(null=True)
 
     @classmethod
     def getObjects(cls, field_trial):
@@ -67,6 +68,19 @@ class Assessment(ModelHelpers, models.Model):
             if thisPart not in partsDict:
                 partsDict[thisPart] = thisPart
         return list(partsDict.keys())
+
+    @classmethod
+    def computeDDT(cls, trial):
+        firstItem = None
+        # We assume getObjects ordered by date
+        for item in cls.getObjects(trial):
+            if firstItem is None:
+                firstItem = item
+                item.daf = 0
+            else:
+                item.daf = (item.assessment_date -
+                            firstItem.assessment_date).days
+            item.save()
 
 
 class DataModel(ModelHelpers):

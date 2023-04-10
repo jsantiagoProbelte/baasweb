@@ -35,6 +35,13 @@
             "justMyCode": true,
         },
         {
+            "name": "Stats",
+            "type": "python",
+            "request": "launch",
+            "module": "catalogue.stats_generator",
+            "justMyCode": true,
+        },
+        {
             "name": "PDF Table Import",
             "type": "python",
             "request": "launch",

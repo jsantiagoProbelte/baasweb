@@ -63,6 +63,7 @@ class GraphTrial:
     L_REPLICA = 'replica'
     L_SAMPLE = 'sample'
     L_DATE = 'date'
+    L_DAF = 'daf'
     LEVELS = [L_THESIS, L_REPLICA, L_SAMPLE]
 
     # SYMBOL_LIST = SymbolValidator().values
@@ -249,6 +250,8 @@ class GraphTrial:
             return self.getTraceName(dataPoint, code)
         if xAxis == GraphTrial.L_DATE:
             return dataPoint.assessment.assessment_date
+        if xAxis == GraphTrial.L_DAF:
+            return dataPoint.assessment.daf
 
     def getTitle(self, rateType, ratedPart):
         return '{}({}) {}'.format(rateType.name, rateType.unit, ratedPart)

@@ -219,7 +219,7 @@ class ProductApi(APIView):
 
         if dataPointsT:
             graphT = GraphTrial(level, rateType, ratedPart, dataPointsT,
-                                xAxis=GraphTrial.L_DATE,
+                                xAxis=GraphTrial.L_DAF,
                                 combineTrialAssessments=False)
             return graphT.draw(), fieldTrials
         else:
