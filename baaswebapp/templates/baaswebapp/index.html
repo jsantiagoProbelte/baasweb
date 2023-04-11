@@ -12,11 +12,14 @@
         <div class="card no-border" >
             <div class="card-body-baas">
               <h2 class="card-title">Browse</h2>
-              <br/>
-              <h1 class="mb-2 text-big-number fw-bold">{{FieldTrials|intcomma}}</h1>
-              <h2 class="mb-2 card-title "> field trials
+              <h1 class="mb-2 text-big-number fw-bold">{{FieldTrials|intcomma}}
+              <span class="mb-2 card-title h2"> field trials</span>
               <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-              <span><a href="{% url 'fieldtrial-list' %}" class="btn btn-info fs-1">&#10132;</a></span></h2>
+              <span><a href="{% url 'fieldtrial-list' %}" class="btn btn-info fs-1">&#10132;</a></span></h1>
+              <h1 class="mb-2 text-big-number fw-bold">{{LabTrials|intcomma}}
+              <span class="mb-2 card-title h2"> lab trials</span>
+                <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+              <span><a href="{% url 'labtrial-list' %}" class="btn btn-info fs-1">&#10132;</a></span></h1>
             </div>
           </div>
     </div>

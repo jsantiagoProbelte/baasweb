@@ -4,6 +4,7 @@ import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
 from catalogue.models import Product, Treatment
+from django.utils.translation import gettext_lazy as _
 
 
 class Crop(ModelHelpers, models.Model):
@@ -59,6 +60,15 @@ class TrialStatus(ModelHelpers, models.Model):
 
 class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+
+    class TrialMeta(models.TextChoices):
+        FIELD_TRIAL = 'FT', _('Field Trial')
+        LAB_TRIAL = 'LT', _('Lab Trial')
+    trial_meta = models.CharField(
+        max_length=2,
+        choices=TrialMeta.choices,
+        default=TrialMeta.FIELD_TRIAL)
+
     trial_type = models.ForeignKey(TrialType,
                                    on_delete=models.CASCADE, null=True)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
@@ -126,6 +136,13 @@ class FieldTrial(ModelHelpers, models.Model):
                                str(counts).zfill(2))
 
     @classmethod
+    def formatLabCode(cls, theDate, counts):
+        return '{}{}{}{}'.format(theDate.year,
+                                 str(theDate.month).zfill(2),
+                                 str(theDate.day).zfill(2),
+                                 str(counts).zfill(2))
+
+    @classmethod
     def getCode(cls, theDate, increment):
         year = theDate.year
         month = theDate.month
@@ -139,8 +156,20 @@ class FieldTrial(ModelHelpers, models.Model):
             counts += 1
         return FieldTrial.formatCode(year, month, counts)
 
+    @classmethod
+    def getLabCode(cls, theDate, increment):
+        counts = FieldTrial.objects.filter(created=theDate).count()
+        if increment:
+            # The object maybe already created or is new
+            counts += 1
+        return FieldTrial.formatLabCode(theDate, counts)
+
     def setCode(self, increment):
         self.code = self.getCode(self.created, increment)
+        self.save()
+
+    def setLabCode(self, increment):
+        self.code = self.getLabCode(self.created, increment)
         self.save()
 
     @classmethod
@@ -177,7 +206,10 @@ class FieldTrial(ModelHelpers, models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return "/fieldtrial_api/%i/" % self.id
+        if self.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
+            return "/labtrial_api/%i/" % self.id
+        else:
+            return "/fieldtrial_api/%i/" % self.id
 
 
 class Thesis(ModelHelpers, models.Model):

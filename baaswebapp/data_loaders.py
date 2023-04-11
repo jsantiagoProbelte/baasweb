@@ -226,5 +226,8 @@ class TrialStats:
                  SampleData.objects.count()
         return {
             'products': Product.objects.count(),
-            'field_trials': FieldTrial.objects.count(),
+            'field_trials': FieldTrial.objects.filter(
+                trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL).count(),
+            'lab_trials': FieldTrial.objects.filter(
+                trial_meta=FieldTrial.TrialMeta.LAB_TRIAL).count(),
             'points': points}

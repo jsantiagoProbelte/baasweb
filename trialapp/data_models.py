@@ -133,6 +133,7 @@ class DataModel(ModelHelpers):
     def getDataPointsProduct(cls, product, crop, plague, rateType, ratedPart):
 
         criteria = {
+            'field_trial__trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL,
             'field_trial__product_id': product.id,
             'rate_type_id': rateType.id,
             'part_rated': ratedPart}

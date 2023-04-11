@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-{% include "baaswebapp/header_page.html" with title=titleList new_href='fieldtrial-add' %}
+{% include "baaswebapp/header_page.html" with title=titleList new_href=add_url %}
 
 <div class='card-body-baas mb-3'>
     <form method="get" class="">
@@ -81,7 +81,7 @@
     </tr>
     </tbody>    
     {% empty %}
-        <p>No Field Trial yet.</p>
+        <p>No Trials yet.</p>
     {% endfor %}
 </table>
 </div>

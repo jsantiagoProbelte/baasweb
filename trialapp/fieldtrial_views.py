@@ -135,6 +135,80 @@ class TrialModel():
         }
     }
 
+    LAB_TRIAL_FIELDS = (
+            'name', 'trial_type', 'objective', 'responsible', 'description',
+            'project', 'code',
+            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
+            'trial_status', 'contact', 'blocks',
+            'samples_per_replica')
+
+    FIELD_TRIAL_FIELDS = (
+            'name', 'trial_type', 'objective', 'responsible', 'description',
+            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
+            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
+            'trial_status', 'contact', 'cro', 'location', 'blocks',
+            'replicas_per_thesis', 'samples_per_replica',
+            'distance_between_plants', 'distance_between_rows', 'number_rows',
+            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
+            'application_volume', 'mode', 'crop_variety', 'cultivation',
+            'crop_age', 'seed_date', 'transplant_date', 'longitude',
+            'latitude')
+
+    @classmethod
+    def applyModel(cls, trialForm):
+        for block in TrialModel.FIELDS:
+            for field in TrialModel.FIELDS[block]:
+                if field not in trialForm.Meta.fields:
+                    continue
+                fieldData = TrialModel.FIELDS[block][field]
+                trialForm.fields[field].label = fieldData['label']
+                trialForm.fields[field].required = fieldData['required']
+                typeField = fieldData['type']
+                if typeField == TrialModel.T_D:
+                    trialForm.fields[field].widget = MyDateInput()
+                elif typeField == TrialModel.T_I:
+                    trialForm.fields[field].widget = forms.NumberInput()
+                elif typeField == TrialModel.T_T:
+                    trialForm.fields[field].widget = forms.Textarea(
+                        attrs={'rows': fieldData['rows']})
+        # Querysets
+        trialForm.fields['product'].queryset = Product.objects.all().order_by(
+            'name')
+        trialForm.fields['crop'].queryset = Crop.objects.all().order_by('name')
+        trialForm.fields['plague'].queryset = Plague.objects.all(
+            ).order_by('name')
+
+    @classmethod
+    def prepareDataItems(cls, fieldTrial):
+        trialDict = fieldTrial.__dict__
+        trialData = {}
+        if fieldTrial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
+            modelFields = TrialModel.LAB_TRIAL_FIELDS
+        else:
+            modelFields = TrialModel.FIELD_TRIAL_FIELDS
+
+        for group in TrialModel.FIELDS:
+            trialData[group] = []
+            for field in TrialModel.FIELDS[group]:
+                if field not in modelFields:
+                    continue
+                label = TrialModel.FIELDS[group][field]['label']
+                value = '?'
+                if field in trialDict:
+                    value = trialDict[field]
+                else:
+                    field_id = field + '_id'
+                    if field_id not in trialDict:
+                        continue
+                    else:
+                        theId = trialDict[field_id]
+                        if theId is not None:
+                            model = TrialModel.FIELDS[group][field]['cls']
+                            value = model.objects.get(id=theId)
+                showValue = value if value is not None else '?'
+                trialData[group].append({'name': label, 'value': showValue})
+        return trialData
+
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
     model = FieldTrial
@@ -150,7 +224,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return None
 
     def get_context_data(self, **kwargs):
-        filter_kwargs = {}
+        filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
@@ -181,6 +255,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'thesis': thesis})
         return {'object_list': new_list,
                 'titleList': '({}) Field trials'.format(len(objectList)),
+                'add_url': 'fieldtrial-add',
                 'filter': filter}
 
 
@@ -189,54 +264,35 @@ class FieldTrialApi(APIView):
     permission_classes = []
     http_method_names = ['get']
 
-    def prepareDataItems(self, fieldTrial):
-        trialDict = fieldTrial.__dict__
-        trialData = {}
-        for group in TrialModel.FIELDS:
-            trialData[group] = []
-            for field in TrialModel.FIELDS[group]:
-                label = TrialModel.FIELDS[group][field]['label']
-                value = '?'
-                if field in trialDict:
-                    value = trialDict[field]
-                else:
-                    field_id = field + '_id'
-                    if field_id not in trialDict:
-                        continue
-                    else:
-                        theId = trialDict[field_id]
-                        if theId is not None:
-                            model = TrialModel.FIELDS[group][field]['cls']
-                            value = model.objects.get(id=theId)
-                showValue = value if value is not None else '?'
-                trialData[group].append({'name': label, 'value': showValue})
-        return trialData
-
     def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/fieldtrial_show.html'
+        template_name = 'trialapp/labtrial_show.html'
         field_trial_id = kwargs.get('field_trial_id', None)
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         thesisTrial = Thesis.getObjects(fieldTrial)
         numberThesis = len(thesisTrial)
         assessments = Assessment.getObjects(fieldTrial)
-        dataTrial = self.prepareDataItems(fieldTrial)
+
+        dataTrial = TrialModel.prepareDataItems(fieldTrial)
         for item in assessments:
             dataTrial['Assessments'].append(
                 {'value': item.getContext(), 'name': item.assessment_date})
-        for item in Application.getObjects(fieldTrial):
-            dataTrial['Applications'].append(
-                {'name': item.getName(), 'value': item.app_date})
-        headerRows = LayoutTrial.headerLayout(fieldTrial)
-        return render(request, template_name,
-                      {'fieldTrial': fieldTrial,
-                       'titleView': fieldTrial.getName(),
-                       'dataTrial': dataTrial,
-                       'thesisTrial': thesisTrial,
-                       'numberThesis': numberThesis,
-                       'rowsReplicaHeader': headerRows,
-                       'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
+        showData = {
+            'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
+            'dataTrial': dataTrial, 'thesisTrial': thesisTrial,
+            'numberThesis': numberThesis}
+
+        if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
+            template_name = 'trialapp/fieldtrial_show.html'
+            for item in Application.getObjects(fieldTrial):
+                dataTrial['Applications'].append(
+                    {'name': item.getName(), 'value': item.app_date})
+            showData['rowsReplicaHeader'] = LayoutTrial.headerLayout(
+                fieldTrial)
+            showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
                                                               None,
-                                                              thesisTrial)})
+                                                              thesisTrial)
+
+        return render(request, template_name, showData)
 
 
 @login_required
@@ -347,40 +403,11 @@ class FieldTrialFormLayout(FormHelper):
 class FieldTrialForm(forms.ModelForm):
     class Meta:
         model = FieldTrial
-        fields = (
-            'name', 'trial_type', 'objective', 'responsible', 'description',
-            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
-            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'cro', 'location', 'blocks',
-            'replicas_per_thesis', 'samples_per_replica',
-            'distance_between_plants', 'distance_between_rows', 'number_rows',
-            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
-            'application_volume', 'mode', 'crop_variety', 'cultivation',
-            'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude')
+        fields = TrialModel.FIELD_TRIAL_FIELDS
 
     def __init__(self, *args, **kwargs):
         super(FieldTrialForm, self).__init__(*args, **kwargs)
-        for block in TrialModel.FIELDS:
-            for field in TrialModel.FIELDS[block]:
-                fieldData = TrialModel.FIELDS[block][field]
-                self.fields[field].label = fieldData['label']
-                self.fields[field].required = fieldData['required']
-                typeField = fieldData['type']
-                if typeField == TrialModel.T_D:
-                    self.fields[field].widget = MyDateInput()
-                elif typeField == TrialModel.T_I:
-                    self.fields[field].widget = forms.NumberInput()
-                elif typeField == TrialModel.T_T:
-                    self.fields['comments_criteria'].widget = forms.Textarea(
-                        attrs={'rows': fieldData['rows']})
-        # Querysets
-        self.fields['product'].queryset = Product.objects.all().order_by(
-            'name')
-        self.fields['crop'].queryset = Crop.objects.all().order_by('name')
-        self.fields['plague'].queryset = Plague.objects.all().order_by('name')
-        self.fields['crop_variety'].queryset = CropVariety.objects.all(
-            ).order_by('name')
+        TrialModel.applyModel(self)
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):
@@ -399,6 +426,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             fieldTrial = form.instance
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
+            fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:
