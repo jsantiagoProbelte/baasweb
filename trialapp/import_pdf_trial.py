@@ -284,8 +284,7 @@ class AssmtTable:
             if assessment is None:
                 # Abort
                 continue
-            self.extractAssessmentData(
-                columnName, assessment, rateType)
+            self.extractAssessmentData(columnName, assessment)
 
     def getValidDate(self, dateStr):
         # check if this is date
@@ -392,13 +391,12 @@ class AssmtTable:
             else:
                 return None
 
-    def saveDataPoint(self, value, assessment, assessmentSet, replica):
+    def saveDataPoint(self, value, assessment, replica):
         valueFloat = self.convertToFloat(value)
         if valueFloat is not None:
             ReplicaData.findOrCreate(
                 value=self.convertToFloat(valueFloat),
                 assessment=assessment,
-                unit=assessmentSet,
                 reference=replica)
         else:
             print('Cannot import value in {}-{}'.format(
@@ -476,8 +474,7 @@ class AssmtTableMultiLineHeader(AssmtTable):
                 self._trial.save()
         return foundReplicas
 
-    def extractAssessmentData(self, columnName, assessment,
-                              assessmentSet):
+    def extractAssessmentData(self, columnName, assessment):
         # Explore all the rows of this columns to extract data
         for index in range(1, self._numberRows):
             thesisInfo = self._table.loc[index, columnName]
@@ -491,8 +488,7 @@ class AssmtTableMultiLineHeader(AssmtTable):
                 # Remember the last item is the average value
                 if replicaIndex in replicas:
                     self.saveDataPoint(
-                        value, assessment,
-                        assessmentSet, replicas[replicaIndex])
+                        value, assessment, replicas[replicaIndex])
                     replicaIndex += 1
 
 
@@ -686,8 +682,7 @@ class AssmtTableSimpleHeader(AssmtTable):
                 foundReplicas += 1
         return foundReplicas, foundThesis
 
-    def extractAssessmentData(self, columnName, assessment,
-                              assessmentSet):
+    def extractAssessmentData(self, columnName, assessment):
         # Explore all the rows of this columns to extract data
         for index in self._replicaDict:
             replica = self._replicaDict[index]
@@ -695,9 +690,7 @@ class AssmtTableSimpleHeader(AssmtTable):
             # Notice coincidence that index is the row in the table
             # and also the number of the thesis. It could be different
             # if the layout of the table is different
-            self.saveDataPoint(
-                        value, assessment,
-                        assessmentSet, replica)
+            self.saveDataPoint(value, assessment, replica)
 
 
 class ImportPdfTrial:
@@ -1091,14 +1084,17 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/todo/botrybel/'
-    fileName = path + '201210404 BELTHIRUL FRESA ITALIA 2.pdf'
+           '/impello/'
+           # '/estudios/todo/botrybel/'
+
+    # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
+    fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 
 
 if __name__ == '__main__':
-    createThesisTreatments()
-    # importOne()
+    # createThesisTreatments()
+    importOne()
     # importOneMapa()
     # discoverReports()
