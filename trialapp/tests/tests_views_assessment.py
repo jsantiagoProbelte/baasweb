@@ -53,6 +53,9 @@ class AssessmentViewsTest(TestCase):
         assessment = Assessment.objects.get(name=assessmentData['name'])
         self.assertEqual(assessment.name, assessmentData['name'])
         self.assertEqual(response.status_code, 302)
+        self.assertTrue('-BBCH' in assessment.getContext())
+        self.assertTrue('/assessment_api/{}/'.format(assessment.id) ==
+                        assessment.get_absolute_url())
         # TODO: self.assertContains(response, assessment.assessment_date)
 
         # Editar y ver nuevo

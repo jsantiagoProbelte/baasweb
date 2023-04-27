@@ -2,9 +2,11 @@ from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial
 from trialapp.tests.tests_models import TrialAppModelTest
-from labapp.labtrial_views import LabTrialView
+from labapp.labtrial_views import LabTrialView, DataLabHelper
+from labapp.models import LabDataPoint, LabAssessment, LabThesis
 from labapp.labtrial_views import LabTrialCreateView,\
-    LabTrialUpdateView, LabTrialListView
+    LabTrialUpdateView, LabTrialListView, SetLabDataPoint,\
+    SetLabThesis
 
 
 from baaswebapp.tests.test_views import ApiRequestHelperTest
@@ -26,20 +28,20 @@ class LabTrialViewsTest(TestCase):
         self.assertContains(response, 'Lab trials')
         self.assertContains(response, 'No Trials yet.')
 
-        fieldTrial = FieldTrial.create_fieldTrial(
+        labTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
-        fieldTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
-        fieldTrial.samples_per_replica = 20
-        fieldTrial.save()
+        labTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
+        labTrial.samples_per_replica = 20
+        labTrial.save()
 
         request = self._apiFactory.get('labtrial-list')
         self._apiFactory.setUser(request)
         response = LabTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Trials yet.')
-        self.assertContains(response, fieldTrial.name)
-        fieldTrial.delete()
+        self.assertContains(response, labTrial.name)
+        labTrial.delete()
 
-    def test_createFieldtrial(self):
+    def test_createLabTrial(self):
         request = self._apiFactory.get('labtrial-add')
         self._apiFactory.setUser(request)
         response = LabTrialCreateView.as_view()(request)
@@ -48,61 +50,107 @@ class LabTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        fieldTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
-        fieldTrialData['samples_per_replica'] = 24
+        labTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
+        labTrialData['samples_per_replica'] = 24
         request = self._apiFactory.post(
-            'labtrial-add', data=fieldTrialData)
+            'labtrial-add', data=labTrialData)
         self._apiFactory.setUser(request)
         response = LabTrialCreateView.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'This field is required.')
         # it is missing a code.
-        fieldTrialData['code'] = '19701409'
+        labTrialData['code'] = '19701409'
         request = self._apiFactory.post(
-            'labtrial-add', data=fieldTrialData)
+            'labtrial-add', data=labTrialData)
         self._apiFactory.setUser(request)
         response = LabTrialCreateView.as_view()(request)
         self.assertEqual(response.status_code, 302)
-        fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
-        self.assertEqual(fieldTrial.name, fieldTrialData['name'])
-        self.assertTrue(fieldTrial.code is not None)
+        labTrial = FieldTrial.objects.get(name=labTrialData['name'])
+        self.assertEqual(labTrial.name, labTrialData['name'])
+        self.assertTrue(labTrial.code is not None)
 
         request = self._apiFactory.get('labtrial-update')
         self._apiFactory.setUser(request)
         response = LabTrialUpdateView.as_view()(
-            request, pk=fieldTrial.id)
+            request, pk=labTrial.id)
         self.assertNotContains(response, 'New')
         self.assertContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         newresponsible = 'Lobo'
-        fieldTrialData['responsible'] = newresponsible
+        labTrialData['responsible'] = newresponsible
 
         request = self._apiFactory.post(
-            'labtrial-update', data=fieldTrialData)
+            'labtrial-update', data=labTrialData)
         self._apiFactory.setUser(request)
         response = LabTrialUpdateView.as_view()(
-            request, pk=fieldTrial.id)
-        fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
-        self.assertEqual(fieldTrial.responsible, newresponsible)
+            request, pk=labTrial.id)
+        labTrial = FieldTrial.objects.get(name=labTrialData['name'])
+        self.assertEqual(labTrial.responsible, newresponsible)
         self.assertEqual(response.status_code, 302)
 
-        fieldTrialData['samples_per_replica'] = '3'
-        self.assertEqual(fieldTrial.samples_per_replica, 24)
+        labTrialData['samples_per_replica'] = '3'
+        self.assertEqual(labTrial.samples_per_replica, 24)
         request = self._apiFactory.post(
-            'labtrial-update', data=fieldTrialData)
+            'labtrial-update', data=labTrialData)
         self._apiFactory.setUser(request)
         response = LabTrialUpdateView.as_view()(
-            request, pk=fieldTrial.id)
-        fieldTrial = FieldTrial.objects.get(name=fieldTrialData['name'])
-        self.assertEqual(fieldTrial.samples_per_replica, 3)
+            request, pk=labTrial.id)
+        labTrial = FieldTrial.objects.get(name=labTrialData['name'])
+        self.assertEqual(labTrial.samples_per_replica, 3)
         self.assertEqual(response.status_code, 302)
 
         request = self._apiFactory.get('labtrial-show')
         self._apiFactory.setUser(request)
         apiView = LabTrialView()
         response = apiView.get(request,
-                               pk=fieldTrial.id)
+                               pk=labTrial.id)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, fieldTrial.name)
+        self.assertContains(response, labTrial.name)
         self.assertContains(response, 'lab trial')
+
+        # Let's add data
+        assessment = LabAssessment.objects.get(trial=labTrial)
+        points = LabDataPoint.getDataPointsAssessment(assessment)
+        dataHelper = DataLabHelper(labTrial)
+        self.assertTrue(len(points) > 0)
+        thePointId = points[0].id
+        addData = {'data_point_id': dataHelper.generateDataPointId(
+                        DataLabHelper.T_VALUE, thePointId),
+                   'data-point': 33}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point_lab',
+            data=addData)
+        self._apiFactory.setUser(addDataPoint)
+        apiView = SetLabDataPoint()
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        thePoint = LabDataPoint.objects.get(id=thePointId)
+        self.assertEqual(thePoint.value, 33)
+
+        addData = {'data_point_id': dataHelper.generateDataPointId(
+                        DataLabHelper.T_TOTAL, thePointId),
+                   'data-point': 66}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point_lab',
+            data=addData)
+        self._apiFactory.setUser(addDataPoint)
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        thePoint = LabDataPoint.objects.get(id=thePointId)
+        self.assertEqual(thePoint.total, 66)
+
+        # Let's change a thesis name
+        thesisLab = LabThesis.objects.filter(trial=labTrial)
+        theThesisId = thesisLab[0].id
+        addData = {'data_point_id': 'thesis-input-{}'.format(theThesisId),
+                   'data-point': "OleOle"}
+        addDataPoint = self._apiFactory.post(
+            'set_thesis_name',
+            data=addData)
+        apiView = SetLabThesis()
+        self._apiFactory.setUser(addDataPoint)
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        theThesis = LabThesis.objects.get(id=theThesisId)
+        self.assertEqual(theThesis.name, "OleOle")

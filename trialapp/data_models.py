@@ -121,11 +121,6 @@ class DataModel(ModelHelpers):
                   .filter(assessment=assessment)
 
     @classmethod
-    def getDataPointsFieldTrial(cls, fieldTrial):
-        assIds = [item.id for item in Assessment.getObjects(fieldTrial)]
-        return cls.getAssessmentDataPoints(assIds)
-
-    @classmethod
     def getAssessmentDataPoints(cls, assIds):
         return cls.objects.filter(assessment_id__in=assIds)
 

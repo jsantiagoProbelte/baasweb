@@ -1,5 +1,7 @@
 from django.test import TestCase
 from labapp.labtrial_views import DataLabHelper
+from scipy.optimize import curve_fit
+import numpy as np
 
 
 class LabTrialDataTest(TestCase):
@@ -31,7 +33,7 @@ class LabTrialDataTest(TestCase):
         # load data into pandas dataframe
         dosis = [0, 0.25, 0.74, 2.22, 6.66, 20]
         ocurrences = [[0, 24], [3, 23], [7, 24], [13, 23], [20, 24], [24, 24]]
-        ld50 = self._helper.calculateLD50(ocurrences, dosis)
+        ld50, ld95 = self._helper.calculateLD50(ocurrences, dosis)
         print('{}: ld50:{} esperado:{}'.format('test', round(ld50, 3), 1.76))
 
     def test_datastats(self):
@@ -39,8 +41,18 @@ class LabTrialDataTest(TestCase):
         for label in self.TEST_DATA['020323']:
             ocurrences = self.TEST_DATA['020323'][label]['data']
             expected = self.TEST_DATA['020323'][label]['ld50']
-            ld50 = self._helper.calculateLD50(ocurrences, dosis)
+            ld50, ld95 = self._helper.calculateLD50(ocurrences, dosis)
 
             print('{}: ld50:{} esperado:{} error:{}%'.format(label,
                   round(ld50, 2),
                   expected, round(100*(ld50-expected) / expected, 2)))
+
+    def fitModel(self, log_dose_levels, probits):
+        def line(x, a, b):
+            return a * x + b
+        popt, pcov = curve_fit(line, log_dose_levels, probits)
+        perr = np.sqrt(np.diag(pcov))
+        return {'p1': popt[1], 'p0': popt[0], 'perr': perr}
+
+    def calculate95_alt(self, model):
+        return model.conf_int(0.05)

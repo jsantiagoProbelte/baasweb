@@ -21,7 +21,7 @@ from rest_framework.response import Response
 from baaswebapp.graphs import GraphTrial
 import numpy as np
 from scipy.stats import norm
-from scipy.optimize import curve_fit
+import statsmodels.api as sm
 
 
 class LabTrialListView(LoginRequiredMixin, FilterView):
@@ -188,9 +188,9 @@ class SetLabDataPoint(APIView):
         pointId = theIds[-1]
         value = request.POST['data-point']
         item = LabDataPoint.objects.get(id=pointId)
-        if level == 'value':
+        if level == DataLabHelper.T_VALUE:
             item.value = value
-        if level == 'total':
+        if level == DataLabHelper.T_TOTAL:
             item.total = value
         item.save()
         return Response({'success': True})
@@ -216,6 +216,9 @@ class SetLabThesis(APIView):
 
 # Show Data methods
 class DataLabHelper:
+    T_VALUE = 'value'
+    T_TOTAL = 'total'
+
     def __init__(self, trial):
         self._trial = trial
 
@@ -262,10 +265,10 @@ class DataLabHelper:
                 thisDosis = point.dosis.rate
             pointsRow.append({
                 'value': point.value,
-                'item_id': self.generateDataPointId('value', point.id)})
+                'item_id': self.generateDataPointId(DataLabHelper.T_VALUE, point.id)})
             pointsRow.append({
                 'value': point.total,
-                'item_id': self.generateDataPointId('total', point.id)})
+                'item_id': self.generateDataPointId(DataLabHelper.T_TOTAL, point.id)})
 
         if len(pointsRow) > 0:
             rows.append({
@@ -338,22 +341,57 @@ class DataLabHelper:
     def filterDosis(self, all_dosis, useValues):
         return [all_dosis[i] for i in useValues]
 
+    def ld50(self, model):
+        p1 = model.params[1]
+        p0 = model.params[0]
+        return 10**((-1*p0) / p1)
+
+    def fitModelLinear(self, log_dose_levels, probits):
+        y = probits
+        X = sm.add_constant(log_dose_levels)
+        model = sm.OLS(y, X, family=sm.families.Binomial()).fit()
+        return model
+
     def calculateLD50(self, responses, all_doseLevels):
+        log_dose_levels, probits = self.prepareSeries(
+            responses,
+            all_doseLevels)
+        if len(log_dose_levels) == 0:
+            return '', ''
+        model = self.fitModelLinear(log_dose_levels, probits)
+        ld50 = self.ld50(model)
+        ld95 = self.calculate95(model)
+        return ld50, ld95
+
+    def prepareSeries(self, responses, all_doseLevels):
         percentanges, useValues = self.filterPercentage(
             [item[0]/item[1] for item in responses],
             all_doseLevels)
         if len(useValues) < 2:
-            return ''
+            return [], []
 
         dose_levels = self.filterDosis(all_doseLevels, useValues)
         log_dose_levels = np.log10(np.array(dose_levels))
         probits = self.probit_func(np.array(percentanges))
+        return log_dose_levels, probits
 
-        def line(x, a, b):
-            return a * x + b
+    def calculate95(self, model):
+        z = 1.96  # the 1.96 quantile of the standard normal distribution
+        p0 = model.params[0]
+        p1 = model.params[1]
+        ld50_probit = -p0/p1
+        ld50_probit_se = model.mse_model / abs(p1)
+        dev = z * ld50_probit_se
 
-        popt, pcov = curve_fit(line, log_dose_levels, probits)
-        return 10**((-1*popt[1]) / popt[0])
+        ld50_probit_ci = (ld50_probit + dev, ld50_probit - dev)
+        factor = (p0 / (p1 ** 2))
+
+        # Transform the upper and lower bounds of the confidence interval back
+        # to the original scale of the dose-response data
+        ld50_ci = (ld50_probit + (factor * ld50_probit_ci[0]),
+                   ld50_probit + (factor * ld50_probit_ci[1]))
+
+        return (round(10**(ld50_ci[0]), 2), round(10**(ld50_ci[1]), 2))
 
     def calculateStats(self):
         data = {}
@@ -372,14 +410,17 @@ class DataLabHelper:
         header = [thesis for thesis in data]
         header.insert(0, 'Stats')
         stats['header'] = header
-        row = ['LD50']
+        rowLD50 = ['LD50']
+        row95 = ['95%']
         for thesis in data:
             responses = data[thesis]
-            ld50 = self.calculateLD50(responses, doses)
+            ld50, ld95 = self.calculateLD50(responses, doses)
             if ld50 != '':
                 ld50 = round(ld50, 2)
-            row.append(ld50)
-        stats['rows'].append(row)
+            rowLD50.append(ld50)
+            row95.append(ld95)
+        stats['rows'].append(rowLD50)
+        stats['rows'].append(row95)
         return stats
 
     def probit_func(self, values):
