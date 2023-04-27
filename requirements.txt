@@ -15,3 +15,4 @@ gunicorn
 dash==2.8.1
 django_plotly_dash
 requests
+scipy==1.10.1
