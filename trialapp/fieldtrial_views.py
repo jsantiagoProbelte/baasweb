@@ -139,7 +139,7 @@ class TrialModel():
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'project', 'code',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'blocks',
+            'trial_status', 'contact', 'replicas_per_thesis',
             'samples_per_replica')
 
     FIELD_TRIAL_FIELDS = (
@@ -420,6 +420,9 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
         form.helper = FieldTrialFormLayout()
         form.fields['code'].initial = FieldTrial.getCode(
             datetime.date.today(), True)
+        form.fields['responsible'].initial = self.request.user.get_username()
+        form.fields['trial_status'].initial = TrialStatus.objects.get(
+            name='Open').id
         return form
 
     def form_valid(self, form):

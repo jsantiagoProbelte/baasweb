@@ -1,0 +1,69 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include "labapp/header_page_labtrial.html" with title=titleView subtitle='lab trial' edit_href="labtrial-update" item=labtrial delete_url='labtrial-delete'%}
+
+<div class="row">
+  <div class="col-md-2">
+    {% include "trialapp/card_values.html" with title='Goal' dataItems=dataTrial.Goal classColumn='classColumn1'%}
+  </div>
+  <div class="col-md-2">
+    {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn1'%}
+    {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn1'%}
+  </div>
+  <div class="col-md-8">
+    <div class="card card-body-baas mt-2">
+      <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-data-tab" data-toggle="pill" href="#v-pills-data" role="tab" aria-controls="v-pills-data" aria-selected="true">
+          <span class="fs-2">&#9776;</span> Data</a>
+        <a class="nav-link" id="v-pills-stats-tab" data-toggle="pill" href="#v-pills-stats" role="tab" aria-controls="v-pills-stats" aria-selected="false">
+          <span class="fs-2 me-2">&#9880;</span>Stats</a>
+      </div>
+
+      <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane show active" id="v-pills-data" role="tabpanel" aria-labelledby="v-pills-data-tab">
+          {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsForm%}
+        </div>
+        <div class="tab-pane" id="v-pills-stats" role="tabpanel" aria-labelledby="v-pills-stats-tab">
+          <table class="table">
+            <thead><th>thesis</th><th>LD50</th></thead>
+            {% for dataThesis in stats %}
+              <tr><td>{{dataThesis.name}}</td><td>{{dataThesis.ld50}}</td></tr>
+            {% endfor %} 
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
+<script>
+var setDataPointAPI = '/set_data_point_lab';
+$('.data-input-template').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, setDataPointAPI);
+});
+
+$('.data-input-template').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, setDataPointAPI, 'data-input-template');
+});
+
+var setThesisNameAPI = '/set_thesis_name';
+$('.thesis-input-template').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, setThesisNameAPI);
+});
+
+$('.thesis-input-template').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, setThesisNameAPI, 'thesis-input-template');
+});
+</script>
+{% endblock %}

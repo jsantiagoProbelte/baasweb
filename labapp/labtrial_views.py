@@ -1,16 +1,27 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import FieldTrial, Thesis, Plague, Crop, TrialStatus
+from trialapp.models import FieldTrial, Plague, Crop, TrialStatus,\
+                            Objective, Project, TrialType
 from catalogue.models import Product
-from trialapp.data_models import Assessment
+from baaswebapp.models import RateTypeUnit
+from labapp.models import LabDataPoint, LabThesis, LabAssessment,\
+                          LabDosis
 import datetime
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.fieldtrial_views import FieldTrialFilter, TrialModel
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from baaswebapp.graphs import GraphTrial
+import numpy as np
+from scipy.stats import norm
+from scipy.optimize import curve_fit
 
 
 class LabTrialListView(LoginRequiredMixin, FilterView):
@@ -18,7 +29,7 @@ class LabTrialListView(LoginRequiredMixin, FilterView):
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
     filterset_class = FieldTrialFilter
-    template_name = 'trialapp/fieldtrial_list.html'
+    template_name = 'labapp/labtrial_list.html'
 
     def getAttrValue(self, label):
         if label in self.request.GET:
@@ -42,20 +53,15 @@ class LabTrialListView(LoginRequiredMixin, FilterView):
             **filter_kwargs).order_by('-code', 'name')
         filter = FieldTrialFilter(self.request.GET)
         for item in objectList:
-            assessments = Assessment.objects.filter(field_trial=item).count()
-            thesis = Thesis.objects.filter(field_trial=item).count()
             new_list.append({
                 'code': item.code,
                 'name': item.name,
                 'crop': item.crop.name,
                 'product': item.product.name,
                 'trial_status': item.trial_status if item.trial_status else '',
-                'project': item.project.name,
-                'objective': item.objective.name,
+                'trial_type': item.trial_type.name,
                 'plague': item.plague.name if item.plague else '',
-                'id': item.id,
-                'assessments': assessments,
-                'thesis': thesis})
+                'id': item.id})
         return {'object_list': new_list,
                 'add_url': 'labtrial-add',
                 'titleList': '({}) Lab trials'.format(len(objectList)),
@@ -95,7 +101,7 @@ class LabTrialFormLayout(FormHelper):
                         css_class="card no-border mb-3"),
                     css_class='col-md-4'),
                 Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
-                    Div(Div(Field('blocks'),
+                    Div(Div(Field('replicas_per_thesis'),
                             Field('samples_per_replica'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
@@ -112,7 +118,8 @@ class LabTrialForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LabTrialForm, self).__init__(*args, **kwargs)
         TrialModel.applyModel(self)
-        self.fields['samples_per_replica'].label = '# samples per block'
+        self.fields['samples_per_replica'].label = '# samples'
+        self.fields['replicas_per_thesis'].label = '# thesis'
 
 
 class LabTrialCreateView(LoginRequiredMixin, CreateView):
@@ -123,16 +130,21 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
     def get_form(self, form_class=LabTrialForm):
         form = super().get_form(form_class)
         form.helper = LabTrialFormLayout()
-        form.fields['code'].initial = FieldTrial.getLabCode(
-            datetime.date.today(), True)
+        code = FieldTrial.getLabCode(datetime.date.today(), True)
+        form.fields['code'].initial = code
+        form.fields['name'].initial = code + ' Bio Trial'
         form.fields['initiation_date'].initial = datetime.date.today()
-        form.fields['product'].initial = Product.getUnknown().id
-        form.fields['crop'].initial = Crop.getUnknown().id
-        form.fields['plague'].initial = Plague.getUnknown().id
-        form.fields['blocks'].initial = 1
+        form.fields['product'].initial = Product.getUnknown()
+        form.fields['project'].initial = Project.getUnknown()
+        form.fields['objective'].initial = Objective.getUnknown()
+        form.fields['crop'].initial = Crop.getUnknown()
+        form.fields['plague'].initial = Plague.getUnknown()
+        form.fields['trial_type'].initial = TrialType.findOrCreate(
+            name='LabTrial')
         form.fields['samples_per_replica'].initial = 24
         form.fields['trial_status'].initial = TrialStatus.objects.get(
             name='Open').id
+        form.fields['responsible'].initial = self.request.user.get_username()
         return form
 
     def form_valid(self, form):
@@ -141,8 +153,11 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getLabCode(datetime.date.today(),
                                                     True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
-            fieldTrial.replicas_per_thesis = 1
+            fieldTrial.blocks = 1
             fieldTrial.save()
+            # Create assessment, thesis, dosis and points
+            dataHelper = DataLabHelper(fieldTrial)
+            dataHelper.createData()
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:
             pass
@@ -157,3 +172,242 @@ class LabTrialUpdateView(LoginRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         form.helper = LabTrialFormLayout(new=False)
         return form
+
+
+class SetLabDataPoint(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    # see generateDataPointId
+    def post(self, request, format=None):
+        # noqa:                      2              1
+        # noqa: E501 data_point_id-[level]-[pointId]
+        theIds = request.POST['data_point_id'].split('-')
+        level = theIds[-2]
+        pointId = theIds[-1]
+        value = request.POST['data-point']
+        item = LabDataPoint.objects.get(id=pointId)
+        if level == 'value':
+            item.value = value
+        if level == 'total':
+            item.total = value
+        item.save()
+        return Response({'success': True})
+
+
+class SetLabThesis(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    # see generateDataPointId
+    def post(self, request, format=None):
+        # noqa:                      2              1
+        # noqa: E501 data_point_id-[level]-[pointId]
+        theIds = request.POST['data_point_id'].split('-')
+        thesisId = theIds[-1]
+        name = request.POST['data-point']
+        thesis = LabThesis.objects.get(id=thesisId)
+        thesis.name = name
+        thesis.save()
+        return Response({'success': True})
+
+
+# Show Data methods
+class DataLabHelper:
+    def __init__(self, trial):
+        self._trial = trial
+
+    def computeData(self):
+        self._assessment = LabAssessment.objects.get(trial=self._trial)
+        self._points = LabDataPoint.getDataPointsAssessment(
+            self._assessment).order_by('dosis__rate', 'thesis__id')
+
+    def prepareHeader(self, colspan=2):
+        references = LabThesis.objects.filter(
+            trial=self._trial).order_by('id')
+        header = []
+        index = 1
+        for reference in references:
+            header.append({
+                'index': reference.getKey(),
+                'color': index,
+                'name': 'value',
+                'colspan': colspan,
+                'id': reference.id})
+            header.append({
+                'index': '',
+                'color': index,
+                'name': 'total',
+                'colspan': colspan,
+                'id': reference.id})
+            index += 1
+        return header
+
+    def generateDataPointId(self, level, pointId=0):
+        return 'data_point_id-{}-{}'.format(level, pointId)
+
+    def prepareDataPoints(self, points):
+        rows = []
+        pointsRow = []
+        thisDosis = 'bla'
+        for point in points:
+            if point.dosis.rate != thisDosis:
+                if len(pointsRow) > 0:
+                    rows.append({
+                        'index': thisDosis,
+                        'dataPoints': pointsRow})
+                pointsRow = []
+                thisDosis = point.dosis.rate
+            pointsRow.append({
+                'value': point.value,
+                'item_id': self.generateDataPointId('value', point.id)})
+            pointsRow.append({
+                'value': point.total,
+                'item_id': self.generateDataPointId('total', point.id)})
+
+        if len(pointsRow) > 0:
+            rows.append({
+                'index': thisDosis,
+                'dataPoints': pointsRow})
+        return rows
+
+    def prepareAssSet(self):
+        graph = 'Add data and refresh to show graph'
+        rows = self.prepareDataPoints(self._points)
+
+        # Calculate graph
+        if len(self._points) > 1:
+            graphHelper = GraphTrial(
+                GraphTrial.L_DOSIS, self._assessment.rate_type,
+                '', self._points,
+                xAxis=GraphTrial.L_DOSIS,)
+            graph = graphHelper.draw()
+        return rows, graph
+
+    def showData(self):
+        self.computeData()
+        subtitle = 'Dilutions'
+        header = self.prepareHeader()
+
+        rows, graph = self.prepareAssSet()
+        return [{
+            'title': self._assessment.rate_type.getName(),
+            'subtitle': subtitle,
+            'header': header, 'errors': '',
+            'graph': graph, 'rows': rows}]
+
+    def createData(self):
+        # Create some default data
+        rateType = RateTypeUnit.findOrCreate(name='DOSIS EFFECTIVENESS',
+                                             unit='NUMBER')
+        assessment = LabAssessment.objects.create(
+            assessment_date=datetime.date.today(),
+            trial=self._trial,
+            rate_type=rateType)
+
+        thesisLab = LabThesis.createLabThesis(self._trial)
+        dosisLab = LabDosis.createLabDosis()
+        for thesis in thesisLab:
+            for dosis in dosisLab:
+                LabDataPoint.objects.create(
+                    value=0.0,
+                    dosis=dosis,
+                    thesis=thesis,
+                    assessment=assessment,
+                    total=self._trial.samples_per_replica)
+
+    def filterPercentage(self, all_percentange, all_dosis):
+        filtered = []
+        useValues = []
+        percentageControl = 0
+        for index in range(0, len(all_percentange)):
+            percentage = all_percentange[index]
+            if all_dosis[index] == 0:
+                # This is control
+                percentageControl = percentage
+            if percentage > 0.3 and percentage < 0.9:
+                if percentageControl > 0:
+                    percentage = (percentage - percentageControl) /\
+                                 (1 - percentageControl)
+                filtered.append(percentage)
+                useValues.append(index)
+        return filtered, useValues
+
+    def filterDosis(self, all_dosis, useValues):
+        return [all_dosis[i] for i in useValues]
+
+    def calculateLD50(self, responses, all_doseLevels):
+        percentanges, useValues = self.filterPercentage(
+            [item[0]/item[1] for item in responses],
+            all_doseLevels)
+        if len(useValues) < 2:
+            return ''
+
+        dose_levels = self.filterDosis(all_doseLevels, useValues)
+        log_dose_levels = np.log10(np.array(dose_levels))
+        probits = self.probit_func(np.array(percentanges))
+
+        def line(x, a, b):
+            return a * x + b
+
+        popt, pcov = curve_fit(line, log_dose_levels, probits)
+        return 10**((-1*popt[1]) / popt[0])
+
+    def calculateStats(self):
+        data = {}
+        doses = []
+        for point in self._points:
+            name = point.thesis.name
+            if name not in data:
+                data[name] = []
+            value = float(point.value)
+            data[name].append([value, float(point.total)])
+            theDosis = float(point.dosis.rate)
+            if theDosis not in doses:
+                doses.append(theDosis)
+        doses.sort()
+        stats = []
+        for thesis in data:
+            responses = data[thesis]
+            ld50 = self.calculateLD50(responses, doses)
+            if ld50 != '':
+                stats.append({'name': thesis, 'ld50': round(ld50, 2)})
+        return stats
+
+    def probit_func(self, values):
+        probits = []
+        for v in values:
+            if v == 1:
+                v = 0.9999
+            if v == 0:
+                v = 0.0001
+            probits.append(norm.ppf(v))
+        return probits
+
+
+class LabTrialView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        template_name = 'labapp/labtrial_show.html'
+        trial_id = kwargs.get('pk', None)
+        trial = get_object_or_404(FieldTrial, pk=trial_id)
+        dataTrial = TrialModel.prepareDataItems(trial)
+        dataHelper = DataLabHelper(trial)
+        showData = {
+            'labtrial': trial, 'titleView': trial.getName(),
+            'dataTrial': dataTrial,
+            'allow_edit_thesis': True,
+            'dataPointsForm': dataHelper.showData(),
+            'stats': dataHelper.calculateStats()}
+        return render(request, template_name, showData)
+
+
+class LabTrialDeleteView(DeleteView):
+    model = FieldTrial
+    success_url = reverse_lazy('labtrial-list')
+    template_name = 'labapp/labtrial_delete.html'

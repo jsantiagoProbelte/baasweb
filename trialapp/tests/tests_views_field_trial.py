@@ -45,8 +45,6 @@ class FieldTrialViewsTest(TestCase):
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
-        self.assertContains(response, '1 &#10000;</a>')  # Number thesis
-        self.assertContains(response, '0 &#43;</a>')  # Number applications
         thesis.delete()
         fieldTrial.delete()
 

@@ -207,7 +207,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     def get_absolute_url(self):
         if self.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
-            return "/labtrial_api/%i/" % self.id
+            return "/labtrial/%i/" % self.id
         else:
             return "/fieldtrial_api/%i/" % self.id
 

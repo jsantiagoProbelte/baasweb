@@ -11,7 +11,20 @@
             <thead><tr><td></td>
             {% for itemHeader in dataPointReference.header %}
                 {% if itemHeader.index %}
-                <td class="bg-custom-{{itemHeader.color}}" colspan="{{itemHeader.colspan}}">{{itemHeader.index}} </td>
+                <td class="bg-custom-{{itemHeader.color}}" colspan="{{itemHeader.colspan}}">
+                    {% if allow_edit_thesis %}
+                        <form id="form-thesis-input-{{itemHeader.id}}" 
+                            class='form-data-input-template'  method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="data-point"
+                                id="thesis-input-{{itemHeader.id}}"
+                                class="form-control-baas input thesis-input-template text-right bg-custom-{{itemHeader.color}}"
+                                placeholder={{itemHeader.index}}
+                                value={{itemHeader.index}}></input>
+                        </form>
+                    {% else %}
+                        {{itemHeader.index}} </td>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             </tr>

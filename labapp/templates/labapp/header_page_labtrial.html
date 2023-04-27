@@ -1,0 +1,38 @@
+{% if subheader %}
+<h5 class="mt-4 ms-4 text-muted">{{subheader}}
+    <span> <div class="btn-group float-end" role="group">
+        
+    </div></span>
+</h5>
+{% endif %}
+<h2 class="fw-bold mt-4 ms-4 mb-3">
+    {{title}}
+    <span class="text-muted ml-2">{{subtitle}}</span>
+    <span><div class="btn-group ms-2" role="group">
+        <a href="{% url 'labtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Go to lap trial list'>&#8679;</a>
+        {% if edit_href %}
+        <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
+                data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+        {% endif %}
+        {% if new_href %}
+        <a href="{% url new_href %}" class="btn btn-info btn-sm fs-1"
+                data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+        {% endif %}
+        
+        {% if new_href_id %}
+        <a href="{% url new_href_id refId %}" class="btn btn-secondary btn-sm fs-1"
+            data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+        {% endif %}
+        {% if delete_url %}
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-1"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
+        {% endif %}
+    </div></span>
+
+</h2>
+
+
+{% if errors %}
+<div class="alert alert-primary" role="alert">{{errors}}</div>
+{% endif %}

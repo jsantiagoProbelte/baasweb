@@ -58,12 +58,15 @@ class GraphTrial:
     SCATTER = 'scatter'
     BAR = 'bar'
     VIOLIN = 'violin'
+    LINE = 'line'
+    _colors = {}
 
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
     L_SAMPLE = 'sample'
     L_DATE = 'date'
     L_DAF = 'daf'
+    L_DOSIS = 'dosis'
     LEVELS = [L_THESIS, L_REPLICA, L_SAMPLE]
 
     # SYMBOL_LIST = SymbolValidator().values
@@ -94,6 +97,7 @@ class GraphTrial:
         self._useCode = useCode
         self._combineTrialAssessments = combineTrialAssessments
         self._graphData = self.buildData(dataPoints)
+        self._colors = {}
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
         return self.figure(self._graphData, typeFigure=typeFigure,
@@ -108,8 +112,13 @@ class GraphTrial:
     def violin(self):
         return self.preparePlots(typeFigure=GraphTrial.VIOLIN)
 
+    def line(self):
+        return self.preparePlots(typeFigure=GraphTrial.LINE)
+
     def draw(self):
-        if self._level == GraphTrial.L_THESIS:
+        if self._level == GraphTrial.L_DOSIS:
+            return self.line()
+        elif self._level == GraphTrial.L_THESIS:
             if self._combineTrialAssessments:
                 return self.scatter()
             else:
@@ -140,6 +149,11 @@ class GraphTrial:
                 data = go.Bar(orientation=orientation,
                               name=name, marker={'color': color},
                               x=x, y=y)
+            elif typeFigure == GraphTrial.LINE:
+                markerMode = 'lines+markers'
+                data = go.Scatter(name=name, x=x, y=y,
+                                  marker={'color': color, 'symbol': symbol},
+                                  mode=markerMode, marker_size=5)
             elif typeFigure == GraphTrial.SCATTER:
                 if self._xAxis == GraphTrial.L_DATE:
                     markerMode = 'lines+markers'
@@ -199,6 +213,8 @@ class GraphTrial:
             return dataPoint.reference.thesis.number
         elif self._level == GraphTrial.L_SAMPLE:
             return dataPoint.reference.replica.number
+        elif self._level == GraphTrial.L_DOSIS:
+            return dataPoint.thesis.name
 
     def traceId(self, dataPoint):
         theId = '{}'.format(self.traceIdLevel(dataPoint))
@@ -214,6 +230,8 @@ class GraphTrial:
             return dataPoint.reference.thesis.name
         elif self._level == GraphTrial.L_SAMPLE:
             return dataPoint.reference.replica.thesis.name
+        elif self._level == GraphTrial.L_DOSIS:
+            return dataPoint.thesis.name
 
     def getTraceName(self, dataPoint, code):
         theName = self.getTraceNameLevel(dataPoint)
@@ -229,6 +247,8 @@ class GraphTrial:
             color = dataPoint.reference.thesis.number
         elif self._level == GraphTrial.L_SAMPLE:
             color = dataPoint.reference.replica.thesis.number
+        elif self._level == GraphTrial.L_DOSIS:
+            color = self._colors[dataPoint.thesis.name]
         return GraphTrial.COLOR_LIST[color]
 
     def getTraceSymbol(self, dataPoint):
@@ -237,6 +257,8 @@ class GraphTrial:
             symbol = dataPoint.reference.number
         elif self._level == GraphTrial.L_SAMPLE:
             symbol = dataPoint.reference.replica.number
+        elif self._level == GraphTrial.L_DOSIS:
+            symbol = self._colors[dataPoint.thesis.name]
         return GraphTrial.SYMBOL_LIST[symbol]
 
     def prepareTrace(self, dataPoint, code):
@@ -254,6 +276,8 @@ class GraphTrial:
             return dataPoint.assessment.assessment_date
         if xAxis == GraphTrial.L_DAF:
             return dataPoint.assessment.daf
+        if xAxis == GraphTrial.L_DOSIS:
+            return dataPoint.dosis.rate
 
     def getTitle(self, rateType, ratedPart):
         return '{}({}) {}'.format(rateType.name, rateType.unit, ratedPart)
@@ -267,6 +291,12 @@ class GraphTrial:
         else:
             return None
 
+    def assignColor(self, traceId):
+        if self._level == GraphTrial.L_DOSIS:
+            if traceId not in self._colors:
+                number = len(list(self._colors.keys()))
+                self._colors[traceId] = number + 1
+
     def buildData(self, dataPoints):
         # This is for diplay purposes. [[,],[,]...]
         # It has to follow the order of references
@@ -278,6 +308,7 @@ class GraphTrial:
             # TODO: there could be data with different units
             code = self.getCode(dataPoint)
             traceId = self.traceId(dataPoint)
+            self.assignColor(traceId)
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(dataPoint, code)
             traces[traceId]['y'].append(dataPoint.value)

@@ -1,8 +1,8 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis
+from trialapp.models import FieldTrial
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.fieldtrial_views import FieldTrialApi
+from labapp.labtrial_views import LabTrialView
 from labapp.labtrial_views import LabTrialCreateView,\
     LabTrialUpdateView, LabTrialListView
 
@@ -29,29 +29,14 @@ class LabTrialViewsTest(TestCase):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
         fieldTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
+        fieldTrial.samples_per_replica = 20
         fieldTrial.save()
 
         request = self._apiFactory.get('labtrial-list')
         self._apiFactory.setUser(request)
         response = LabTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Trials yet.')
-        self.assertContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
-
-        thesis = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        request = self._apiFactory.get('labtrial-list')
-        self._apiFactory.setUser(request)
-        response = LabTrialListView.as_view()(request)
-        self.assertNotContains(response, 'No Trials yet.')
-        self.assertNotContains(response, 'Please define thesis first')
-        self.assertContains(response, fieldTrial.name)
-
-        request = self._apiFactory.get('labtrial-list')
-        self._apiFactory.setUser(request)
-        response = LabTrialListView.as_view()(request)
-        self.assertContains(response, '1 &#10000;</a>')  # Number thesis
-        self.assertContains(response, '0 &#43;</a>')  # Number applications
-        thesis.delete()
         fieldTrial.delete()
 
     def test_createFieldtrial(self):
@@ -64,6 +49,7 @@ class LabTrialViewsTest(TestCase):
 
         # Create one field trial
         fieldTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
+        fieldTrialData['samples_per_replica'] = 24
         request = self._apiFactory.post(
             'labtrial-add', data=fieldTrialData)
         self._apiFactory.setUser(request)
@@ -102,7 +88,7 @@ class LabTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         fieldTrialData['samples_per_replica'] = '3'
-        self.assertEqual(fieldTrial.samples_per_replica, 0)
+        self.assertEqual(fieldTrial.samples_per_replica, 24)
         request = self._apiFactory.post(
             'labtrial-update', data=fieldTrialData)
         self._apiFactory.setUser(request)
@@ -112,11 +98,11 @@ class LabTrialViewsTest(TestCase):
         self.assertEqual(fieldTrial.samples_per_replica, 3)
         self.assertEqual(response.status_code, 302)
 
-        request = self._apiFactory.get('fieldtrial_api')
+        request = self._apiFactory.get('labtrial-show')
         self._apiFactory.setUser(request)
-        apiView = FieldTrialApi()
+        apiView = LabTrialView()
         response = apiView.get(request,
-                               field_trial_id=fieldTrial.id)
+                               pk=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
         self.assertContains(response, 'lab trial')

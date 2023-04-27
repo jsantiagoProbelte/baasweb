@@ -54,14 +54,15 @@
 {% block scripts %}
 <script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
+var setDataPointAPI = '/set_data_point';
 $('.data-input-template').on('blur', function(){
     var element=$(this);
-    return setDataPoint(element);
+    return setDataPoint(element, setDataPointAPI);
 });
 
 $('.data-input-template').on('keypress', function(event) {
     var element = $(this);
-    return processEnter(event, element);
+    return processEnter(event, element, setDataPointAPI, 'data-input-template');
 });
 </script>
 {% endblock %}
