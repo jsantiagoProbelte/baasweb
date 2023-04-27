@@ -368,12 +368,18 @@ class DataLabHelper:
             if theDosis not in doses:
                 doses.append(theDosis)
         doses.sort()
-        stats = []
+        stats = {'rows': []}
+        header = [thesis for thesis in data]
+        header.insert(0, 'Stats')
+        stats['header'] = header
+        row = ['LD50']
         for thesis in data:
             responses = data[thesis]
             ld50 = self.calculateLD50(responses, doses)
             if ld50 != '':
-                stats.append({'name': thesis, 'ld50': round(ld50, 2)})
+                ld50 = round(ld50, 2)
+            row.append(ld50)
+        stats['rows'].append(row)
         return stats
 
     def probit_func(self, values):

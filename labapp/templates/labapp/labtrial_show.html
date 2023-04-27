@@ -29,11 +29,21 @@
         </div>
         <div class="tab-pane" id="v-pills-stats" role="tabpanel" aria-labelledby="v-pills-stats-tab">
           <table class="table">
-            <thead><th>thesis</th><th>LD50</th></thead>
-            {% for dataThesis in stats %}
-              <tr><td>{{dataThesis.name}}</td><td>{{dataThesis.ld50}}</td></tr>
-            {% endfor %} 
-            </table>
+            <thead>
+              {% for thesisName in stats.header %}
+                <th>{{thesisName}}</th>
+              {% endfor %} 
+            </thead>
+            <tbody>
+              {% for row in stats.rows %}
+                <tr>
+                  {% for value in row %}
+                    <td>{{value}}</td>
+                  {% endfor %} 
+                </tr>
+              {% endfor %} 
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
