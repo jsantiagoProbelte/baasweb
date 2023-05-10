@@ -66,7 +66,7 @@ class ImportPdfTest(TestCase):
         firstTable.findTagPositions()
         columnToExplore = firstTable._columns[
             firstTable._indexfirstColumnWithValues]
-        assesment = firstTable.extractEvaluationInfo(columnToExplore)
+        assesment = firstTable.extractAssessmentInfo(columnToExplore)
         self.assertEqual(assesment.assessment_date,
                          datetime(2018, 1, 9, 0, 0))
         self.assertEqual(assesment.crop_stage_majority, '81')
@@ -105,7 +105,7 @@ class ImportPdfTest(TestCase):
 
         # Load last columns
         columnToExplore2 = firstTable._columns[firstTable._numberColumns-1]
-        assesment2 = firstTable.extractEvaluationInfo(columnToExplore2)
+        assesment2 = firstTable.extractAssessmentInfo(columnToExplore2)
         self.assertEqual(assesment2.assessment_date,
                          datetime(2018, 9, 15, 0, 0))
         self.assertEqual(assesment2.crop_stage_majority, '87-89')
@@ -200,7 +200,7 @@ class ImportPdfTest(TestCase):
         # Days After First/Last Applic.\r
         # Trt-Eval Interval\rARM Action Codes\rNumber of Decimals'
 
-        assesment = firstTable.extractEvaluationInfo(columnName)
+        assesment = firstTable.extractAssessmentInfo(columnName)
         self.assertEqual(assesment.assessment_date,
                          datetime(2015, 2, 18, 0, 0))
         self.assertEqual(assesment.crop_stage_majority,
