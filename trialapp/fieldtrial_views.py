@@ -275,7 +275,8 @@ class FieldTrialApi(APIView):
         dataTrial = TrialModel.prepareDataItems(fieldTrial)
         for item in assessments:
             dataTrial['Assessments'].append(
-                {'value': item.getContext(), 'name': item.assessment_date})
+                {'value': item.getContext(), 'name': item.assessment_date,
+                 'link': 'assessment_api', 'id': item.id})
         showData = {
             'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
             'dataTrial': dataTrial, 'thesisTrial': thesisTrial,
@@ -350,8 +351,8 @@ class FieldTrialFormLayout(FormHelper):
                     Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
-                            Field('longitude', css_class='mb-2'),
                             Field('latitude', css_class='mb-2'),
+                            Field('longitude', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
                     Div(HTML('Applications'), css_class="card-header-baas h4"),

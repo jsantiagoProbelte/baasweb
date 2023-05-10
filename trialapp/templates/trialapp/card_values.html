@@ -9,7 +9,11 @@
     <div class="{{classColumn}}">
       {% for data in dataItems %}
         <div class="card">
-        {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value %}
+          {% if data.link %}
+            {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value itemLink=data.link itemId=data.id%}
+          {% else %}
+            {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value %}
+          {%endif%}
         </div>
       {% endfor %}
       </div>
