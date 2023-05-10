@@ -384,12 +384,17 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
 class BatchDeleteView(DeleteView):
     model = Batch
     template_name = 'catalogue/batch_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.product_variant.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.product_variant.product
+        return super().form_valid(form)
 
 
 ##############################
@@ -476,12 +481,17 @@ class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
 class ProductVariantDeleteView(DeleteView):
     model = ProductVariant
     template_name = 'catalogue/product_variant_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.product
+        return super().form_valid(form)
 
 
 ##############################
@@ -597,9 +607,14 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
 class TreatmentDeleteView(DeleteView):
     model = Treatment
     template_name = 'catalogue/treatment_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.batch.product_variant.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.batch.product_variant.product
+        return super().form_valid(form)

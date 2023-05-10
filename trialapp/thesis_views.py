@@ -144,20 +144,20 @@ class ThesisUpdateView(LoginRequiredMixin, UpdateView):
 
 class ThesisDeleteView(DeleteView):
     model = Thesis
-    success_url = reverse_lazy('thesis-list')
     template_name = 'trialapp/thesis_delete.html'
-    _field_trial_id = None
-
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        self._field_trial_id = self.object.field_trial_id
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())
+    _trial_id = None
 
     def get_success_url(self):
-        return reverse(
-            'thesis-list',
-            kwargs={'field_trial_id': self._field_trial_id})
+        if self._trial_id is None:
+            return '/fieldtrials/'
+        else:
+            return reverse(
+                'thesis-list',
+                kwargs={'field_trial_id': self._trial_id})
+
+    def form_valid(self, form):
+        self._trial_id = self.object.field_trial.id
+        return super().form_valid(form)
 
 
 class ThesisApi(APIView):
@@ -271,14 +271,15 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
 
 class TreatmentThesisDeleteView(DeleteView):
     model = TreatmentThesis
-    success_url = reverse_lazy('thesis_api')
     template_name = 'trialapp/treatment_thesis_delete.html'
+    _thesis = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        thesis_id = self.object.thesis_id
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url(thesis_id))
+    def get_success_url(self):
+        if self._thesis is None:
+            return '/fieldtrials/'
+        else:
+            return self._thesis.get_absolute_url()
 
-    def get_success_url(self, thesis_id):
-        return reverse('thesis_api', kwargs={'thesis_id': thesis_id})
+    def form_valid(self, form):
+        self._thesis = self.object.thesis
+        return super().form_valid(form)

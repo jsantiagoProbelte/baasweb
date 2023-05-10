@@ -49,7 +49,9 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(thesis.name, thesisData['name'])
 
         # Editar y ver nuevo
-        request = self._apiFactory.get('thesis-update')
+        thesisData.pop('treatment')
+        request = self._apiFactory.get('thesis-update',
+                                       data=thesisData)
         self._apiFactory.setUser(request)
         response = ThesisUpdateView.as_view()(
             request,

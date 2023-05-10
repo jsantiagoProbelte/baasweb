@@ -80,8 +80,9 @@
                 "test",
                 // "panel.tests.tests_statsdata"
                 // "trialapp.tests.tests_views_data"
+                "trialapp.tests.tests_views_thesis"
                 // "catalogue.tests.tests_views_catalogue"
-                "labapp.tests.tests_labtrial_views"
+                // "labapp.tests.tests_labtrial_views"
             ],
             "django": true,
             "justMyCode": true
