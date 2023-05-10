@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
