@@ -95,7 +95,8 @@ class ThesisViewsTest(TestCase):
                 "batch": batch})
 
         # TODO: Let;s add some ThesisTreatment
-        data = {'treatment': treatment.id}
+        data = {'treatment': treatment.id,
+                'thesis_id': thesis.id}
         token = 'treatment_thesis'
         createView = TreatmentThesisCreateView
         deleteView = TreatmentThesisDeleteView
