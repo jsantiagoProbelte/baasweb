@@ -59,7 +59,10 @@ class TrialDataApi(APIView):
             if partRated == 'Undefined' or partRated == 'None':
                 partRated = ''
             headerRatingPart.append(partRated)
-            headerBBCH.append(ass.crop_stage_majority)
+            bbch = ass.crop_stage_majority
+            if bbch == 'Undefined' or bbch == 'None':
+                bbch = ''
+            headerBBCH.append(bbch)
 
         return {
             'ids': [{'id': ass.id, 'name': ass.name}
