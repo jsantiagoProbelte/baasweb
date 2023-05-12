@@ -10,13 +10,22 @@
   <div class="table-container-long">
   <table class="data-table-longer">
     <thead>
-      {% for headerRow in header %}
+      {% for headerRow in header.values %}
         <tr>
         {% for itemHeader in headerRow %}
-          <th class="bg-custom-cards">{{itemHeader}}</th>
+          <th class="text-right">{{itemHeader}}</th>
         {% endfor %}
        </tr>
       {% endfor %}
+      <tr><th></th><th class="text-right">Name/Interval</th>
+        {% for itemId in header.ids %}
+          <th class="text-right">
+            <a href="{% url 'assessment_api' itemId.id %}" class="btn btn-secondary">
+              {{itemId.name}}</a>
+          </th>
+        {% endfor %}
+      </tr>
+
     </thead>
     <tbody>
     {% for dataRow in dataRows %}

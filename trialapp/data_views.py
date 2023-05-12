@@ -51,18 +51,21 @@ class TrialDataApi(APIView):
         headerRatingUnit = ['', 'Rating Unit']
         headerRatingPart = ['', 'Part Rated']
         headerBBCH = ['', 'BBCH']
-        headerInterval = ['', 'Name/Interval']
         for ass in self._assessments:
             headerDates.append(ass.assessment_date.strftime("%d/%m/%y"))
             headerRatingType.append(ass.rate_type.name)
             headerRatingUnit.append(ass.rate_type.unit)
-            partRated = '' if ass.part_rated == 'Undefined' else ass.part_rated
+            partRated = ass.part_rated
+            if partRated == 'Undefined' or partRated == 'None':
+                partRated = ''
             headerRatingPart.append(partRated)
             headerBBCH.append(ass.crop_stage_majority)
-            headerInterval.append(ass.name)
 
-        return [headerDates, headerRatingType, headerRatingUnit,
-                headerRatingPart, headerBBCH, headerInterval]
+        return {
+            'ids': [{'id': ass.id, 'name': ass.name}
+                    for ass in self._assessments],
+            'values': [headerDates, headerRatingType, headerRatingUnit,
+                       headerRatingPart, headerBBCH]}
 
     def preparaRows(self):
         replicas = Replica.getFieldTrialObjects(self._trial)
