@@ -177,8 +177,9 @@ class TrialModel():
         trialForm.fields['crop'].queryset = Crop.objects.all().order_by('name')
         trialForm.fields['plague'].queryset = Plague.objects.all(
             ).order_by('name')
-        trialForm.fields['crop_variety'].queryset = CropVariety.objects.all(
-            ).order_by('name')
+        if 'crop_variety' in trialForm.fields:
+            trialForm.fields['crop_variety'].queryset = CropVariety.objects.all(
+                ).order_by('name')
 
     @classmethod
     def prepareDataItems(cls, fieldTrial):
