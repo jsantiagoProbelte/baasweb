@@ -6,7 +6,7 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
     SampleData, Assessment
 from baaswebapp.graphs import GraphTrial
-from trialapp.data_views import DataHelper, SetDataAssessment
+from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -268,6 +268,15 @@ class DataViewsTest(TestCase):
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
             GraphTrial.L_REPLICA, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
+
+        # View trial_data
+        request = self._apiFactory.get('trial_data')
+        self._apiFactory.setUser(request)
+        apiView = TrialDataApi()
+        response = apiView.get(request,
+                               pk=self._fieldTrial.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self._fieldTrial.name)
 
     def test_setSampleData(self):
         dataHelper = DataHelper(self._assessment.id)

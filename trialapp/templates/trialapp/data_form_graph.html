@@ -30,14 +30,14 @@
             </tr>
             <tr><td><small>{{dataPointReference.subtitle}}</small></td>
             {% for itemHeader in dataPointReference.header %}
-                <td class="bg-custom-{{itemHeader.color}} text-right td-control-baas">{{itemHeader.name}}</td>
+                <td class="bg-custom-{{itemHeader.color}} text-right ">{{itemHeader.name}}</td>
             {% endfor %}
             </tr></thead>
         <tbody>
         {% for evaluationSet in dataPointReference.rows %}
-            <tr><td class="td-control-baas">{{evaluationSet.index}}</td>
+            <tr><td>{{evaluationSet.index}}</td>
             {% for dataPointValue in evaluationSet.dataPoints %}
-            <td class="td-control-baas"><form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
+            <td ><form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
                 class='form-data-input-template'  method="POST">
                 {% csrf_token %}
                 <input type="text" name="data-point"

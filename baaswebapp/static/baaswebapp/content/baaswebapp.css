@@ -335,6 +335,12 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
   height: 200px;
 }
 
+.table-container-longer {
+  width: 100%; 
+  overflow: auto;
+  height: 2000px;
+}
+
 .data-table {
   width:100%;
   table-layout:auto;
@@ -344,6 +350,22 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
   width: 15rem;
   background-color: grey;
 }
+
+
+.data-table-longer {
+  width:100%;
+  table-layout:auto;
+}
+
+table.data-table-longer tbody td {
+  width: 20rem;
+}
+
+table.data-table-longer thead th {
+  width: 20rem;
+  background-color: var(--custom-bg-color-cards);
+}
+
 
 /* SCROLLTABLE */
 .form-control-baas {

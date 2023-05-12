@@ -1,7 +1,7 @@
-from trialapp.models import Thesis, Replica, Sample
+from trialapp.models import Thesis, Replica, Sample, FieldTrial
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from baaswebapp.graphs import GraphTrial
@@ -36,6 +36,73 @@ class SetDataAssessment(APIView):
         else:
             return Response({'success': False}, status='500')
         return Response({'success': True})
+
+
+class TrialDataApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+    _trial = None
+    _assessments = None
+
+    def prepareHeader(self):
+        headerDates = ['', 'Date']
+        headerRatingType = ['', 'Rating Type']
+        headerRatingUnit = ['', 'Rating Unit']
+        headerRatingPart = ['', 'Part Rated']
+        headerBBCH = ['', 'BBCH']
+        headerInterval = ['', 'Name/Interval']
+        for ass in self._assessments:
+            headerDates.append(ass.assessment_date.strftime("%d/%m/%y"))
+            headerRatingType.append(ass.rate_type.name)
+            headerRatingUnit.append(ass.rate_type.unit)
+            partRated = '' if ass.part_rated == 'Undefined' else ass.part_rated
+            headerRatingPart.append(partRated)
+            headerBBCH.append(ass.crop_stage_majority)
+            headerInterval.append(ass.name)
+
+        return [headerDates, headerRatingType, headerRatingUnit,
+                headerRatingPart, headerBBCH, headerInterval]
+
+    def preparaRows(self):
+        replicas = Replica.getFieldTrialObjects(self._trial)
+        lastThesisId = None
+        rows = []
+        thesisName = ''
+        for replica in replicas:
+            if replica.thesis_id != lastThesisId:
+                thesisName = replica.thesis.name
+                lastThesisId = replica.thesis_id
+            else:
+                thesisName = ''
+
+            values = []
+            plotPoints = ReplicaData.objects.filter(reference=replica)
+            dataPoints = {point.assessment.id: point.value
+                          for point in plotPoints}
+
+            for ass in self._assessments:
+                value = dataPoints.get(ass.id, '')
+                values.append({
+                    'value': value,
+                    'item_id': DataModel.generateDataPointId(
+                         GraphTrial.L_REPLICA, ass, replica)})
+            rows.append(
+                {'thesis': thesisName,
+                 'replica': replica.name,
+                 'color': replica.thesis.number,
+                 'values': values})
+        return rows
+
+    def get(self, request, *args, **kwargs):
+        template_name = 'trialapp/trial_data.html'
+        trial_id = kwargs.get('pk', None)
+        self._trial = get_object_or_404(FieldTrial, pk=trial_id)
+        self._assessments = Assessment.getObjects(self._trial)
+        header = self.prepareHeader()
+        showData = {'header': header, 'dataRows': self.preparaRows(),
+                    'fieldTrial': self._trial}
+        return render(request, template_name, showData)
 
 
 # Show Data methods

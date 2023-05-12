@@ -1,0 +1,61 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
+
+<div class="card card-body-baas mt-2">
+  <div class="table-container-long">
+  <table class="data-table-longer">
+    <thead>
+      {% for headerRow in header %}
+        <tr>
+        {% for itemHeader in headerRow %}
+          <th class="bg-custom-cards">{{itemHeader}}</th>
+        {% endfor %}
+       </tr>
+      {% endfor %}
+    </thead>
+    <tbody>
+    {% for dataRow in dataRows %}
+        <tr><td class="bg-custom-{{dataRow.color}}">{{dataRow.thesis}}</td>
+            <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
+        {% for dataPointValue in dataRow.values %}
+          <td class="bg-custom-{{dataRow.color}}">
+            <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
+              class='form-data-input-template'  method="POST">
+              {% csrf_token %}
+              <input type="text" name="data-point"
+                  id="{{dataPointValue.item_id}}"
+                  class="form-control-baas input data-input-template text-right"
+                  placeholder="-"
+                  value={{dataPointValue.value}}></input>
+            </form>
+          </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
+<script>
+var setDataPointAPI = '/set_data_point';
+$('.data-input-template').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, setDataPointAPI);
+});
+
+$('.data-input-template').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, setDataPointAPI, 'data-input-template');
+});
+</script>
+{% endblock %}

@@ -74,6 +74,10 @@ urlpatterns = [
         'set_data_point',
         data_views.SetDataAssessment.as_view(),
         name='set_data_point'),
+    path(
+        'trial_data/<int:pk>/',
+        data_views.TrialDataApi.as_view(),
+        name='trial_data'),
     # Application urls
     path(
         'applicationlist/<int:field_trial_id>/',
