@@ -68,7 +68,7 @@
         </td>
         <td>
             {% if item.thesis > 0 %}
-                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'assessment-list' item.id%}">{{item.assessments}} &#43;</a>
+                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'trial_data' item.id%}">{{item.assessments}} &#43;</a>
             {% else %}
                 <small>Please define thesis first</small>
             {% endif %}
