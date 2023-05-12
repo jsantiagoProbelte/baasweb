@@ -244,6 +244,15 @@ class TreatmentThesisForm(forms.ModelForm):
         model = TreatmentThesis
         fields = ('treatment',)
 
+    def __init__(self, *args, **kwargs):
+        super(TreatmentThesisForm, self).__init__(*args, **kwargs)
+        listt = Treatment.objects.all().order_by(
+            'batch__product_variant__product__name',
+            'batch__product_variant__name',
+            'batch__name',
+            'rate')
+        self.fields['treatment'].queryset = listt
+
 
 class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
     model = TreatmentThesis

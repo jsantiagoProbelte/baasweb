@@ -130,7 +130,7 @@ class AssessmentForm(forms.ModelForm):
         self.fields['assessment_date'].widget = MyDateInput()
         self.fields['crop_stage_majority'].label = 'Crop Stage Majority (BBCH)'
         self.fields['rate_type'].queryset =\
-            RateTypeUnit.objects.all().order_by('name')
+            RateTypeUnit.objects.all().order_by('name', 'unit')
         self.fields['part_rated'].required = False
 
 

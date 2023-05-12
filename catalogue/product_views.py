@@ -235,7 +235,7 @@ class ProductApi(APIView):
                 batchItem = {'name': batch.name,
                              'id': batch.id, 'treatments': []}
                 for treatment in Treatment.objects.filter(
-                                 batch=batch).order_by('name'):
+                                 batch=batch).order_by('name', 'rate'):
                     batchItem['treatments'].append(
                         {'name': treatment.getName(), 'id': treatment.id})
                 variantItem['batches'].append(batchItem)
