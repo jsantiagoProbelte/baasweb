@@ -32,7 +32,8 @@ class TrialTags:
     RATING_TYPE = 'Rating Type'
     ASSESSMENT_TYPE = 'Assessment Type'
     RATING_TYPE_ES = 'Descripción'
-    TAG_TYPES = [ASSESSMENT_TYPE, RATING_TYPE, RATING_TYPE_ES, 'ating Type']
+    TAG_TYPES = [ASSESSMENT_TYPE, RATING_TYPE, RATING_TYPE_ES, 'ating Type',
+                 'Rating T ype']
 
     RATING_DATE = 'Rating Date'
     RATING_DATE_ES = 'Fecha Valoración'
@@ -129,7 +130,9 @@ class AssmtTable:
             self._thesis[joinName] = thesis
 
     def findOrCreateThesis(self, name, number):
-        thesis = self.existThesis(name)
+        thesis = self.existThesisByNumber(number)
+        if thesis is None:
+            thesis = self.existThesis(name)
         if thesis is None or thesis.number != number:
             thesis = Thesis.findOrCreate(
                             name=name.strip(),
@@ -163,6 +166,14 @@ class AssmtTable:
 
     def existThesis(self, newthesisname):
         return self._thesis.get(newthesisname.replace(" ", ""), None)
+
+    def existThesisByNumber(self, number):
+        for thesisName in self._thesis:
+            thesis = self._thesis[thesisName]
+            if number == thesis.number:
+
+                return thesis
+        return None
 
     def isStatisticalTable(self):
         tokens = ['Standard Deviation', 'Bartlett', 'Tukey']
@@ -245,7 +256,7 @@ class AssmtTable:
             return None, thesisInfo
 
     def getFirstReplica(self, thesisInfo):
-        if thesisInfo[-3:].isdigit():
+        if len(thesisInfo) > 10 and thesisInfo[-3:].isdigit():
             return thesisInfo[-3:], thesisInfo[:-3]
         else:
             return None, thesisInfo
@@ -1107,11 +1118,12 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
+           '/estudios/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
 
     # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
     # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
-    fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
+    # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
+    fileName = path + '20180706 BOTRYBEL EFICACIA ITALIA FRUTAL DE HUESO 05.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 
