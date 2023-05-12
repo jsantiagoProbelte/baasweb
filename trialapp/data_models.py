@@ -154,7 +154,7 @@ class DataModel(ModelHelpers):
         tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
         results = FieldTrial.objects.filter(product=product).values(
-            tag_id, tag_name)
+            tag_id, tag_name).order_by(tag_name)
         theArray, theIds = ModelHelpers.extractDistincValues(results, tag_id,
                                                              tag_name)
         return theArray
@@ -175,10 +175,20 @@ class DataModel(ModelHelpers):
         # We need the id from the set, but we display the name from the type
         tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
+        tag_unit = '{}__unit'.format(tag)
         results = Assessment.objects.filter(
-                field_trial_id__in=ids).values(tag_id, tag_name)
-        dimensions, theIds = ModelHelpers.extractDistincValues(results, tag_id,
-                                                               tag_name)
+                field_trial_id__in=ids).values(
+                tag_id, tag_name, tag_unit).order_by(
+                    tag_name, tag_unit)
+
+        # merge _name & _unit
+        new_results = [{tag_id: item[tag_id],
+                        tag_name: '{} ({})'.format(item[tag_name],
+                                                   item[tag_unit])}
+                       for item in results]
+
+        dimensions, theIds = ModelHelpers.extractDistincValues(
+            new_results, tag_id, tag_name)
         if as_array:
             return dimensions
         else:
