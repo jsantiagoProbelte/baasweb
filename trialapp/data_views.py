@@ -1,4 +1,4 @@
-from trialapp.models import Thesis, Replica, Sample, FieldTrial
+from trialapp.models import Thesis, Replica, Sample, FieldTrial, TreatmentThesis
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
 from django.shortcuts import get_object_or_404, render
@@ -297,6 +297,8 @@ class DataGraphFactory():
                  dataPoints, xAxis=GraphTrial.L_DATE,
                  showTitle=True):
         self._level = level
+        self._references = {}
+        self._colors = {}
         traces = self.buildData(dataPoints, xAxis)
         if len(traces) > 0:
             self._graph = GraphTrial(level, rateType, ratedPart,
@@ -331,8 +333,18 @@ class DataGraphFactory():
         else:
             return pointRefence.number
 
-    def addTreatmentToReference(self, reference):
-        self._references[reference.id] = reference.name
+    def addTreatmentToReference(self, thesis):
+        if thesis.id in self._references:
+            return
+        ttreatments = TreatmentThesis.getObjects(thesis)
+        name = ''
+        for ttreatment in ttreatments:
+            if name is not None:
+                name += ''
+            name += ttreatment.treatment.getName()
+        if name == '':
+            name = thesis.name
+        self._references[thesis.id] = name
 
     def getPointRefence(self, dataPoint):
         if self._level == GraphTrial.L_DOSIS:
@@ -345,12 +357,14 @@ class DataGraphFactory():
                 reference = dataPoint.reference.thesis
             elif self._level == GraphTrial.L_SAMPLE:
                 reference = dataPoint.reference.replica.thesis
-            if reference.id not in self._references:
-                self.addTreatmentToReference(reference)
+            self.addTreatmentToReference(reference)
             return reference
 
     def getTraceName(self, pointRefence):
-        return pointRefence.name
+        if self._level == GraphTrial.L_DOSIS:
+            return pointRefence.name
+        else:
+            return self._references[pointRefence.id]
 
     def getTraceColor(self, pointRefence):
         color = 1

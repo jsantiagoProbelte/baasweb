@@ -585,7 +585,7 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item.save()
             batch = Batch.objects.get(id=item.batch_id)
             return HttpResponseRedirect(
-                batch.product_variant.get_absolute_url())
+                batch.product_variant.product.get_absolute_url())
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)
