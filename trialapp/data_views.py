@@ -208,7 +208,7 @@ class DataHelper:
         # Calculate graph
         pointsInGraphs = len(pointForGraph)
         if pointsInGraphs > 1:
-            graphHelper = GraphTrial(
+            graphHelper = DataGraphFactory(
                 level, assSet,
                 self._assessment.part_rated, pointForGraph)
             graph = graphHelper.draw()
@@ -285,3 +285,117 @@ class DataHelper:
                                           onlyThisData=True)
         activeViews = self.makeActiveView(pR, pT)
         return {**dataR, **dataT, **dataS, **activeViews}
+
+
+class DataGraphFactory():
+    _level = None
+    _graph = None
+    _references = {}
+    _colors = {}
+
+    def __init__(self, level, rateType, ratedPart,
+                 dataPoints, xAxis=GraphTrial.L_DATE,
+                 showTitle=True):
+        self._level = level
+        traces = self.buildData(dataPoints, xAxis)
+        if len(traces) > 0:
+            self._graph = GraphTrial(level, rateType, ratedPart,
+                                     traces, xAxis=xAxis,
+                                     showTitle=showTitle)
+        else:
+            self._graph = 'No data points found'
+
+    def buildData(self, dataPoints, xAxis):
+        # This is for diplay purposes. [[,],[,]...]
+        # It has to follow the order of references
+        # and then trial assessments
+        if dataPoints is None or len(dataPoints) == 0:
+            return None
+        traces = {}
+        for dataPoint in dataPoints:
+            # TODO: there could be data with different units
+            pointRef = self.getPointRefence(dataPoint)
+            traceId = self.traceId(pointRef)
+
+            self.assignColor(traceId)
+            if traceId not in traces:
+                traces[traceId] = self.prepareTrace(pointRef)
+            traces[traceId]['y'].append(dataPoint.value)
+            traces[traceId]['x'].append(
+                self.getX(dataPoint, xAxis, pointRef))
+        return traces
+
+    def traceId(self, pointRefence):
+        if self._level == GraphTrial.L_DOSIS:
+            return pointRefence.name
+        else:
+            return pointRefence.number
+
+    def addTreatmentToReference(self, reference):
+        self._references[reference.id] = reference.name
+
+    def getPointRefence(self, dataPoint):
+        if self._level == GraphTrial.L_DOSIS:
+            return dataPoint.thesis
+        else:
+            reference = None
+            if self._level == GraphTrial.L_THESIS:
+                reference = dataPoint.reference
+            elif self._level == GraphTrial.L_REPLICA:
+                reference = dataPoint.reference.thesis
+            elif self._level == GraphTrial.L_SAMPLE:
+                reference = dataPoint.reference.replica.thesis
+            if reference.id not in self._references:
+                self.addTreatmentToReference(reference)
+            return reference
+
+    def getTraceName(self, pointRefence):
+        return pointRefence.name
+
+    def getTraceColor(self, pointRefence):
+        color = 1
+        if self._level == GraphTrial.L_DOSIS:
+            color = self._colors[pointRefence.name]
+        else:
+            color = pointRefence.number
+        return GraphTrial.COLOR_LIST[color]
+
+    def getTraceSymbol(self, pointRefence):
+        symbol = 2
+        if self._level == GraphTrial.L_DOSIS:
+            symbol = self._colors[pointRefence.name]
+        else:
+            symbol = pointRefence.number
+        return GraphTrial.SYMBOL_LIST[symbol]
+
+    def assignColor(self, traceId):
+        if self._level == GraphTrial.L_DOSIS:
+            if traceId not in self._colors:
+                number = len(list(self._colors.keys()))
+                self._colors[traceId] = number + 1
+
+    def prepareTrace(self, pointRef):
+        return {
+            'name': self.getTraceName(pointRef),
+            'marker_color': self.getTraceColor(pointRef),
+            'marker_symbol': self.getTraceSymbol(pointRef),
+            'x': [],
+            'y': []}
+
+    def getX(self, dataPoint, xAxis, pointRef):
+        if xAxis == GraphTrial.L_THESIS:
+            return pointRef.name
+        if xAxis == GraphTrial.L_DATE:
+            return dataPoint.assessment.assessment_date
+        if xAxis == GraphTrial.L_DAF:
+            return dataPoint.assessment.daf
+        if xAxis == GraphTrial.L_DOSIS:
+            return dataPoint.dosis.rate
+
+    def draw(self):
+        if self._level == GraphTrial.L_DOSIS:
+            return self._graph.line()
+        elif self._level == GraphTrial.L_THESIS:
+            return self._graph.bar()
+        else:
+            return self._graph.violin()

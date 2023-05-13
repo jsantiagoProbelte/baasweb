@@ -1123,7 +1123,7 @@ def importOne():
     # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
     # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
     # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
-    fileName = path + '20180706 BOTRYBEL EFICACIA ITALIA FRUTAL DE HUESO 05.pdf'
+    fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 

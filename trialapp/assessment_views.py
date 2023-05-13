@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
 from baaswebapp.graphs import GraphTrial
-from trialapp.data_views import DataHelper
+from trialapp.data_views import DataHelper, DataGraphFactory
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse
@@ -48,7 +48,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 dataPoints = classDataModel.getAssessmentDataPoints(assIds)
                 if len(dataPoints):
                     foundData += 1
-                    graph = GraphTrial(level, rateSet, ratedPart, dataPoints)
+                    graph = DataGraphFactory(level, rateSet, ratedPart, dataPoints)
                     if len(rowGraphs) == columns:
                         graphs.append(rowGraphs)
                         rowGraphs = []

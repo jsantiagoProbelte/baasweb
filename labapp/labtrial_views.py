@@ -14,6 +14,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.fieldtrial_views import FieldTrialFilter, TrialModel
+from trialapp.data_views import DataGraphFactory
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from rest_framework.views import APIView
@@ -282,7 +283,7 @@ class DataLabHelper:
 
         # Calculate graph
         if len(self._points) > 1:
-            graphHelper = GraphTrial(
+            graphHelper = DataGraphFactory(
                 GraphTrial.L_DOSIS, self._assessment.rate_type,
                 '', self._points,
                 xAxis=GraphTrial.L_DOSIS,)

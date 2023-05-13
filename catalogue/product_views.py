@@ -14,6 +14,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
+from trialapp.data_views import DataGraphFactory
 
 
 class ProductFormLayout(FormHelper):
@@ -165,7 +166,6 @@ class ProductApi(APIView):
             textNotFound = '<div class="alert alert-warning" role="alert">'\
                            'Data not found for ' + notFound + ' dimensions.'\
                            '</div>'
-
             graphs.append(
                 {'name': 'Not Found',
                  'values': [[{'name': 'Not Found', 'graph': textNotFound}]]})
@@ -218,9 +218,9 @@ class ProductApi(APIView):
             product, crop, plague, rateType, ratedPart)
 
         if dataPointsT:
-            graphT = GraphTrial(level, rateType, ratedPart, dataPointsT,
-                                xAxis=GraphTrial.L_DAF,
-                                combineTrialAssessments=False)
+            graphT = DataGraphFactory(
+                level, rateType, ratedPart, dataPointsT,
+                xAxis=GraphTrial.L_DAF)
             return graphT.draw(), fieldTrials
         else:
             return None, None
