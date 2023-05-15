@@ -386,3 +386,7 @@ table.data-table-longer thead th {
   float: right !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
+.form-control-baas-longer {
+  width: 7.5rem !important;
+}

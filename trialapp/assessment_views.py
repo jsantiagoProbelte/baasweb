@@ -14,6 +14,7 @@ from trialapp.data_views import DataHelper, DataGraphFactory
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse
+from rest_framework.response import Response
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
@@ -48,7 +49,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 dataPoints = classDataModel.getAssessmentDataPoints(assIds)
                 if len(dataPoints):
                     foundData += 1
-                    graph = DataGraphFactory(level, rateSet, ratedPart, dataPoints)
+                    graph = DataGraphFactory(level, rateSet, ratedPart,
+                                             dataPoints)
                     if len(rowGraphs) == columns:
                         graphs.append(rowGraphs)
                         rowGraphs = []
@@ -194,7 +196,7 @@ class AssessmentDeleteView(DeleteView):
 class AssessmentApi(APIView):
     authentication_classes = []
     permission_classes = []
-    http_method_names = ['get']
+    http_method_names = ['get', 'post']
 
     def get(self, request, *args, **kwargs):
         template_name = 'trialapp/assessment_show.html'
@@ -202,3 +204,24 @@ class AssessmentApi(APIView):
         dataHelper = DataHelper(assessment_id)
         dataAssessment = dataHelper.showDataAssessment()
         return render(request, template_name, dataAssessment)
+
+    # see generateDataPointId
+    def post(self, request, format=None):
+        # noqa:                      2              1
+        # noqa: E501 data_point_id-[level]-[pointId]
+        theIds = request.POST['data_point_id'].split('-')
+        assId = theIds[-1]
+        ass = Assessment.objects.get(id=assId)
+
+        if 'rate_type' in request.POST:
+            ass.rate_unit_id = int(request.POST['rate_type'])
+        elif 'name' in request.POST:
+            ass.name = request.POST['name']
+        elif 'assessment_date' in request.POST:
+            ass.assessment_date = request.POST['assessment_date']
+        elif 'part_rated' in request.POST:
+            ass.part_rated = request.POST['part_rated']
+        elif 'crop_stage_majority' in request.POST:
+            ass.crop_stage_majority = request.POST['crop_stage_majority']
+        ass.save()
+        return Response({'success': True})

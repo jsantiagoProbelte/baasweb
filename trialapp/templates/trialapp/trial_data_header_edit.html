@@ -1,0 +1,15 @@
+
+<tr><th></th><th class="text-right">{{title}}</th>
+{% for itemHeader in headerRowClass %}
+  <th class="text-right">
+    <form id="form-header-input-{{itemHeader.id}}"
+        class='form-header-input-template'  method="POST">
+        {% csrf_token %}
+        <input type="{{type}}" name="{{itemHeader.name}}"
+            id="assessment-input-{{itemHeader.name}}-{{itemHeader.id}}"
+            class="form-control-baas input assessment-input-form text-right form-control-baas-longer"
+            placeholder='-'
+            value='{{itemHeader.value}}'></input>
+    </form>
+  </th>
+{% endfor %}

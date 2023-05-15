@@ -69,6 +69,10 @@ urlpatterns = [
         'assessment/delete/<int:pk>/',
         assessment_views.AssessmentDeleteView.as_view(),
         name='assessment-delete'),
+    path(
+        'assessment_api',
+        assessment_views.AssessmentApi.as_view(),
+        name='assessment_api'),
     # Data & measurements apis
     path(
         'set_data_point',

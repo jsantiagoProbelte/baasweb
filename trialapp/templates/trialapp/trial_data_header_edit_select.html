@@ -1,0 +1,27 @@
+
+<tr><th></th><th class="text-right">{{title}}</th>
+{% for itemHeader in headerRowClass %}
+  <th class="text-right">
+    <form id="form-header-input-{{itemHeader.id}}"
+        class='form-header-input-template'  method="POST">
+      {% csrf_token %}
+      <select id="assessment-input-{{itemHeader.name}}-{{itemHeader.id}}" name='{{itemHeader.name}}' 
+              class="form-control no-border assessment-input-form">
+        {% if currentValue == "" %}
+            <option value selected>.....</option>
+        {% else %}
+            {% if addNull %}
+                <option value>.....</option>
+            {% endif %}
+        {% endif %}
+        {% for selectOption in selectOptions%}
+            {% if selectOption.value == itemHeader.value %}
+                <option value="{{selectOption.value}}" selected>{{selectOption.name}}</option>
+            {% else %}
+                <option value="{{selectOption.value}}">{{selectOption.name}}</option>
+            {% endif %}
+        {% endfor %}
+      </select>
+    </form>
+  </th>
+{% endfor %}

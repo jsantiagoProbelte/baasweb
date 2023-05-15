@@ -10,14 +10,7 @@
   <div class="table-container-long">
   <table class="data-table-longer">
     <thead>
-      {% for headerRow in header.values %}
-        <tr>
-        {% for itemHeader in headerRow %}
-          <th class="text-right">{{itemHeader}}</th>
-        {% endfor %}
-       </tr>
-      {% endfor %}
-      <tr><th></th><th class="text-right">Name/Interval</th>
+      <tr><th></th><th class="text-right">Assessment</th>
         {% for itemId in header.ids %}
           <th class="text-right">
             <a href="{% url 'assessment_api' itemId.id %}" class="btn btn-secondary">
@@ -25,7 +18,11 @@
           </th>
         {% endfor %}
       </tr>
-
+      {% include "trialapp/trial_data_header_edit_select.html" with headerRowClass=header.rating title='Rating (Unit)' selectOptions=ratings %}
+      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.dates title='Date' type='date' %}
+      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.bbch title='BBCH' type='text' %}
+      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.partRated title='Part Rated' type='text' %}
+      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.names title='Name/Interval' type='text' %}
     </thead>
     <tbody>
     {% for dataRow in dataRows %}
@@ -65,6 +62,17 @@ $('.data-input-template').on('blur', function(){
 $('.data-input-template').on('keypress', function(event) {
     var element = $(this);
     return processEnter(event, element, setDataPointAPI, 'data-input-template');
+});
+
+var assessmentInfoUpdateAPI = '/assessment_api';
+$('.assessment-input-form').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, assessmentInfoUpdateAPI);
+});
+
+$('.assessment-input-form').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
 });
 </script>
 {% endblock %}

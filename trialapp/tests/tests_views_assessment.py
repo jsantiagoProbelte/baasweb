@@ -170,3 +170,60 @@ class AssessmentViewsTest(TestCase):
             request, **{'field_trial_id': self._fieldTrial.id})
         self.assertNotContains(response, 'No assessments yet.')
         self.assertContains(response, 'show active" id="v-pills-thesis"')
+
+    def test_AssessmentApiPostData(self):
+        assessmentData = TrialAppModelTest.ASSESSMENT[0].copy()
+        assessmentData['rate_type'] = RateTypeUnit.objects.get(
+            id=assessmentData['rate_type'])
+        ass = Assessment.objects.create(**assessmentData)
+
+        newName = 'new data'
+        requestPost = self._apiFactory.post(
+            'assessment_api',
+            data={'data_point_id': 'whatever-{}'.format(ass.id),
+                  'name': newName})
+        self._apiFactory.setUser(requestPost)
+        response = AssessmentApi.as_view()(requestPost)
+        ass1 = Assessment.objects.get(id=ass.id)
+        self.assertEqual(ass1.name, newName)
+
+        part_rated = 'new part'
+        requestPost = self._apiFactory.post(
+            'assessment_api',
+            data={'data_point_id': 'whatever-{}'.format(ass.id),
+                  'part_rated': part_rated})
+        self._apiFactory.setUser(requestPost)
+        response = AssessmentApi.as_view()(requestPost)
+        ass1 = Assessment.objects.get(id=ass.id)
+        self.assertEqual(ass1.part_rated, part_rated)
+
+        crop_stage_majority = 'new bbch'
+        requestPost = self._apiFactory.post(
+            'assessment_api',
+            data={'data_point_id': 'whatever-{}'.format(ass.id),
+                  'crop_stage_majority': crop_stage_majority})
+        self._apiFactory.setUser(requestPost)
+        response = AssessmentApi.as_view()(requestPost)
+        ass1 = Assessment.objects.get(id=ass.id)
+        self.assertEqual(ass1.crop_stage_majority, crop_stage_majority)
+
+        # rate_type = 1
+        # requestPost = self._apiFactory.post(
+        #     'assessment_api',
+        #     data={'data_point_id': 'whatever-{}'.format(ass.id),
+        #           'rate_type': rate_type})
+        # self._apiFactory.setUser(requestPost)
+        # response = AssessmentApi.as_view()(requestPost)
+        # ass1 = Assessment.objects.get(id=ass.id)
+        # self.assertEqual(ass1.rate_type.id, rate_type)
+
+        assessment_date = '2022-09-01'
+        requestPost = self._apiFactory.post(
+            'assessment_api',
+            data={'data_point_id': 'whatever-{}'.format(ass.id),
+                  'assessment_date': assessment_date})
+        self._apiFactory.setUser(requestPost)
+        response = AssessmentApi.as_view()(requestPost)
+        ass1 = Assessment.objects.get(id=ass.id)
+        self.assertEqual(ass1.assessment_date.isoformat(),
+                         assessment_date)

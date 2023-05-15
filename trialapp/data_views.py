@@ -1,3 +1,4 @@
+from baaswebapp.models import RateTypeUnit
 from trialapp.models import Thesis, Replica, Sample, FieldTrial, TreatmentThesis
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
@@ -45,30 +46,38 @@ class TrialDataApi(APIView):
     _trial = None
     _assessments = None
 
+    def addValue(self, array, assessment, key, value):
+        array.append({'name': key, 'value': value, 'id': assessment.id})
+
     def prepareHeader(self):
-        headerDates = ['', 'Date']
-        headerRatingType = ['', 'Rating Type']
-        headerRatingUnit = ['', 'Rating Unit']
-        headerRatingPart = ['', 'Part Rated']
-        headerBBCH = ['', 'BBCH']
+        partRatedArr = []
+        bbchArr = []
+        names = []
+        dates = []
+        rating = []
         for ass in self._assessments:
-            headerDates.append(ass.assessment_date.strftime("%d/%m/%y"))
-            headerRatingType.append(ass.rate_type.name)
-            headerRatingUnit.append(ass.rate_type.unit)
+            self.addValue(names, ass, 'name', ass.name)
+            self.addValue(dates, ass, 'assessment_date',
+                          ass.assessment_date.isoformat())
+            self.addValue(rating, ass, 'rate_type', ass.rate_type.id)
+
             partRated = ass.part_rated
             if partRated == 'Undefined' or partRated == 'None':
                 partRated = ''
-            headerRatingPart.append(partRated)
+            self.addValue(partRatedArr, ass, 'part_rated', partRated)
             bbch = ass.crop_stage_majority
             if bbch == 'Undefined' or bbch == 'None':
                 bbch = ''
-            headerBBCH.append(bbch)
+            self.addValue(bbchArr, ass, 'crop_stage_majority', bbch)
 
         return {
             'ids': [{'id': ass.id, 'name': ass.name}
                     for ass in self._assessments],
-            'values': [headerDates, headerRatingType, headerRatingUnit,
-                       headerRatingPart, headerBBCH]}
+            'bbch': bbchArr,
+            'partRated': partRatedArr,
+            'rating': rating,
+            'names': names,
+            'dates': dates}
 
     def preparaRows(self):
         replicas = Replica.getFieldTrialObjects(self._trial)
@@ -107,6 +116,7 @@ class TrialDataApi(APIView):
         self._assessments = Assessment.getObjects(self._trial)
         header = self.prepareHeader()
         showData = {'header': header, 'dataRows': self.preparaRows(),
+                    'ratings': RateTypeUnit.getSelectList(asDict=True),
                     'fieldTrial': self._trial}
         return render(request, template_name, showData)
 
