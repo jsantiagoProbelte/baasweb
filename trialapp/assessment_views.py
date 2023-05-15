@@ -214,7 +214,7 @@ class AssessmentApi(APIView):
         ass = Assessment.objects.get(id=assId)
 
         if 'rate_type' in request.POST:
-            ass.rate_unit_id = int(request.POST['rate_type'])
+            ass.rate_type_id = int(request.POST['rate_type'])
         elif 'name' in request.POST:
             ass.name = request.POST['name']
         elif 'assessment_date' in request.POST:

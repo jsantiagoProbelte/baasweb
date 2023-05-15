@@ -207,15 +207,15 @@ class AssessmentViewsTest(TestCase):
         ass1 = Assessment.objects.get(id=ass.id)
         self.assertEqual(ass1.crop_stage_majority, crop_stage_majority)
 
-        # rate_type = 1
-        # requestPost = self._apiFactory.post(
-        #     'assessment_api',
-        #     data={'data_point_id': 'whatever-{}'.format(ass.id),
-        #           'rate_type': rate_type})
-        # self._apiFactory.setUser(requestPost)
-        # response = AssessmentApi.as_view()(requestPost)
-        # ass1 = Assessment.objects.get(id=ass.id)
-        # self.assertEqual(ass1.rate_type.id, rate_type)
+        rate_type = 1
+        requestPost = self._apiFactory.post(
+            'assessment_api',
+            data={'data_point_id': 'whatever-{}'.format(ass.id),
+                  'rate_type': rate_type})
+        self._apiFactory.setUser(requestPost)
+        AssessmentApi.as_view()(requestPost)
+        ass1 = Assessment.objects.get(id=ass.id)
+        self.assertEqual(ass1.rate_type.id, rate_type)
 
         assessment_date = '2022-09-01'
         requestPost = self._apiFactory.post(
