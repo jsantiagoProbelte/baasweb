@@ -183,7 +183,7 @@ class AssessmentViewsTest(TestCase):
             data={'data_point_id': 'whatever-{}'.format(ass.id),
                   'name': newName})
         self._apiFactory.setUser(requestPost)
-        response = AssessmentApi.as_view()(requestPost)
+        AssessmentApi.as_view()(requestPost)
         ass1 = Assessment.objects.get(id=ass.id)
         self.assertEqual(ass1.name, newName)
 
@@ -193,7 +193,7 @@ class AssessmentViewsTest(TestCase):
             data={'data_point_id': 'whatever-{}'.format(ass.id),
                   'part_rated': part_rated})
         self._apiFactory.setUser(requestPost)
-        response = AssessmentApi.as_view()(requestPost)
+        AssessmentApi.as_view()(requestPost)
         ass1 = Assessment.objects.get(id=ass.id)
         self.assertEqual(ass1.part_rated, part_rated)
 
@@ -203,7 +203,7 @@ class AssessmentViewsTest(TestCase):
             data={'data_point_id': 'whatever-{}'.format(ass.id),
                   'crop_stage_majority': crop_stage_majority})
         self._apiFactory.setUser(requestPost)
-        response = AssessmentApi.as_view()(requestPost)
+        AssessmentApi.as_view()(requestPost)
         ass1 = Assessment.objects.get(id=ass.id)
         self.assertEqual(ass1.crop_stage_majority, crop_stage_majority)
 
@@ -223,7 +223,7 @@ class AssessmentViewsTest(TestCase):
             data={'data_point_id': 'whatever-{}'.format(ass.id),
                   'assessment_date': assessment_date})
         self._apiFactory.setUser(requestPost)
-        response = AssessmentApi.as_view()(requestPost)
+        AssessmentApi.as_view()(requestPost)
         ass1 = Assessment.objects.get(id=ass.id)
         self.assertEqual(ass1.assessment_date.isoformat(),
                          assessment_date)
