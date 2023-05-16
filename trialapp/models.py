@@ -272,6 +272,24 @@ class Thesis(ModelHelpers, models.Model):
     def get_absolute_url(self):
         return "/thesis_api/%i/" % self.id
 
+    @classmethod
+    def getObjectsDisplay(cls, fieldTrial):
+        allThesis = Thesis.getObjects(fieldTrial)
+        thesisDisplay = []
+        for item in allThesis:
+            treatments = ''
+            for treatment in TreatmentThesis.getObjects(item):
+                treatments += treatment.treatment.name
+                treatments += ';'
+            thesisDisplay.append({
+                'name': item.name,
+                'id': item.id,
+                'number': item.number,
+                'description': item.description,
+                'treatments': treatments
+            })
+        return allThesis, thesisDisplay
+
 
 class Application(ModelHelpers, models.Model):
     app_date = models.DateField()

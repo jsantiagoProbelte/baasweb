@@ -271,8 +271,7 @@ class FieldTrialApi(APIView):
         template_name = 'trialapp/labtrial_show.html'
         field_trial_id = kwargs.get('field_trial_id', None)
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        thesisTrial = Thesis.getObjects(fieldTrial)
-        numberThesis = len(thesisTrial)
+        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         assessments = Assessment.getObjects(fieldTrial)
 
         dataTrial = TrialModel.prepareDataItems(fieldTrial)
@@ -282,8 +281,8 @@ class FieldTrialApi(APIView):
                  'link': 'assessment_api', 'id': item.id})
         showData = {
             'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
-            'dataTrial': dataTrial, 'thesisTrial': thesisTrial,
-            'numberThesis': numberThesis}
+            'dataTrial': dataTrial, 'thesisList': thesisDisplay,
+            'numberThesis': len(allThesis)}
 
         if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
             template_name = 'trialapp/fieldtrial_show.html'
@@ -294,7 +293,7 @@ class FieldTrialApi(APIView):
                 fieldTrial)
             showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
                                                               None,
-                                                              thesisTrial)
+                                                              allThesis)
 
         return render(request, template_name, showData)
 

@@ -26,14 +26,14 @@ class ThesisListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        new_list = Thesis.getObjects(fieldTrial)
+        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         headerRows = LayoutTrial.headerLayout(fieldTrial)
-        return {'object_list': new_list,
+        return {'thesisList': thesisDisplay,
                 'fieldTrial': fieldTrial,
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
-                                                       new_list)}
+                                                       allThesis)}
 
 
 class ThesisFormLayout(FormHelper):

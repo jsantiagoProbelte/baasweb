@@ -33,16 +33,7 @@
       </div>
       
       <div class="card-body-baas">
-          <table >
-            {% for thesis in thesisTrial %}
-              <tr><td>
-                <a href="{% url 'thesis_api' thesis.id %}" class="btn btn-sm bg-custom-{{thesis.number}}">T{{thesis.number}}</a>
-                <span class="ml-4">{{thesis.name}}</span>
-              </td></tr>
-            {% empty %}
-              <p>No Thesis yet.</p>
-            {% endfor %}
-          </table>
+        {% include 'trialapp/thesis_list_table.html' with show_description=False %}
       </div>
     </div>
     {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn3'%}

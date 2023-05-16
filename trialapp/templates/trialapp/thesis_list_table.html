@@ -1,0 +1,27 @@
+<table class="table">
+    {% if show_description %}
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Name</th>
+            <th>Treatments</th>
+            <th>description</th>
+        </tr>
+    </thead>
+    {% endif %}
+    <tbody>
+{% for item in thesisList %}
+    <tr id="item-{{item.id}}">
+        <td><a href="{% url 'thesis_api' item.id %}" class="btn bg-custom-{{item.number}}">T{{item.number}}</a></td>
+        <td><strong>{{item.name}}</strong></td>
+        <td>{{item.treatments}}</td>
+        {% if show_description %}
+            <td>{{item.description}}</td>
+        {% endif %}
+    </tr>
+{% empty %}
+    <p>No Thesis yet.</p>
+{% endfor %}
+    </tbody> 
+</table>
+ 
