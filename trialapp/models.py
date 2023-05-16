@@ -279,8 +279,8 @@ class Thesis(ModelHelpers, models.Model):
         for item in allThesis:
             treatments = ''
             for treatment in TreatmentThesis.getObjects(item):
-                treatments += treatment.treatment.name
-                treatments += ';'
+                treatments += treatment.treatment.getName()
+                treatments += '\n'
             thesisDisplay.append({
                 'name': item.name,
                 'id': item.id,

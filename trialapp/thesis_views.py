@@ -208,8 +208,6 @@ class ThesisApi(APIView):
         layout = LayoutTrial.showLayout(
             self._thesis.field_trial, None,
             Thesis.getObjects(trial), onlyThis=thesis_id)
-        addTreatmentView = TreatmentThesisCreateView(request=request)
-        addTreatmentForm = addTreatmentView.get_form()
         treatments = [{'name': tt.getName(), 'id': tt.id}
                       for tt in TreatmentThesis.getObjects(self._thesis)]
 
@@ -220,15 +218,14 @@ class ThesisApi(APIView):
                 'title': self._thesis.getTitle(),
                 'thesisVolume': self.getThesisVolume(),
                 'treatments': treatments,
-                'addTreatmentForm': addTreatmentForm,
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': layout})
 
 
 class TreatmentThesisFormLayout(FormHelper):
-    def __init__(self):
+    def __init__(self, thesisName):
         super().__init__()
-        title = 'Add treatment to thesis'
+        title = 'Add treatment to thesis [{}]'.format(thesisName)
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(Field('treatment', css_class='mb-3'),
@@ -261,7 +258,8 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=TreatmentThesisForm):
         form = super().get_form(form_class)
-        form.helper = TreatmentThesisFormLayout()
+        thesisName = Thesis.objects.get(id=self.kwargs['thesis_id'])
+        form.helper = TreatmentThesisFormLayout(thesisName)
         return form
 
     def form_valid(self, form):
