@@ -26,7 +26,10 @@
     </thead>
     <tbody>
     {% for dataRow in dataRows %}
-        <tr><td class="bg-custom-{{dataRow.color}}">{{dataRow.thesis}}</td>
+        <tr>
+            {% if dataRow.rowspan > 0 %}
+              <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
+            {% endif %}
             <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
         {% for dataPointValue in dataRow.values %}
           <td class="bg-custom-{{dataRow.color}}">

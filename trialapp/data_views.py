@@ -84,12 +84,15 @@ class TrialDataApi(APIView):
         lastThesisId = None
         rows = []
         thesisName = ''
+        rowspan = self._trial.replicas_per_thesis
         for replica in replicas:
             if replica.thesis_id != lastThesisId:
                 thesisName = replica.thesis.name
                 lastThesisId = replica.thesis_id
+                thisRowspan = rowspan
             else:
                 thesisName = ''
+                thisRowspan = 0
 
             values = []
             plotPoints = ReplicaData.objects.filter(reference=replica)
@@ -104,6 +107,7 @@ class TrialDataApi(APIView):
                          GraphTrial.L_REPLICA, ass, replica)})
             rows.append(
                 {'thesis': thesisName,
+                 'rowspan': thisRowspan,
                  'replica': replica.name,
                  'color': replica.thesis.number,
                  'values': values})
