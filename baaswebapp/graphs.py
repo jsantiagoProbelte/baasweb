@@ -54,30 +54,173 @@ ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
 
 
 class WeatherGraph:
-    def __init__(self, dates, temps, precip):
+    def __init__(self, dates, non_recent_dates, mean_temps, min_temps,
+                 max_temps, precip, precip_hrs,
+                 soil_moist_1, soil_moist_2, soil_moist_3, soil_moist_4,
+                 soil_temps_1, soil_temps_2, soil_temps_3, soil_temps_4,
+                 rel_humid, dew_point
+                 ):
         self.dates = dates
-        self.temps = temps
+        self.non_recent_dates = non_recent_dates
+        self.mean_temps = mean_temps
+        self.min_temps = min_temps
+        self.max_temps = max_temps
         self.precip = precip
+        self.precip_hrs = precip_hrs
+        self.soil_moist_1 = soil_moist_1
+        self.soil_moist_2 = soil_moist_2
+        self.soil_moist_3 = soil_moist_3
+        self.soil_moist_4 = soil_moist_4
+        self.soil_temps_1 = soil_temps_1
+        self.soil_temps_2 = soil_temps_2
+        self.soil_temps_3 = soil_temps_3
+        self.soil_temps_4 = soil_temps_4
+        self.rel_humid = rel_humid
+        self.dew_point = dew_point
         return
 
-    def draw(self):
+    def draw_precip(self):
+        if not self.dates:
+            return False
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-        fig.add_trace(go.Scatter(x=self.dates, y=self.temps, name='Mean Temperature (°C)',
-                      line=dict(color='firebrick', width=4)))
+        fig.add_trace(go.Scatter(x=self.dates, y=self.precip_hrs, name='Precipitation Hours',
+                      line=dict(color='lightblue', width=2)))
         fig.add_bar(x=self.dates, y=self.precip,
                     name='Precipitation (mm)', marker=dict(color='royalblue', opacity=0.3), secondary_y=True)
-        fig.update_layout(dict(bargap=0.4))
+
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color="white",
             plot_bgcolor=COLOR_bg_color_cards,
             font_color='white',
-            showlegend=False
+            showlegend=False,
+            autosize=True
         )
         fig.update_xaxes(title_text="Date")
-        fig.update_yaxes(title_text="Mean Temperature (°C)", secondary_y=False)
+        fig.update_yaxes(title_text="Precipitation Hours", secondary_y=False)
         fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=True)
 
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
+
+    def draw_temp(self):
+        if not self.dates:
+            return False
+        fig = make_subplots()
+
+        fig.add_trace(go.Scatter(x=self.dates, y=self.min_temps, name='Min Temp',
+                      line=dict(color='lightblue', width=2)))
+        fig.add_trace(go.Scatter(x=self.dates, y=self.mean_temps, name='Mean Temp',
+                      line=dict(color='yellow', width=3)))
+        fig.add_trace(go.Scatter(x=self.dates, y=self.max_temps, name='Max Temp',
+                      line=dict(color='firebrick', width=2)))
+
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            showlegend=False,
+            autosize=True
+        )
+
+        fig.update_xaxes(title_text="Date")
+        fig.update_yaxes(title_text="Temperatures (°C)")
+
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
+
+    def draw_soil_temp(self):
+        if not self.non_recent_dates:
+            return False
+        fig = make_subplots()
+
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_1, name='0-7cm',
+                      line=dict(color='#e3f2e2', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_2, name='7-28cm',
+                      line=dict(color='#b3d0b1', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_3, name='28-100cm',
+                      line=dict(color='#84ae82', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_4, name='100-255cm',
+                                 line=dict(color='#558d55', width=2)))
+
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            autosize=True
+        )
+
+        fig.update_xaxes(title_text="Date")
+        fig.update_yaxes(title_text="Soil Temperatures (°C)")
+
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
+
+    def draw_soil_moist(self):
+        if not self.non_recent_dates:
+            return False
+        fig = make_subplots()
+
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_1, name='0-7cm',
+                      line=dict(color='#e3f2e2', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_2, name='7-28cm',
+                      line=dict(color='#b3d0b1', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_3, name='28-100cm',
+                      line=dict(color='#84ae82', width=2)))
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_4, name='100-255cm',
+                                 line=dict(color='#558d55', width=2)))
+
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            autosize=True
+        )
+
+        fig.update_xaxes(title_text="Date")
+        fig.update_yaxes(title_text="Soil Moisture (m³/m³)")
+
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
+
+    def draw_humid(self):
+        if not self.non_recent_dates:
+            return False
+        fig = make_subplots()
+
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.rel_humid, name='Relative Humidity',
+                      line=dict(color=COLOR_bs_purple, width=2)))
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            autosize=True
+        )
+        fig.update_yaxes(title_text="Relative Humidity (%)")
+        fig.update_xaxes(title_text="Date")
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
+        return plotly_plot_obj
+
+    def draw_dew(self):
+        if not self.non_recent_dates:
+            return False
+        fig = make_subplots()
+
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.dew_point, name='Dew Point',
+                      line=dict(color=COLOR_bs_blue, width=2)))
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            autosize=True
+        )
+        fig.update_yaxes(title_text="Dew Point (°C)")
+        fig.update_xaxes(title_text="Date")
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 

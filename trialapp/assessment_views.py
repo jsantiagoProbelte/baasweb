@@ -71,11 +71,30 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         return weather_data
 
     def graphWeatherData(self, weather_data):
-        temps = [o.mean_temp for o in weather_data]
         dates = [o.date for o in weather_data]
+        non_recent_dates = [o.date for o in weather_data if not o.recent]
+        min_temps = [o.min_temp for o in weather_data]
+        max_temps = [o.max_temp for o in weather_data]
+        mean_temps = [o.mean_temp for o in weather_data]
         precip = [o.precipitation for o in weather_data]
-        graph = WeatherGraph(dates, temps, precip).draw()
-        return graph
+        precip_hrs = [o.precipitation_hours for o in weather_data]
+        soil_temps_1 = [o.soil_temp_0_to_7cm for o in weather_data]
+        soil_temps_2 = [o.soil_temp_7_to_28cm for o in weather_data]
+        soil_temps_3 = [o.soil_temp_28_to_100cm for o in weather_data]
+        soil_temps_4 = [o.soil_temp_100_to_255cm for o in weather_data]
+        soil_moist_1 = [o.soil_moist_0_to_7cm for o in weather_data]
+        soil_moist_2 = [o.soil_moist_7_to_28cm for o in weather_data]
+        soil_moist_3 = [o.soil_moist_28_to_100cm for o in weather_data]
+        soil_moist_4 = [o.soil_moist_100_to_255cm for o in weather_data]
+        dew_point = [o.dew_point for o in weather_data]
+        rel_humid = [o.relative_humidity for o in weather_data]
+
+        graph = WeatherGraph(dates, non_recent_dates, mean_temps, min_temps,
+                             max_temps, precip, precip_hrs, soil_moist_1,
+                             soil_moist_2, soil_moist_3, soil_moist_4,
+                             soil_temps_1, soil_temps_2, soil_temps_3,
+                             soil_temps_4, rel_humid, dew_point)
+        return graph.draw_temp(), graph.draw_precip(), graph.draw_soil_temp(), graph.draw_soil_moist(), graph.draw_humid(), graph.draw_dew()
 
     def get_context_data(self, **kwargs):
         field_trial_id = None
@@ -108,7 +127,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         graphPlotsS, classGraphS = self.getGraphData(
             GraphTrial.L_SAMPLE, rateSets, ratedParts)
         weatherData = self.getWeatherData()
-        weatherGraph = self.graphWeatherData(weatherData)
+        tGraph, pGraph, sGraph, mGraph, hGraph, dGraph = self.graphWeatherData(
+            weatherData)
         return {'object_list': new_list,
                 'fieldTrial': self._trial,
                 'show_active_thesis': show_active_thesis,
@@ -118,7 +138,9 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
                 'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS,
-                'weatherGraph': weatherGraph}
+                'tempGraph': tGraph, 'precipGraph': pGraph,
+                'soilTempGraph': sGraph, 'soilMoistGraph': mGraph,
+                'humidGraph': hGraph, 'dewPointGraph': dGraph}
 
 
 class AssessmentFormLayout(FormHelper):
