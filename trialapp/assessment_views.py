@@ -152,7 +152,7 @@ class AssessmentCreateView(LoginRequiredMixin, CreateView):
             assessment = form.instance
             assessment.save()
             Assessment.computeDDT(assessment.field_trial)
-            return HttpResponseRedirect(assessment.get_success_url())
+            return HttpResponseRedirect(assessment.get_absolute_url())
 
 
 class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
@@ -170,7 +170,7 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
             assessment = form.instance
             assessment.save()
             Assessment.computeDDT(assessment.field_trial)
-            return HttpResponseRedirect(assessment.get_success_url())
+            return HttpResponseRedirect(assessment.get_absolute_url())
 
 
 class AssessmentDeleteView(DeleteView):
