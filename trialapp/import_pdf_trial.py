@@ -1118,12 +1118,13 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
+           '/estudios/imported/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
 
     # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
     # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
     # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
-    fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
+    # fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
+    fileName = path + '20171102 BOTRYBEL EFICACIA CPCP PEPINO PORTUGAL 09.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 

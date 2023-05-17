@@ -282,6 +282,7 @@ class FieldTrialApi(APIView):
         showData = {
             'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
+            'numberAssessments': len(assessments),
             'numberThesis': len(allThesis)}
 
         if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
@@ -321,7 +322,7 @@ class FieldTrialFormLayout(FormHelper):
                     css_class='col-md-7'),
                 Div(FormActions(
                         Submit('submit', submitTxt, css_class="btn btn-info")),
-                    css_class='col-md-2 text-sm-end'),
+                    css_class='col-md-1 text-sm-end'),
                 css_class='mt-3 mb-3'),
             Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
                     Div(Div(Field('project', css_class='mb-2'),
@@ -332,7 +333,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('description', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
-                    css_class='col-md-2'),
+                    css_class='col-md-3'),
                 Div(Div(HTML('Status'), css_class="card-header-baas h4"),
                     Div(Div(Field('trial_type', css_class='mb-2'),
                             Field('trial_status', css_class='mb-2'),
@@ -348,7 +349,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('comments_criteria', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
-                    css_class='col-md-2'),
+                    css_class='col-md-3'),
                 Div(Div(HTML('Location'), css_class="card-header-baas h4"),
                     Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),

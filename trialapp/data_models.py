@@ -23,9 +23,13 @@ class Assessment(ModelHelpers, models.Model):
             self.crop_stage_majority)
 
     def getContext(self):
-        return "{}-BBCH {}".format(
-            self.crop_stage_majority,
-            self.rate_type.getName())
+        if self.crop_stage_majority is None or\
+           self.crop_stage_majority == ModelHelpers.UNDEFINED:
+            return self.rate_type.getName()
+        else:
+            return "{}-BBCH {}".format(
+                self.crop_stage_majority,
+                self.rate_type.getName())
 
     def get_absolute_url(self):
         return "/assessment_api/%i/" % self.id

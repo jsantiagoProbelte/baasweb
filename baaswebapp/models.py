@@ -4,6 +4,7 @@ from django.db import models
 class ModelHelpers:
     NULL_STRING = '------'
     UNKNOWN = ' Unknown'
+    UNDEFINED = 'Undefined'
 
     @classmethod
     def getUnknown(cls):
