@@ -13,10 +13,20 @@ class Assessment(ModelHelpers, models.Model):
     daf = models.IntegerField(null=True)
 
     @classmethod
-    def getObjects(cls, field_trial):
-        return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('assessment_date', 'rate_type', 'part_rated')
+    def getObjects(cls, field_trial, date_order=True):
+        if date_order:
+            first_order = 'assessment_date'
+            second_order = 'rate_type__name'
+            third_order = 'rate_type__unit'
+            forth_order = 'part_rated'
+        else:
+            forth_order = 'assessment_date'
+            first_order = 'rate_type__name'
+            second_order = 'rate_type__unit'
+            third_order = 'part_rated'
+        return cls.objects.filter(
+            field_trial=field_trial).order_by(
+            first_order, second_order, third_order, forth_order)
 
     def getName(self):
         return "{}-BBCH".format(

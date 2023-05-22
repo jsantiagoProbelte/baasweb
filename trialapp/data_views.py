@@ -118,7 +118,8 @@ class TrialDataApi(APIView):
         template_name = 'trialapp/trial_data.html'
         trial_id = kwargs.get('pk', None)
         self._trial = get_object_or_404(FieldTrial, pk=trial_id)
-        self._assessments = Assessment.getObjects(self._trial)
+        self._assessments = Assessment.getObjects(
+            self._trial, date_order=False)
         header = self.prepareHeader()
         showData = {'header': header, 'dataRows': self.preparaRows(),
                     'ratings': RateTypeUnit.getSelectList(asDict=True),
