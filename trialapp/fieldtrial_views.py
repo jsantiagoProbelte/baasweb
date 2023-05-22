@@ -263,6 +263,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'project': item.project.name,
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
+                'latitude': item.latitude,
+                'longitude': item.longitude,
                 'id': item.id,
                 'assessments': assessments,
                 'thesis': thesis})

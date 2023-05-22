@@ -111,6 +111,35 @@ if (show_maker.length>0) {
     .addTo(map);
 }
 
+function extraCoord(coords, pattern){
+    var match = coords.match(pattern);
+    // Extract the value from the matched pattern
+    return match ? match[1] : null;
+}
+
+var poiCoordinates = [];
+$('.show_poi').each(function(){
+    coordText = $(this).text();
+
+    var latitude = extraCoord(coordText, /lat=([0-9.\-]+)/);
+    var longitude = extraCoord(coordText, /long=([0-9.\-]+)/);
+
+    var coord = [longitude, latitude]
+    const marker1 = new mapboxgl.Marker()
+    .setLngLat(coord)
+    .addTo(map);
+    poiCoordinates.push(coord)
+});
+
+if (poiCoordinates.length > 0) {
+    var bounds = poiCoordinates.reduce(function (bounds, coord) {
+        return bounds.extend(coord);
+    }, new mapboxgl.LngLatBounds(poiCoordinates[0], poiCoordinates[0]));
+    
+    map.fitBounds(bounds, { padding: 50 });
+}
+
+
 map.on('click', (e) => {
     // Copy coordinates array.
     const coordinates = e.lngLat;
