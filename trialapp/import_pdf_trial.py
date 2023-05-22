@@ -304,7 +304,7 @@ class AssmtTable:
     def getValidDate(self, dateStr):
         # check if this is date
         try:
-            if len(dateStr) < 8:
+            if not isinstance(dateStr, str) or len(dateStr) < 6:
                 return None
             return None if dateStr is None else parse(dateStr, fuzzy=False)
         except ValueError:
@@ -347,8 +347,11 @@ class AssmtTable:
         return self.correctDatePosition(columnName)
 
     def getCropStage(self, columnName):
-        return self.getTagPositionValue(
+        bbch = self.getTagPositionValue(
             columnName, TrialTags.TAG_STAGES, 'Undefined')
+        if bbch is None:
+            bbch = 'Undefined'
+        return bbch
 
     def getPartRated(self, columnName):
         return self.getTagPositionValue(
@@ -1118,13 +1121,14 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/imported/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
+           '/estudios/todo/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
 
     # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
     # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
     # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
     # fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
-    fileName = path + '20171102 BOTRYBEL EFICACIA CPCP PEPINO PORTUGAL 09.pdf'
+    fileName = path + '20220233 PB050, PB051, PB012, PB012B lettuce Sclerotinia sclerotiorum.pdf'
+    fileName = path + '20220692 PB012, PBO12B, PB051 Final Report - CUCUMBER FUSARIUM.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 
