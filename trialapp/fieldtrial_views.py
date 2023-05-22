@@ -2,7 +2,7 @@
 import django_filters
 
 from django_filters.views import FilterView
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
@@ -227,6 +227,34 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 return self.request.GET[label]
         return None
 
+    def getList(self, filter):
+        objectList = FieldTrial.objects.annotate(
+            assessments=Count('assessment')).filter(
+            filter).order_by('-code', 'name')
+
+        thesisCounts = FieldTrial.objects.annotate(
+            thesiss=Count('thesis')).filter(
+            filter)
+        thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
+
+        new_list = []
+        for item in objectList:
+            new_list.append({
+                'code': item.code,
+                'name': item.name,
+                'crop': item.crop.name,
+                'product': item.product.name,
+                'trial_status': item.trial_status if item.trial_status else '',
+                'project': item.project.name,
+                'objective': item.objective.name,
+                'plague': item.plague.name if item.plague else '',
+                'latitude': item.latitude,
+                'longitude': item.longitude,
+                'id': item.id,
+                'assessments': item.assessments,
+                'thesis': thesisCountDict.get(item.id, 0)})
+        return new_list
+
     def get_context_data(self, **kwargs):
         # filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
@@ -247,29 +275,11 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         new_list = []
         orderBy = paramsReplyTemplate.copy()
         orderBy.append('name')
-        objectList = FieldTrial.objects.filter(
-            # **filter_kwargs
-            q_objects).order_by('-code', 'name')
         filter = FieldTrialFilter(self.request.GET)
-        for item in objectList:
-            assessments = Assessment.objects.filter(field_trial=item).count()
-            thesis = Thesis.objects.filter(field_trial=item).count()
-            new_list.append({
-                'code': item.code,
-                'name': item.name,
-                'crop': item.crop.name,
-                'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'project': item.project.name,
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'id': item.id,
-                'assessments': assessments,
-                'thesis': thesis})
+        new_list = self.getList(q_objects)
+
         return {'object_list': new_list,
-                'titleList': '({}) Field trials'.format(len(objectList)),
+                'titleList': '({}) Field trials'.format(len(new_list)),
                 'add_url': 'fieldtrial-add',
                 'filter': filter}
 
