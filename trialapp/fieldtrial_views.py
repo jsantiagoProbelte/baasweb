@@ -2,6 +2,7 @@
 import django_filters
 
 from django_filters.views import FilterView
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
@@ -227,19 +228,28 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return None
 
     def get_context_data(self, **kwargs):
-        filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
+        # filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
+        q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
             if paramIdName == 'name' and paramId:
-                filter_kwargs['name__icontains'] = paramId
+                q_name = Q()
+                q_name |= Q(name__icontains=paramId)
+                q_name |= Q(responsible__icontains=paramId)
+                q_name |= Q(code__icontains=paramId)
+                # filter_kwargs['name__icontains'] = paramId
+                # filter_kwargs['responsible__icontains'] = paramId
+                q_objects &= q_name
             elif paramId:
-                filter_kwargs['{}__id'.format(paramIdName)] = paramId
+                # filter_kwargs['{}__id'.format(paramIdName)] = paramId
+                q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
         new_list = []
         orderBy = paramsReplyTemplate.copy()
         orderBy.append('name')
         objectList = FieldTrial.objects.filter(
-            **filter_kwargs).order_by('-code', 'name')
+            # **filter_kwargs
+            q_objects).order_by('-code', 'name')
         filter = FieldTrialFilter(self.request.GET)
         for item in objectList:
             assessments = Assessment.objects.filter(field_trial=item).count()
