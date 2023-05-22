@@ -68,7 +68,7 @@
     <tbody>
     {% for item in object_list %}
     {% if item.latitude %}
-        <div class="show_poi" hidden>lat={{item.latitude}},long={{item.longitude}}</div>
+        <div class="show_poi" hidden>lat={{item.latitude}},long={{item.longitude}},label={{item.code}}</div>
     {% endif %}
     <tr id="item-{{item.id}}">
         <td><span class="badge">{{ item.trial_status }}</span></td>

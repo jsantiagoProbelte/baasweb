@@ -123,12 +123,23 @@ $('.show_poi').each(function(){
 
     var latitude = extraCoord(coordText, /lat=([0-9.\-]+)/);
     var longitude = extraCoord(coordText, /long=([0-9.\-]+)/);
+    var label = extraCoord(coordText, /label=([0-9]+)/);
 
     var coord = [longitude, latitude]
-    const marker1 = new mapboxgl.Marker()
+    const poiMarker = new mapboxgl.Marker()
     .setLngLat(coord)
+    .setPopup(new mapboxgl.Popup({ offset: 25 }) // Add a popup for the label
+    .setHTML(label))
     .addTo(map);
     poiCoordinates.push(coord)
+
+    // Show/hide label on hover
+    poiMarker.getElement().addEventListener('mouseenter', function () {
+        poiMarker.getPopup().addTo(map);
+    });
+    poiMarker.getElement().addEventListener('mouseleave', function () {
+        poiMarker.getPopup().remove();
+    });
 });
 
 if (poiCoordinates.length > 0) {
