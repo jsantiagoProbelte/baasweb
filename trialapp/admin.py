@@ -4,7 +4,7 @@ from trialapp.models import FieldTrial, Crop, TrialType, Project, Objective,\
     Plague, TrialStatus, Irrigation, CropVariety, ApplicationMode,\
     CultivationMethod, TreatmentThesis
 from trialapp.data_models import Assessment
-from catalogue.models import Weather
+from baaswebapp.models import Weather
 
 
 class FieldTrialAdmin(admin.ModelAdmin):

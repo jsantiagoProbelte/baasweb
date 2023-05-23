@@ -231,11 +231,11 @@ class ProductApi(APIView):
             variantItem = {'name': variant.name, 'id': variant.id,
                            'batches': []}
             for batch in Batch.objects.filter(
-                         product_variant=variant).order_by('name'):
+                    product_variant=variant).order_by('name'):
                 batchItem = {'name': batch.name,
                              'id': batch.id, 'treatments': []}
                 for treatment in Treatment.objects.filter(
-                                 batch=batch).order_by('name'):
+                        batch=batch).order_by('name'):
                     batchItem['treatments'].append(
                         {'name': treatment.getName(), 'id': treatment.id})
                 variantItem['batches'].append(batchItem)
@@ -337,7 +337,7 @@ class BatchFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")
-            ))
+        ))
 
 
 class BatchForm(forms.ModelForm):
@@ -430,7 +430,7 @@ class ProductVariantFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")
-            ))
+        ))
 
 
 class ProductVariantForm(forms.ModelForm):
@@ -548,7 +548,7 @@ class TreatmentFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")
-            ))
+        ))
 
 
 class TreatmentForm(forms.ModelForm):

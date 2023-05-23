@@ -2,11 +2,10 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial
 from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
     Assessment
-from catalogue.models import Weather
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 
@@ -94,7 +93,9 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                              soil_moist_2, soil_moist_3, soil_moist_4,
                              soil_temps_1, soil_temps_2, soil_temps_3,
                              soil_temps_4, rel_humid, dew_point)
-        return graph.draw_temp(), graph.draw_precip(), graph.draw_soil_temp(), graph.draw_soil_moist(), graph.draw_humid(), graph.draw_dew()
+        return (graph.draw_temp(), graph.draw_precip(),
+                graph.draw_soil_temp(), graph.draw_soil_moist(),
+                graph.draw_humid(), graph.draw_dew())
 
     def get_context_data(self, **kwargs):
         field_trial_id = None
