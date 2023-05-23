@@ -21,6 +21,7 @@ def home(request):
             'year': datetime.now().year,
             'Products': stats['products'],
             'FieldTrials': stats['field_trials'],
+            'LabTrials': stats['lab_trials'],
             'DataPoints': stats['points']
         }
     )

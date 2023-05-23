@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/baaswebapp.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/mapbox-gl-geocoder.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'mapbox-gl.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/mapbox-gl.css' %}" />
 
 </head>
 
@@ -32,6 +32,10 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarColor02">
+        <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
+          <input class="form-control me-sm-2" type="text" placeholder="name, code, responsible" name="name">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
         <ul class="navbar-nav ms-auto">
           <!-- <form class="d-flex">
             <input class="form-control me-sm-2" type="text" placeholder="Search">
@@ -50,6 +54,7 @@
 
             <ul class="dropdown-menu" aria-labelledby="navbarActionsDropdownMenu">
               <li><a class="dropdown-item" href="{% url 'fieldtrial-list' %}">Field Trials</a></li>
+              <li><a class="dropdown-item" href="{% url 'labtrial-list' %}">Lab Trials</a></li>
               <li><a class="dropdown-item" href="{% url 'product-list' %}">Product</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'statsdata' %}">Stats</a></li>
@@ -88,8 +93,7 @@
   <script src="{% static 'baaswebapp/scripts/bootstrap.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/respond.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/chart.min.js' %}"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+
   {% block scripts %}{% endblock %}
 <br/>
 <br/>

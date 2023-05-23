@@ -1,15 +1,30 @@
 <div class="card no-border mb-3" >
     <div class="card-header-baas h4">
+      {% if note %}
+      <span class='badge bg-light ms-2'>{{note}}</span>
+      {% endif %}
       {% if link %}
         <a class="btn btn-secondary btn-sm fs-5" href="{% url link fieldTrial.id%}">{{title}}</a>
       {% else %}
         {{title}}
       {% endif %}
+      {% if title2 %}
+        <span> & </span>
+        {% if link2 %}
+          <a class="btn btn-secondary btn-sm fs-5" href="{% url link2 fieldTrial.id%}">{{title2}}</a>
+        {% endif %}
+      {% else %}
+        {{title2}}
+      {% endif %}
     </div>
     <div class="{{classColumn}}">
       {% for data in dataItems %}
         <div class="card">
-        {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value %}
+          {% if data.link %}
+            {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value itemLink=data.link itemId=data.id%}
+          {% else %}
+            {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value %}
+          {%endif%}
         </div>
       {% endfor %}
       </div>

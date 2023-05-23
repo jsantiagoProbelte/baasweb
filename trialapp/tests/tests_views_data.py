@@ -6,7 +6,8 @@ from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
     SampleData, Assessment
 from baaswebapp.graphs import GraphTrial
-from trialapp.data_views import DataHelper, SetDataAssessment
+from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi,\
+    DataGraphFactory
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -119,17 +120,22 @@ class DataViewsTest(TestCase):
         self.assertEqual(tPoints[1].value, 99)
 
         dataPoints = ThesisData.getDataPoints(self._assessment)
-        graph = GraphTrial(GraphTrial.L_THESIS, self._units[0],
-                           'part', dataPoints)
-        graphToDisplay = graph.bar()
+        factory = DataGraphFactory(GraphTrial.L_THESIS, self._units[0],
+                                   'part', dataPoints)
+        graphToDisplay = factory._graph.bar()
         self.assertTrue(graphToDisplay is not None)
-        graphToDisplay = graph.scatter()
+        graphToDisplay = factory._graph.scatter()
         self.assertTrue(graphToDisplay is not None)
 
         # Let's query via the DataHelper
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
             GraphTrial.L_THESIS, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
+
+    def validateGraph(self, level, unit, thesis, point):
+        factory = DataGraphFactory(level, unit, 'part', [point])
+        ref = factory.getPointRefence(point)
+        self.assertEqual(factory.traceId(ref), thesis.number)
 
     def test_graph_logic(self):
         thesis = self._theses[0]
@@ -154,43 +160,9 @@ class DataViewsTest(TestCase):
             reference=sample,
             value=66)
 
-        graphT = GraphTrial(GraphTrial.L_THESIS, unit, 'part', [dPT])
-        graphR = GraphTrial(GraphTrial.L_REPLICA, unit, 'part', [dPR])
-        graphS = GraphTrial(GraphTrial.L_SAMPLE, unit, 'part', [dPS])
-        traceId = unit.id
-        code = thesis.field_trial.code
-        self.assertEqual(graphT.traceId(dPT),
-                         "{}".format(thesis.number))
-        self.assertEqual(graphR.traceId(dPR),
-                         "{}".format(thesis.number))
-        self.assertEqual(graphS.traceId(dPS),
-                         "{}".format(replica.number))
-
-        self.assertEqual(graphT.getTraceName(dPT, code), thesis.name)
-        self.assertEqual(graphR.getTraceName(dPR, code), thesis.name)
-        self.assertEqual(graphS.getTraceName(dPS, code), thesis.name)
-
-        graphT._combineTrialAssessments = True
-        self.assertEqual(graphT.traceId(dPT),
-                         "{}-{}".format(thesis.number, traceId))
-        self.assertEqual(graphT.getTraceName(dPT, code),
-                         "{}-{}".format(thesis.name, code))
-
-        color = GraphTrial.COLOR_LIST[thesis.number]
-        self.assertEqual(graphT.getTraceColor(dPT), color)
-        self.assertEqual(graphR.getTraceColor(dPR), color)
-        self.assertEqual(graphS.getTraceColor(dPS), color)
-
-        symbolT = GraphTrial.SYMBOL_LIST[2]
-        symbolR = GraphTrial.SYMBOL_LIST[replica.number]
-        self.assertEqual(graphT.getTraceSymbol(dPT), symbolT)
-        self.assertEqual(graphR.getTraceSymbol(dPR), symbolR)
-        self.assertEqual(graphS.getTraceSymbol(dPS), symbolR)
-
-        graphSOne = GraphTrial(GraphTrial.L_SAMPLE, self._units[0], 'part',
-                               [dPS], combineTrialAssessments=True)
-        self.assertEqual(graphSOne.traceId(dPS),
-                         "{}-{}".format(replica.number, self._units[0].id))
+        self.validateGraph(GraphTrial.L_THESIS, unit, thesis, dPT)
+        self.validateGraph(GraphTrial.L_REPLICA, unit, thesis, dPR)
+        self.validateGraph(GraphTrial.L_SAMPLE, unit, thesis, dPS)
 
     def test_setReplicaData(self):
         dataHelper = DataHelper(self._assessment.id)
@@ -268,6 +240,15 @@ class DataViewsTest(TestCase):
         dataPointList, totalPoints = dataHelper.showDataPerLevel(
             GraphTrial.L_REPLICA, onlyThisData=True)
         self.assertEqual(totalPoints, 2)
+
+        # View trial_data
+        request = self._apiFactory.get('trial_data')
+        self._apiFactory.setUser(request)
+        apiView = TrialDataApi()
+        response = apiView.get(request,
+                               pk=self._fieldTrial.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self._fieldTrial.name)
 
     def test_setSampleData(self):
         dataHelper = DataHelper(self._assessment.id)

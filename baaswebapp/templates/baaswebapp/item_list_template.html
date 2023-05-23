@@ -1,5 +1,10 @@
-
+{% if itemLink %}
+    <a style="text-decoration: none; color: white;" href="{% url itemLink itemId %}">
+{% endif %}
     <div class="form-floating mb-1">
     <input readonly class="form-control no-border" value="{{value}}">
     <label for="floatingInputValue">{{field}}</label>
     </div>
+{% if itemLink %}
+</a>
+{% endif %}

@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from django.urls import reverse_lazy
+from django.urls import reverse
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
@@ -97,16 +97,22 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
 
 class ApplicationDeleteView(DeleteView):
     model = Application
-    success_url = reverse_lazy('application-list')
     template_name = 'trialapp/application_delete.html'
+    _trial = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        trial = self.object.field_trial
-        url = self.object.get_success_url()
-        self.object.delete()
-        Application.computeDDT(trial)
-        return HttpResponseRedirect(url)
+    def get_success_url(self):
+        if self._trial is None:
+            return '/fieldtrials/'
+        else:
+            return reverse(
+                'assessment-list',
+                kwargs={'field_trial_id': self._trial.id})
+
+    def form_valid(self, form):
+        self._trial = self.object.field_trial
+        respose = super().form_valid(form)
+        Application.computeDDT(self._trial)
+        return respose
 
 
 class ApplicationApi(APIView):

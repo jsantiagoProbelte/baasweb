@@ -9,26 +9,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card card-body-baas">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Name</th>
-                    <th>description</th>
-                </tr>
-            </thead>
-            <tbody>
-        {% for item in object_list %}
-            <tr id="item-{{item.id}}">
-                <td><a href="{% url 'thesis_api' item.id %}" class="btn bg-custom-{{item.number}}">T{{item.number}}</a></td>
-                <td><strong>{{item.name}}</strong></td>
-                <td>{{item.description}}</td>
-            </tr>
-        {% empty %}
-            <p>No Thesis yet.</p>
-        {% endfor %}
-            </tbody> 
-        </table>
+        {% include 'trialapp/thesis_list_table.html' with show_description=True %}
         </div>
     </div>
     <div class="col-md-6">

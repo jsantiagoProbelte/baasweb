@@ -33,7 +33,7 @@ class TrialTags:
     ASSESSMENT_TYPE = 'Assessment Type'
     RATING_TYPE_ES = 'Descripción'
     TAG_TYPES = [ASSESSMENT_TYPE, RATING_TYPE, RATING_TYPE_ES, 'ating Type',
-                 'Part Assessed']
+                 'Rating T ype']
 
     RATING_DATE = 'Rating Date'
     RATING_DATE_ES = 'Fecha Valoración'
@@ -46,19 +46,25 @@ class TrialTags:
 
     CROP_CODE = 'Crop Code'
     CROP_CODE_ES = 'Código cultivo'
-    TAG_CROPS = [CROP_CODE, CROP_CODE_ES, 'rop Type, Code']
+    CROP_NAME = 'Crop Name'
+    TAG_CROPS = [CROP_CODE, CROP_NAME, CROP_CODE_ES, 'rop Type, Code']
 
     SAMPLING_SIZE = 'Sample Size'
     SAMPLING_SIZE_ES = 'Numero submuestras'
     TAG_SIZE = [SAMPLING_SIZE, SAMPLING_SIZE_ES, 'ample Size']
 
+    PART_ASSESSED = 'Part Assessed'
+    PART_RATED = 'Part Rated'
+    TAG_PARTS = [PART_ASSESSED, PART_RATED]
+
     KEY_TAGS = [TAG_DATES, TAG_TYPES]
     ALL_TAGS = [TAG_UNITS, TAG_STAGES, TAG_TYPES, TAG_DATES, TAG_PESTS,
-                TAG_PESTS, TAG_CROPS, TAG_SIZE, TAG_INTERVALS]
+                TAG_PESTS, TAG_CROPS, TAG_SIZE, TAG_INTERVALS, TAG_PARTS]
 
     TAG_MEANS = ['Mean', 'Promedio']
 
     CROPS = {'CUMSA': 'cucumber', 'FRASS': 'Strawberry', 'PRNPS': 'Peach',
+             'Strawberry': 'Strawberry',
              'LACSA': 'Lettuce', 'C; LACSA': 'Lettuce', 'ALLAM': 'Garlic',
              'BRSOL': 'Wild Cabbage', 'C; BRSOK': 'Brocoli',
              'LYPES': 'Tomato', 'FRAS': 'Strawberry',
@@ -71,6 +77,9 @@ class TrialTags:
              'PUCCSP': 'Wheat yellow rust', 'CARPPO': 'Codling moth',
              'BOTRSP': 'botrytis', 'HELIAR': 'Helicoverpa armigera',
              'ARGTSP': 'Moth - Argyrotaenia ljungiana'}
+
+    TRAILERS = ['ABCDEFHIJKLM', 'HIJKLM', 'IJKLMN', 'BCDEFG', 'ABCDEF', 'ABCD',
+                'CDEFGHJKLMNO', 'CDEFGH', 'JKLMNO']
 
     @classmethod
     def isMeanTag(cls, value):
@@ -121,8 +130,10 @@ class AssmtTable:
             self._thesis[joinName] = thesis
 
     def findOrCreateThesis(self, name, number):
-        thesis = self.existThesis(name)
+        thesis = self.existThesisByNumber(number)
         if thesis is None:
+            thesis = self.existThesis(name)
+        if thesis is None or thesis.number != number:
             thesis = Thesis.findOrCreate(
                             name=name.strip(),
                             number=number,
@@ -130,9 +141,7 @@ class AssmtTable:
         return thesis
 
     def findOrCreateReplica(self, name, number, thesis):
-        if 'ABCD' in name:
-            name = name.replace('ABCD', '')
-        name = name.strip()
+        name = self.replaceApplicationTrailers(name)
         if name.isdigit() and len(name) < 4:
             nameReplica = f'{int(name):03}'
             return Replica.findOrCreate(
@@ -157,6 +166,14 @@ class AssmtTable:
 
     def existThesis(self, newthesisname):
         return self._thesis.get(newthesisname.replace(" ", ""), None)
+
+    def existThesisByNumber(self, number):
+        for thesisName in self._thesis:
+            thesis = self._thesis[thesisName]
+            if number == thesis.number:
+
+                return thesis
+        return None
 
     def isStatisticalTable(self):
         tokens = ['Standard Deviation', 'Bartlett', 'Tukey']
@@ -239,7 +256,7 @@ class AssmtTable:
             return None, thesisInfo
 
     def getFirstReplica(self, thesisInfo):
-        if thesisInfo[-3:].isdigit():
+        if len(thesisInfo) > 10 and thesisInfo[-3:].isdigit():
             return thesisInfo[-3:], thesisInfo[:-3]
         else:
             return None, thesisInfo
@@ -251,9 +268,7 @@ class AssmtTable:
         thesisInfo = thesisInfoLong.split('\r')[0]
         number, thesisInfo = self.getThesisIndex(thesisInfo)
         firstReplica, thesisInfo = self.getFirstReplica(thesisInfo)
-        if 'ABCD' in thesisInfo:
-            thesisInfo = thesisInfo.replace('ABCD', '')
-        name = thesisInfo.strip()
+        name = self.replaceApplicationTrailers(thesisInfo)
         return number, name, firstReplica
 
     def getTagPositionValue(self, columnName, tagSet, default):
@@ -280,17 +295,16 @@ class AssmtTable:
                                  self._numberColumns):
             columnName = self._columns[columnIndex]
             rateType = self.extractRateTypeInfo(columnName)
-            assessment = self.extractEvaluationInfo(columnName, rateType)
+            assessment = self.extractAssessmentInfo(columnName, rateType)
             if assessment is None:
                 # Abort
                 continue
-            self.extractAssessmentData(
-                columnName, assessment, rateType)
+            self.extractAssessmentData(columnName, assessment)
 
     def getValidDate(self, dateStr):
         # check if this is date
         try:
-            if len(dateStr) < 8:
+            if not isinstance(dateStr, str) or len(dateStr) < 6:
                 return None
             return None if dateStr is None else parse(dateStr, fuzzy=False)
         except ValueError:
@@ -333,8 +347,15 @@ class AssmtTable:
         return self.correctDatePosition(columnName)
 
     def getCropStage(self, columnName):
-        return self.getTagPositionValue(
+        bbch = self.getTagPositionValue(
             columnName, TrialTags.TAG_STAGES, 'Undefined')
+        if bbch is None:
+            bbch = 'Undefined'
+        return bbch
+
+    def getPartRated(self, columnName):
+        return self.getTagPositionValue(
+            columnName, TrialTags.TAG_PARTS, 'Undefined')
 
     def isColumnWithValues(self, columnName):
         value1 = self._table.loc[self._firstRowValuesNames, columnName]
@@ -343,7 +364,7 @@ class AssmtTable:
             return True
         return False
 
-    def extractEvaluationInfo(self, columnName, rateType):
+    def extractAssessmentInfo(self, columnName, rateType):
         # Validate that we have values in these column
         if not self.isColumnWithValues(columnName):
             print('>>>>> Cannot find assessment')
@@ -358,6 +379,8 @@ class AssmtTable:
 
         stage = self.getCropStage(columnName)
 
+        part_rated = self.getPartRated(columnName)
+
         interval = self.getTagPositionValue(
             columnName, TrialTags.TAG_INTERVALS, 'Unknown')
         if not interval:
@@ -367,6 +390,7 @@ class AssmtTable:
                 name=interval,
                 assessment_date=theDate,
                 field_trial=self._trial,
+                part_rated=part_rated,
                 rate_type=rateType,
                 crop_stage_majority=stage)
 
@@ -392,13 +416,12 @@ class AssmtTable:
             else:
                 return None
 
-    def saveDataPoint(self, value, assessment, assessmentSet, replica):
+    def saveDataPoint(self, value, assessment, replica):
         valueFloat = self.convertToFloat(value)
         if valueFloat is not None:
             ReplicaData.findOrCreate(
                 value=self.convertToFloat(valueFloat),
                 assessment=assessment,
-                unit=assessmentSet,
                 reference=replica)
         else:
             print('Cannot import value in {}-{}'.format(
@@ -413,6 +436,12 @@ class AssmtTable:
                     replica.delete()
             if len(Replica.getObjects(thesis)) == 0:
                 thesis.delete()
+
+    def replaceApplicationTrailers(self, name):
+        for trailer in TrialTags.TRAILERS:
+            if trailer in name:
+                name = name.replace(trailer, '')
+        return name.strip()
 
 
 # Class for tables with multiple lines inside the header
@@ -476,23 +505,24 @@ class AssmtTableMultiLineHeader(AssmtTable):
                 self._trial.save()
         return foundReplicas
 
-    def extractAssessmentData(self, columnName, assessment,
-                              assessmentSet):
+    def extractAssessmentData(self, columnName, assessment):
         # Explore all the rows of this columns to extract data
+        thesisList = list(self._replicaDict.keys())
         for index in range(1, self._numberRows):
             thesisInfo = self._table.loc[index, columnName]
             # Notice coincidence that index is the row in the table
             # and also the number of the thesis. It could be different
             # if the layout of the table is different
-            replicas = self._replicaDict[index]
+            # ... thesisList should solve this, by checking the
+            thesisPosition = thesisList[index-1]
+            replicas = self._replicaDict[thesisPosition]
             values = thesisInfo.split('\r')
             replicaIndex = 1
             for value in values:
                 # Remember the last item is the average value
                 if replicaIndex in replicas:
                     self.saveDataPoint(
-                        value, assessment,
-                        assessmentSet, replicas[replicaIndex])
+                        value, assessment, replicas[replicaIndex])
                     replicaIndex += 1
 
 
@@ -686,8 +716,7 @@ class AssmtTableSimpleHeader(AssmtTable):
                 foundReplicas += 1
         return foundReplicas, foundThesis
 
-    def extractAssessmentData(self, columnName, assessment,
-                              assessmentSet):
+    def extractAssessmentData(self, columnName, assessment):
         # Explore all the rows of this columns to extract data
         for index in self._replicaDict:
             replica = self._replicaDict[index]
@@ -695,9 +724,7 @@ class AssmtTableSimpleHeader(AssmtTable):
             # Notice coincidence that index is the row in the table
             # and also the number of the thesis. It could be different
             # if the layout of the table is different
-            self.saveDataPoint(
-                        value, assessment,
-                        assessmentSet, replica)
+            self.saveDataPoint(value, assessment, replica)
 
 
 class ImportPdfTrial:
@@ -792,7 +819,9 @@ class ImportPdfTrial:
         return self.isKeyInTableColumns(table, 'Assessment\rdate')
 
     def walkThrough(self):
+        indexTable = 1
         for table in self._tables:
+            print('------->>>({})<<<<------------'.format(indexTable))
             self.printTable(table)
             # if self.isThesisTable(table):
             #     self._thesis = table
@@ -814,6 +843,7 @@ class ImportPdfTrial:
                     self._evals.append(evalTable)
                 else:
                     print('>>>>> No replicas found')
+            indexTable += 1
 
         if len(self._evals) == 0:
             return False
@@ -1091,14 +1121,20 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/todo/botrybel/'
-    fileName = path + '201210404 BELTHIRUL FRESA ITALIA 2.pdf'
+           '/estudios/todo/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
+
+    # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
+    # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
+    # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
+    # fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
+    fileName = path + '20220233 PB050, PB051, PB012, PB012B lettuce Sclerotinia sclerotiorum.pdf'
+    fileName = path + '20220692 PB012, PBO12B, PB051 Final Report - CUCUMBER FUSARIUM.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 
 
 if __name__ == '__main__':
-    createThesisTreatments()
-    # importOne()
+    # createThesisTreatments()
+    importOne()
     # importOneMapa()
     # discoverReports()

@@ -5,14 +5,14 @@ function scrollTo(target) {
     $('html, body').animate({scrollTop:offset}, scrollSpeed);
 };
 
-var setDataPointAPI = '/set_data_point';
 
-function processEnter(event,element) {
+
+function processEnter(event,element, url, theId) {
     var code = event.keyCode || event.which;
     if(code==13){
         // Cancel the default action, if needed
-        result = setDataPoint(element);
-        nextElement = element.parent().parent().parent().next().find('input.data-input-template');
+        result = setDataPoint(element, url);
+        nextElement = element.parent().parent().next().find('input.'+theId);
         if (nextElement.length !== 0)
             nextElement[0].focus();
         else
@@ -21,7 +21,8 @@ function processEnter(event,element) {
     }
 };
 
-function setDataPoint(element) {
+
+function setDataPoint(element, url) {
     var formElement=element.parent()
     var dataJson={}
     $(element.serializeArray()).each(function(index,obj){
@@ -31,7 +32,7 @@ function setDataPoint(element) {
 
     $.ajax({
         type : formElement.attr('method'), 
-        url: setDataPointAPI,
+        url: url,
         data: dataJson,
         
         success: function(data){
@@ -44,6 +45,7 @@ function setDataPoint(element) {
     });
     return false;
 };
+
 
 
 // Delete product on click

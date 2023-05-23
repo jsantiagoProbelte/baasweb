@@ -10,3 +10,13 @@ DATABASES = {
         'NAME': 'db_baaswebapp.sqlite3',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'db_baas',
+#         'USER': 'admin_baas',
+#         'PASSWORD': 'B@@SisGreat',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }

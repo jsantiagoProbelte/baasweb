@@ -70,11 +70,19 @@ urlpatterns = [
         'assessment/delete/<int:pk>/',
         assessment_views.AssessmentDeleteView.as_view(),
         name='assessment-delete'),
+    path(
+        'assessment_api',
+        assessment_views.AssessmentApi.as_view(),
+        name='assessment_api'),
     # Data & measurements apis
     path(
         'set_data_point',
         data_views.SetDataAssessment.as_view(),
         name='set_data_point'),
+    path(
+        'trial_data/<int:pk>/',
+        data_views.TrialDataApi.as_view(),
+        name='trial_data'),
     # Application urls
     path(
         'applicationlist/<int:field_trial_id>/',

@@ -21,7 +21,7 @@ class FieldTrialViewsTest(TestCase):
         response = FieldTrialListView.as_view()(request)
 
         self.assertContains(response, 'Field Trials')
-        self.assertContains(response, 'No Field Trial yet.')
+        self.assertContains(response, 'No Trials yet.')
 
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
@@ -29,7 +29,8 @@ class FieldTrialViewsTest(TestCase):
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
-        self.assertNotContains(response, 'No Field Trial yet.')
+        self.assertNotContains(response, 'No Trials yet.')
+        self.assertContains(response, 'Field trials')
         self.assertContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
 
@@ -37,15 +38,13 @@ class FieldTrialViewsTest(TestCase):
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
-        self.assertNotContains(response, 'No Field Trial yet.')
+        self.assertNotContains(response, 'No Trials yet.')
         self.assertNotContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
 
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
-        self.assertContains(response, '1 &#10000;</a>')  # Number thesis
-        self.assertContains(response, '0 &#43;</a>')  # Number applications
         thesis.delete()
         fieldTrial.delete()
 
@@ -118,6 +117,7 @@ class FieldTrialViewsTest(TestCase):
                                field_trial_id=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
+        self.assertContains(response, 'field trial')
 
         deleteRequest = self._apiFactory.delete('fieldtrial-delete')
         self._apiFactory.setUser(deleteRequest)

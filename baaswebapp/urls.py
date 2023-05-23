@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include('trialapp.urls')),
     path('', include('catalogue.urls')),
     path('', include('panel.urls')),
+    path('', include('labapp.urls')),
     path("logout", views.logout_request, name="logout"),
     path("login", views.login_request, name="login"),
     path('admin/', admin.site.urls),

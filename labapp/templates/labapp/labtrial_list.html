@@ -1,0 +1,78 @@
+{% extends "baaswebapp/layout.html" %}
+
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block content %}
+{% include "baaswebapp/header_page.html" with title=titleList new_href=add_url %}
+
+<div class='card-body-baas mb-3'>
+    <form method="get" class="">
+        <div class="row">
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.name.label_tag }}
+                {% render_field filter.form.name class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_status.label_tag }}
+                {% render_field filter.form.trial_status class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_type.label_tag }}
+                {% render_field filter.form.trial_type class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.objective.label_tag }}
+                {% render_field filter.form.objective class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.product.label_tag }}
+                {% render_field filter.form.product class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.crop.label_tag }}
+                {% render_field filter.form.crop class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.plague.label_tag }}
+                {% render_field filter.form.plague class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                <button type="submit" class="btn btn-info mt-4">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="card card-body-baas">
+<table class="table">
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Keywords</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in object_list %}
+    <tr id="item-{{item.id}}">
+        <td><span class="badge">{{ item.trial_status }}</span></td>
+        <td><a class="btn btn-light fs-6 me-3" href="{% url 'labtrial-show' item.id%}">{{ item.code }}</a>
+            <span>{{item.name}}</span>
+        </td>
+        <td>{{item.trial_type}}</td>
+        <td>
+            <span class="badge bg-plague">{{ item.plague }}</span>
+            <span class="badge bg-crop">{{ item.crop }}</span>
+            <span class="badge bg-product">{{ item.product }}</span>
+        </td>
+    </tr>
+    </tbody>    
+    {% empty %}
+        <p>No Trials yet.</p>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

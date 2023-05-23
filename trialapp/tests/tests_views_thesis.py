@@ -49,7 +49,9 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(thesis.name, thesisData['name'])
 
         # Editar y ver nuevo
-        request = self._apiFactory.get('thesis-update')
+        thesisData.pop('treatment')
+        request = self._apiFactory.get('thesis-update',
+                                       data=thesisData)
         self._apiFactory.setUser(request)
         response = ThesisUpdateView.as_view()(
             request,
@@ -95,7 +97,8 @@ class ThesisViewsTest(TestCase):
                 "batch": batch})
 
         # TODO: Let;s add some ThesisTreatment
-        data = {'treatment': treatment.id}
+        data = {'treatment': treatment.id,
+                'thesis_id': thesis.id}
         token = 'treatment_thesis'
         createView = TreatmentThesisCreateView
         deleteView = TreatmentThesisDeleteView

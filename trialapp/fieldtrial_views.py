@@ -2,6 +2,7 @@
 import django_filters
 
 from django_filters.views import FilterView
+from django.db.models import Q, Count
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
@@ -135,66 +136,66 @@ class TrialModel():
         }
     }
 
+    LAB_TRIAL_FIELDS = (
+            'name', 'trial_type', 'objective', 'responsible', 'description',
+            'project', 'code',
+            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
+            'trial_status', 'contact', 'replicas_per_thesis',
+            'samples_per_replica')
 
-class FieldTrialListView(LoginRequiredMixin, FilterView):
-    model = FieldTrial
-    paginate_by = 100  # if pagination is desired
-    login_url = '/login'
-    filterset_class = FieldTrialFilter
-    template_name = 'trialapp/fieldtrial_list.html'
+    FIELD_TRIAL_FIELDS = (
+            'name', 'trial_type', 'objective', 'responsible', 'description',
+            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
+            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
+            'trial_status', 'contact', 'cro', 'location', 'blocks',
+            'replicas_per_thesis', 'samples_per_replica',
+            'distance_between_plants', 'distance_between_rows', 'number_rows',
+            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
+            'application_volume', 'mode', 'crop_variety', 'cultivation',
+            'crop_age', 'seed_date', 'transplant_date', 'longitude',
+            'latitude')
 
-    def getAttrValue(self, label):
-        if label in self.request.GET:
-            if self.request.GET[label] != '':
-                return self.request.GET[label]
-        return None
+    @classmethod
+    def applyModel(cls, trialForm):
+        for block in TrialModel.FIELDS:
+            for field in TrialModel.FIELDS[block]:
+                if field not in trialForm.Meta.fields:
+                    continue
+                fieldData = TrialModel.FIELDS[block][field]
+                trialForm.fields[field].label = fieldData['label']
+                trialForm.fields[field].required = fieldData['required']
+                typeField = fieldData['type']
+                if typeField == TrialModel.T_D:
+                    trialForm.fields[field].widget = MyDateInput()
+                elif typeField == TrialModel.T_I:
+                    trialForm.fields[field].widget = forms.NumberInput()
+                elif typeField == TrialModel.T_T:
+                    trialForm.fields[field].widget = forms.Textarea(
+                        attrs={'rows': fieldData['rows']})
+        # Querysets
+        trialForm.fields['product'].queryset = Product.objects.all().order_by(
+            'name')
+        trialForm.fields['crop'].queryset = Crop.objects.all().order_by('name')
+        trialForm.fields['plague'].queryset = Plague.objects.all(
+            ).order_by('name')
+        if 'crop_variety' in trialForm.fields:
+            crops = CropVariety.objects.all().order_by('name')
+            trialForm.fields['crop_variety'].queryset = crops
 
-    def get_context_data(self, **kwargs):
-        filter_kwargs = {}
-        paramsReplyTemplate = FieldTrialFilter.Meta.fields
-        for paramIdName in paramsReplyTemplate:
-            paramId = self.getAttrValue(paramIdName)
-            if paramIdName == 'name' and paramId:
-                filter_kwargs['name__icontains'] = paramId
-            elif paramId:
-                filter_kwargs['{}__id'.format(paramIdName)] = paramId
-        new_list = []
-        orderBy = paramsReplyTemplate.copy()
-        orderBy.append('name')
-        objectList = FieldTrial.objects.filter(
-            **filter_kwargs).order_by('-code', 'name')
-        filter = FieldTrialFilter(self.request.GET)
-        for item in objectList:
-            assessments = Assessment.objects.filter(field_trial=item).count()
-            thesis = Thesis.objects.filter(field_trial=item).count()
-            new_list.append({
-                'code': item.code,
-                'name': item.name,
-                'crop': item.crop.name,
-                'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'project': item.project.name,
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'id': item.id,
-                'assessments': assessments,
-                'thesis': thesis})
-        return {'object_list': new_list,
-                'titleList': '({}) Field trials'.format(len(objectList)),
-                'filter': filter}
-
-
-class FieldTrialApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
-
-    def prepareDataItems(self, fieldTrial):
+    @classmethod
+    def prepareDataItems(cls, fieldTrial):
         trialDict = fieldTrial.__dict__
         trialData = {}
+        if fieldTrial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
+            modelFields = TrialModel.LAB_TRIAL_FIELDS
+        else:
+            modelFields = TrialModel.FIELD_TRIAL_FIELDS
+
         for group in TrialModel.FIELDS:
             trialData[group] = []
             for field in TrialModel.FIELDS[group]:
+                if field not in modelFields:
+                    continue
                 label = TrialModel.FIELDS[group][field]['label']
                 value = '?'
                 if field in trialDict:
@@ -212,31 +213,112 @@ class FieldTrialApi(APIView):
                 trialData[group].append({'name': label, 'value': showValue})
         return trialData
 
+
+class FieldTrialListView(LoginRequiredMixin, FilterView):
+    model = FieldTrial
+    paginate_by = 100  # if pagination is desired
+    login_url = '/login'
+    filterset_class = FieldTrialFilter
+    template_name = 'trialapp/fieldtrial_list.html'
+
+    def getAttrValue(self, label):
+        if label in self.request.GET:
+            if self.request.GET[label] != '':
+                return self.request.GET[label]
+        return None
+
+    def getList(self, filter):
+        objectList = FieldTrial.objects.annotate(
+            assessments=Count('assessment')).filter(
+            filter).order_by('-code', 'name')
+
+        thesisCounts = FieldTrial.objects.annotate(
+            thesiss=Count('thesis')).filter(
+            filter)
+        thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
+
+        new_list = []
+        for item in objectList:
+            new_list.append({
+                'code': item.code,
+                'name': item.name,
+                'crop': item.crop.name,
+                'product': item.product.name,
+                'trial_status': item.trial_status if item.trial_status else '',
+                'project': item.project.name,
+                'objective': item.objective.name,
+                'plague': item.plague.name if item.plague else '',
+                'latitude': item.latitude,
+                'longitude': item.longitude,
+                'id': item.id,
+                'assessments': item.assessments,
+                'thesis': thesisCountDict.get(item.id, 0)})
+        return new_list
+
+    def get_context_data(self, **kwargs):
+        # filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
+        paramsReplyTemplate = FieldTrialFilter.Meta.fields
+        q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
+        for paramIdName in paramsReplyTemplate:
+            paramId = self.getAttrValue(paramIdName)
+            if paramIdName == 'name' and paramId:
+                q_name = Q()
+                q_name |= Q(name__icontains=paramId)
+                q_name |= Q(responsible__icontains=paramId)
+                q_name |= Q(code__icontains=paramId)
+                # filter_kwargs['name__icontains'] = paramId
+                # filter_kwargs['responsible__icontains'] = paramId
+                q_objects &= q_name
+            elif paramId:
+                # filter_kwargs['{}__id'.format(paramIdName)] = paramId
+                q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
+        new_list = []
+        orderBy = paramsReplyTemplate.copy()
+        orderBy.append('name')
+        filter = FieldTrialFilter(self.request.GET)
+        new_list = self.getList(q_objects)
+
+        return {'object_list': new_list,
+                'titleList': '({}) Field trials'.format(len(new_list)),
+                'add_url': 'fieldtrial-add',
+                'filter': filter}
+
+
+class FieldTrialApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+
     def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/fieldtrial_show.html'
+        template_name = 'trialapp/labtrial_show.html'
         field_trial_id = kwargs.get('field_trial_id', None)
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        thesisTrial = Thesis.getObjects(fieldTrial)
-        numberThesis = len(thesisTrial)
+        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         assessments = Assessment.getObjects(fieldTrial)
-        dataTrial = self.prepareDataItems(fieldTrial)
+
+        dataTrial = TrialModel.prepareDataItems(fieldTrial)
         for item in assessments:
             dataTrial['Assessments'].append(
-                {'value': item.getContext(), 'name': item.assessment_date})
-        for item in Application.getObjects(fieldTrial):
-            dataTrial['Applications'].append(
-                {'name': item.getName(), 'value': item.app_date})
-        headerRows = LayoutTrial.headerLayout(fieldTrial)
-        return render(request, template_name,
-                      {'fieldTrial': fieldTrial,
-                       'titleView': fieldTrial.getName(),
-                       'dataTrial': dataTrial,
-                       'thesisTrial': thesisTrial,
-                       'numberThesis': numberThesis,
-                       'rowsReplicaHeader': headerRows,
-                       'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
+                {'value': item.getContext(), 'name': item.assessment_date,
+                 'link': 'assessment_api', 'id': item.id})
+        showData = {
+            'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
+            'dataTrial': dataTrial, 'thesisList': thesisDisplay,
+            'numberAssessments': len(assessments),
+            'numberThesis': len(allThesis)}
+
+        if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
+            template_name = 'trialapp/fieldtrial_show.html'
+            for item in Application.getObjects(fieldTrial):
+                dataTrial['Applications'].append(
+                    {'name': item.getName(), 'value': item.app_date})
+            showData['rowsReplicaHeader'] = LayoutTrial.headerLayout(
+                fieldTrial)
+            showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
                                                               None,
-                                                              thesisTrial)})
+                                                              allThesis)
+
+        return render(request, template_name, showData)
 
 
 @login_required
@@ -262,7 +344,7 @@ class FieldTrialFormLayout(FormHelper):
                     css_class='col-md-7'),
                 Div(FormActions(
                         Submit('submit', submitTxt, css_class="btn btn-info")),
-                    css_class='col-md-2 text-sm-end'),
+                    css_class='col-md-1 text-sm-end'),
                 css_class='mt-3 mb-3'),
             Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
                     Div(Div(Field('project', css_class='mb-2'),
@@ -273,7 +355,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('description', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
-                    css_class='col-md-2'),
+                    css_class='col-md-3'),
                 Div(Div(HTML('Status'), css_class="card-header-baas h4"),
                     Div(Div(Field('trial_type', css_class='mb-2'),
                             Field('trial_status', css_class='mb-2'),
@@ -289,13 +371,13 @@ class FieldTrialFormLayout(FormHelper):
                             Field('comments_criteria', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
-                    css_class='col-md-2'),
+                    css_class='col-md-3'),
                 Div(Div(HTML('Location'), css_class="card-header-baas h4"),
                     Div(Div(Field('contact', css_class='mb-2'),
                             Field('cro', css_class='mb-2'),
                             Field('location', css_class='mb-2'),
-                            Field('longitude', css_class='mb-2'),
                             Field('latitude', css_class='mb-2'),
+                            Field('longitude', css_class='mb-2'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
                     Div(HTML('Applications'), css_class="card-header-baas h4"),
@@ -347,40 +429,11 @@ class FieldTrialFormLayout(FormHelper):
 class FieldTrialForm(forms.ModelForm):
     class Meta:
         model = FieldTrial
-        fields = (
-            'name', 'trial_type', 'objective', 'responsible', 'description',
-            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
-            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'cro', 'location', 'blocks',
-            'replicas_per_thesis', 'samples_per_replica',
-            'distance_between_plants', 'distance_between_rows', 'number_rows',
-            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
-            'application_volume', 'mode', 'crop_variety', 'cultivation',
-            'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude')
+        fields = TrialModel.FIELD_TRIAL_FIELDS
 
     def __init__(self, *args, **kwargs):
         super(FieldTrialForm, self).__init__(*args, **kwargs)
-        for block in TrialModel.FIELDS:
-            for field in TrialModel.FIELDS[block]:
-                fieldData = TrialModel.FIELDS[block][field]
-                self.fields[field].label = fieldData['label']
-                self.fields[field].required = fieldData['required']
-                typeField = fieldData['type']
-                if typeField == TrialModel.T_D:
-                    self.fields[field].widget = MyDateInput()
-                elif typeField == TrialModel.T_I:
-                    self.fields[field].widget = forms.NumberInput()
-                elif typeField == TrialModel.T_T:
-                    self.fields['comments_criteria'].widget = forms.Textarea(
-                        attrs={'rows': fieldData['rows']})
-        # Querysets
-        self.fields['product'].queryset = Product.objects.all().order_by(
-            'name')
-        self.fields['crop'].queryset = Crop.objects.all().order_by('name')
-        self.fields['plague'].queryset = Plague.objects.all().order_by('name')
-        self.fields['crop_variety'].queryset = CropVariety.objects.all(
-            ).order_by('name')
+        TrialModel.applyModel(self)
 
 
 class FieldTrialCreateView(LoginRequiredMixin, CreateView):
@@ -393,12 +446,16 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
         form.helper = FieldTrialFormLayout()
         form.fields['code'].initial = FieldTrial.getCode(
             datetime.date.today(), True)
+        form.fields['responsible'].initial = self.request.user.get_username()
+        form.fields['trial_status'].initial = TrialStatus.objects.get(
+            name='Open').id
         return form
 
     def form_valid(self, form):
         if form.is_valid():
             fieldTrial = form.instance
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
+            fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:

@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
@@ -26,14 +26,14 @@ class ThesisListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        new_list = Thesis.getObjects(fieldTrial)
+        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         headerRows = LayoutTrial.headerLayout(fieldTrial)
-        return {'object_list': new_list,
+        return {'thesisList': thesisDisplay,
                 'fieldTrial': fieldTrial,
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
-                                                       new_list)}
+                                                       allThesis)}
 
 
 class ThesisFormLayout(FormHelper):
@@ -144,20 +144,20 @@ class ThesisUpdateView(LoginRequiredMixin, UpdateView):
 
 class ThesisDeleteView(DeleteView):
     model = Thesis
-    success_url = reverse_lazy('thesis-list')
     template_name = 'trialapp/thesis_delete.html'
-    _field_trial_id = None
-
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        self._field_trial_id = self.object.field_trial_id
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())
+    _trial_id = None
 
     def get_success_url(self):
-        return reverse(
-            'thesis-list',
-            kwargs={'field_trial_id': self._field_trial_id})
+        if self._trial_id is None:
+            return '/fieldtrials/'
+        else:
+            return reverse(
+                'thesis-list',
+                kwargs={'field_trial_id': self._trial_id})
+
+    def form_valid(self, form):
+        self._trial_id = self.object.field_trial.id
+        return super().form_valid(form)
 
 
 class ThesisApi(APIView):
@@ -208,8 +208,6 @@ class ThesisApi(APIView):
         layout = LayoutTrial.showLayout(
             self._thesis.field_trial, None,
             Thesis.getObjects(trial), onlyThis=thesis_id)
-        addTreatmentView = TreatmentThesisCreateView(request=request)
-        addTreatmentForm = addTreatmentView.get_form()
         treatments = [{'name': tt.getName(), 'id': tt.id}
                       for tt in TreatmentThesis.getObjects(self._thesis)]
 
@@ -220,15 +218,14 @@ class ThesisApi(APIView):
                 'title': self._thesis.getTitle(),
                 'thesisVolume': self.getThesisVolume(),
                 'treatments': treatments,
-                'addTreatmentForm': addTreatmentForm,
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': layout})
 
 
 class TreatmentThesisFormLayout(FormHelper):
-    def __init__(self):
+    def __init__(self, thesisName):
         super().__init__()
-        title = 'Add treatment to thesis'
+        title = 'Add treatment to thesis [{}]'.format(thesisName)
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(Field('treatment', css_class='mb-3'),
@@ -244,6 +241,15 @@ class TreatmentThesisForm(forms.ModelForm):
         model = TreatmentThesis
         fields = ('treatment',)
 
+    def __init__(self, *args, **kwargs):
+        super(TreatmentThesisForm, self).__init__(*args, **kwargs)
+        listt = Treatment.objects.all().order_by(
+            'batch__product_variant__product__name',
+            'batch__product_variant__name',
+            'batch__name',
+            'rate')
+        self.fields['treatment'].queryset = listt
+
 
 class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
     model = TreatmentThesis
@@ -252,7 +258,8 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=TreatmentThesisForm):
         form = super().get_form(form_class)
-        form.helper = TreatmentThesisFormLayout()
+        thesisName = Thesis.objects.get(id=self.kwargs['thesis_id'])
+        form.helper = TreatmentThesisFormLayout(thesisName)
         return form
 
     def form_valid(self, form):
@@ -271,14 +278,15 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
 
 class TreatmentThesisDeleteView(DeleteView):
     model = TreatmentThesis
-    success_url = reverse_lazy('thesis_api')
     template_name = 'trialapp/treatment_thesis_delete.html'
+    _thesis = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        thesis_id = self.object.thesis_id
-        self.object.delete()
-        return HttpResponseRedirect(self.get_success_url(thesis_id))
+    def get_success_url(self):
+        if self._thesis is None:
+            return '/fieldtrials/'
+        else:
+            return self._thesis.get_absolute_url()
 
-    def get_success_url(self, thesis_id):
-        return reverse('thesis_api', kwargs={'thesis_id': thesis_id})
+    def form_valid(self, form):
+        self._thesis = self.object.thesis
+        return super().form_valid(form)

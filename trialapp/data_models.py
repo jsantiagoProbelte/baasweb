@@ -10,21 +10,36 @@ class Assessment(ModelHelpers, models.Model):
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.CharField(max_length=25)
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
+    daf = models.IntegerField(null=True)
 
     @classmethod
-    def getObjects(cls, field_trial):
-        return cls.objects \
-                .filter(field_trial=field_trial) \
-                .order_by('assessment_date', 'rate_type', 'part_rated')
+    def getObjects(cls, field_trial, date_order=True):
+        if date_order:
+            first_order = 'assessment_date'
+            second_order = 'rate_type__name'
+            third_order = 'rate_type__unit'
+            forth_order = 'part_rated'
+        else:
+            forth_order = 'assessment_date'
+            first_order = 'rate_type__name'
+            second_order = 'rate_type__unit'
+            third_order = 'part_rated'
+        return cls.objects.filter(
+            field_trial=field_trial).order_by(
+            first_order, second_order, third_order, forth_order)
 
     def getName(self):
         return "{}-BBCH".format(
             self.crop_stage_majority)
 
     def getContext(self):
-        return "{}-BBCH {}".format(
-            self.crop_stage_majority,
-            self.rate_type.getName())
+        if self.crop_stage_majority is None or\
+           self.crop_stage_majority == ModelHelpers.UNDEFINED:
+            return self.rate_type.getName()
+        else:
+            return "{}-BBCH {}".format(
+                self.crop_stage_majority,
+                self.rate_type.getName())
 
     def get_absolute_url(self):
         return "/assessment_api/%i/" % self.id
@@ -32,6 +47,9 @@ class Assessment(ModelHelpers, models.Model):
     def getTitle(self):
         return "[{}] {}".format(self.assessment_date,
                                 self.name)
+
+    def get_success_url(self):
+        return "/assessment_list/%i/" % self.field_trial.id
 
     @classmethod
     def getRateSets(cls, assessments):
@@ -67,6 +85,19 @@ class Assessment(ModelHelpers, models.Model):
             if thisPart not in partsDict:
                 partsDict[thisPart] = thisPart
         return list(partsDict.keys())
+
+    @classmethod
+    def computeDDT(cls, trial):
+        firstItem = None
+        # We assume getObjects ordered by date
+        for item in cls.getObjects(trial):
+            if firstItem is None:
+                firstItem = item
+                item.daf = 0
+            else:
+                item.daf = (item.assessment_date -
+                            firstItem.assessment_date).days
+            item.save()
 
 
 class DataModel(ModelHelpers):
@@ -104,11 +135,6 @@ class DataModel(ModelHelpers):
                   .filter(assessment=assessment)
 
     @classmethod
-    def getDataPointsFieldTrial(cls, fieldTrial):
-        assIds = [item.id for item in Assessment.getObjects(fieldTrial)]
-        return cls.getAssessmentDataPoints(assIds)
-
-    @classmethod
     def getAssessmentDataPoints(cls, assIds):
         return cls.objects.filter(assessment_id__in=assIds)
 
@@ -116,6 +142,7 @@ class DataModel(ModelHelpers):
     def getDataPointsProduct(cls, product, crop, plague, rateType, ratedPart):
 
         criteria = {
+            'field_trial__trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL,
             'field_trial__product_id': product.id,
             'rate_type_id': rateType.id,
             'part_rated': ratedPart}
@@ -141,7 +168,7 @@ class DataModel(ModelHelpers):
         tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
         results = FieldTrial.objects.filter(product=product).values(
-            tag_id, tag_name)
+            tag_id, tag_name).order_by(tag_name)
         theArray, theIds = ModelHelpers.extractDistincValues(results, tag_id,
                                                              tag_name)
         return theArray
@@ -162,10 +189,20 @@ class DataModel(ModelHelpers):
         # We need the id from the set, but we display the name from the type
         tag_id = '{}__id'.format(tag)
         tag_name = '{}__name'.format(tag)
+        tag_unit = '{}__unit'.format(tag)
         results = Assessment.objects.filter(
-                field_trial_id__in=ids).values(tag_id, tag_name)
-        dimensions, theIds = ModelHelpers.extractDistincValues(results, tag_id,
-                                                               tag_name)
+                field_trial_id__in=ids).values(
+                tag_id, tag_name, tag_unit).order_by(
+                    tag_name, tag_unit)
+
+        # merge _name & _unit
+        new_results = [{tag_id: item[tag_id],
+                        tag_name: '{} ({})'.format(item[tag_name],
+                                                   item[tag_unit])}
+                       for item in results]
+
+        dimensions, theIds = ModelHelpers.extractDistincValues(
+            new_results, tag_id, tag_name)
         if as_array:
             return dimensions
         else:

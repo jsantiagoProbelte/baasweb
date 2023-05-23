@@ -1,20 +1,7 @@
 {% if subheader %}
 <h5 class="mt-4 ms-4 text-muted">{{subheader}}
     <span> <div class="btn-group float-end" role="group">
-        <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
-            data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
-        <a href="{% url 'fieldtrial_api' fieldTrial.id%}" class="btn btn-light"
-            data-toggle="tooltip" data-placement="top" title='Go to field trial'>{{fieldTrial.code}}</a>
-        <a href="{% url 'thesis-list' fieldTrial.id%}" class="btn btn-dark "
-            data-toggle="tooltip" data-placement="top" title='Thesis list'>Thesis</a>
-        <a href="{% url 'assessment-list' fieldTrial.id%}" class="btn btn-dark"
-            data-toggle="tooltip" data-placement="top" title='View assessments '>ASSMTS</a>
-        <a href="{% url 'trial_data' fieldTrial.id%}" class="btn btn-dark"
-            data-toggle="tooltip" data-placement="top" title='View All data'>data</a>
-        <a href="{% url 'application-list' fieldTrial.id%}" class="btn btn-dark "
-            data-toggle="tooltip" data-placement="top" title='Applications list'>Applications</a>
-
-
+        
     </div></span>
 </h5>
 {% endif %}
@@ -22,6 +9,8 @@
     {{title}}
     <span class="text-muted ml-2">{{subtitle}}</span>
     <span><div class="btn-group ms-2" role="group">
+        <a href="{% url 'labtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Go to lap trial list'>&#8679;</a>
         {% if edit_href %}
         <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
                 data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>

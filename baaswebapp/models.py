@@ -7,6 +7,7 @@ import requests
 class ModelHelpers:
     NULL_STRING = '------'
     UNKNOWN = ' Unknown'
+    UNDEFINED = 'Undefined'
 
     @classmethod
     def getUnknown(cls):

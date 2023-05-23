@@ -14,6 +14,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
+from trialapp.data_views import DataGraphFactory
 
 
 class ProductFormLayout(FormHelper):
@@ -165,7 +166,6 @@ class ProductApi(APIView):
             textNotFound = '<div class="alert alert-warning" role="alert">'\
                            'Data not found for ' + notFound + ' dimensions.'\
                            '</div>'
-
             graphs.append(
                 {'name': 'Not Found',
                  'values': [[{'name': 'Not Found', 'graph': textNotFound}]]})
@@ -218,9 +218,9 @@ class ProductApi(APIView):
             product, crop, plague, rateType, ratedPart)
 
         if dataPointsT:
-            graphT = GraphTrial(level, rateType, ratedPart, dataPointsT,
-                                xAxis=GraphTrial.L_DATE,
-                                combineTrialAssessments=False)
+            graphT = DataGraphFactory(
+                level, rateType, ratedPart, dataPointsT,
+                xAxis=GraphTrial.L_DAF)
             return graphT.draw(), fieldTrials
         else:
             return None, None
@@ -235,7 +235,7 @@ class ProductApi(APIView):
                 batchItem = {'name': batch.name,
                              'id': batch.id, 'treatments': []}
                 for treatment in Treatment.objects.filter(
-                        batch=batch).order_by('name'):
+                                 batch=batch).order_by('name', 'rate'):
                     batchItem['treatments'].append(
                         {'name': treatment.getName(), 'id': treatment.id})
                 variantItem['batches'].append(batchItem)
@@ -384,12 +384,17 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
 class BatchDeleteView(DeleteView):
     model = Batch
     template_name = 'catalogue/batch_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.product_variant.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.product_variant.product
+        return super().form_valid(form)
 
 
 ##############################
@@ -476,12 +481,17 @@ class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
 class ProductVariantDeleteView(DeleteView):
     model = ProductVariant
     template_name = 'catalogue/product_variant_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.product
+        return super().form_valid(form)
 
 
 ##############################
@@ -575,7 +585,7 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item.save()
             batch = Batch.objects.get(id=item.batch_id)
             return HttpResponseRedirect(
-                batch.product_variant.get_absolute_url())
+                batch.product_variant.product.get_absolute_url())
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)
@@ -597,9 +607,14 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
 class TreatmentDeleteView(DeleteView):
     model = Treatment
     template_name = 'catalogue/treatment_delete.html'
+    _product = None
 
-    def delete(self, *args, **kwargs):
-        self.object = self.get_object()
-        product = self.object.batch.product_variant.product
-        self.object.delete()
-        return HttpResponseRedirect(product.get_absolute_url())
+    def get_success_url(self):
+        if self._product is None:
+            return '/products/'
+        else:
+            return self._product.get_absolute_url()
+
+    def form_valid(self, form):
+        self._product = self.object.batch.product_variant.product
+        return super().form_valid(form)

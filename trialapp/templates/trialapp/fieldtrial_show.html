@@ -11,7 +11,7 @@
     {% include "trialapp/card_values.html" with title='Goal' dataItems=dataTrial.Goal classColumn='classColumn1'%}
     {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn1'%}
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2">
     {% include "trialapp/card_values.html" with title='Cultive' dataItems=dataTrial.Cultive classColumn='classColumn2'%}
     {% if fieldTrial.latitude %}
       <div id="map" class='mt-3 mb-3' width="100%" style='height:250px'></div><div id="show_marker"></div>
@@ -20,8 +20,8 @@
     {% endif %}
     {% include "trialapp/card_values.html" with title='Location' dataItems=dataTrial.Location link='assessment-list' classColumn='classColumn2'%}
   </div>
-  <div class="col-md-3">
-    {% include "trialapp/card_values.html" with title='Assessments' dataItems=dataTrial.Assessments link='assessment-list' classColumn='classColumn2'%}
+  <div class="col-md-4">
+    {% include "trialapp/card_values.html" with title='Assessments' title2='Data' dataItems=dataTrial.Assessments link='assessment-list' link2='trial_data' classColumn='classColumn2' note=numberAssessments %}
     {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn2'%}
   </div>
   <div class="col-md-4">
@@ -33,16 +33,7 @@
       </div>
       
       <div class="card-body-baas">
-          <table >
-            {% for thesis in thesisTrial %}
-              <tr><td>
-                <a href="{% url 'thesis_api' thesis.id %}" class="btn btn-sm bg-custom-{{thesis.number}}">T{{thesis.number}}</a>
-                <span class="ml-4">{{thesis.name}}</span>
-              </td></tr>
-            {% empty %}
-              <p>No Thesis yet.</p>
-            {% endfor %}
-          </table>
+        {% include 'trialapp/thesis_list_table.html' with show_description=False %}
       </div>
     </div>
     {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn3'%}

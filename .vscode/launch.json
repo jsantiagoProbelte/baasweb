@@ -35,6 +35,13 @@
             "justMyCode": true,
         },
         {
+            "name": "Stats",
+            "type": "python",
+            "request": "launch",
+            "module": "catalogue.stats_generator",
+            "justMyCode": true,
+        },
+        {
             "name": "PDF Table Import",
             "type": "python",
             "request": "launch",
@@ -73,7 +80,10 @@
                 "test",
                 // "panel.tests.tests_statsdata"
                 // "trialapp.tests.tests_views_data"
-                "catalogue.tests.tests_views_catalogue"
+                "trialapp.tests.tests_views_assessment"
+                // "trialapp.tests.tests_views_thesis"
+                // "catalogue.tests.tests_views_catalogue"
+                // "labapp.tests.tests_labtrial_views"
             ],
             "django": true,
             "justMyCode": true
