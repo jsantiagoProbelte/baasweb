@@ -1,7 +1,8 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit
-from catalogue.models import Product, Batch, Treatment, ProductVariant
+from catalogue.models import Product, Batch, Treatment, ProductVariant,\
+    Vendor, ProductCategory
 from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, Assessment
 from django.shortcuts import render, get_object_or_404
@@ -37,6 +38,13 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('name', 'vendor', 'category')
+
+    def __init__(self, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
+        vendors = Vendor.objects.all().order_by('name')
+        self.fields['vendor'].queryset = vendors
+        categories = ProductCategory.objects.all().order_by('name')
+        self.fields['category'].queryset = categories
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):

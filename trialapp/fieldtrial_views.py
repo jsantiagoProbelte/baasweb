@@ -173,6 +173,10 @@ class TrialModel():
                     trialForm.fields[field].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
         # Querysets
+        trialForm.fields['project'].queryset = Project.objects.all().order_by(
+            'name')
+        trialForm.fields['objective'].queryset = Objective.objects.all(
+            ).order_by('name')
         trialForm.fields['product'].queryset = Product.objects.all().order_by(
             'name')
         trialForm.fields['crop'].queryset = Crop.objects.all().order_by('name')
