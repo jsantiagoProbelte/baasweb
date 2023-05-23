@@ -367,7 +367,7 @@ class GraphTrial:
     def getTitle(self, rateType, ratedPart):
         return '{}({}) {}'.format(rateType.name, rateType.unit, ratedPart)
 
-      
+
 class GraphStat():
     def __init__(self, rawDataDict, labels, showLegend=True,
                  title=None, showTitle=False,
