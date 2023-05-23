@@ -1,63 +1,30 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    {% include "trialapp/header_page_trial.html" with title="Assessments list" subheader=fieldTrial.name new_href_id="assessment-add" refId=fieldTrial.id %}
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card card-body-baas">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Name</th>
-                            <th>Crop Stage</th>
-                            <th>Rate type (unit)</th>
-                            <th>Part Rated</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in object_list %}
-                            <tr id="item-{{ item.id }}">
-                                <td>
-                                    <a href="{% url "assessment_api" item.id %}" class="btn btn-secondary">{{ item.assessment_date }}</a>
-                                </td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.crop_stage_majority }} BBCH</td>
-                                <td>{{ item.rate_type }}</td>
-                                <td>{{ item.part_rated }}</td>
-                            </tr>
-                        </tbody>
-                    {% empty %}
-                        <p>No assessments yet.</p>
-                    {% endfor %}
-                    <a href="{% url "meteo_api" fieldTrial.id %}" class="btn btn-secondary">Enrich with Meteorological Data</a>
-                </table>
-            </div>
-
-{% include "trialapp/header_page_trial.html" with title="Assessments list" subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title="Assessments list" subheader=fieldTrial.name new_href_id="assessment-add" refId=fieldTrial.id %}
 <div class="row">
     <div class="col-md-4">
         <div class="card card-body-baas">
         <table class="table">
-            <thead><tr><th>Date</th><th>Name</th><th>Crop Stage</th><th>Rate type (unit)</th><th>Part Rated</th></tr></thead>
-            <tbody>
+        <thead><tr><th>Date</th><th>Name</th><th>Crop Stage</th>
+            <th>Rate type (unit)</th><th>Part Rated</th></tr></thead>
+        <tbody>
         {% for item in object_list %}
-            <tr id="item-{{item.id}}">
-                <td>{{item.assessment_date}}</td>
-                <td><a href="{% url 'assessment_api' item.id %}" class="btn btn-secondary">
-                    {{item.name}}
-                </a></td>
-                <td>{{item.crop_stage_majority}} BBCH</td>
-                <td>{{item.rate_type}}</td>
-                <td>{{item.part_rated}}</td>
-            </tr>
-            </tbody>    
+            <tr id="item-{{ item.id }}">
+                <td><a href="{% url "assessment_api" item.id %}" class="btn btn-secondary">{{ item.assessment_date }}</a></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.crop_stage_majority }} BBCH</td>
+                <td>{{ item.rate_type }}</td>
+                <td>{{ item.part_rated }}</td></tr>
         {% empty %}
             <p>No assessments yet.</p>
         {% endfor %}
-        </table>
+        </tbody></table>
         </div>
-        <div class="col-md-8">{% include "trialapp/data_tabs.html" with graphPlots=graphPlots classGraph=classGraph %}</div>
-        <div class="col-md-4 pt-2">{% include "trialapp/weather_graphs.html" with tempGraph=tempGraph precipGraph=precipGraph soilTempGraph=soilTempGraph soilMoistGraph=soilMoistGraph humidGraph=humidGraph dewPointGraph=dewPointGraph %}</div>
     </div>
+    <div class="col-md-8">
+        {% include "trialapp/data_tabs.html" with graphPlots=graphPlots classGraph=classGraph %}
+        {% include "trialapp/weather_graphs.html" with tempGraph=tempGraph precipGraph=precipGraph soilTempGraph=soilTempGraph soilMoistGraph=soilMoistGraph humidGraph=humidGraph dewPointGraph=dewPointGraph %}
+    </div>
+</div>
 {% endblock content %}
