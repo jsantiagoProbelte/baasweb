@@ -2,14 +2,13 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial
 from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
     Assessment
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
-
-from baaswebapp.graphs import GraphTrial
+from baaswebapp.graphs import GraphTrial, WeatherGraph
 from trialapp.data_views import DataHelper, DataGraphFactory
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
@@ -22,9 +21,9 @@ from django import forms
 from trialapp.forms import MyDateInput
 
 CLASS_DATA_LEVEL = {
-        GraphTrial.L_REPLICA: ReplicaData,
-        GraphTrial.L_SAMPLE: SampleData,
-        GraphTrial.L_THESIS: ThesisData}
+    GraphTrial.L_REPLICA: ReplicaData,
+    GraphTrial.L_SAMPLE: SampleData,
+    GraphTrial.L_THESIS: ThesisData}
 
 
 class AssessmentListView(LoginRequiredMixin, ListView):
@@ -60,6 +59,45 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         classGraph = GraphTrial.classColGraphs(foundData, columns)
         return graphs, classGraph
 
+    def getWeatherData(self):
+        assessments = Assessment.getObjects(self._trial)
+        weather_data = []
+        for assessment in assessments:
+            weather = Weather.objects.filter(
+                date=assessment.assessment_date, latitude=self._trial.latitude,
+                longitude=self._trial.longitude)
+            if weather:
+                weather_data.append(weather.first())
+        return weather_data
+
+    def graphWeatherData(self, weather_data):
+        dates = [o.date for o in weather_data]
+        non_recent_dates = [o.date for o in weather_data if not o.recent]
+        min_temps = [o.min_temp for o in weather_data]
+        max_temps = [o.max_temp for o in weather_data]
+        mean_temps = [o.mean_temp for o in weather_data]
+        precip = [o.precipitation for o in weather_data]
+        precip_hrs = [o.precipitation_hours for o in weather_data]
+        soil_temps_1 = [o.soil_temp_0_to_7cm for o in weather_data]
+        soil_temps_2 = [o.soil_temp_7_to_28cm for o in weather_data]
+        soil_temps_3 = [o.soil_temp_28_to_100cm for o in weather_data]
+        soil_temps_4 = [o.soil_temp_100_to_255cm for o in weather_data]
+        soil_moist_1 = [o.soil_moist_0_to_7cm for o in weather_data]
+        soil_moist_2 = [o.soil_moist_7_to_28cm for o in weather_data]
+        soil_moist_3 = [o.soil_moist_28_to_100cm for o in weather_data]
+        soil_moist_4 = [o.soil_moist_100_to_255cm for o in weather_data]
+        dew_point = [o.dew_point for o in weather_data]
+        rel_humid = [o.relative_humidity for o in weather_data]
+
+        graph = WeatherGraph(dates, non_recent_dates, mean_temps, min_temps,
+                             max_temps, precip, precip_hrs, soil_moist_1,
+                             soil_moist_2, soil_moist_3, soil_moist_4,
+                             soil_temps_1, soil_temps_2, soil_temps_3,
+                             soil_temps_4, rel_humid, dew_point)
+        return (graph.draw_temp(), graph.draw_precip(),
+                graph.draw_soil_temp(), graph.draw_soil_moist(),
+                graph.draw_humid(), graph.draw_dew())
+
     def get_context_data(self, **kwargs):
         field_trial_id = None
         # from call on server
@@ -90,7 +128,9 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         # Sample data
         graphPlotsS, classGraphS = self.getGraphData(
             GraphTrial.L_SAMPLE, rateSets, ratedParts)
-
+        weatherData = self.getWeatherData()
+        tGraph, pGraph, sGraph, mGraph, hGraph, dGraph = self.graphWeatherData(
+            weatherData)
         return {'object_list': new_list,
                 'fieldTrial': self._trial,
                 'show_active_thesis': show_active_thesis,
@@ -99,7 +139,10 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'active_thesis': active_thesis,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
-                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS}
+                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS,
+                'tempGraph': tGraph, 'precipGraph': pGraph,
+                'soilTempGraph': sGraph, 'soilMoistGraph': mGraph,
+                'humidGraph': hGraph, 'dewPointGraph': dGraph}
 
 
 class AssessmentFormLayout(FormHelper):
@@ -118,7 +161,7 @@ class AssessmentFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")
-            ))
+        ))
 
 
 class AssessmentForm(forms.ModelForm):
