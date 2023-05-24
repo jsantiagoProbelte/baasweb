@@ -79,7 +79,7 @@
             {% for tagValues in filterData %}
 
               <div class="form-floating col-md-2 ms-2 me-2">
-                {% include 'baaswebapp/input_select_template.html' with tag=tagValues.name item_id='new' currentValue=tagValues.current selectOptions=tagValues.values addNull=True tag=tagValues.name selectOptions=tagValues.values %}
+                {% include 'baaswebapp/input_select_template.html' with tag=tagValues.name item_id='new' currentValue=tagValues.current selectOptions=tagValues.values addNull=True%}
                 <label class='mb-2' for="floatingInputValue">{{tagValues.name}}</label>
               </div>
              

@@ -1,13 +1,17 @@
 <div class="card-group bg-custom-cards mt-2">
-    {% for item in row %}
-      <div class="card no-border me-2" >
-        <div class="bg-custom-{{item.number}} card-body-baas">
-            {% if item.name == '-' %}
+  {% for item in row %}
+    <div class="card no-border me-2" >
+      <div class="bg-custom-{{item.number}} card-body-baas">
+        {% if replicas %}
+            {% include 'trialapp/select_replica.html' with item=item selectOptions=replicas %}
+        {% else %}
+          {% if item.name == '-' %}
             -
-            {% else %}
-              <small>{{appendix}}{{item.name}}</small>
-            {% endif %}
-        </div>
+          {% else %}
+            <small>{{appendix}}{{item.name}}</small>
+          {% endif %}
+        {% endif %}    
       </div>
-    {% endfor %}
+    </div>
+  {% endfor %}
 </div>

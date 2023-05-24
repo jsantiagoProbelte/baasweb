@@ -24,9 +24,9 @@ urlpatterns = [
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
     path(
-        'reshuffle_blocks/<int:field_trial_id>/',
-        fieldtrial_views.reshuffle_blocks,
-        name='reshuffle-blocks'),
+        'set_replica_position/<int:x>/<int:y>/<int:oldReplicaId>/',
+        thesis_views.SetReplicaPosition.as_view(),
+        name='set-replica-position'),
     # Thesis urls
     path(
         'thesislist/<int:field_trial_id>/',

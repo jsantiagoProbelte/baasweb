@@ -1,5 +1,5 @@
 from django.test import TestCase
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, Weather
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import Assessment, ThesisData, ReplicaData
@@ -19,9 +19,35 @@ class AssessmentViewsTest(TestCase):
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
+        self._fieldTrial.latitude = '1.0'
+        self._fieldTrial.longitude = '1.0'
+        self._fieldTrial.save()
         for thesis in TrialAppModelTest.THESIS:
             Thesis.create_Thesis(**thesis)
         self._unit = RateTypeUnit.objects.get(id=1)
+
+    def addWeatherData(self, ass):
+        Weather.objects.create(
+            date=ass.assessment_date,
+            recent=False,
+            latitude=float(ass.field_trial.latitude),
+            longitude=float(ass.field_trial.longitude),
+            max_temp=30.0,
+            min_temp=15.0,
+            mean_temp=20.0,
+            soil_temp_0_to_7cm=10.0,
+            soil_temp_7_to_28cm=10.0,
+            soil_temp_28_to_100cm=10.0,
+            soil_temp_100_to_255cm=10.0,
+            soil_moist_0_to_7cm=10.0,
+            soil_moist_7_to_28cm=10.0,
+            soil_moist_28_to_100cm=10.0,
+            soil_moist_100_to_255cm=10.0,
+            dew_point=10.0,
+            relative_humidity=10.0,
+            precipitation=10.0,
+            precipitation_hours=10.0,
+            max_wind_speed=10.0)
 
     def test_assessment_emply_list(self):
         request = self._apiFactory.get('assessment-list')
@@ -96,6 +122,9 @@ class AssessmentViewsTest(TestCase):
                                **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.name)
+
+        # add weather
+        self.addWeatherData(item)
 
         # Let's call thesis list
         getRequest = self._apiFactory.get('assessment-list')

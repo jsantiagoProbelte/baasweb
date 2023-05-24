@@ -1,0 +1,17 @@
+<form action="{% url 'set-replica-position' item.x item.y item.replica_id%}" method="POST">
+{% csrf_token %}
+    <select name='replica_position' class="form-control replica-position-selection no-border">
+        {% if item.name == "-" %}
+            <option value selected>.....</option>
+        {% else %}
+            <option value>.....</option>
+        {% endif %}
+        {% for selectOption in selectOptions%}
+            {% if selectOption.value == item.replica_id %}
+                <option value="{{selectOption.value}}" selected>{{selectOption.name}}</option>
+            {% else %}
+                <option value="{{selectOption.value}}">{{selectOption.name}}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</form>

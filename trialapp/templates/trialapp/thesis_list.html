@@ -17,3 +17,13 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+$('.replica-position-selection').on('change', function() {
+    var element=$(this);
+    var formElement=element.parent();
+    formElement.submit();
+});
+</script>
+{% endblock %}

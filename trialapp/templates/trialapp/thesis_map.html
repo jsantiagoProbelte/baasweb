@@ -1,12 +1,16 @@
 
 <div class="card no-border" >
     <div class="card-header-baas h5">
-        <span class='badge bg-light ms-2'>{{fieldTrial.blocks}}</span> Blocks & 
+        <span class='badge bg-light ms-2'>{{fieldTrial.blocks}}</span> Blocks  
         <span class='badge bg-light ms-2'>{{fieldTrial.replicas_per_thesis}}</span> Replicas distribution
-        <a class="btn btn-info btn-sm float-end" href="{% url 'reshuffle-blocks' fieldTrial.id%}">&#10000;</a>
     </div>
-    <div class="card-body-baas bg-custom-0" >
-        {% include "trialapp/data_row_replica_template.html" with row=rowsReplicaHeader appendix='block '%}
+    <div class="card-body-baas bg-custom-cards" >
+        <div class="card-group  mt-2">
+            {% for item in rowsReplicaHeader %}
+            <div class="card no-border bg-custom-cards me-2" >
+                <div class="card-header-baas h4">{{item.name}} block</div></div>
+            {% endfor %}
+        </div>
         {% for row in rowsReplicas %}
             {% include "trialapp/data_row_replica_template.html" with row=row appendix='R'%}
         {% empty %}

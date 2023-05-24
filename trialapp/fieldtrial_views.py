@@ -6,13 +6,13 @@ from django.db.models import Q, Count
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from django.contrib.auth.decorators import login_required
+
 from trialapp.models import\
     FieldTrial, Thesis, Project, Objective,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
 from trialapp.data_models import Assessment
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from trialapp.trial_helper import LayoutTrial
 from rest_framework.views import APIView
 import datetime
@@ -323,15 +323,6 @@ class FieldTrialApi(APIView):
                                                               allThesis)
 
         return render(request, template_name, showData)
-
-
-@login_required
-def reshuffle_blocks(request, field_trial_id=None):
-    fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-    LayoutTrial.distributeLayout(fieldTrial)
-    return redirect(
-        'thesis-list',
-        field_trial_id=fieldTrial.id)
 
 
 class FieldTrialFormLayout(FormHelper):

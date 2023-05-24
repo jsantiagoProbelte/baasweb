@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import FieldTrial,\
     Thesis, Replica, TreatmentThesis
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from rest_framework.views import APIView
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -28,9 +28,14 @@ class ThesisListView(LoginRequiredMixin, ListView):
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         headerRows = LayoutTrial.headerLayout(fieldTrial)
+        replicas = [
+            {'value': item.id, 'number': item.thesis.number,
+             'name': item.getTitle()}
+            for item in Replica.getFieldTrialObjects(fieldTrial)]
         return {'thesisList': thesisDisplay,
                 'fieldTrial': fieldTrial,
                 'rowsReplicaHeader': headerRows,
+                'replicas': replicas,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
                                                        allThesis)}
@@ -100,12 +105,9 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
             TreatmentThesis.objects.create(
                 treatment=treatment,
                 thesis=thesis)
-
             # Create replicas
             Replica.createReplicas(thesis,
                                    thesis.field_trial.replicas_per_thesis)
-            # Reassigned all replicas of the same
-            LayoutTrial.distributeLayout(thesis.field_trial)
             return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -290,3 +292,41 @@ class TreatmentThesisDeleteView(DeleteView):
     def form_valid(self, form):
         self._thesis = self.object.thesis
         return super().form_valid(form)
+
+
+class SetReplicaPosition(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    # see generateDataPointId
+    def post(self, request, x, y, oldReplicaId):
+        newReplicaId = request.POST['replica_position']
+        newReplica = None
+        trialId = None
+        if newReplicaId != '':
+            newReplica = get_object_or_404(Replica, pk=newReplicaId)
+            trialId = newReplica.thesis.field_trial_id
+
+        oldReplica = None
+        if oldReplicaId != 0:
+            oldReplica = get_object_or_404(Replica, pk=oldReplicaId)
+            trialId = oldReplica.thesis.field_trial_id
+
+        # try to find if exists:
+        if oldReplica:
+            newPosX = 0
+            newPosY = 0
+            if newReplica:
+                newPosX = newReplica.pos_x
+                newPosY = newReplica.pos_y
+            oldReplica.pos_x = newPosX
+            oldReplica.pos_y = newPosY
+            oldReplica.save()
+
+        if newReplica:
+            newReplica.pos_x = x
+            newReplica.pos_y = y
+            newReplica.save()
+        return redirect('thesis-list',
+                        field_trial_id=trialId)

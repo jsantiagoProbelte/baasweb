@@ -3,7 +3,7 @@ from baaswebapp.models import RateTypeUnit
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit,\
     Batch, Treatment, DEFAULT
-from trialapp.models import FieldTrial, Thesis, Replica
+from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
 from catalogue.product_views import ProductListView, ProductApi,\
     ProductCreateView, ProductUpdateView, ProductDeleteView,\
@@ -291,6 +291,12 @@ class ProductViewsTest(TestCase):
             self.assertTrue(len(items) == 1)
             self.assertTrue(DEFAULT in items[0].name)
 
+        if theClass == Treatment:
+            # Create a thesis and associated with this treatment
+            aThesis = self._theses[0]
+            TreatmentThesis.objects.create(thesis=aThesis,
+                                           treatment=theItem)
+
         modelGet = self._apiFactory.get(url_model)
         self._apiFactory.setUser(modelGet)
         response = modelApi.as_view()(modelGet,
@@ -369,6 +375,7 @@ class ProductViewsTest(TestCase):
             **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
                'rate_unit': rateUnit, 'product_variant': variant})
         data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id}
+
         self.alltogether(
             Treatment, data, batch, 'treatment', TreatmentApi,
             TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)

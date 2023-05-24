@@ -407,8 +407,8 @@ class Replica(ModelHelpers, models.Model):
         return self.getKey()
 
     def getTitle(self):
-        return "Thesis {} - Replica {}".format(
-            self.thesis.name, self.getKey())
+        return "T{} - R{}".format(
+            self.thesis.number, self.getKey())
 
     def generateReplicaDataSetId(self, assessment):
         assessmentId = assessment.id if assessment else 'null'
