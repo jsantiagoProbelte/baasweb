@@ -22,6 +22,9 @@ class MeteoApi(APIView):
                 exists.fetchWeather()
                 exists.save()
             return exists
+        if field_trial.longitude is None or\
+           field_trial.latitude is None:
+            return None
         weather = Weather(date=assessment.assessment_date,
                           longitude=field_trial.longitude,
                           latitude=field_trial.latitude)

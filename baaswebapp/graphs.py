@@ -1,4 +1,3 @@
-
 from plotly.offline import plot
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
@@ -83,10 +82,12 @@ class WeatherGraph:
         if not self.dates:
             return False
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-        fig.add_trace(go.Scatter(x=self.dates, y=self.precip_hrs, name='Precipitation Hours',
+        fig.add_trace(go.Scatter(x=self.dates, y=self.precip_hrs,
+                      name='Precipitation Hours',
                       line=dict(color='lightblue', width=2)))
         fig.add_bar(x=self.dates, y=self.precip,
-                    name='Precipitation (mm)', marker=dict(color='royalblue', opacity=0.3), secondary_y=True)
+                    name='Precipitation (mm)', marker=dict(
+                        color='royalblue', opacity=0.3), secondary_y=True)
 
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
@@ -108,11 +109,14 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        fig.add_trace(go.Scatter(x=self.dates, y=self.min_temps, name='Min Temp',
+        fig.add_trace(go.Scatter(x=self.dates, y=self.min_temps,
+                      name='Min Temp',
                       line=dict(color='lightblue', width=2)))
-        fig.add_trace(go.Scatter(x=self.dates, y=self.mean_temps, name='Mean Temp',
+        fig.add_trace(go.Scatter(x=self.dates, y=self.mean_temps,
+                      name='Mean Temp',
                       line=dict(color='yellow', width=3)))
-        fig.add_trace(go.Scatter(x=self.dates, y=self.max_temps, name='Max Temp',
+        fig.add_trace(go.Scatter(x=self.dates, y=self.max_temps,
+                      name='Max Temp',
                       line=dict(color='firebrick', width=2)))
 
         fig.update_layout(
@@ -135,13 +139,17 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_1, name='0-7cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_1,
+                      name='0-7cm',
                       line=dict(color='#e3f2e2', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_2, name='7-28cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_2,
+                      name='7-28cm',
                       line=dict(color='#b3d0b1', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_3, name='28-100cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_3,
+                      name='28-100cm',
                       line=dict(color='#84ae82', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_4, name='100-255cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_temps_4,
+                                 name='100-255cm',
                                  line=dict(color='#558d55', width=2)))
 
         fig.update_layout(
@@ -163,13 +171,17 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_1, name='0-7cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_1,
+                      name='0-7cm',
                       line=dict(color='#e3f2e2', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_2, name='7-28cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_2,
+                      name='7-28cm',
                       line=dict(color='#b3d0b1', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_3, name='28-100cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_3,
+                      name='28-100cm',
                       line=dict(color='#84ae82', width=2)))
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_4, name='100-255cm',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.soil_moist_4,
+                                 name='100-255cm',
                                  line=dict(color='#558d55', width=2)))
 
         fig.update_layout(
@@ -191,7 +203,8 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.rel_humid, name='Relative Humidity',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.rel_humid,
+                      name='Relative Humidity',
                       line=dict(color=COLOR_bs_purple, width=2)))
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
@@ -210,7 +223,8 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.dew_point, name='Dew Point',
+        fig.add_trace(go.Scatter(x=self.non_recent_dates, y=self.dew_point,
+                      name='Dew Point',
                       line=dict(color=COLOR_bs_blue, width=2)))
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
