@@ -19,7 +19,8 @@
                 {% include "baaswebapp/item_list_template.html" with field='First application' value=thesis.first_application%}
             </div>
         </div>
-        {% include "baaswebapp/item_list_template.html" with field='Description' value=thesis.description%}
+        {% include "baaswebapp/item_list_template.html" with field='Description' value=''%}
+        <p class="ms-3">{{thesis.description}}</p>
       </div>
     </div>
   </div>
