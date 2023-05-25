@@ -2,9 +2,17 @@ import requests
 import json
 
 
-def fetchOpenWeather(latitude, longitude):
-    res = requests.get('https://api.open-meteo.com/v1/forecast?latitude=' + str(
-        latitude) + '&longitude=' + str(longitude) + '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m&forecast_days=5')
+WT_DEW_TEMP = 'Dew temperature (°C)'
+WT_TAG_TEMPS = 'Temperature (°C)'
+WT_HUMIDITY = 'Absolute humidity'
+
+
+def fetchOpenWeather(latitude, longitude, nextDays):
+    res = requests.get(
+        'https://api.open-meteo.com/v1/forecast?latitude=' +
+        str(latitude) + '&longitude=' + str(longitude) +
+        '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m&'
+        'forecast_days=' + str(nextDays))
     res_json = json.loads(res.content)
 
     return formatOpenWeather(res_json)
@@ -12,29 +20,29 @@ def fetchOpenWeather(latitude, longitude):
 
 def formatOpenWeather(res_json):
     temperatures = res_json['hourly']['temperature_2m']
-    dew_temperatures = res_json['hourly']['dewpoint_2m']
+    WT_DEW_TEMPeratures = res_json['hourly']['dewpoint_2m']
     humidities = res_json['hourly']['relativehumidity_2m']
     dates = res_json['hourly']['time']
     count = len(temperatures)
 
     for i in range(count):
         temperatures[i] = {'date': dates[i], 'value': temperatures[i]}
-        dew_temperatures[i] = {'date': dates[i],
-                               'value': dew_temperatures[i]}
+        WT_DEW_TEMPeratures[i] = {'date': dates[i],
+                                  'value': WT_DEW_TEMPeratures[i]}
         humidities[i] = {'date': dates[i], 'value': humidities[i]}
 
     return {
-        'temperatures': temperatures,
-        'dew_temperatures': dew_temperatures,
-        'humidities': humidities
+        WT_TAG_TEMPS: temperatures,
+        WT_DEW_TEMP: WT_DEW_TEMPeratures,
+        WT_HUMIDITY: humidities
     }
 
 
 def formatDaily(weather):
     offset = 12
-    temperatures = weather['temperatures']
-    dew_temperatures = weather['dew_temperatures']
-    humidities = weather['humidities']
+    temperatures = weather[WT_TAG_TEMPS]
+    WT_DEW_TEMPeratures = weather[WT_DEW_TEMP]
+    humidities = weather[WT_HUMIDITY]
 
     daily_temperatures = []
     daily_dew = []
@@ -43,18 +51,15 @@ def formatDaily(weather):
     for i in range(len(temperatures)):
         if i % 24 == 0:
             daily_temperatures.append(temperatures[i + offset])
-            daily_dew.append(dew_temperatures[i + offset])
+            daily_dew.append(WT_DEW_TEMPeratures[i + offset])
             daily_humidity.append(humidities[i + offset])
-
-    return {
-        'temperatures': daily_temperatures,
-        'dew_temperatures': daily_dew,
-        'humidities': daily_humidity
-    }
+    return {WT_TAG_TEMPS: daily_temperatures,
+            WT_DEW_TEMP: daily_dew,
+            WT_HUMIDITY: daily_humidity}
 
 
 def seperateTemperatures(weather):
-    temperatures = weather['temperatures']
+    temperatures = weather[WT_TAG_TEMPS]
     daily_temperatures = []
     formatted_temperatures = []
 
@@ -84,17 +89,17 @@ def fetchWeather(latitude, longitude):
 """
 def formatWeather(res_json):
     temperatures = res_json['data'][0]['coordinates'][0]['dates']
-    dew_temperatures = res_json['data'][1]['coordinates'][0]['dates']
+    WT_DEW_TEMPeratures = res_json['data'][1]['coordinates'][0]['dates']
     humidities = res_json['data'][2]['coordinates'][0]['dates']
 
     # Meteomatics always returns 1 hour extra, so we pop it.
     temperatures.pop()
-    dew_temperatures.pop()
+    WT_DEW_TEMPeratures.pop()
     humidities.pop()
 
     return {
-        'temperatures': temperatures,
-        'dew_temperatures': dew_temperatures,
-        'humidities': humidities
+        WT_TAG_TEMPS: temperatures,
+        WT_DEW_TEMP: WT_DEW_TEMPeratures,
+        WT_HUMIDITY: humidities
     }
 """

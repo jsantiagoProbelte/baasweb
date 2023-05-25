@@ -28,3 +28,10 @@ class BaaSHelpers:
             (firstLastMonth+relativedelta(months=+monthIndex)).month)
             for monthIndex in range(0, numberMonthsToIndex)]
         return months
+
+    @staticmethod
+    def nextXDays(nextDays, fromDay=None):
+        if fromDay is None:
+            fromDay = date.today()
+        return [fromDay+relativedelta(days=+index)
+                for index in range(0, nextDays)]

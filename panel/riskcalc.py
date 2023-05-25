@@ -2,15 +2,19 @@ import math
 import panel.weatherhelper as weatherhelper
 
 
+RISK_BOTRITIS = 'Botrytis Risk'
+PEST_RISK = 'Pests Risk'
+
+
 def calculateLWD(weather):
     threshold = 2
-    count = len(weather['temperatures'])
-    temperatures = weather['temperatures']
-    dew_temperatures = weather['dew_temperatures']
+    count = len(weather[weatherhelper.WT_TAG_TEMPS])
+    temperatures = weather[weatherhelper.WT_TAG_TEMPS]
+    WT_DEW_TEMPeratures = weather[weatherhelper.WT_DEW_TEMP]
     lwd = []
     daily_lwd = 0
     for i in range(count):
-        deficit = abs(dew_temperatures[i]
+        deficit = abs(WT_DEW_TEMPeratures[i]
                       ['value'] - temperatures[i]['value'])
         if deficit < threshold:
             daily_lwd += 1
@@ -71,13 +75,13 @@ def computePests(temperatures):
 def computeRisks(weather):
     lwd = calculateLWD(weather)
     daily_weather = weatherhelper.formatDaily(weather)
-    daily_temperatures = daily_weather['temperatures']
+    daily_temperatures = daily_weather[weatherhelper.WT_TAG_TEMPS]
     seperate_temperatures = weatherhelper.seperateTemperatures(weather)
 
     botrytis_risks = computeBotrytis(daily_temperatures, lwd)
     pest_risks = computePests(seperate_temperatures)
 
     return {
-        'botrytis': botrytis_risks,
+        RISK_BOTRITIS: botrytis_risks,
         'pests': pest_risks
     }

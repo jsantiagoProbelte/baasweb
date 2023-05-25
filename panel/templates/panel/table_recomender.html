@@ -1,0 +1,23 @@
+{% if data_table %}
+<div class="card card-body-baas mb-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-2">{{title}}</th>
+            {% for day in days %}    
+                <th>{{day}}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data_table %} 
+            <tr>
+                {% for item in row %}
+                    <td>{{item}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}

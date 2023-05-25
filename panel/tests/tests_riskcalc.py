@@ -1,6 +1,7 @@
 import panel.riskcalc as riskcalc
 from django.test import TestCase
 import random
+from panel.weatherhelper import WT_TAG_TEMPS, WT_DEW_TEMP, WT_HUMIDITY
 
 
 def generateRandomArray(length):
@@ -32,13 +33,13 @@ def generateTestTemperatures():
     return temperatures
 
 
-def generateTestWeather(temperatures, dew_temperatures, humidities):
-    weather = {'temperatures': [], 'dew_temperatures': [], 'humidities': []}
+def generateTestWeather(temperatures, WT_DEW_TEMPeratures, humidities):
+    weather = {WT_TAG_TEMPS: [], WT_DEW_TEMP: [], WT_HUMIDITY: []}
     for i in range(len(temperatures)):
-        weather['temperatures'].append({'value': temperatures[i]})
-        weather['dew_temperatures'].append({'value': dew_temperatures[i]})
+        weather[WT_TAG_TEMPS].append({'value': temperatures[i]})
+        weather[WT_DEW_TEMP].append({'value': WT_DEW_TEMPeratures[i]})
         if humidities is not None:
-            weather['humidities'].append({'value': humidities[i]})
+            weather[WT_HUMIDITY].append({'value': humidities[i]})
 
     return weather
 
@@ -69,7 +70,7 @@ class RiskcalcTest(TestCase):
     def test_botrytis(self):
         expected_results = ["Medium", "High", "High", "High", "High"]
         temperatures = generateTestWeather(
-            [1, 5, 10, 15, 20], [3, 10, 2, 1, 10], None)['temperatures']
+            [1, 5, 10, 15, 20], [3, 10, 2, 1, 10], None)[WT_TAG_TEMPS]
         lwd_weather = generateTestWeather(
             generateArray(120), generateArray(120), None)
         lwd = riskcalc.calculateLWD(lwd_weather)
@@ -84,7 +85,7 @@ class RiskcalcTest(TestCase):
 
     def test_all(self):
         expected_results = {
-            'botrytis': ["High", "High", "High", "High", "High"],
+            riskcalc.RISK_BOTRITIS: ["High", "High", "High", "High", "High"],
             'pests': ["Low", "Low", "High", "High", "High"]
         }
         weather = generateTestWeather(

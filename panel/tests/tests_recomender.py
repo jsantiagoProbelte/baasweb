@@ -1,8 +1,6 @@
 from django.test import TestCase
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from panel.recomender import RecomenderApi
-import json
-from datetime import datetime, timezone
 
 
 class RecommenderTest(TestCase):
@@ -18,16 +16,12 @@ class RecommenderTest(TestCase):
         response = RecomenderApi.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_post(self):
-        request = self._apiFactory.post(
+    def test_get(self):
+        request = self._apiFactory.get(
             'recomender', {'latitude': 90, 'longitude': 90})
         self._apiFactory.setUser(request)
         response = RecomenderApi.as_view()(request)
-        data = json.loads(response.content)
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%dT12:00")
+
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(data['daily_weather']
-        #                  ['temperatures'][0]['date'], today)
-        self.assertTrue(today is not None)
-        self.assertTrue(data['daily_weather']['temperatures']
-                        [0]['date'] is not None)
+        self.assertContains(response, 'Weather')
+        self.assertContains(response, 'Alerts')
