@@ -25,7 +25,7 @@
     <div class="col-md-8">
         {% include "trialapp/data_tabs.html" with graphPlots=graphPlots classGraph=classGraph %}
         {% if fieldTrial.latitude %}
-            {% include "trialapp/weather_graphs.html" with tempGraph=tempGraph precipGraph=precipGraph soilTempGraph=soilTempGraph soilMoistGraph=soilMoistGraph humidGraph=humidGraph dewPointGraph=dewPointGraph %}
+            {% include "trialapp/weather_graphs.html" with weatherGraph=weatherGraph %}
         {% else %}
             <div class="alert alert-primary" role="alert">Please define location (latitude, longitude) of this trial to show meteorlogical info</div>
         {% endif %}

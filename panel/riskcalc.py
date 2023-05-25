@@ -14,8 +14,7 @@ def calculateLWD(weather):
     lwd = []
     daily_lwd = 0
     for i in range(count):
-        deficit = abs(WT_DEW_TEMPeratures[i]
-                      ['value'] - temperatures[i]['value'])
+        deficit = abs(WT_DEW_TEMPeratures[i] - temperatures[i])
         if deficit < threshold:
             daily_lwd += 1
 
@@ -46,8 +45,7 @@ def computeBotrytis(temperatures, lwd):
     count = len(temperatures)
     risks = []
     for i in range(count):
-        temp = temperatures[i]['value']
-
+        temp = temperatures[i]
         risk = -4.268 - (0.0901 *
                          lwd[i]) + (0.294 * lwd[i] * temp) - \
             ((2.35 * lwd[i] * (temp ** 3)) / 100000)
@@ -61,12 +59,12 @@ def computePests(temperatures):
     risks = []
     for day in temperatures:
         max_temp = 0
-        min_temp = day[0]['value']
+        min_temp = day[0]
         for temperature in day:
-            if temperature['value'] > max_temp:
-                max_temp = temperature['value']
-            if temperature['value'] < min_temp:
-                min_temp = temperature['value']
+            if temperature > max_temp:
+                max_temp = temperature
+            if temperature < min_temp:
+                min_temp = temperature
         gda = max(0, ((min_temp + max_temp / 2) - base_temp))
         risks.append(formatPestRisk(gda))
     return risks

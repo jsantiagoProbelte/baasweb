@@ -5,35 +5,34 @@ import json
 WT_DEW_TEMP = 'Dew temperature (°C)'
 WT_TAG_TEMPS = 'Temperature (°C)'
 WT_HUMIDITY = 'Absolute humidity'
+WT_PREC_HOURS = 'Precipitation Hour'
+DATES = 'DATES'
 
 
 def fetchOpenWeather(latitude, longitude, nextDays):
     res = requests.get(
         'https://api.open-meteo.com/v1/forecast?latitude=' +
         str(latitude) + '&longitude=' + str(longitude) +
-        '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m&'
+        '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,'
+        'rain&'
         'forecast_days=' + str(nextDays))
     res_json = json.loads(res.content)
 
-    return formatOpenWeather(res_json)
+    return parseWeather(res_json)
 
 
-def formatOpenWeather(res_json):
+def parseWeather(res_json):
     temperatures = res_json['hourly']['temperature_2m']
     WT_DEW_TEMPeratures = res_json['hourly']['dewpoint_2m']
     humidities = res_json['hourly']['relativehumidity_2m']
+    precipitation_hours = res_json['hourly']['rain']
     dates = res_json['hourly']['time']
-    count = len(temperatures)
-
-    for i in range(count):
-        temperatures[i] = {'date': dates[i], 'value': temperatures[i]}
-        WT_DEW_TEMPeratures[i] = {'date': dates[i],
-                                  'value': WT_DEW_TEMPeratures[i]}
-        humidities[i] = {'date': dates[i], 'value': humidities[i]}
 
     return {
+        DATES: dates,
         WT_TAG_TEMPS: temperatures,
         WT_DEW_TEMP: WT_DEW_TEMPeratures,
+        WT_PREC_HOURS: precipitation_hours,
         WT_HUMIDITY: humidities
     }
 

@@ -18,8 +18,7 @@ class WeatherTest(TestCase):
         # TEMP DISABLED self.assertEqual(weather[WT_TAG_TEMPS][0]['date'],
         # today)
         self.assertTrue(today is not None)
-        self.assertTrue(weather[weatherhelper.WT_TAG_TEMPS][0]['date']
-                        is not None)
+        self.assertTrue(weather[weatherhelper.DATES][0] is not None)
 
     def test_seperateTemperatures(self):
         test_temps = generateTestTemperatures(120)

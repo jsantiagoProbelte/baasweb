@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 import panel.weatherhelper as weatherhelper
 import panel.riskcalc as riskcalc
 from baaswebapp.baas_helpers import BaaSHelpers
+from baaswebapp.graphs import WeatherGraphFactory
 
 
 class RecomenderApi(APIView):
@@ -23,12 +24,26 @@ class RecomenderApi(APIView):
         if longitude and latitude:
             weather = weatherhelper.fetchOpenWeather(
                 latitude, longitude, RecomenderApi.NEXT_DAYS)
+            graphs = WeatherGraphFactory.build(
+                weather[weatherhelper.DATES], weather[weatherhelper.DATES],
+                weather[weatherhelper.WT_TAG_TEMPS], None,  # min_temps,
+                None, None, weather[weatherhelper.WT_PREC_HOURS], None,
+                None, None, None,
+                None, None, None,
+                # max_temps, precip, precip_hrs, soil_moist_1,
+                # soil_moist_2, soil_moist_3, soil_moist_4,
+                # soil_temps_1, soil_temps_2, soil_temps_3,
+                # soil_temps_4, rel_humid, dew_point)
+                None, weather[weatherhelper.WT_HUMIDITY],
+                weather[weatherhelper.WT_DEW_TEMP])
+
             daily_weather = weatherhelper.formatDaily(weather)
             risks = riskcalc.computeRisks(weather)
             days = BaaSHelpers.nextXDays(RecomenderApi.NEXT_DAYS)
             return {'days': days,
                     'daily_weather': self.convertToArray(daily_weather),
-                    'risks': self.convertToArray(risks, isDict=False)}
+                    'risks': self.convertToArray(risks),
+                    'weatherGraph': graphs}
         else:
             return {}
 
@@ -36,16 +51,10 @@ class RecomenderApi(APIView):
         data = self.fetchData(request)
         return render(request, RecomenderApi.TEMPLATE, data)
 
-    def convertToArray(self, dictionary, isDict=True):
+    def convertToArray(self, dictionary):
         theArray = []
         for key in dictionary:
             values = dictionary[key]
-            row = []
-            if isDict:
-                for item in values:
-                    row.append(item['value'])
-            else:
-                row = values
-            row.insert(0, key)
-            theArray.append(row)
+            values.insert(0, key)
+            theArray.append(values)
         return theArray

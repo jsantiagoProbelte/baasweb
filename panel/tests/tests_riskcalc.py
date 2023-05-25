@@ -21,7 +21,7 @@ def generateArray(length, multiplier=1):
 def generateTempArray(length, multiplier=1):
     array = []
     for i in range(length):
-        array.append({'value': i * multiplier})
+        array.append(i * multiplier)
     return array
 
 
@@ -36,10 +36,10 @@ def generateTestTemperatures():
 def generateTestWeather(temperatures, WT_DEW_TEMPeratures, humidities):
     weather = {WT_TAG_TEMPS: [], WT_DEW_TEMP: [], WT_HUMIDITY: []}
     for i in range(len(temperatures)):
-        weather[WT_TAG_TEMPS].append({'value': temperatures[i]})
-        weather[WT_DEW_TEMP].append({'value': WT_DEW_TEMPeratures[i]})
+        weather[WT_TAG_TEMPS].append(temperatures[i])
+        weather[WT_DEW_TEMP].append(WT_DEW_TEMPeratures[i])
         if humidities is not None:
-            weather[WT_HUMIDITY].append({'value': humidities[i]})
+            weather[WT_HUMIDITY].append(humidities[i])
 
     return weather
 

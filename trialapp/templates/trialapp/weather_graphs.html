@@ -23,13 +23,15 @@
             aria-controls="v-pills-replica" aria-selected="false">
             <span class="fs-2">&#128167;</span> Dew Point
         </a>
-        <a href="{% url 'meteo_api' fieldTrial.id %}" class="btn btn-secondary">Enrich with Meteorological Data</a>
+        {% if fieldTrial %}
+            <a href="{% url 'meteo_api' fieldTrial.id %}" class="btn btn-secondary">Enrich with Meteorological Data</a>
+        {% endif %}
     </div>
     <div class="tab-content" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="v-pills-temps" role="tabpanel" aria-labelledby="v-pills-temps-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if tempGraph %}
-                {{ tempGraph|safe }}
+                {% if weatherGraph.tempGraph %}
+                {{ weatherGraph.tempGraph|safe }}
                 {% else %}
                 <small>Please add assessments to be able to enrich this graph.</small>
                 {% endif %}
@@ -37,8 +39,8 @@
         </div>
         <div class="tab-pane fade" id="v-pills-precip" role="tabpanel" aria-labelledby="v-pills-precip-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if precipGraph %}
-                {{ precipGraph|safe }}
+                {% if weatherGraph.precipGraph %}
+                {{ weatherGraph.precipGraph|safe }}
                 {% else %}
                 <small>Please add assessments to be able to enrich this graph.</small>
                 {% endif %}
@@ -46,8 +48,8 @@
         </div>
         <div class="tab-pane fade" id="v-pills-soiltemp" role="tabpanel" aria-labelledby="v-pills-soiltemp-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if soilTempGraph %}
-                {{ soilTempGraph|safe }}
+                {% if weatherGraph.soilTempGraph %}
+                {{ weatherGraph.soilTempGraph|safe }}
                 {% else %}
                 <small>Please add data that is at least 7 days old to view this graph.</small>
                 {% endif %}
@@ -55,8 +57,8 @@
         </div>
         <div class="tab-pane fade" id="v-pills-soilmoist" role="tabpanel" aria-labelledby="v-pills-soilmoist-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if soilMoistGraph %}
-                {{ soilMoistGraph|safe }}
+                {% if weatherGraph.soilMoistGraph %}
+                {{ weatherGraph.soilMoistGraph|safe }}
                 {% else %}
                 <small>Please add data that is at least 7 days old to view this graph.</small>
                 {% endif %}
@@ -64,8 +66,8 @@
         </div>
         <div class="tab-pane fade" id="v-pills-humidity" role="tabpanel" aria-labelledby="v-pills-humidity-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if humidGraph %}
-                {{ humidGraph|safe }}
+                {% if weatherGraph.humidGraph %}
+                {{ weatherGraph.humidGraph|safe }}
                 {% else %}
                 <small>Please add data that is at least 7 days old to view this graph.</small>
                 {% endif %}
@@ -73,8 +75,8 @@
         </div>
         <div class="tab-pane fade" id="v-pills-dewpoint" role="tabpanel" aria-labelledby="v-pills-dewpoint-tab">
             <div class="card card-body-baas baas-graphs mt-4">
-                {% if dewPointGraph %}
-                {{ dewPointGraph|safe }}
+                {% if weatherGraph.dewPointGraph %}
+                {{ weatherGraph.dewPointGraph|safe }}
                 {% else %}
                 <small>Please add data that is at least 7 days old to view this graph.</small>
                 {% endif %}
