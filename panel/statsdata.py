@@ -61,8 +61,12 @@ class StatsDataApi(APIView):
 
         # reverse order of labels to draw from top to bottom
         newlabels = list(reversed(labels))
-        for index in range(6):
-            topList.append(newlabels[index])
+        sizeTops = 6
+        for label in newlabels:
+            topList.append(label)
+            sizeTops -= 1
+            if sizeTops == 0:
+                break
         # prepare data to display
         return GraphStat({keyName: dataset}, newlabels,
                          orientation='h',
