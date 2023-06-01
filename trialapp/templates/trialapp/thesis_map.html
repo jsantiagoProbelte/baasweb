@@ -12,7 +12,7 @@
             {% endfor %}
         </div>
         {% for row in rowsReplicas %}
-            {% include "trialapp/data_row_replica_template.html" with row=row appendix='R'%}
+            {% include "trialapp/data_row_replica_template.html" with row=row%}
         {% empty %}
             <p>No Thesis yet.</p>
         {% endfor %}
