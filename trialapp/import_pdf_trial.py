@@ -5,7 +5,7 @@ from dateutil.parser import parse
 import shutil
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
-
+from trialapp.sharepoint import TeamsHelper  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
     Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
@@ -1128,9 +1128,13 @@ def importOne():
     # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
     # fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
     fileName = path + '20220233 PB050, PB051, PB012, PB012B lettuce Sclerotinia sclerotiorum.pdf'
-    fileName = path + '20220692 PB012, PBO12B, PB051 Final Report - CUCUMBER FUSARIUM.pdf'
+    fileName = path + '20221102 P003 TOMATE.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
+
+
+def createFolder():
+    TeamsHelper.create_folder('studies', 'General')
 
 
 if __name__ == '__main__':
