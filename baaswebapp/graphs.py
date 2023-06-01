@@ -497,7 +497,7 @@ class GraphStat():
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
-            barmode = self._barmode)
+            barmode=self._barmode)
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
