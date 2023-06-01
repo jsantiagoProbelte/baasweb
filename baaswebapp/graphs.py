@@ -401,7 +401,8 @@ class GraphTrial:
 class GraphStat():
     def __init__(self, rawDataDict, labels, showLegend=True,
                  title=None, showTitle=False,
-                 xAxis='month', yAxis='# trials', orientation='v'):
+                 xAxis='month', yAxis='# trials', orientation='v',
+                 barmode="group"):
         self._graphData = None
         self._title = title
         self._orientation = orientation
@@ -411,6 +412,7 @@ class GraphStat():
         self._yAxis = yAxis
         self._showTitle = showTitle
         self._showLegend = showLegend
+        self._barmode = barmode
 
     def plot(self):
         self.prepareData()
@@ -494,7 +496,8 @@ class GraphStat():
                 xanchor="left",
                 x=0),
             xaxis_title=xaxis_title,
-            yaxis_title=yaxis_title)
+            yaxis_title=yaxis_title,
+            barmode = self._barmode)
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')

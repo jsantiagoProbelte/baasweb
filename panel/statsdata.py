@@ -39,7 +39,7 @@ class StatsDataApi(APIView):
                 datasets[datasetKey][month] += item['id__count']
         # prepare data to display
         return GraphStat(datasets, labels, orientation='v',
-                         xAxis='month', yAxis=yAxis).plot()
+                         xAxis='month', yAxis=yAxis, barmode="stack").plot()
 
     def getTrialTotalStats(self, dimension):
         keyName = '{}__name'.format(dimension)
