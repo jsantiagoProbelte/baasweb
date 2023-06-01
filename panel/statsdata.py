@@ -16,7 +16,7 @@ class StatsDataApi(APIView):
     def getDatapointStats(self):
         pass
 
-    def getTrialMonthStats(self, dimension):
+    def getTrialMonthStats(self, dimension, topList):
         keyName = '{}__name'.format(dimension)
         yAxis = 'last {} months created trials'.format(
             StatsDataApi.LAST_MONTHS)
@@ -29,51 +29,59 @@ class StatsDataApi(APIView):
         datasets = {}
         labels = BaaSHelpers.getLastMonthsInOrder(StatsDataApi.LAST_MONTHS)
         # Sorting in array of values per keyName,month
+        topList.append('Other')
+        datasets = {datasetKey: {label: 0 for label in labels}
+                    for datasetKey in topList}
         for item in query:
             month = BaaSHelpers.monthNameFromInt(item['created__month'])
             datasetKey = item[keyName]
-            datasetKey = 'Unknown' if datasetKey is None else datasetKey
-            if datasetKey not in datasets:
-                datasets[datasetKey] = {label: 0 for label in labels}
+            if datasetKey is None or datasetKey not in topList:
+                datasetKey = 'Other'
             if month in labels:
                 datasets[datasetKey][month] += item['id__count']
         # prepare data to display
-        return GraphStat(datasets, labels, orientation='v',
+        return GraphStat(datasets, labels, orientation='v', showLegend=False,
                          xAxis='month', yAxis=yAxis, barmode="stack").plot()
 
     def getTrialTotalStats(self, dimension):
         keyName = '{}__name'.format(dimension)
         query = FieldTrial.objects.values(keyName)\
             .annotate(Count('id')).all()\
-            .order_by(keyName)
+            .order_by('id__count')
 
         dataset = {}
         # Sorting in array of values per keyName
         labels = []
+        topList = []
         for item in query:
             datasetKey = item[keyName]
             datasetKey = 'Unknown' if datasetKey is None else datasetKey
             dataset[datasetKey] = item['id__count']
             labels.append(datasetKey)
 
+        # reverse order of labels to draw from top to bottom
+        newlabels = list(reversed(labels))
+        for index in range(6):
+            topList.append(newlabels[index])
         # prepare data to display
-        return GraphStat({keyName: dataset}, labels,
+        return GraphStat({keyName: dataset}, newlabels,
                          orientation='h',
                          showLegend=False, showTitle=False,
-                         xAxis=dimension, yAxis='total trials').plot()
+                         xAxis=dimension, yAxis='total trials').plot(), topList
 
-    def generateDataDimension(self, dimension):
-        return {'title': 'Product trial distribution',
-                'total': self.getTrialTotalStats(dimension),
-                'time': self.getTrialMonthStats(dimension)}
+    def generateDataDimension(self, dimension, title):
+        totalGraph, topList = self.getTrialTotalStats(dimension)
+        return {'title': title,
+                'total': totalGraph,
+                'time': self.getTrialMonthStats(dimension, topList)}
 
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
 
-        stats = [[self.generateDataDimension('trial_status'),
-                  self.generateDataDimension('product')],
-                 [self.generateDataDimension('crop'),
-                  self.generateDataDimension('plague')]]
+        stats = [[self.generateDataDimension('trial_status', 'Trial Status'),
+                  self.generateDataDimension('product', 'Products')],
+                 [self.generateDataDimension('crop', 'Crops'),
+                  self.generateDataDimension('plague', 'Plagues & Sickness')]]
 
         data = {'stats': stats, 'totalTrials': totalTrials}
         return render(request, StatsDataApi.TEMPLATE, data)

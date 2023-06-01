@@ -41,7 +41,7 @@ COLOR_bg_color = '#282828'
 COLOR_bg_color_cards = '#333333'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
-              COLOR_blue, COLOR_grey, COLOR_black, COLOR_bio_morado,
+              COLOR_blue, COLOR_grey, COLOR_bio_morado,
               COLOR_morado,
               COLOR_violeta, COLOR_bs_blue, COLOR_bs_indigo, COLOR_bs_purple,
               COLOR_bs_pink, COLOR_bs_red,  COLOR_bs_orange, COLOR_bs_yellow,
@@ -498,6 +498,9 @@ class GraphStat():
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
             barmode=self._barmode)
+
+        if self._orientation == 'h':
+            fig.update_yaxes(autorange="reversed")
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
