@@ -35,7 +35,7 @@ class LayoutTrial:
             number = replica.thesis.number
             if onlyThis and replica.thesis.id != onlyThis:
                 number = 0
-            return {'name': replica.getShortName(),
+            return {'name': replica.getTitle(),
                     'replica_id': replica.id,
                     'number': number,
                     'x': replica.pos_x,
