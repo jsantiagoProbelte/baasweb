@@ -3,7 +3,7 @@ from django.db import models
 import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
-from catalogue.models import Product, Treatment
+from catalogue.models import Product, Treatment, RateUnit
 from django.utils.translation import gettext_lazy as _
 
 
@@ -74,6 +74,7 @@ class FieldTrial(ModelHelpers, models.Model):
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     responsible = models.CharField(max_length=100)
     description = models.TextField(null=True)
+    conclusion = models.TextField(null=True)
 
     ref_to_eppo = models.CharField(max_length=100, null=True)
     ref_to_criteria = models.CharField(max_length=100, null=True)
@@ -126,6 +127,8 @@ class FieldTrial(ModelHelpers, models.Model):
 
     application_volume = models.DecimalField(
         max_digits=10, decimal_places=2, null=True)
+    application_volume_unit = models.ForeignKey(
+        RateUnit, on_delete=models.CASCADE, null=True)
     mode = models.ForeignKey(ApplicationMode,
                              on_delete=models.CASCADE, null=True)
 
