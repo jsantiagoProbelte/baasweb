@@ -11,6 +11,7 @@ from trialapp.models import\
     FieldTrial, Thesis, Project, Objective,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
+from catalogue.models import RateUnit
 from trialapp.data_models import Assessment
 from django.shortcuts import render, get_object_or_404
 from trialapp.trial_helper import LayoutTrial
@@ -63,8 +64,6 @@ class TrialModel():
                      'cls': Crop},
             'plague': {'label': "Plague", 'required': False, 'type': T_N,
                        'cls': Plague},
-            'description': {'label': "Description", 'required': False,
-                            'type': T_T, 'rows': 10},
         },
         'Status': {
             'trial_type': {'label': 'Type', 'required': True, 'type': T_N,
@@ -77,6 +76,17 @@ class TrialModel():
                                 'type': T_D},
             'completion_date': {'label': 'Completed by', 'required': False,
                                 'type': T_D},
+        },
+        'Report': {
+            'description': {
+                'label': "Description", 'required': False,
+                'type': T_T, 'rows': 10},
+            'comments_criteria': {
+                'label': "Criteria comments",
+                'required': False, 'type': T_T, 'rows': 5},
+            'conclusion': {
+                'label': "Conclusion", 'required': False,
+                'type': T_T, 'rows': 10}
         },
         'Cultive': {
             'crop_variety': {'label': 'Crop Variety', 'required': False,
@@ -97,13 +107,14 @@ class TrialModel():
                             'type': T_N},
             'ref_to_criteria': {'label': "Criteria Reference",
                                 'required': False, 'type': T_N},
-            'comments_criteria': {'label': "Criteria comments",
-                                  'required': False, 'type': T_T, 'rows': 5},
         },
         'Applications': {
-            'application_volume': {'label': "Application Volume (L/Ha)",
+            'application_volume': {'label': "Volume",
                                    'required': False, 'type': T_N},
-            'mode': {'label': "Application Mode", 'required': False,
+            'application_volume_unit': {
+                'label': "Unit", 'required': False, 'type': T_N,
+                'cls': RateUnit},
+            'mode': {'label': "Mode", 'required': False,
                      'type': T_N, 'cls': ApplicationMode},
         },
         'Layout': {
@@ -153,7 +164,7 @@ class TrialModel():
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude')
+            'latitude', 'application_volume_unit', 'conclusion')
 
     @classmethod
     def applyModel(cls, trialForm):
@@ -173,17 +184,16 @@ class TrialModel():
                     trialForm.fields[field].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
         # Querysets
-        trialForm.fields['project'].queryset = Project.objects.all().order_by(
-            'name')
-        trialForm.fields['objective'].queryset = Objective.objects.all(
-            ).order_by('name')
-        trialForm.fields['product'].queryset = Product.objects.all().order_by(
-            'name')
-        trialForm.fields['crop'].queryset = Crop.objects.all().order_by('name')
-        trialForm.fields['plague'].queryset = Plague.objects.all(
-            ).order_by('name')
+        trialForm.fields['project'].queryset = Project.getObjects()
+        trialForm.fields['objective'].queryset = Objective.getObjects()
+        trialForm.fields['product'].queryset = Product.getObjects()
+        trialForm.fields['crop'].queryset = Crop.getObjects()
+        trialForm.fields['plague'].queryset = Plague.getObjects()
+        if 'application_volume_unit' in trialForm.fields:
+            trialForm.fields['application_volume_unit'].queryset =\
+                RateUnit.getObjects()
         if 'crop_variety' in trialForm.fields:
-            crops = CropVariety.objects.all().order_by('name')
+            crops = CropVariety.getObjects()
             trialForm.fields['crop_variety'].queryset = crops
 
     @classmethod
@@ -260,7 +270,6 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return new_list
 
     def get_context_data(self, **kwargs):
-        # filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL}
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
@@ -270,11 +279,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 q_name |= Q(name__icontains=paramId)
                 q_name |= Q(responsible__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
-                # filter_kwargs['name__icontains'] = paramId
-                # filter_kwargs['responsible__icontains'] = paramId
                 q_objects &= q_name
             elif paramId:
-                # filter_kwargs['{}__id'.format(paramIdName)] = paramId
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
         new_list = []
         orderBy = paramsReplyTemplate.copy()
@@ -321,104 +327,148 @@ class FieldTrialApi(APIView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               allThesis)
-
         return render(request, template_name, showData)
 
 
 class FieldTrialFormLayout(FormHelper):
+
+    def showGoal(self):
+        return Div(
+            Div(HTML('Goal'), css_class="card-header-baas h4"),
+            Div(Div(Field('project', css_class='mb-2'),
+                    Field('objective', css_class='mb-2'),
+                    Field('product', css_class='mb-2'),
+                    Field('crop', css_class='mb-2'),
+                    Field('plague', css_class='mb-2'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showStatus(self):
+        return Div(
+            Div(HTML('Status'), css_class="card-header-baas h4"),
+            Div(Div(Field('trial_type', css_class='mb-2'),
+                    Field('trial_status', css_class='mb-2'),
+                    Field('responsible', css_class='mb-2'),
+                    Field('initiation_date', css_class='mb-2'),
+                    Field('completion_date', css_class='mb-2'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showAssessments(self):
+        return Div(
+            Div(HTML('Assessments'), css_class="card-header-baas h4"),
+            Div(Div(Field('ref_to_eppo', css_class='mb-2'),
+                    Field('ref_to_criteria', css_class='mb-2'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showLocation(self):
+        return Div(
+            Div(HTML('Location'), css_class="card-header-baas h4"),
+            Div(Div(Field('contact', css_class='mb-2'),
+                    Field('cro', css_class='mb-2'),
+                    Field('location', css_class='mb-2'),
+                    Field('latitude', css_class='mb-2'),
+                    Field('longitude', css_class='mb-2'),
+                    css_class="card-body-baas mb-3"),
+                css_class="card no-border mb-3"))
+
+    def showApplications(self):
+        return Div(
+            Div(HTML('Applications'), css_class="card-header-baas h4"),
+            Div(Div(Row(Div(Field('application_volume', css_class='mb-2'),
+                            css_class='col-md-8'),
+                        Div(Field('application_volume_unit', css_class='mb-2'),
+                            css_class='col-md-4')),
+                    Field('mode', css_class='mb-2'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showHeader(self, title, submitTxt):
+        return Row(
+            Div(HTML(title), css_class='col-md-1 h2'),
+            Div(Field('code'), css_class='col-md-2'),
+            Div(Field('name'), css_class='col-md-7'),
+            Div(FormActions(
+                Submit('submit', submitTxt, css_class="btn btn-info")),
+                css_class='col-md-1 text-sm-end'),
+            css_class='mt-3 mb-3')
+
+    def showFirstRow(self):
+        return Row(
+            Div(self.showGoal(), css_class='col-md-3'),
+            Div(self.showStatus(), css_class='col-md-3'),
+            Div(self.showLocation(), css_class='col-md-3'),
+            Div(self.showApplications(),
+                self.showAssessments(),
+                css_class='col-md-3'))
+
+    def showReportInfo(self):
+        return Div(
+            Div(HTML('Report'), css_class="card-header-baas h4"),
+            Div(Div(Field('description', css_class='mb-2'),
+                    Field('comments_criteria', css_class='mb-2'),
+                    Field('conclusion', css_class='mb-2'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showLayout(self):
+        return Div(
+            Div(HTML('Layout'), css_class="card-header-baas h4"),
+            Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
+                        Div(Field('replicas_per_thesis'),
+                            css_class='col-md-4'),
+                        Div(Field('samples_per_replica'),
+                            css_class='col-md-4'),
+                        css_class='mb-2'),
+                    Row(Div(Field('number_rows'),
+                            css_class='col-md-4'),
+                        Div(Field('distance_between_rows'),
+                            css_class='col-md-4'),
+                        Div(Field('distance_between_plants'),
+                            css_class='col-md-4'),
+                        css_class='mb-2'),
+                    Row(Div(Field('lenght_row'),
+                            css_class='col-md-4'),
+                        Div(Field('gross_surface'),
+                            css_class='col-md-4'),
+                        Div(Field('net_surface'),
+                            css_class='col-md-4'),
+                        css_class='mb-3'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
+    def showLastColumn(self):
+        return Div(self.showLayout(),
+                   self.showCultive())
+
+    def showCultive(self):
+        return Div(
+            Div(HTML('Cultive'), css_class="card-header-baas h4"),
+            Div(Div(Row(Div(Field('crop_variety', css_class='mb-2'),
+                            Field('irrigation', css_class='mb-2'),
+                            Field('seed_date', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        Div(Field('cultivation', css_class='mb-2'),
+                            Field('crop_age', css_class='mb-2'),
+                            Field('transplant_date', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        css_class='mb-3'),
+                    css_class="card-body-baas"),
+                css_class="card no-border mb-3"))
+
     def __init__(self, new=True):
         super().__init__()
         title = 'New' if new else 'Edit'
         submitTxt = 'Create' if new else 'Save'
         self.add_layout(Layout(
-            Row(Div(HTML(title),
-                    css_class='col-md-1 h2'),
-                Div(Field('code'),
-                    css_class='col-md-2'),
-                Div(Field('name'),
-                    css_class='col-md-7'),
-                Div(FormActions(
-                        Submit('submit', submitTxt, css_class="btn btn-info")),
-                    css_class='col-md-1 text-sm-end'),
-                css_class='mt-3 mb-3'),
-            Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
-                    Div(Div(Field('project', css_class='mb-2'),
-                            Field('objective', css_class='mb-2'),
-                            Field('product', css_class='mb-2'),
-                            Field('crop', css_class='mb-2'),
-                            Field('plague', css_class='mb-2'),
-                            Field('description', css_class='mb-2'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    css_class='col-md-3'),
-                Div(Div(HTML('Status'), css_class="card-header-baas h4"),
-                    Div(Div(Field('trial_type', css_class='mb-2'),
-                            Field('trial_status', css_class='mb-2'),
-                            Field('responsible', css_class='mb-2'),
-                            Field('initiation_date', css_class='mb-2'),
-                            Field('completion_date', css_class='mb-2'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-
-                    Div(HTML('Assessments'), css_class="card-header-baas h4"),
-                    Div(Div(Field('ref_to_eppo', css_class='mb-2'),
-                            Field('ref_to_criteria', css_class='mb-2'),
-                            Field('comments_criteria', css_class='mb-2'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    css_class='col-md-3'),
-                Div(Div(HTML('Location'), css_class="card-header-baas h4"),
-                    Div(Div(Field('contact', css_class='mb-2'),
-                            Field('cro', css_class='mb-2'),
-                            Field('location', css_class='mb-2'),
-                            Field('latitude', css_class='mb-2'),
-                            Field('longitude', css_class='mb-2'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    Div(HTML('Applications'), css_class="card-header-baas h4"),
-                    Div(Div(Field('application_volume', css_class='mb-2'),
-                            Field('mode', css_class='mb-2'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    css_class='col-md-2'),
-                Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
-                    Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
-                                Div(Field('replicas_per_thesis'),
-                                    css_class='col-md-4'),
-                                Div(Field('samples_per_replica'),
-                                    css_class='col-md-4'),
-                                css_class='mb-2'),
-                            Row(Div(Field('number_rows'),
-                                    css_class='col-md-4'),
-                                Div(Field('distance_between_rows'),
-                                    css_class='col-md-4'),
-                                Div(Field('distance_between_plants'),
-                                    css_class='col-md-4'),
-                                css_class='mb-2'),
-                            Row(Div(Field('lenght_row'),
-                                    css_class='col-md-4'),
-                                Div(Field('gross_surface'),
-                                    css_class='col-md-4'),
-                                Div(Field('net_surface'),
-                                    css_class='col-md-4'),
-                                css_class='mb-3'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    Div(HTML('Cultive'), css_class="card-header-baas h4"),
-                    Div(Div(Row(Div(Field('crop_variety', css_class='mb-2'),
-                                    Field('irrigation', css_class='mb-2'),
-                                    Field('seed_date', css_class='mb-2'),
-                                    css_class='col-md-6'),
-                                Div(Field('cultivation', css_class='mb-2'),
-                                    Field('crop_age', css_class='mb-2'),
-                                    Field('transplant_date', css_class='mb-2'),
-                                    css_class='col-md-6'),
-                                css_class='mb-3'),
-                            css_class="card-body-baas"),
-                        css_class="card no-border mb-3"),
-                    css_class='col-md-4')
-                )  # row
-            ))
+            self.showHeader(title, submitTxt),
+            Row(
+                Div(self.showFirstRow(),
+                    self.showReportInfo(),
+                    css_class="col-md-8"),
+                Div(self.showLastColumn(), css_class="col-md-4"),
+                )))
 
 
 class FieldTrialForm(forms.ModelForm):
