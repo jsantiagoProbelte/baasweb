@@ -5,7 +5,7 @@ from dateutil.parser import parse
 import shutil
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
-from trialapp.sharepoint import TeamsHelper  # noqa: E402
+from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
     Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
@@ -1133,12 +1133,16 @@ def importOne():
     importer.run()
 
 
-def createFolder():
-    TeamsHelper.create_folder('studies', 'General')
+def testArchive():
+    archive = BaaSArchive()
+    # archive.createFolder('20230101')
+    archive.uploadFile('submit.sh', '/Users/jsantiago/Code/baasweb', 'prueba/')
+    archive.downloadFile('submit.sh', 'prueba/', '/Users/jsantiago/Code/tmp')
 
 
 if __name__ == '__main__':
     # createThesisTreatments()
-    importOne()
+    # importOne()
     # importOneMapa()
     # discoverReports()
+    testArchive()

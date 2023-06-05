@@ -10,6 +10,9 @@ DATABASES = {
         'NAME': 'db_baaswebapp.sqlite3',
     }
 }
+
+TRIALS_ARCHIVE = 'LOCAL'
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',

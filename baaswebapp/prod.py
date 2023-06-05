@@ -13,3 +13,5 @@ DATABASES = {
     }
 }
 CSRF_TRUSTED_ORIGINS = ['https://baasweb.azurewebsites.net']
+
+TRIALS_ARCHIVE = 'TEAMS'
