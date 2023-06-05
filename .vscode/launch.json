@@ -28,13 +28,6 @@
             "justMyCode": true
         },
         {
-            "name": "Import reports",
-            "type": "python",
-            "request": "launch",
-            "module": "trialapp.report_finder",
-            "justMyCode": true,
-        },
-        {
             "name": "Stats",
             "type": "python",
             "request": "launch",
@@ -42,7 +35,7 @@
             "justMyCode": true,
         },
         {
-            "name": "PDF Table Import",
+            "name": "Import trial",
             "type": "python",
             "request": "launch",
             "module": "trialapp.import_pdf_trial",
@@ -60,7 +53,7 @@
             "justMyCode": true
         },
         {
-            "name": "Run Import Test",
+            "name": "Test Import",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
@@ -88,13 +81,6 @@
             ],
             "django": true,
             "justMyCode": true
-        },
-        {
-            "name": "migrate UNits",
-            "type": "python",
-            "request": "launch",
-            "module": "trialapp.migrateUnits",
-            "justMyCode": true,
         },
     ]
 }

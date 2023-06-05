@@ -1,10 +1,10 @@
 from math import ceil
 from trialapp.models import FieldTrial, Replica
 from trialapp.data_models import Assessment
+from baaswebapp.baas_archive import BaaSArchive
 
 
 class LayoutTrial:
-
     @classmethod
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
         blocks = fieldTrial.blocks
@@ -69,3 +69,21 @@ class LayoutTrial:
                             replica, assessment,
                             onlyThis=onlyThis)
         return deck
+
+
+class TrialHelper:
+    @classmethod
+    def uploadTrialFile(cls, trial, filepath):
+        archive = BaaSArchive()
+        fileBits = filepath.split('/')
+        filename = fileBits[-1]
+        filepath = '/'.join(fileBits[:-1])
+        archive.uploadFile(filename,
+                           filepath,
+                           trial.code)
+        trial.report_filename = '/'.join([trial.code, filename])
+        trial.save()
+
+    @classmethod
+    def createTrialArchive(cls, fieldTrialFolder):
+        BaaSArchive().createFolder(fieldTrialFolder)
