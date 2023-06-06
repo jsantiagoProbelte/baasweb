@@ -7,8 +7,8 @@ import shutil
 
 
 class SharePoint:
-    USERNAME = 'baas_admin@probelte.com'
-    PASSWORD = 'Baspsw.2023'
+    USERNAME = os.environ.get('USUARIO')
+    PASSWORD = os.environ.get('CLAVE')
     SHAREPOINT_URL = 'https://probelte.sharepoint.com'
     SHAREPOINT_SITE = 'https://probelte.sharepoint.com/sites/BaaSArchive/'
     ROOT_PATH = 'Documentos%20compartidos/'
