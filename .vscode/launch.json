@@ -72,12 +72,14 @@
             "args": [
                 "test",
                 // "panel.tests.tests_statsdata"
+                "trialapp.tests.tests_views_field_trial"
                 // "trialapp.tests.tests_views_data"
                 // "trialapp.tests.tests_trial_helper"
-                "trialapp.tests.tests_views_assessment"
+                // "trialapp.tests.tests_views_assessment"
                 // "trialapp.tests.tests_views_thesis"
                 // "catalogue.tests.tests_views_catalogue"
                 // "labapp.tests.tests_labtrial_views"
+                // "baaswebapp.tests.test_baas_archive"
             ],
             "django": true,
             "justMyCode": true

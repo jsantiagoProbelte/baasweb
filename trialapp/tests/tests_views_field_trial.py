@@ -1,10 +1,14 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis
+from trialapp.models import FieldTrial, Thesis, Application
+from trialapp.data_models import Assessment
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
+from trialapp.trial_helper import TrialHelper
+from baaswebapp.models import RateTypeUnit
+import os
 
 
 class FieldTrialViewsTest(TestCase):
@@ -109,6 +113,31 @@ class FieldTrialViewsTest(TestCase):
     def test_showFieldTrial(self):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
+
+        # Add filetrial
+        TrialHelper.uploadTrialFile(
+            fieldTrial, './baaswebapp/tests/fixtures/input/dummy.txt',
+            root_path='./baaswebapp/tests/fixtures/')
+        expectFolder = './baaswebapp/tests/fixtures/trials/{}/'.format(
+            fieldTrial.code)
+        expectFile = ''.join([expectFolder, 'dummy.txt'])
+        self.assertTrue(os.path.exists(expectFile))
+        self.assertEqual(fieldTrial.report_filename,
+                         '{}/dummy.txt'.format(fieldTrial.code))
+        os.remove(expectFile)
+        os.rmdir(expectFolder)
+
+        Assessment.objects.create(
+            name='ass',
+            assessment_date='2023-01-01',
+            field_trial=fieldTrial,
+            crop_stage_majority='69-96',
+            rate_type=RateTypeUnit.objects.get(id=1))
+
+        Application.objects.create(
+            app_date='2023-01-01',
+            field_trial=fieldTrial,
+            bbch='69-96')
 
         request = self._apiFactory.get('fieldtrial_api')
         self._apiFactory.setUser(request)

@@ -11,9 +11,12 @@ class SharePoint:
     PASSWORD = 'Baspsw.2023'
     SHAREPOINT_URL = 'https://probelte.sharepoint.com'
     SHAREPOINT_SITE = 'https://probelte.sharepoint.com/sites/BaaSArchive/'
-    SHAREPOINT_DOC = 'Documentos%20compartidos/'
+    ROOT_PATH = 'Documentos%20compartidos/'
+    _root_path = None
 
-    def __init__(self):
+    def __init__(self, root_path=None):
+        self._root_path = self.ROOT_PATH if root_path is None\
+                                         else root_path
         self.authcookie = Office365(
             SharePoint.SHAREPOINT_URL, username=SharePoint.USERNAME,
             password=SharePoint.PASSWORD).GetCookies()
@@ -21,7 +24,7 @@ class SharePoint:
                               authcookie=self.authcookie)
 
     def connectFolder(self, folder_name):
-        self.sharepoint_dir = ''.join([SharePoint.SHAREPOINT_DOC, folder_name])
+        self.sharepoint_dir = ''.join([self._root_path, folder_name])
         self._folder = self.auth_site.Folder(self.sharepoint_dir)
 
     def _download_file(self, file_name, dest_folder):
@@ -55,7 +58,12 @@ class SharePoint:
 
 
 class LocalArchive():
-    LOCAL_ARCHIVE = './../../'
+    ROOT_PATH = './../../'
+    _root_path = None
+
+    def __init__(self, root_path=None):
+        self._root_path = self.ROOT_PATH if root_path is None\
+                                         else root_path
 
     def makeFolder(self, folder_name):
         try:
@@ -68,7 +76,7 @@ class LocalArchive():
         """
         Create a new folder at the specified path.
         """
-        folder = ''.join([LocalArchive.LOCAL_ARCHIVE, folder_name])
+        folder = ''.join([self._root_path, folder_name])
         self.makeFolder(folder)
 
     def downloadFile(self, file_name, folder_name, dest_folder):
@@ -76,7 +84,7 @@ class LocalArchive():
         Copy a file from the source path to the destination path.
         """
         try:
-            source = ''.join([LocalArchive.LOCAL_ARCHIVE,
+            source = ''.join([self._root_path,
                               folder_name, file_name])
             self.makeFolder(dest_folder)
             shutil.copy2(source, dest_folder)
@@ -93,7 +101,7 @@ class LocalArchive():
         try:
             source = '/'.join([folder_name, file_name])
             destination = ''.join(
-                [LocalArchive.LOCAL_ARCHIVE, dest_folder])
+                [self._root_path, dest_folder])
             self.connectFolder(dest_folder)
             shutil.copy2(source, destination)
             print(f"File copied from {source} to {destination}")
@@ -104,17 +112,21 @@ class LocalArchive():
 
 
 class BaaSArchive():
-    _trialsFolder = 'trials/'
+    DEFAULT_PATH = 'trials/'
+    _trialsFolder = None
     _archive = None
 
-    def __init__(self):
+    def __init__(self, root_path=None,
+                 trialsFolder=None):
         if settings.TRIALS_ARCHIVE == 'TEAMS':
-            self._archive = SharePoint()
+            self._archive = SharePoint(root_path)
         else:
-            self._archive = LocalArchive()
+            self._archive = LocalArchive(root_path)
+        self._trialsFolder = trialsFolder if trialsFolder else\
+            BaaSArchive.DEFAULT_PATH
 
     def addRoot(self, folder_name):
-        return ''.join([BaaSArchive._trialsFolder, folder_name])
+        return ''.join([self._trialsFolder, folder_name])
 
     def downloadFile(self, file_name, folder_name, dest_folder):
         self._archive.downloadFile(file_name,

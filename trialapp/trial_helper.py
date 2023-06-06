@@ -73,8 +73,11 @@ class LayoutTrial:
 
 class TrialHelper:
     @classmethod
-    def uploadTrialFile(cls, trial, filepath):
-        archive = BaaSArchive()
+    def uploadTrialFile(cls, trial, filepath,
+                        root_path=None,
+                        trialsFolder=None):
+        archive = BaaSArchive(root_path=root_path,
+                              trialsFolder=trialsFolder)
         fileBits = filepath.split('/')
         filename = fileBits[-1]
         filepath = '/'.join(fileBits[:-1])
