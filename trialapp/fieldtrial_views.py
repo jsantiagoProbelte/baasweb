@@ -312,7 +312,7 @@ class FieldTrialApi(APIView):
                 {'value': item.getContext(), 'name': item.assessment_date,
                  'link': 'assessment_api', 'id': item.id})
         showData = {
-            'fieldTrial': fieldTrial, 'titleView': fieldTrial.getName(),
+            'fieldTrial': fieldTrial, 'titleView': fieldTrial.code,
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'numberAssessments': len(assessments),
             'numberThesis': len(allThesis)}
