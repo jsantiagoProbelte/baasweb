@@ -14,7 +14,7 @@ from trialapp.models import\
 from catalogue.models import RateUnit
 from trialapp.data_models import Assessment
 from django.shortcuts import render, get_object_or_404
-from trialapp.trial_helper import LayoutTrial
+from trialapp.trial_helper import LayoutTrial, TrialHelper
 from rest_framework.views import APIView
 import datetime
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -502,6 +502,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
+            TrialHelper.createTrialArchive(fieldTrial.code)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:
             pass
