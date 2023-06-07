@@ -82,7 +82,7 @@ class TrialModel():
                 'label': "Description", 'required': False,
                 'type': T_T, 'rows': 10},
             'comments_criteria': {
-                'label': "Criteria comments",
+                'label': "Evaluation Criteria",
                 'required': False, 'type': T_T, 'rows': 5},
             'conclusion': {
                 'label': "Conclusion", 'required': False,
