@@ -117,7 +117,7 @@ class FieldTrialViewsTest(TestCase):
         # Add filetrial
         helper = TrialHelper(root_path='./baaswebapp/tests/fixtures/')
         helper.uploadTrialFile(
-            fieldTrial, 
+            fieldTrial,
             './baaswebapp/tests/fixtures/input/dummy.txt')
         expectFolder = './baaswebapp/tests/fixtures/trials/{}/'.format(
             fieldTrial.code)
