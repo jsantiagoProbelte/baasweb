@@ -115,9 +115,10 @@ class FieldTrialViewsTest(TestCase):
             **TrialAppModelTest.FIELDTRIALS[0])
 
         # Add filetrial
-        TrialHelper.uploadTrialFile(
-            fieldTrial, './baaswebapp/tests/fixtures/input/dummy.txt',
-            root_path='./baaswebapp/tests/fixtures/')
+        helper = TrialHelper(root_path='./baaswebapp/tests/fixtures/')
+        helper.uploadTrialFile(
+            fieldTrial, 
+            './baaswebapp/tests/fixtures/input/dummy.txt')
         expectFolder = './baaswebapp/tests/fixtures/trials/{}/'.format(
             fieldTrial.code)
         expectFile = ''.join([expectFolder, 'dummy.txt'])

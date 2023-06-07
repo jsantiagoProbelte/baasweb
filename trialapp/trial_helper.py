@@ -72,21 +72,22 @@ class LayoutTrial:
 
 
 class TrialHelper:
-    @classmethod
-    def uploadTrialFile(cls, trial, filepath,
-                        root_path=None,
-                        trialsFolder=None):
-        archive = BaaSArchive(root_path=root_path,
-                              trialsFolder=trialsFolder)
+    _archive = None
+
+    def __init__(self, root_path=None, trialsFolder=None):
+        self._archive = BaaSArchive(root_path=root_path,
+                                    trialsFolder=trialsFolder)
+
+    def uploadTrialFile(self, trial, filepath):
         fileBits = filepath.split('/')
         filename = fileBits[-1]
         filepath = '/'.join(fileBits[:-1])
-        archive.uploadFile(filename,
-                           filepath,
-                           trial.code)
+        filepath += '/'
+        self._archive.uploadFile(filename,
+                                 filepath,
+                                 trial.code)
         trial.report_filename = '/'.join([trial.code, filename])
         trial.save()
 
-    @classmethod
-    def createTrialArchive(cls, fieldTrialFolder):
-        BaaSArchive().createFolder(fieldTrialFolder)
+    def createTrialArchive(self, fieldTrialFolder):
+        self._archive.createFolder(fieldTrialFolder)

@@ -502,7 +502,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
-            TrialHelper.createTrialArchive(fieldTrial.code)
+            TrialHelper().createTrialArchive(fieldTrial.code)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:
             pass

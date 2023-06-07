@@ -13,6 +13,7 @@ from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant,\
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
 from trialapp.trial_helper import TrialHelper  # noqa: E402
+import glob  # noqa: E402
 
 
 class TrialTags:
@@ -900,8 +901,8 @@ class ImportPdfTrial:
             self._importedTable,
             len(self._evals)))
         if self._importedTable > 0:
-            TrialHelper.uploadTrialFile(self._trial,
-                                        self._filepath)
+            TrialHelper().uploadTrialFile(self._trial,
+                                          self._filepath)
             return True
         else:
             self._trial.delete()
@@ -1143,9 +1144,26 @@ def testArchive():
     archive.downloadFile('submit.sh', 'prueba/', '/Users/jsantiago/Code/tmp')
 
 
+def createTeams():
+    helper = TrialHelper()
+    reference = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/'\
+                'Data/estudios/imported/'
+
+    for trial in FieldTrial.objects.all():
+        print('{}>>'.format(trial.code))
+        helper.createTrialArchive(trial.code)
+        pattern = '*{}*.[pP][dD][fF]'.format(trial.code)
+        filePattern = ''.join([reference, pattern])
+        files = glob.glob(filePattern)
+        for filepath in files:
+            print('>>{}'.format(filepath))
+            helper.uploadTrialFile(trial, filepath)
+
+
 if __name__ == '__main__':
     # createThesisTreatments()
-    importOne()
+    # importOne()
+    createTeams()
     # importOneMapa()
     # discoverReports()
     # testArchive()
