@@ -315,7 +315,7 @@ class PdfTrial:
             ("TEXTCOLOR", (0, 0), (-1, 0), "#000000"),
             ("ALIGN", (0, 0), (-1, 0), "CENTER"),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, 0), 12),
+            ("FONTSIZE", (0, 0), (-1, 0), 8),
             ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
             ("BACKGROUND", (0, 1), (-1, -1), "#EEEEEE"),
             ("TEXTCOLOR", (0, 1), (-1, -1), "#000000"),
@@ -326,7 +326,7 @@ class PdfTrial:
             ("ALIGN", (0, 0), (0, -1), "LEFT"),
             ("ALIGN", (1, 1), (-1, -1), "RIGHT"),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, 0), 12),
+            ("FONTSIZE", (0, 0), (-1, 0), 8),
             ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
             ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
             ("FONTSIZE", (0, 1), (-1, -1), 10)])
@@ -467,22 +467,48 @@ class PdfTrial:
         self._canvas.showPage()
         return (x, y)
 
-    def writeAssessmentInfo(self, y):
-        (x, y) = self.writeParagraph(self.toText('Assessments', []), y)
-        assmts = Assessment.getObjects(self._trial)
-        references = Replica.getFieldTrialObjects(self._trial)
+    def prepareHeader(self, assessList):
+        partRatedArr = ['Part Rated', '', '']
+        bbchArr = ['BBCH', '', '']
+        names = ['Name/Interval', '', '']
+        dates = ['Date', '', '']
+        rating = ['Rating (Unit)', '', '']
+        for ass in assessList:
+            names.append(ass.name)
+            dates.append(ass.assessment_date.isoformat())
+            rating.append(ass.rate_type.getName())
+            partRated = ass.part_rated
+            if partRated == 'Undefined' or partRated == 'None':
+                partRated = ''
+            partRatedArr.append(partRated)
+            bbch = ass.crop_stage_majority
+            if bbch == 'Undefined' or bbch == 'None':
+                bbch = ''
+            bbchArr.append(bbch)
+        return [dates, rating, bbchArr, partRatedArr, names]
+
+    def selectAssmts(self, assmts):
         assmtsLists = []
         index = 0
         assmtsList = []
         for assmt in assmts:
             assmtsList.append(assmt)
-            if index == 5:
+            if index == 2:
                 assmtsLists.append(assmtsList)
                 assmtsList = []
                 index = 0
             else:
                 index += 1
+        return assmtsLists
+
+    def writeAssessmentInfo(self, y):
+        (x, y) = self.writeParagraph(self.toText('Assessments', []), y)
+        assmts = Assessment.getObjects(self._trial)
+        references = Replica.getFieldTrialObjects(self._trial)
+        assmtsLists = self.selectAssmts(assmts)
+
         for block in assmtsLists:
+            data = self.prepareHeader(block)
             replicaData = {}
             lastThesisId = None
             for item in references:
@@ -501,7 +527,8 @@ class PdfTrial:
                         if dataPoint.reference.id == reference.id:
                             replicaData[reference.id].append(dataPoint.value)
                             break
-            data = list(replicaData.values())
+            for row in list(replicaData.values()):
+                data.append(row)
             (x, y) = self.writeTable(data, y, colums_align_right=2)
         return (x, y)
 
@@ -511,5 +538,5 @@ class PdfTrial:
         (x, y) = self.writeThesisData(y)
         (x, y) = self.writeApplicationData(y)
         self._canvas.showPage()
-        (x, y) = self.writeAssessmentInfo(self._page_start)
+        (x, y) = self.writeAssessmentInfo(self._page_start - 50)
         self._canvas.save()
