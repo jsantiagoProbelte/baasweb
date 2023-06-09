@@ -226,7 +226,7 @@ class DataLabHelper:
 
     def computeData(self):
         self._assessment = LabAssessment.objects.get(trial=self._trial)
-        self._points = LabDataPoint.getDataPointsAssessment(
+        self._points = LabDataPoint.getDataPoints(
             self._assessment).order_by('dosis__rate', 'thesis__id')
 
     def prepareHeader(self, colspan=2):

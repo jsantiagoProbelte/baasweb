@@ -126,13 +126,7 @@ class DataModel(ModelHelpers):
 
     @classmethod
     def getDataPoints(cls, assessment):
-        return cls.objects \
-                  .filter(assessment=assessment)
-
-    @classmethod
-    def getDataPointsAssessment(cls, assessment):
-        return cls.objects \
-                  .filter(assessment=assessment)
+        return cls.objects.filter(assessment=assessment)
 
     @classmethod
     def getAssessmentDataPoints(cls, assIds):

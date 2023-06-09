@@ -111,7 +111,7 @@ class LabTrialViewsTest(TestCase):
 
         # Let's add data
         assessment = LabAssessment.objects.get(trial=labTrial)
-        points = LabDataPoint.getDataPointsAssessment(assessment)
+        points = LabDataPoint.getDataPoints(assessment)
         dataHelper = DataLabHelper(labTrial)
         self.assertTrue(len(points) > 0)
         thePointId = points[0].id

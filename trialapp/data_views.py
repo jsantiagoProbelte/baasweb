@@ -168,7 +168,7 @@ class DataHelper:
 
     def prepareDataPoints(self, references, level, assSet):
         clsData = DataHelper.CLSDATAS[level]
-        dataPoints = clsData.getDataPointsAssessment(self._assessment)
+        dataPoints = clsData.getDataPoints(self._assessment)
         dataPointsToDisplay = []
         dataPointsForGraph = []
         for reference in references:

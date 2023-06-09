@@ -137,8 +137,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
                 'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS,
-                'weatherGraph': weatherGraph
-                }
+                'weatherGraph': weatherGraph}
 
 
 class AssessmentFormLayout(FormHelper):
@@ -156,8 +155,7 @@ class AssessmentFormLayout(FormHelper):
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
-                css_class="card-body-baas mt-2")
-        ))
+                css_class="card-body-baas mt-2")))
 
 
 class AssessmentForm(forms.ModelForm):

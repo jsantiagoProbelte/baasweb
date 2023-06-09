@@ -8,6 +8,7 @@ from trialapp.models import\
     FieldTrial, Thesis, Project, Objective, Replica,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
+from trialapp.data_models import ReplicaData
 from catalogue.models import RateUnit
 from django import forms
 from io import BytesIO
@@ -307,6 +308,7 @@ class PdfTrial:
     _margin = 25
     _buffer = None
     _filename = None
+    _page_start = 800
 
     _TABLE_STYLE_1 = TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), "#CCCCCC"),
@@ -352,8 +354,6 @@ class PdfTrial:
     def writeParagraph(self, texto, y, x=_margin,
                        styleName='Normal',
                        width=0):
-        # styleSheet = getSampleStyleSheet()
-        # style = styleSheet['BodyText']
         styles = getSampleStyleSheet()
         style = styles[styleName]
         paragraph = Paragraph(texto, style)
@@ -363,15 +363,17 @@ class PdfTrial:
     def toText(self, title, fields, exclude=[], includeItem=True):
         texto = ''
         if len(title) > 0:
-            texto = '''<font size=20><strong>''' + title +\
-                    '''</strong></font><br/>'''
+            texto = '''<font size=20><br/><strong>''' + title +\
+                    '''</strong><br/></font><br/>'''
         for item in fields:
             if item not in exclude:
                 if includeItem:
                     texto += '''<strong>''' + item + ''' :</strong>   '''
                 texto += str(fields[item])
                 texto += '''<br/>'''
-        return texto + '''<br/><br/>'''
+        if len(fields) > 1:
+            texto += '''<br/>'''
+        return texto
 
     def selectPartOfTotal(self, data, part, total):
         newVector = {}
@@ -388,9 +390,9 @@ class PdfTrial:
         # A4 : 210, 297 mm
         trialData = TrialModel.prepareDataItems(self._trial, asArray=True)
         self.writeParagraph(
-            self.toText('Goal', trialData['Goal']), 800)
+            self.toText('Goal', trialData['Goal']), self._page_start)
         (x, y) = self.writeParagraph(
-            self.toText('Status', trialData['Status']), 350, 800)
+            self.toText('Status', trialData['Status']), self._page_start, x=350)
         (x, y) = self.writeParagraph(
             self.toText('Protocol',
                         {**trialData['Report'], **trialData['Assessments']},
@@ -404,18 +406,19 @@ class PdfTrial:
         self._canvas.showPage()
 
         # Second page
-        self.writeParagraph(
-            self.toText('Cultive', trialData['Cultive']), 800)
+        (x, y0) = self.writeParagraph(
+            self.toText('Cultive', trialData['Cultive']), self._page_start)
         (x, y1) = self.writeParagraph(
-            self.toText('Location', trialData['Location']), 800, x=200)
+            self.toText('Location', trialData['Location']), self._page_start, x=250)
+        y1 = min([y0, y1])
         (x, y2) = self.writeParagraph(
             self.toText('Applications', trialData['Applications']), y1)
         layout1 = self.selectPartOfTotal(trialData['Layout'], 1, 2)
         (x, y3) = self.writeParagraph(
-            self.toText('Layout', layout1), y1, x=200)
+            self.toText('Layout', layout1), y1, x=250)
         layout2 = self.selectPartOfTotal(trialData['Layout'], 2, 2)
         (x, y4) = self.writeParagraph(
-            self.toText('  ', layout2), y1, x=200)
+            self.toText('  ', layout2), y1, x=400)
         new_y = min([y2, y3, y4])
         return (x, new_y)
 
@@ -442,16 +445,17 @@ class PdfTrial:
         return (x+w, y-h)
 
     def writeTable(self, data, y, x=_margin, width=0,
-                   style=_TABLE_STYLE_1):
+                   style=_TABLE_STYLE_2, colums_align_right=1):
         table = Table(data)
         # Set the table style
-        table.setStyle(style)
+        table.setStyle(TableStyle([
+            ("ALIGN", (colums_align_right, 1), (-1, -1), "RIGHT")]))
         return self.addToPage(table, x, y, width)
 
     def writeThesisData(self, y):
         (x, y) = self.writeParagraph(self.toText('Treatments', []), y)
         thesis, data = Thesis.getObjectsDisplay(self._trial, asArray=True)
-        (x, y) = self.writeTable(data, y)
+        (x, y) = self.writeTable(data, y, colums_align_right=2)
         return (x, y)
 
     def writeApplicationData(self, y):
@@ -463,14 +467,43 @@ class PdfTrial:
         self._canvas.showPage()
         return (x, y)
 
-    # def writeAssessmentInfo(self, y):
-    #     data = Assessment.getObjectsDisplay(self._trial)
-    #     if len(data) < 2:
-    #         return (PdfTrial._margin, y)
-    #     (x, y) = self.writeParagraph(self.toText('', []), y)
-    #     (x, y) = self.writeTable(data, PdfTrial._margin, y)
-    #     self._canvas.showPage()
-    #     return (x, y)
+    def writeAssessmentInfo(self, y):
+        (x, y) = self.writeParagraph(self.toText('Assessments', []), y)
+        assmts = Assessment.getObjects(self._trial)
+        references = Replica.getFieldTrialObjects(self._trial)
+        assmtsLists = []
+        index = 0
+        assmtsList = []
+        for assmt in assmts:
+            assmtsList.append(assmt)
+            if index == 5:
+                assmtsLists.append(assmtsList)
+                assmtsList = []
+                index = 0
+            else:
+                index += 1
+        for block in assmtsLists:
+            replicaData = {}
+            lastThesisId = None
+            for item in references:
+                if item.thesis_id != lastThesisId:
+                    thesis = item.thesis
+                    values = [thesis.number, thesis.name]
+                    lastThesisId = thesis.id
+                else:
+                    values = ['', '']
+                values.append(item.number)
+                replicaData[item.id] = values
+            for assmt in block:
+                dataPoints = ReplicaData.getDataPoints(assmt)
+                for reference in references:
+                    for dataPoint in dataPoints:
+                        if dataPoint.reference.id == reference.id:
+                            replicaData[reference.id].append(dataPoint.value)
+                            break
+            data = list(replicaData.values())
+            (x, y) = self.writeTable(data, y, colums_align_right=2)
+        return (x, y)
 
     def produce(self):
         self.writeMainPage()
@@ -478,6 +511,5 @@ class PdfTrial:
         (x, y) = self.writeThesisData(y)
         (x, y) = self.writeApplicationData(y)
         self._canvas.showPage()
-        # (x, y) = self.writeAssessmentInfo()
-
+        (x, y) = self.writeAssessmentInfo(self._page_start)
         self._canvas.save()
