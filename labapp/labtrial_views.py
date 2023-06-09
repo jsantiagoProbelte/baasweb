@@ -13,7 +13,8 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.fieldtrial_views import FieldTrialFilter, TrialModel
+from trialapp.fieldtrial_views import FieldTrialFilter
+from trialapp.trial_helper import TrialModel
 from trialapp.data_views import DataGraphFactory
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy

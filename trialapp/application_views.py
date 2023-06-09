@@ -12,7 +12,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.forms import MyDateInput
+from trialapp.trial_helper import MyDateInput
 
 
 class ApplicationListView(LoginRequiredMixin, ListView):

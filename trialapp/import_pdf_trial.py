@@ -12,7 +12,7 @@ from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant,\
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
-from trialapp.trial_helper import TrialHelper  # noqa: E402
+from trialapp.trial_helper import TrialHelper, PdfTrial  # noqa: E402
 import glob  # noqa: E402
 
 
@@ -1151,7 +1151,7 @@ def createTeams():
 
     for trial in FieldTrial.objects.all():
         print('{}>>'.format(trial.code))
-        helper.createTrialArchive(trial.code)
+        helper.createTrialFolder(trial.code)
         pattern = '*{}*.[pP][dD][fF]'.format(trial.code)
         filePattern = ''.join([reference, pattern])
         files = glob.glob(filePattern)
@@ -1160,10 +1160,16 @@ def createTeams():
             helper.uploadTrialFile(trial, filepath)
 
 
+def exportPdf():
+    trial = FieldTrial.objects.get(code='20160902')
+    export = PdfTrial(trial)
+    export.produce()
+
+
 if __name__ == '__main__':
     # createThesisTreatments()
     # importOne()
-    createTeams()
+    exportPdf()
     # importOneMapa()
     # discoverReports()
     # testArchive()

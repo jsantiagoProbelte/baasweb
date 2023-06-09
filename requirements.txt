@@ -20,3 +20,4 @@ statsmodels==0.13.5
 
 # Teams
 SharePlum
+reportlab==4.0.4

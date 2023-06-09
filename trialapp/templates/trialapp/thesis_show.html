@@ -36,8 +36,8 @@
                 {% for treatment in treatments %}
                 <li class="list-group-item list-group-item-baas">
                     {{treatment.name}}
-                    <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-4"
-                        data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a></span>
+                    <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-3"
+                        data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a></span>
                 </li>
               
                 {% empty %}

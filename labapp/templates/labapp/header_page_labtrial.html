@@ -25,8 +25,8 @@
             data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
         {% endif %}
         {% if delete_url %}
-        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-1"
-            data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a>
         {% endif %}
     </div></span>
 

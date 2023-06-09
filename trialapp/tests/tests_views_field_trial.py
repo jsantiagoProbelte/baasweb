@@ -4,9 +4,10 @@ from trialapp.models import FieldTrial, Thesis, Application
 from trialapp.data_models import Assessment
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
-    FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView
+    FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView,\
+    DownloadTrial
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.trial_helper import TrialHelper
+from trialapp.trial_helper import TrialHelper, PdfTrial
 from baaswebapp.models import RateTypeUnit
 import os
 
@@ -113,6 +114,41 @@ class FieldTrialViewsTest(TestCase):
     def test_showFieldTrial(self):
         fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
+        Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
+        Assessment.objects.create(
+            name='ass',
+            assessment_date='2023-01-01',
+            field_trial=fieldTrial,
+            crop_stage_majority='69-96',
+            rate_type=RateTypeUnit.objects.get(id=1))
+        Application.objects.create(
+            app_date='2023-01-01',
+            field_trial=fieldTrial,
+            bbch='69-96')
+
+        # Export file
+        PdfTrial(fieldTrial).produce()
+        trialFile = './{}_trial.pdf'.format(fieldTrial.code)
+        self.assertTrue(os.path.exists(trialFile))
+
+        # Download it
+        request = self._apiFactory.get('download_pdf')
+        self._apiFactory.setUser(request)
+        apiView = DownloadTrial()
+        response = apiView.get(request,
+                               field_trial_id=fieldTrial.id)
+
+        # Assert that the response has a status code of 200 (OK)
+        self.assertEqual(response.status_code, 200)
+        # Assert that the response has the correct content type for a PDF file
+        self.assertEqual(response['Content-Type'], 'application/pdf')
+        # Assert that the response includes the necessary headers for
+        # downloading
+        fileName = '{}_trial.pdf'.format(fieldTrial.code)
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="{}"'.format(fileName)
+        )
 
         # Add filetrial
         helper = TrialHelper(root_path='./baaswebapp/tests/fixtures/')
@@ -127,18 +163,6 @@ class FieldTrialViewsTest(TestCase):
                          '{}/dummy.txt'.format(fieldTrial.code))
         os.remove(expectFile)
         os.rmdir(expectFolder)
-
-        Assessment.objects.create(
-            name='ass',
-            assessment_date='2023-01-01',
-            field_trial=fieldTrial,
-            crop_stage_majority='69-96',
-            rate_type=RateTypeUnit.objects.get(id=1))
-
-        Application.objects.create(
-            app_date='2023-01-01',
-            field_trial=fieldTrial,
-            bbch='69-96')
 
         request = self._apiFactory.get('fieldtrial_api')
         self._apiFactory.setUser(request)

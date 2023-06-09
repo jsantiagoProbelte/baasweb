@@ -9,8 +9,8 @@
     <span><div class="btn-group ms-2" role="group">
         <a href="{% url update_url item.id %}" class="btn btn-secondary btn-sm fs-3 "
                 data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
-        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-1"
-            data-toggle="tooltip" data-placement="top" title='Delete new item'> - </a>
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a>
     </div></span>
     <span> <div class="btn-group float-end" role="group">
         <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"

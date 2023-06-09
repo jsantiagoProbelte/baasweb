@@ -24,9 +24,9 @@ urlpatterns = [
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
     path(
-        'set_replica_position/<int:x>/<int:y>/<int:oldReplicaId>/',
-        thesis_views.SetReplicaPosition.as_view(),
-        name='set-replica-position'),
+        'download_pdf/<int:field_trial_id>/',
+        fieldtrial_views.DownloadTrial.as_view(),
+        name='download_pdf'),
     # Thesis urls
     path(
         'thesislist/<int:field_trial_id>/',
@@ -44,6 +44,10 @@ urlpatterns = [
         'thesis/delete/<int:pk>/',
         thesis_views.ThesisDeleteView.as_view(),
         name='thesis-delete'),
+    path(
+        'set_replica_position/<int:x>/<int:y>/<int:oldReplicaId>/',
+        thesis_views.SetReplicaPosition.as_view(),
+        name='set-replica-position'),
     # treatment in thesis
     path('treatment_thesis/add/<int:thesis_id>/',
          thesis_views.TreatmentThesisCreateView.as_view(),

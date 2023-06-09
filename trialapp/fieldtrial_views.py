@@ -1,29 +1,22 @@
-# Create your views here.
-import django_filters
-
-from django_filters.views import FilterView
+import datetime
 from django.db.models import Q, Count
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-# from rest_framework import permissions
-
-from trialapp.models import\
-    FieldTrial, Thesis, Project, Objective,\
-    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
-    Plague, CultivationMethod, Irrigation, Application
-from catalogue.models import RateUnit
-from trialapp.data_models import Assessment
-from django.shortcuts import render, get_object_or_404
-from trialapp.trial_helper import LayoutTrial, TrialHelper
 from rest_framework.views import APIView
-import datetime
+from django.shortcuts import render, get_object_or_404
+from django import forms
+from django.http import HttpResponseRedirect, FileResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+import django_filters
+from django_filters.views import FilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
-from django.http import HttpResponseRedirect
-from django import forms
-from trialapp.forms import MyDateInput
+from trialapp.models import FieldTrial, Thesis, Objective,\
+    Product, TrialStatus, TrialType, Crop, Plague, Application
+from trialapp.data_models import Assessment
+from trialapp.trial_helper import LayoutTrial, TrialHelper, TrialModel,\
+    PdfTrial
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -45,187 +38,6 @@ class FieldTrialFilter(django_filters.FilterSet):
         model = FieldTrial
         fields = ['name', 'trial_status', 'trial_type', 'objective', 'product',
                   'crop', 'plague']
-
-
-class TrialModel():
-    T_D = 'TypeDate'
-    T_I = 'TypeInteger'
-    T_N = 'TypeNoChange'
-    T_T = 'TypeText'
-    FIELDS = {
-        'Goal': {
-            'project': {'label': "Project", 'required': True, 'type': T_N,
-                        'cls': Project},
-            'objective': {'label': "Objective", 'required': True, 'type': T_N,
-                          'cls': Objective},
-            'product': {'label': "Main Product", 'required': True,
-                        'type': T_N, 'cls': Product},
-            'crop': {'label': "Crop", 'required': True, 'type': T_N,
-                     'cls': Crop},
-            'plague': {'label': "Plague", 'required': False, 'type': T_N,
-                       'cls': Plague},
-        },
-        'Status': {
-            'trial_type': {'label': 'Type', 'required': True, 'type': T_N,
-                           'cls': TrialType},
-            'trial_status': {'label': 'Status', 'required': True, 'type': T_N,
-                             'cls': TrialStatus},
-            'responsible': {'label': 'Responsible', 'required': True,
-                            'type': T_N},
-            'initiation_date': {'label': 'Started', 'required': True,
-                                'type': T_D},
-            'completion_date': {'label': 'Completed by', 'required': False,
-                                'type': T_D},
-        },
-        'Report': {
-            'description': {
-                'label': "Description", 'required': False,
-                'type': T_T, 'rows': 10},
-            'comments_criteria': {
-                'label': "Evaluation Criteria",
-                'required': False, 'type': T_T, 'rows': 5},
-            'conclusion': {
-                'label': "Conclusion", 'required': False,
-                'type': T_T, 'rows': 10}
-        },
-        'Cultive': {
-            'crop_variety': {'label': 'Crop Variety', 'required': False,
-                             'type': T_N, 'cls': CropVariety},
-            'cultivation': {'label': 'Cultivation Mode', 'required': False,
-                            'type': T_N, 'cls': CultivationMethod},
-            'irrigation': {'label': 'Irrigation', 'required': False,
-                           'type': T_N, 'cls': Irrigation},
-            'crop_age': {'label': 'Crop Age (years)', 'required': False,
-                         'type': T_I},
-            'seed_date': {'label': 'Seed date', 'required': False,
-                          'type': T_D},
-            'transplant_date': {'label': 'Transplante date', 'required': False,
-                                'type': T_D},
-        },
-        'Assessments': {
-            'ref_to_eppo': {'label': "EPPO Reference", 'required': False,
-                            'type': T_N},
-            'ref_to_criteria': {'label': "Criteria Reference",
-                                'required': False, 'type': T_N},
-        },
-        'Applications': {
-            'application_volume': {'label': "Volume",
-                                   'required': False, 'type': T_N},
-            'application_volume_unit': {
-                'label': "Unit", 'required': False, 'type': T_N,
-                'cls': RateUnit},
-            'mode': {'label': "Mode", 'required': False,
-                     'type': T_N, 'cls': ApplicationMode},
-        },
-        'Layout': {
-            'blocks': {'label': "# blocks", 'required': True,
-                       'type': T_I},
-            'replicas_per_thesis': {'label': "# replicas", 'required': True,
-                                    'type': T_I},
-            'samples_per_replica': {'label': "# samples/replica ",
-                                    'required': False, 'type': T_I},
-            'distance_between_plants': {'label': "Plants separation",
-                                        'required': False, 'type': T_N},
-            'distance_between_rows': {'label': "Rows separation",
-                                      'required': False, 'type': T_N},
-            'number_rows': {'label': "# rows", 'required': False, 'type': T_I},
-            'lenght_row': {'label': "Row length (m)", 'required': False,
-                           'type': T_N},
-            'net_surface': {'label': "Net area plot (m2)", 'required': False,
-                            'type': T_N},
-            'gross_surface': {'label': "Gross area plot (m2)",
-                              'required': False, 'type': T_N},
-        },
-        'Location': {
-            'contact': {'label': "Farmer", 'required': False, 'type': T_N},
-            'cro': {'label': "CRO", 'required': False, 'type': T_N},
-            'location': {'label': "City/Area", 'required': False, 'type': T_N},
-            'latitude': {'label': "Latitude", 'required': False,
-                         'type': T_N},
-            'longitude': {'label': "Longitude", 'required': False,
-                          'type': T_N},
-        }
-    }
-
-    LAB_TRIAL_FIELDS = (
-            'name', 'trial_type', 'objective', 'responsible', 'description',
-            'project', 'code',
-            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'replicas_per_thesis',
-            'samples_per_replica')
-
-    FIELD_TRIAL_FIELDS = (
-            'name', 'trial_type', 'objective', 'responsible', 'description',
-            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
-            'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'cro', 'location', 'blocks',
-            'replicas_per_thesis', 'samples_per_replica',
-            'distance_between_plants', 'distance_between_rows', 'number_rows',
-            'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
-            'application_volume', 'mode', 'crop_variety', 'cultivation',
-            'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude', 'application_volume_unit', 'conclusion')
-
-    @classmethod
-    def applyModel(cls, trialForm):
-        for block in TrialModel.FIELDS:
-            for field in TrialModel.FIELDS[block]:
-                if field not in trialForm.Meta.fields:
-                    continue
-                fieldData = TrialModel.FIELDS[block][field]
-                trialForm.fields[field].label = fieldData['label']
-                trialForm.fields[field].required = fieldData['required']
-                typeField = fieldData['type']
-                if typeField == TrialModel.T_D:
-                    trialForm.fields[field].widget = MyDateInput()
-                elif typeField == TrialModel.T_I:
-                    trialForm.fields[field].widget = forms.NumberInput()
-                elif typeField == TrialModel.T_T:
-                    trialForm.fields[field].widget = forms.Textarea(
-                        attrs={'rows': fieldData['rows']})
-        # Querysets
-        trialForm.fields['project'].queryset = Project.getObjects()
-        trialForm.fields['objective'].queryset = Objective.getObjects()
-        trialForm.fields['product'].queryset = Product.getObjects()
-        trialForm.fields['crop'].queryset = Crop.getObjects()
-        trialForm.fields['plague'].queryset = Plague.getObjects()
-        if 'application_volume_unit' in trialForm.fields:
-            trialForm.fields['application_volume_unit'].queryset =\
-                RateUnit.getObjects()
-        if 'crop_variety' in trialForm.fields:
-            crops = CropVariety.getObjects()
-            trialForm.fields['crop_variety'].queryset = crops
-
-    @classmethod
-    def prepareDataItems(cls, fieldTrial):
-        trialDict = fieldTrial.__dict__
-        trialData = {}
-        if fieldTrial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
-            modelFields = TrialModel.LAB_TRIAL_FIELDS
-        else:
-            modelFields = TrialModel.FIELD_TRIAL_FIELDS
-
-        for group in TrialModel.FIELDS:
-            trialData[group] = []
-            for field in TrialModel.FIELDS[group]:
-                if field not in modelFields:
-                    continue
-                label = TrialModel.FIELDS[group][field]['label']
-                value = '?'
-                if field in trialDict:
-                    value = trialDict[field]
-                else:
-                    field_id = field + '_id'
-                    if field_id not in trialDict:
-                        continue
-                    else:
-                        theId = trialDict[field_id]
-                        if theId is not None:
-                            model = TrialModel.FIELDS[group][field]['cls']
-                            value = model.objects.get(id=theId)
-                showValue = value if value is not None else '?'
-                trialData[group].append({'name': label, 'value': showValue})
-        return trialData
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
@@ -502,10 +314,8 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
-            TrialHelper().createTrialArchive(fieldTrial.code)
+            TrialHelper().createTrialFolder(fieldTrial.code)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
-        else:
-            pass
 
 
 class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
@@ -523,3 +333,19 @@ class FieldTrialDeleteView(DeleteView):
     model = FieldTrial
     success_url = reverse_lazy('fieldtrial-list')
     template_name = 'trialapp/fieldtrial_delete.html'
+
+
+class DownloadTrial(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get']
+
+    # see generateDataPointId
+    def get(self, request, field_trial_id):
+        trial = get_object_or_404(FieldTrial, pk=field_trial_id)
+        export = PdfTrial(trial, useBuffer=True)
+        export.produce()
+        # Create a FileResponse with the PDF file and appropriate content type
+        response = FileResponse(export.getBuffer(), as_attachment=True,
+                                filename=export.getName())
+        return response

@@ -276,22 +276,29 @@ class Thesis(ModelHelpers, models.Model):
         return "/thesis_api/%i/" % self.id
 
     @classmethod
-    def getObjectsDisplay(cls, fieldTrial):
+    def getObjectsDisplay(cls, fieldTrial, asArray=False):
         allThesis = Thesis.getObjects(fieldTrial)
         thesisDisplay = []
+        if asArray:
+            thesisDisplay.append(['#', 'Name', 'Descriptions', 'Treatments'])
+
         for item in allThesis:
             treatments = ''
             for treatment in TreatmentThesis.getObjects(item):
                 if treatments != '':
                     treatments += ' + '
                 treatments += treatment.treatment.getName()
-            thesisDisplay.append({
-                'name': item.name,
-                'id': item.id,
-                'number': item.number,
-                'description': item.description,
-                'treatments': treatments
-            })
+            if asArray:
+                thesisDisplay.append([
+                    item.number, item.name, item.description, treatments])
+            else:
+                thesisDisplay.append({
+                    'name': item.name,
+                    'id': item.id,
+                    'number': item.number,
+                    'description': item.description,
+                    'treatments': treatments
+                })
         return allThesis, thesisDisplay
 
 
@@ -308,6 +315,14 @@ class Application(ModelHelpers, models.Model):
         return cls.objects \
             .filter(field_trial=field_trial) \
             .order_by('app_date')
+
+    @classmethod
+    def getObjectsDisplay(cls, field_trial):
+        data = [['Date', 'DAA', 'DAF', 'BBCH', 'Comments']]
+        for item in cls.getObjects(field_trial):
+            data.append([item.app_date, item.daa, item.daf,
+                         item.bbch, item.comment])
+        return data
 
     def daysBetween(self, fromDate):
         return (self.app_date-fromDate).days
@@ -349,31 +364,8 @@ class TreatmentThesis(ModelHelpers, models.Model):
             .filter(thesis=thesis) \
             .order_by('treatment__name')
 
-    @classmethod
-    def getObjectsPerFieldTrial(cls, fieldTrial: FieldTrial):
-        return cls.objects \
-            .filter(thesis__field_trial=fieldTrial) \
-            .order_by('treatment__name')
-
-    @classmethod
-    def getSelectListFieldTrial(cls, fieldTrial: FieldTrial,
-                                addNull=False, asDict=False):
-        return cls._getSelectList(
-            cls.getObjectsPerFieldTrial(fieldTrial),
-            asDict=asDict,
-            addNull=addNull)
-
-    @classmethod
-    def create_TreatmentThesis(cls, **kwargs):
-        return cls.objects.create(
-            thesis=Thesis.objects.get(pk=kwargs['thesis_id']),
-            product=Treatment.objects.get(pk=kwargs['treatment_id']))
-
     def getName(self):
         return self.treatment.getName()
-
-    def __str__(self):
-        return self.getName()
 
 
 class Replica(ModelHelpers, models.Model):
