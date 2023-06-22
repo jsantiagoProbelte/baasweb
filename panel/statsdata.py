@@ -27,20 +27,32 @@ class StatsDataApi(APIView):
             .filter(**filterCriteria)\
             .order_by(keyName, 'created__month')
         datasets = {}
-        labels = BaaSHelpers.getLastMonthsInOrder(StatsDataApi.LAST_MONTHS)
+        months = BaaSHelpers.getLastMonthsInOrder(StatsDataApi.LAST_MONTHS)
         # Sorting in array of values per keyName,month
         topList.append('Other')
-        datasets = {datasetKey: {label: 0 for label in labels}
+        datasets = {datasetKey: {label: 0 for label in months}
                     for datasetKey in topList}
         for item in query:
             month = BaaSHelpers.monthNameFromInt(item['created__month'])
             datasetKey = item[keyName]
             if datasetKey is None or datasetKey not in topList:
                 datasetKey = 'Other'
-            if month in labels:
+            if month in months:
                 datasets[datasetKey][month] += item['id__count']
+
+        accValues = {}
+        for key in topList:
+            lastValue = 0
+            accValues[key] = {}
+            for month in months:
+                thisMonthValue = 0
+                if month in datasets[key]:
+                    thisMonthValue = datasets[key][month]
+                lastValue += thisMonthValue
+                accValues[key][month] = lastValue
+
         # prepare data to display
-        return GraphStat(datasets, labels, orientation='v', showLegend=False,
+        return GraphStat(accValues, months, orientation='v', showLegend=False,
                          xAxis='month', yAxis=yAxis, barmode="stack").plot()
 
     def getTrialTotalStats(self, dimension):
