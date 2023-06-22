@@ -72,7 +72,8 @@
             "args": [
                 "test",
                 // "panel.tests.tests_statsdata"
-                "trialapp.tests.tests_views_field_trial"
+                // "trialapp.tests.tests_views_field_trial"
+                "trialapp.tests.tests_trial_analytics"
                 // "trialapp.tests.tests_views_data"
                 // "trialapp.tests.tests_trial_helper"
                 // "trialapp.tests.tests_views_assessment"

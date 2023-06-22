@@ -413,22 +413,31 @@ class Replica(ModelHelpers, models.Model):
     # create the replicas asociated with this
     @classmethod
     def createReplicas(cls, thesis, replicas_per_thesis):
+        replicas = []
         for number in range(0, replicas_per_thesis):
-            Replica.objects.create(
+            item = Replica.objects.create(
                 number=number+1,
                 thesis=thesis,
                 pos_x=0,
                 pos_y=0)
+            replicas.append(item.id)
+        return replicas
 
     @classmethod
     def getFieldTrialObjects(cls, field_trial):
-        ids = Thesis.objects.filter(
-            field_trial=field_trial
-        ).order_by('number').values_list('id', flat=True)
-
         return Replica.objects.filter(
-            thesis_id__in=ids
+            thesis__field_trial_id=field_trial.id
         ).order_by('thesis__number', 'number')
+
+    @classmethod
+    def getDict(cls, trial):
+        rict = {}
+        for replica in cls.getFieldTrialObjects(trial):
+            thesisId = replica.thesis.id
+            if thesisId not in rict:
+                rict[thesisId] = []
+            rict[thesisId].append(replica.id)
+        return rict
 
     def getReferenceIndexDataInput(self):
         return self.thesis.getName()
