@@ -3,7 +3,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_models import ReplicaData, Assessment
-from trialapp.trial_analytics import TrialAnalytics
+from trialapp.trial_analytics import TrialAnalytics, SNK_Table
 
 
 class TrialAnalyticsTest(TestCase):
@@ -89,6 +89,31 @@ class TrialAnalyticsTest(TestCase):
                         value=assData[tId][index])
 
     def test_analytics(self):
+        debug = False
         for trial in self._fieldTrials:
             ta = TrialAnalytics(self._fieldTrials[trial])
-            ta.calculateAnalytics(debug=True)
+            debug = False if debug else True
+            ta.calculateAnalytics(debug=debug)
+
+    def test_tableSNK(self):
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(0, 1),
+            None)
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(121, 2),
+            SNK_Table.qCritical__0_05['inf'][0])
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(120, 2),
+            SNK_Table.qCritical__0_05[120][0])
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(85, 2),
+            SNK_Table.qCritical__0_05[60][0])
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(15, 20),
+            SNK_Table.qCritical__0_05[15][18])
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(15, 1),
+            None)
+        self.assertEqual(
+            SNK_Table.qCriticalSNK(15, 21),
+            None)
