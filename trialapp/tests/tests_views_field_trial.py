@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Application
-from trialapp.data_models import Assessment
+from trialapp.models import FieldTrial, Thesis, Application, Replica
+from trialapp.data_models import Assessment, ReplicaData
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView,\
@@ -111,20 +111,42 @@ class FieldTrialViewsTest(TestCase):
         self.assertEqual(fieldTrial.samples_per_replica, 3)
         self.assertEqual(response.status_code, 302)
 
-    def test_showFieldTrial(self):
-        fieldTrial = FieldTrial.create_fieldTrial(
+    def createDataTrial(self):
+        trial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
-        Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        Assessment.objects.create(
-            name='ass',
-            assessment_date='2023-01-01',
-            field_trial=fieldTrial,
-            crop_stage_majority='69-96',
-            rate_type=RateTypeUnit.objects.get(id=1))
+        assessments = []
+        for index in range(4):
+            assessments.append(Assessment.objects.create(
+                name=f'ass {index}',
+                assessment_date=f'2023-0{index+1}-01',
+                field_trial=trial,
+                part_rated='Undefined',
+                crop_stage_majority='Undefined',
+                rate_type=RateTypeUnit.objects.get(id=1)))
         Application.objects.create(
             app_date='2023-01-01',
-            field_trial=fieldTrial,
+            field_trial=trial,
             bbch='69-96')
+        replicas = {}
+        nums = 4
+        for j in range(nums):
+            thesis = Thesis.objects.create(
+                name='{}'.format(j),
+                number=j,
+                field_trial_id=trial.id)
+            replicas[j] = Replica.createReplicas(thesis, nums)
+
+        for tId in range(nums):
+            for index in range(nums):
+                for ass in assessments:
+                    ReplicaData.objects.create(
+                        assessment_id=ass.id,
+                        reference_id=replicas[tId][index],
+                        value=tId+index+ass.id)
+        return trial
+
+    def test_showFieldTrial(self):
+        fieldTrial = self.createDataTrial()
 
         # Export file
         PdfTrial(fieldTrial).produce()
@@ -137,6 +159,8 @@ class FieldTrialViewsTest(TestCase):
         apiView = DownloadTrial()
         response = apiView.get(request,
                                field_trial_id=fieldTrial.id)
+        self.assertTrue(os.path.exists(trialFile))
+        os.remove(trialFile)
 
         # Assert that the response has a status code of 200 (OK)
         self.assertEqual(response.status_code, 200)

@@ -392,7 +392,8 @@ class PdfTrial:
         self.writeParagraph(
             self.toText('Goal', trialData['Goal']), self._page_start)
         (x, y) = self.writeParagraph(
-            self.toText('Status', trialData['Status']), self._page_start, x=350)
+            self.toText('Status', trialData['Status']), self._page_start,
+            x=350)
         (x, y) = self.writeParagraph(
             self.toText('Protocol',
                         {**trialData['Report'], **trialData['Assessments']},
@@ -409,7 +410,8 @@ class PdfTrial:
         (x, y0) = self.writeParagraph(
             self.toText('Cultive', trialData['Cultive']), self._page_start)
         (x, y1) = self.writeParagraph(
-            self.toText('Location', trialData['Location']), self._page_start, x=250)
+            self.toText('Location', trialData['Location']), self._page_start,
+            x=250)
         y1 = min([y0, y1])
         (x, y2) = self.writeParagraph(
             self.toText('Applications', trialData['Applications']), y1)
@@ -499,6 +501,8 @@ class PdfTrial:
                 index = 0
             else:
                 index += 1
+        if len(assmtsList) > 0:
+            assmtsLists.append(assmtsList)
         return assmtsLists
 
     def writeAssessmentInfo(self, y):
