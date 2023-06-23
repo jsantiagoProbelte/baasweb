@@ -19,7 +19,7 @@ class ApplicationViewsTest(TestCase):
         self._fieldTrial = FieldTrial.create_fieldTrial(
             **TrialAppModelTest.FIELDTRIALS[0])
 
-    def test_editfieldtrial(self):
+    def test_editapplication(self):
         request = self._apiFactory.get(
             'application-add',
             data={'field_trial_id': self._fieldTrial.id})
