@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from baaswebapp.graphs import GraphTrial
+from trialapp.trial_analytics import AssessmentAnalytics
 
 
 class SetDataAssessment(APIView):
@@ -131,9 +132,11 @@ class TrialDataApi(APIView):
 class DataHelper:
     def __init__(self, assessmentId):
         self._assessment = get_object_or_404(Assessment, pk=assessmentId)
-        self._fieldTrial = self._assessment.field_trial
-        self._replicas = Replica.getFieldTrialObjects(self._fieldTrial)
-        self._thesisTrial = Thesis.getObjects(self._fieldTrial)
+        self._trial = self._assessment.field_trial
+        self._replicas = Replica.getFieldTrialObjects(self._trial)
+        self._thesisTrial = Thesis.getObjects(self._trial, as_dict=True)
+        self._numThesis = len(self._thesisTrial.keys())
+        self._replicas_thesis = len(self._replicas) / self._numThesis
 
     def prepareHeader(self, references):
         header = []
@@ -188,7 +191,7 @@ class DataHelper:
         return rows, dataPointsForGraph
 
     def prepareSampleDataPoints(self, replicas, level, assSet):
-        fakeSampleIds = range(1, self._fieldTrial.samples_per_replica+1)
+        fakeSampleIds = range(1, self._trial.samples_per_replica+1)
         dataPointsForGraph = []
         rows = []
         for fakeSampleId in fakeSampleIds:
@@ -224,9 +227,8 @@ class DataHelper:
         # Calculate graph
         pointsInGraphs = len(pointForGraph)
         if pointsInGraphs > 1:
-            graphHelper = DataGraphFactory(
-                level, assSet,
-                self._assessment.part_rated, pointForGraph)
+            graphHelper = DataGraphFactory(level, [self._assessment],
+                                           pointForGraph)
             graph = graphHelper.draw()
         return rows, graph, pointsInGraphs
 
@@ -235,72 +237,88 @@ class DataHelper:
         GraphTrial.L_THESIS: 'dataPointsT',
         GraphTrial.L_SAMPLE: 'dataPointsS'}
 
-    def showDataPerLevel(self, level, onlyThisData=False):
-        references = None
-        subtitle = 'Assessment'
-        if level == GraphTrial.L_THESIS:
-            references = self._thesisTrial
-        elif level == GraphTrial.L_REPLICA:
-            references = self._replicas
-
-        elif level == GraphTrial.L_SAMPLE:
-            references = self._replicas
-            subtitle = 'Samples'
-            if not self._fieldTrial.samples_per_replica:
-                return {DataHelper.TOKEN_LEVEL[level]: [{
-                    'errors': 'Number of samples per replica '
-                              'is not defined. Go to field trial'
-                              'definition'}]}, 0
-        totalPoints = 0
-        header = self.prepareHeader(references)
-        rows, graph, pointsInGraph = self.prepareAssSet(
-            level, self._assessment.rate_type, references)
-        dataPointsList = [{
-            'title': self._assessment.rate_type.getName(),
-            'subtitle': subtitle,
-            'header': header, 'errors': '',
-            'graph': graph, 'rows': rows}]
-        totalPoints += pointsInGraph
-        return self.returnData(
-            {DataHelper.TOKEN_LEVEL[level]: dataPointsList},
-            onlyThisData), totalPoints
-
-    def returnData(self, dataToReturned, onlyThisData):
-        if onlyThisData:
-            return dataToReturned
-        else:
-            common = {
+    def showDataAssessment(self):
+        common = {
                 'title': self._assessment.getTitle(),
                 'assessment': self._assessment,
-                'theses': self._thesisTrial,
-                'fieldTrial': self._fieldTrial}
-            return {**common, **dataToReturned}
+                'fieldTrial': self._trial}
+        showData = self.prepareThesisBasedData()
+        if showData is None:
+            showData = self.prepareReplicaBasedData()
+        if showData:
+            return {**showData, **common}
+        else:
+            return {**common, 'points': 0}
 
-    def makeActiveView(self, pointsR, pointsT):
-        active = GraphTrial.L_SAMPLE
-        if pointsR > 0:
-            active = GraphTrial.L_REPLICA
-        elif pointsT > 0:
-            active = GraphTrial.L_THESIS
-        activeViews = {}
-        for level in GraphTrial.LEVELS:
-            navActive = ''
-            tabActive = ''
-            if level == active:
-                navActive = 'active'
-                tabActive = 'show active'
-            activeViews['{}_nav'.format(level)] = navActive
-            activeViews['{}_tab'.format(level)] = tabActive
-        return activeViews
+    def prepareThesisBasedData(self):
+        thesisPoints = ThesisData.dataPointsAssess([self._assessment.id])
+        if not thesisPoints:
+            return None
+        rows = []
+        for item in thesisPoints:
+            thesisNumber = item['reference__number']
+            rows.append(
+                {'thesis': self._thesisTrial[thesisNumber],
+                 'tvalue': item['value'],
+                 'rvalue': None,
+                 'item_id': DataModel.genDataPointId(
+                    GraphTrial.L_THESIS, self._assessment.id,
+                    item['reference__id']),
+                 'rowspan': 1,
+                 'replica': None,
+                 'color': thesisNumber})
+        graphHelper = DataGraphFactory(
+            GraphTrial.L_THESIS, [self._assessment], thesisPoints,
+            references=self._thesisTrial)
+        graph = graphHelper.draw()
+        return {'dataRows': rows, 'graphData': graph,
+                'stats': None,
+                'level': GraphTrial.L_THESIS,
+                'points': len(thesisPoints)}
 
-    def showDataAssessment(self):
-        dataR, pR = self.showDataPerLevel(GraphTrial.L_REPLICA)
-        dataT, pT = self.showDataPerLevel(GraphTrial.L_THESIS,
-                                          onlyThisData=True)
-        dataS, pS = self.showDataPerLevel(GraphTrial.L_SAMPLE,
-                                          onlyThisData=True)
-        activeViews = self.makeActiveView(pR, pT)
-        return {**dataR, **dataT, **dataS, **activeViews}
+    def prepareReplicaBasedData(self):
+        replicaPoints = ReplicaData.dataPointsAssess([self._assessment.id])
+        if not replicaPoints:
+            return None
+        stats = None
+        if len(replicaPoints) == len(self._replicas):
+            aa = AssessmentAnalytics(self._assessment, self._numThesis)
+            aa.analyse(self._replicas, dataReplica=replicaPoints)
+            stats = aa.getStats()
+        snk = stats['snk'] if stats else None
+        rows = []
+        lastThesis = None
+
+        for item in replicaPoints:
+            thesisId = item['reference__thesis__id']
+            thesisNumber = item['reference__thesis__number']
+            span = 0
+            tvalue = ''
+            if lastThesis != thesisNumber:
+                lastThesis = thesisNumber
+                span = self._replicas_thesis
+                if snk:
+                    groups = ', '.join(snk[thesisNumber]['group'])
+                    tvalue = f"{snk[thesisNumber]['mean']} "\
+                             f"({groups})"
+            rows.append(
+                {'thesis': self._thesisTrial[thesisId],
+                 'tvalue': tvalue,
+                 'rvalue': item['value'],
+                 'item_id': DataModel.genDataPointId(
+                    GraphTrial.L_REPLICA, self._assessment.id,
+                    item['reference__id']),
+                 'rowspan': span,
+                 'replica': item['reference__name'],
+                 'color': thesisNumber})
+        graphHelper = DataGraphFactory(
+            GraphTrial.L_REPLICA, [self._assessment], replicaPoints,
+            references=self._thesisTrial)
+        graph = graphHelper.draw()
+        return {'dataRows': rows, 'graphData': graph,
+                'stats': stats['stats'] if stats else None,
+                'level': GraphTrial.L_REPLICA,
+                'points': len(replicaPoints)}
 
 
 class DataGraphFactory():
@@ -309,19 +327,27 @@ class DataGraphFactory():
     _references = {}
     _colors = {}
 
-    def __init__(self, level, rateType, ratedPart,
+    def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
-                 showTitle=True):
+                 showTitle=True, references=None):
         self._level = level
-        self._references = {}
+        self._assessments = {item.id: item for item in assessments}
+        self._references = references if references else {}
         self._colors = {}
         traces = self.buildData(dataPoints, xAxis)
         if len(traces) > 0:
-            self._graph = GraphTrial(level, rateType, ratedPart,
+            self._graph = GraphTrial(level, assessments[0].rate_type,
+                                     assessments[0].getPartRated(),
                                      traces, xAxis=xAxis,
                                      showTitle=showTitle)
         else:
             self._graph = 'No data points found'
+
+    def dataPointValue(self, dataPoint):
+        if self._level in [GraphTrial.L_REPLICA, GraphTrial.L_THESIS]:
+            return dataPoint['value']
+        else:
+            return dataPoint.value
 
     def buildData(self, dataPoints, xAxis):
         # This is for diplay purposes. [[,],[,]...]
@@ -338,7 +364,8 @@ class DataGraphFactory():
             self.assignColor(traceId)
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(pointRef)
-            traces[traceId]['y'].append(dataPoint.value)
+            traces[traceId]['y'].append(
+                self.dataPointValue(dataPoint))
             traces[traceId]['x'].append(
                 self.getX(dataPoint, xAxis, pointRef))
         return traces
@@ -346,9 +373,12 @@ class DataGraphFactory():
     def traceId(self, pointRefence):
         if self._level == GraphTrial.L_DOSIS:
             return pointRefence.name
+        elif self._level in [GraphTrial.L_THESIS, GraphTrial.L_REPLICA]:
+            return self._references[pointRefence].number
         else:
             return pointRefence.number
 
+    # To Delete
     def addTreatmentToReference(self, thesis):
         if thesis.id in self._references:
             return
@@ -366,36 +396,32 @@ class DataGraphFactory():
         if self._level == GraphTrial.L_DOSIS:
             return dataPoint.thesis
         else:
-            reference = None
-            if self._level == GraphTrial.L_THESIS:
-                reference = dataPoint.reference
-            elif self._level == GraphTrial.L_REPLICA:
-                reference = dataPoint.reference.thesis
+            if self._level in GraphTrial.L_THESIS:
+                return dataPoint['reference__id']
+            elif GraphTrial.L_REPLICA:
+                return dataPoint['reference__thesis__id']
             elif self._level == GraphTrial.L_SAMPLE:
-                reference = dataPoint.reference.replica.thesis
-            self.addTreatmentToReference(reference)
-            return reference
+                return dataPoint.reference.replica.thesis
+            return None
 
     def getTraceName(self, pointRefence):
         if self._level == GraphTrial.L_DOSIS:
             return pointRefence.name
+        elif self._level in [GraphTrial.L_THESIS, GraphTrial.L_REPLICA]:
+            return self._references[pointRefence].name
         else:
             return self._references[pointRefence.id]
 
     def getTraceColor(self, pointRefence):
-        color = 1
+        color = self.traceId(pointRefence)
         if self._level == GraphTrial.L_DOSIS:
-            color = self._colors[pointRefence.name]
-        else:
-            color = pointRefence.number
+            color = self._colors[color]
         return GraphTrial.COLOR_LIST[color]
 
     def getTraceSymbol(self, pointRefence):
-        symbol = 2
+        symbol = self.traceId(pointRefence)
         if self._level == GraphTrial.L_DOSIS:
-            symbol = self._colors[pointRefence.name]
-        else:
-            symbol = pointRefence.number
+            symbol = self._colors[symbol]
         return GraphTrial.SYMBOL_LIST[symbol]
 
     def assignColor(self, traceId):
@@ -416,9 +442,11 @@ class DataGraphFactory():
         if xAxis == GraphTrial.L_THESIS:
             return pointRef.name
         if xAxis == GraphTrial.L_DATE:
-            return dataPoint.assessment.assessment_date
+            assId = dataPoint['assessment__id']
+            return self._assessments[assId].assessment_date
         if xAxis == GraphTrial.L_DAF:
-            return dataPoint.assessment.daf
+            assId = dataPoint['assessment__id']
+            return self._assessments[assId].daf
         if xAxis == GraphTrial.L_DOSIS:
             return dataPoint.dosis.rate
 

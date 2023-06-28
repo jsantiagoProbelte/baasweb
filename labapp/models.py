@@ -11,6 +11,9 @@ class LabAssessment(ModelHelpers, models.Model):
     trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
 
+    def getPartRated(self):
+        return ''
+
 
 class LabDosis(ModelHelpers, models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2)

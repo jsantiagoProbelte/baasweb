@@ -67,6 +67,9 @@ class Assessment(ModelHelpers, models.Model):
                 ratedParts[assessment.part_rated] = assessment.part_rated
         return list(ratedParts.values())
 
+    def getPartRated(self):
+        return self.part_rated
+
     @classmethod
     def getRatedPartsProduct(cls, product, crop, plague,
                              dimension):
@@ -108,6 +111,12 @@ class DataModel(ModelHelpers):
             level, assessment.id, reference.id, fakeId)
 
     @classmethod
+    def genDataPointId(cls, level, assessmentId,
+                       referenceId, fakeId=0):
+        return 'data-point-{}-{}-{}-{}'.format(
+            level, assessmentId, referenceId, fakeId)
+
+    @classmethod
     def setDataPoint(cls, reference, assessment, value):
         dataPoint = cls.objects.filter(
             assessment=assessment,
@@ -129,10 +138,6 @@ class DataModel(ModelHelpers):
         return cls.objects.filter(assessment=assessment)
 
     @classmethod
-    def getAssessmentDataPoints(cls, assIds):
-        return cls.objects.filter(assessment_id__in=assIds)
-
-    @classmethod
     def getDataPointsProduct(cls, product, crop, plague, rateType, ratedPart):
 
         criteria = {
@@ -147,15 +152,18 @@ class DataModel(ModelHelpers):
 
         assessments = Assessment.objects.filter(**criteria).order_by(
             'field_trial_id')
-        setIds = [item.id for item in assessments]
+
         trials = {}
         for assessment in assessments:
             if assessment.field_trial_id not in trials:
                 trials[assessment.field_trial_id] = assessment.field_trial.code
-        dataSets = cls.objects.filter(assessment_id__in=setIds)
         fieldTrials = [{'id': trialId, 'code': trials[trialId]}
                        for trialId in trials]
-        return dataSets, fieldTrials
+
+        thesis = Thesis.objects.filter(field_trial_id__in=list(trials.keys()))
+        allThesis = {item.id: item for item in thesis}
+
+        return assessments, fieldTrials, allThesis
 
     @classmethod
     def distinctValues(cls, product, tag):
@@ -214,6 +222,14 @@ class ThesisData(DataModel, models.Model):
     reference = models.ForeignKey(Thesis,
                                   on_delete=models.CASCADE)
 
+    @classmethod
+    def dataPointsAssess(cls, assIds):
+        return ThesisData.objects.values(
+            'id', 'reference__id', 'value', 'assessment__id',
+            'reference__number'
+            ).filter(assessment_id__in=assIds).order_by(
+            'reference__number')
+
 
 class ReplicaData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
@@ -221,6 +237,15 @@ class ReplicaData(DataModel, models.Model):
                                   on_delete=models.CASCADE)
     assessment = models.ForeignKey(Assessment,
                                    on_delete=models.CASCADE)
+
+    @classmethod
+    def dataPointsAssess(cls, assIds):
+        return ReplicaData.objects.values(
+            'reference__thesis__id', 'reference__name', 'value',
+            'reference__id', 'assessment__id',
+            'reference__thesis__number'
+            ).filter(assessment_id__in=assIds).order_by(
+            'reference__thesis__number', 'reference__number')
 
 
 class SampleData(DataModel, models.Model):

@@ -231,10 +231,14 @@ class Thesis(ModelHelpers, models.Model):
                                   on_delete=models.CASCADE, null=True)
 
     @classmethod
-    def getObjects(cls, field_trial):
-        return cls.objects \
+    def getObjects(cls, field_trial, as_dict=False):
+        objects = cls.objects \
             .filter(field_trial=field_trial) \
             .order_by('number')
+        if as_dict:
+            return {item.id: item for item in objects}
+        else:
+            return objects
 
     @classmethod
     def create_Thesis(cls, **kwargs):

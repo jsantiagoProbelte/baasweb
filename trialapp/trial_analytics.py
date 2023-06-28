@@ -66,11 +66,7 @@ class TrialAnalytics:
         for assessment in Assessment.getObjects(self._trial):
             analytics = AssessmentAnalytics(assessment, len(self._thesis),
                                             debug=debug)
-            analytics.prepareData(self._replicas, )
-            analytics.anova()
-            analytics.SNK()
-            analytics.barlett()
-            analytics.levene()
+            analytics.analyse(self._replicas)
 
 
 class AssessmentAnalytics:
@@ -82,6 +78,8 @@ class AssessmentAnalytics:
     _sig_letters = {}
     _data_groups = []
     _debug = False
+    _statsText = ''
+    _snk = {}
 
     def __init__(self, assessment, num_thesis, debug=False):
         self._assessment = assessment
@@ -89,21 +87,47 @@ class AssessmentAnalytics:
         self._sig_letters = self.genSigLetter(num_thesis)
         self._sig_diff = {i: [] for i in range(num_thesis)}
         self._debug = debug
-
-    def prepareData(self, replicas):
+        self._replicaData = {}
         self._data = []
-        means = []
-        std_devs = []
-        lens = []
-        self._groups = []
-        self._data_groups = []
+        self._means = None
+        self._std_devs = None
+        self._n_samples = None
 
+    def analyse(self, replicas, dataReplica=None):
+        self.prepareData(replicas, dataReplica=dataReplica)
+        self.anova()
+        self.SNK()
+        self.barlett()
+        self.levene()
+
+    def getReplicaDataAndGroup(self, replicas):
         for thesisId in replicas:
             dataV = ReplicaData.objects.filter(
                 assessment=self._assessment,
                 reference_id__in=replicas[thesisId])
             data = [float(item.value) for item in dataV]
             self._replicaData[thesisId] = data
+
+    def groupReplicaData(self, dataReplica):
+        for item in dataReplica:
+            thesisId = item['reference__thesis__number']
+            value = float(item['value'])
+            if thesisId not in self._replicaData:
+                self._replicaData[thesisId] = []
+            self._replicaData[thesisId].append(value)
+
+    def prepareData(self, replicas, dataReplica=None):
+        means = []
+        std_devs = []
+        lens = []
+        self._groups = []
+        self._data_groups = []
+        if dataReplica is None:
+            self.getReplicaDataAndGroup(replicas)
+        else:
+            self.groupReplicaData(dataReplica)
+        for thesisId in self._replicaData:
+            data = self._replicaData[thesisId]
             self._data += data
             self._data_groups.append(data)
             means.append(np.mean(data))
@@ -125,8 +149,15 @@ class AssessmentAnalytics:
         # Perform one-way ANOVA
         model = ols('Data ~ Groups', data=df).fit()
         self._anova_table = sm.stats.anova_lm(model, typ=2)
+        self._statsText += '<strong>ANOVA stats</strong>'
+        self._statsText += self._anova_table.to_html()
         if self._debug:
             print(self._anova_table)
+
+    def getStats(self):
+        return {
+            'stats': self._statsText,
+            'snk': self._snk}
 
     def genSigLetter(self, num_thesis):
         return [chr(num) for num in range(97, 97 + num_thesis + 1)]
@@ -181,11 +212,12 @@ class AssessmentAnalytics:
             self.SNKcompareTreatments(
                 i, k, num_thesis, sortMeans, qSwit, sigLetters, df)
 
+        for index in range(num_thesis):
+            self._snk[index+1] = {'mean': round(self._means[index], 2),
+                                  'sig': round(self._std_devs[index], 2),
+                                  'group': self._sig_diff[index]}
         if self._debug:
-            for index in self._sig_diff:
-                print(f"[{index+1}] [{round(self._means[index],2)}]"
-                      f"[{round(self._std_devs[index], 2)}]"
-                      f"{self._sig_diff[index]}")
+            print(self._snk)
 
     def SNKcompareTreatments(self, i, k, num_thesis, sortMeans, qSwit,
                              sigLetters, df):
@@ -222,12 +254,19 @@ class AssessmentAnalytics:
     def barlett(self):
         self._bartlett_stat, self._bartlett_p = bartlett(*self._data_groups)
         # Print the test statistic and p-value
+        text = "<table class='table'><tr><td><h4>Bartlett statistic</h4><td></td></tr>"
+        text += f"<tr><td>X^2</td><td>{round(self._bartlett_stat,2)}</td><tr>"\
+                f"<tr><td>p-value</td><td>{round(self._bartlett_p,3)}</td><tr>"
+        self._statsText += text
         if self._debug:
-            print(f"Bartlett's X^2 statistic:{round(self._bartlett_stat,2)},"
-                  f"p-value:{round(self._bartlett_p,3)}")
+            print(text)
 
     def levene(self):
         self._levene_stat, self._levene_p = levene(*self._data_groups)
+        text = "<tr><td><h4>Levene statistic</h4><td></td></tr>"
+        text += f"<tr><td>X^2</td><td>{round(self._levene_stat,2)}</td><tr>"\
+                f"<tr><td>p-value</td><td>{round(self._levene_p,3)}</td><tr>"
+        text += "</table>"
+        self._statsText += text
         if self._debug:
-            print(f"Levene X^2 statistic:{round(self._levene_stat,2)},"
-                  f"p-value:{round(self._levene_p,3)}")
+            print(text)

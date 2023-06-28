@@ -267,10 +267,12 @@ class DataLabHelper:
                 thisDosis = point.dosis.rate
             pointsRow.append({
                 'value': point.value,
-                'item_id': self.generateDataPointId(DataLabHelper.T_VALUE, point.id)})
+                'item_id': self.generateDataPointId(DataLabHelper.T_VALUE,
+                                                    point.id)})
             pointsRow.append({
                 'value': point.total,
-                'item_id': self.generateDataPointId(DataLabHelper.T_TOTAL, point.id)})
+                'item_id': self.generateDataPointId(DataLabHelper.T_TOTAL,
+                                                    point.id)})
 
         if len(pointsRow) > 0:
             rows.append({
@@ -285,9 +287,8 @@ class DataLabHelper:
         # Calculate graph
         if len(self._points) > 1:
             graphHelper = DataGraphFactory(
-                GraphTrial.L_DOSIS, self._assessment.rate_type,
-                '', self._points,
-                xAxis=GraphTrial.L_DOSIS,)
+                GraphTrial.L_DOSIS, [self._assessment],
+                self._points, xAxis=GraphTrial.L_DOSIS)
             graph = graphHelper.draw()
         return rows, graph
 

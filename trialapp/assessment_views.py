@@ -3,7 +3,7 @@ from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from baaswebapp.models import RateTypeUnit, Weather
-from trialapp.models import FieldTrial
+from trialapp.models import FieldTrial, Thesis
 from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
     Assessment
 from django.shortcuts import get_object_or_404, render
@@ -32,6 +32,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
     login_url = '/login'
     template_name = 'trialapp/assessment_list.html'
     _trial = None
+    _thesis = None
 
     def getGraphData(self, level, rateSets, ratedParts, columns=2):
         graphs = []
@@ -39,17 +40,20 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         foundData = 0
         for rateSet in rateSets:
             for ratedPart in ratedParts:
-                classDataModel = CLASS_DATA_LEVEL[level]
-                assVIds = Assessment.objects.filter(
+                assmts = Assessment.objects.filter(
                     field_trial_id=self._trial.id,
                     part_rated=ratedPart,
-                    rate_type=rateSet).values('id')
-                assIds = [value['id'] for value in assVIds]
-                dataPoints = classDataModel.getAssessmentDataPoints(assIds)
+                    rate_type=rateSet)
+                assIds = [value.id for value in assmts]
+
+                if level == GraphTrial.L_REPLICA:
+                    dataPoints = ReplicaData.dataPointsAssess(assIds)
+                else:
+                    dataPoints = []
                 if len(dataPoints):
                     foundData += 1
-                    graph = DataGraphFactory(level, rateSet, ratedPart,
-                                             dataPoints)
+                    graph = DataGraphFactory(level, assmts, dataPoints,
+                                             references=self._thesis)
                     if len(rowGraphs) == columns:
                         graphs.append(rowGraphs)
                         rowGraphs = []
@@ -104,6 +108,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         new_list = Assessment.getObjects(self._trial)
         rateSets = Assessment.getRateSets(new_list)
         ratedParts = Assessment.getRatedParts(new_list)
+        self._thesis = Thesis.getObjects(self._trial, as_dict=True)
 
         # Replica data
         graphPlotsR, classGraphR = self.getGraphData(
@@ -129,6 +134,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         weatherData = self.getWeatherData()
         weatherGraph = self.graphWeatherData(weatherData)
         return {'object_list': new_list,
+                'title': f"({len(new_list)}) Assessments",
                 'fieldTrial': self._trial,
                 'show_active_thesis': show_active_thesis,
                 'show_active_replica': show_active_replica,

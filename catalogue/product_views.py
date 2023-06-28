@@ -215,20 +215,22 @@ class ProductApi(APIView):
 
     def computeGraph(self, product, crop, plague,
                      rateType, level, ratedPart):
-        dataClass = None
-        # Fetch Data
-        if level == GraphTrial.L_THESIS:
-            dataClass = ThesisData
-        elif level == GraphTrial.L_REPLICA:
-            dataClass = ReplicaData
-
-        dataPointsT, fieldTrials = dataClass.getDataPointsProduct(
+        assmnts, fieldTrials, thesis = DataModel.getDataPointsProduct(
             product, crop, plague, rateType, ratedPart)
 
-        if dataPointsT:
-            graphT = DataGraphFactory(
-                level, rateType, ratedPart, dataPointsT,
-                xAxis=GraphTrial.L_DAF)
+        if assmnts:
+            assIds = [item.id for item in assmnts]
+        dataPoints = None
+        # Fetch Data
+        if level == GraphTrial.L_THESIS:
+            dataPoints = ThesisData.dataPointsAssess(assIds)
+        elif level == GraphTrial.L_REPLICA:
+            dataPoints = ReplicaData.dataPointsAssess(assIds)
+
+        if dataPoints:
+            graphT = DataGraphFactory(level, assmnts, dataPoints,
+                                      xAxis=GraphTrial.L_DAF,
+                                      references=thesis)
             return graphT.draw(), fieldTrials
         else:
             return None, None

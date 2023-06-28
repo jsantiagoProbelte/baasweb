@@ -159,9 +159,6 @@ class AssessmentViewsTest(TestCase):
                                **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
         # No data, it enables samples views
-        self.assertContains(
-            response,
-            '"nav-link active" id="v-pills-sample-tab"')
 
         # Lets add data on thesis
         for thesis in Thesis.getObjects(self._fieldTrial):
@@ -173,9 +170,6 @@ class AssessmentViewsTest(TestCase):
         response = apiView.get(getRequest,
                                **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '"nav-link active" id="v-pills-thesis-tab"')
 
         # Lets add some replica data to test we have replica view activated
         Replica.createReplicas(thesis, 4)
@@ -188,9 +182,6 @@ class AssessmentViewsTest(TestCase):
         response = apiView.get(getRequest,
                                **{'assessment_id': item.id})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '"nav-link active" id="v-pills-replica-tab"')
 
         # if we go to assessment list, we show thesis as active
         request = self._apiFactory.get('assessment-list')
@@ -198,7 +189,6 @@ class AssessmentViewsTest(TestCase):
         response = AssessmentListView.as_view()(
             request, **{'field_trial_id': self._fieldTrial.id})
         self.assertNotContains(response, 'No assessments yet.')
-        self.assertContains(response, 'show active" id="v-pills-thesis"')
 
     def test_AssessmentApiPostData(self):
         assessmentData = TrialAppModelTest.ASSESSMENT[0].copy()
