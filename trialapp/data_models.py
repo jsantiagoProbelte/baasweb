@@ -68,6 +68,8 @@ class Assessment(ModelHelpers, models.Model):
         return list(ratedParts.values())
 
     def getPartRated(self):
+        if self.part_rated == 'Undefined' or self.part_rated == 'None':
+            return ''
         return self.part_rated
 
     @classmethod

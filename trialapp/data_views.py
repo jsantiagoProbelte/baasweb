@@ -63,9 +63,7 @@ class TrialDataApi(APIView):
                           ass.assessment_date.isoformat())
             self.addValue(rating, ass, 'rate_type', ass.rate_type.id)
 
-            partRated = ass.part_rated
-            if partRated == 'Undefined' or partRated == 'None':
-                partRated = ''
+            partRated = ass.getPartRated()
             self.addValue(partRatedArr, ass, 'part_rated', partRated)
             bbch = ass.crop_stage_majority
             if bbch == 'Undefined' or bbch == 'None':
@@ -137,105 +135,6 @@ class DataHelper:
         self._thesisTrial = Thesis.getObjects(self._trial, as_dict=True)
         self._numThesis = len(self._thesisTrial.keys())
         self._replicas_thesis = len(self._replicas) / self._numThesis
-
-    def prepareHeader(self, references):
-        header = []
-        lastIndex = "Bla"
-        colspans = {}
-        for reference in references:
-            thisIndex = reference.getReferenceIndexDataInput()
-            if thisIndex not in colspans:
-                colspans[thisIndex] = 0
-            colspans[thisIndex] += 1
-            if lastIndex == thisIndex:
-                thisIndex = ''
-            else:
-                lastIndex = thisIndex
-            header.append({
-                'index': thisIndex,
-                'color': reference.getBackgroundColor(),
-                'name': reference.getKey(),
-                'id': reference.id})
-        newHeader = []
-        for item in header:
-            thisIndex = item['index']
-            if thisIndex != '':
-                item['colspan'] = colspans[thisIndex]
-            newHeader.append(item)
-        return newHeader
-
-    CLSDATAS = {
-        GraphTrial.L_REPLICA: ReplicaData,
-        GraphTrial.L_THESIS: ThesisData,
-        GraphTrial.L_SAMPLE: SampleData}
-
-    def prepareDataPoints(self, references, level, assSet):
-        clsData = DataHelper.CLSDATAS[level]
-        dataPoints = clsData.getDataPoints(self._assessment)
-        dataPointsToDisplay = []
-        dataPointsForGraph = []
-        for reference in references:
-            value = ''
-            for dataPoint in dataPoints:
-                if dataPoint.reference.id == reference.id:
-                    value = dataPoint.value
-                    dataPointsForGraph.append(dataPoint)
-                    break
-            dataPointsToDisplay.append({
-                'value': value,
-                'item_id': DataModel.generateDataPointId(
-                    level, self._assessment, reference)})
-        rows = [{
-            'index': self._assessment.assessment_date,
-            'dataPoints': dataPointsToDisplay}]
-        return rows, dataPointsForGraph
-
-    def prepareSampleDataPoints(self, replicas, level, assSet):
-        fakeSampleIds = range(1, self._trial.samples_per_replica+1)
-        dataPointsForGraph = []
-        rows = []
-        for fakeSampleId in fakeSampleIds:
-            dataPointsToDisplay = []
-            for replica in replicas:
-                dataPoints = SampleData.getDataPointsPerSampleNumber(
-                    self._assessment, fakeSampleId)
-                value = ''
-                for dataPoint in dataPoints:
-                    if dataPoint.reference.replica.id == replica.id:
-                        value = dataPoint.value
-                        dataPointsForGraph.append(dataPoint)
-                        break
-                dataPointsToDisplay.append({
-                    'value': value,
-                    'item_id': DataModel.generateDataPointId(
-                        level, self._assessment,
-                        replica, fakeSampleId)})
-            rows.append({
-                'index': fakeSampleId,
-                'dataPoints': dataPointsToDisplay})
-        return rows, dataPointsForGraph
-
-    def prepareAssSet(self, level, assSet,
-                      references):
-        graph = 'Add data and refresh to show graph'
-        if level == GraphTrial.L_SAMPLE:
-            rows, pointForGraph = self.prepareSampleDataPoints(
-                references, level, assSet)
-        else:
-            rows, pointForGraph = self.prepareDataPoints(
-                references, level, assSet)
-        # Calculate graph
-        pointsInGraphs = len(pointForGraph)
-        if pointsInGraphs > 1:
-            graphHelper = DataGraphFactory(level, [self._assessment],
-                                           pointForGraph)
-            graph = graphHelper.draw()
-        return rows, graph, pointsInGraphs
-
-    TOKEN_LEVEL = {
-        GraphTrial.L_REPLICA: 'dataPointsR',
-        GraphTrial.L_THESIS: 'dataPointsT',
-        GraphTrial.L_SAMPLE: 'dataPointsS'}
 
     def showDataAssessment(self):
         common = {
