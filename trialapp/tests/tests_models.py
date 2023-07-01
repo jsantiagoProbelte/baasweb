@@ -186,6 +186,8 @@ class TrialAppModelTest(TestCase):
         replicas = Replica.getObjects(thesis)
         self.assertEqual(len(replicas), toCreate)
         selectedReplica = replicas[0]
+        selectedReplica.name = None
+        selectedReplica.save()
         self.assertEqual(
             selectedReplica.getName(),
             '[{}-{}] {}-({},{})'.format(

@@ -54,7 +54,6 @@ class AssessmentViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = AssessmentListView.as_view()(
             request, **{'field_trial_id': self._fieldTrial.id})
-        self.assertContains(response, 'show active" id="v-pills-replica"')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'assessments')
         self.assertContains(response, self._fieldTrial.name)

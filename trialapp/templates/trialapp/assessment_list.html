@@ -23,7 +23,10 @@
         </div>
     </div>
     <div class="col-md-8">
-        {% include "trialapp/data_tabs.html" with graphPlots=graphPlots classGraph=classGraph %}
+        {% if graphPlotsT %}
+            {% include 'trialapp/data_graphs.html' with graphPlots=graphPlotsT classGraph=classGraphT %}
+        {% endif %}
+        {% include 'trialapp/data_graphs.html' with graphPlots=graphPlotsR classGraph=classGraphR %}
         {% if fieldTrial.latitude %}
             {% include "trialapp/weather_graphs.html" with weatherGraph=weatherGraph %}
         {% else %}

@@ -118,31 +118,16 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         graphPlotsT, classGraphT = self.getGraphData(
             GraphTrial.L_THESIS, rateSets, ratedParts)
 
-        show_active_replica = 'show active'
-        show_active_thesis = ''
-        active_replica = 'active'
-        active_thesis = ''
-        if len(graphPlotsT) > 0:
-            show_active_thesis = 'show active'
-            show_active_replica = ''
-            active_replica = ''
-            active_thesis = 'active'
-
-        # Sample data
-        graphPlotsS, classGraphS = self.getGraphData(
-            GraphTrial.L_SAMPLE, rateSets, ratedParts)
+        # TODO: Sample data
+        # graphPlotsS, classGraphS = self.getGraphData(
+        #     GraphTrial.L_SAMPLE, rateSets, ratedParts)
         weatherData = self.getWeatherData()
         weatherGraph = self.graphWeatherData(weatherData)
         return {'object_list': new_list,
                 'title': f"({len(new_list)}) Assessments",
                 'fieldTrial': self._trial,
-                'show_active_thesis': show_active_thesis,
-                'show_active_replica': show_active_replica,
-                'active_replica': active_replica,
-                'active_thesis': active_thesis,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
-                'graphPlotsS': graphPlotsS, 'classGraphS': classGraphS,
                 'weatherGraph': weatherGraph}
 
 

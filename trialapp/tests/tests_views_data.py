@@ -156,7 +156,7 @@ class DataViewsTest(TestCase):
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 2)
         self.assertEqual(dataShow['level'], GraphTrial.L_REPLICA)
-        self.assertEqual(dataShow['stats'], None)
+        self.assertEqual(dataShow['stats'], '')
 
         # View trial_data
         request = self._apiFactory.get('trial_data')
@@ -185,11 +185,56 @@ class DataViewsTest(TestCase):
         assName = '15 DA-E'
         assmt = datagenerator._assessments[assName]
         dataHelper = DataHelper(assmt.id)
-        thesis = Thesis.getObjects(trial)
+        replicas = Replica.getFieldTrialObjects(trial)
         dataShow = dataHelper.showDataAssessment()
-        self.assertEqual(dataShow['points'], len(thesis))
-        self.assertEqual(dataShow['level'], GraphTrial.L_THESIS)
-        self.assertTrue(dataShow['stats'] is None)
+        self.assertEqual(dataShow['points'], len(replicas))
+        self.assertEqual(dataShow['level'], GraphTrial.L_REPLICA)
+        self.assertTrue(dataShow['stats'] is not None)
+
+    def incompleteDataset(self, level, references, assmt, classData):
+        num_references = len(references)
+        dataHelper = DataHelper(assmt.id)
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 0)
+        self.assertEqual(dataShow['level'], level)
+        self.assertEqual(len(dataShow['dataRows']), num_references)
+        self.assertEqual(dataShow['graphData'],
+                         GraphTrial.NO_DATA_AVAILABLE)
+
+        # Create an object
+        classData.objects.create(value=66,
+                                 assessment=assmt,
+                                 reference=references[0])
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 1)
+        self.assertEqual(dataShow['level'], level)
+        self.assertEqual(len(dataShow['dataRows']), num_references)
+        self.assertNotEqual(dataShow['graphData'],
+                            GraphTrial.NO_DATA_AVAILABLE)
+
+    def test_incompleteDatasetThesis(self):
+        datagenerator = DataGenerator(thesisGen=False, replicaGen=False)
+        trial = datagenerator._fieldTrials[0]
+        assName = '15 DA-E'
+        assmt = datagenerator._assessments[assName]
+
+        # Let's pretend no repicas are defined
+        trial.replicas_per_thesis = 0
+        trial.save()
+
+        self.incompleteDataset(GraphTrial.L_THESIS,
+                               Thesis.getObjects(trial),
+                               assmt, ThesisData)
+
+    def test_incompleteDatasetReplica(self):
+        datagenerator = DataGenerator(thesisGen=False, replicaGen=False)
+        trial = datagenerator._fieldTrials[0]
+        assName = '15 DA-E'
+        assmt = datagenerator._assessments[assName]
+
+        self.incompleteDataset(GraphTrial.L_REPLICA,
+                               Replica.getFieldTrialObjects(trial),
+                               assmt, ReplicaData)
 
     # def test_setSampleData(self):
     #     datagenerator = DataGenerator()

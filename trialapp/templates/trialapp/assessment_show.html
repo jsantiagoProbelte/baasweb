@@ -7,90 +7,69 @@
 {% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='assessment' edit_href="assessment-update" item=assessment delete_url='assessment-delete'%}
 
 <div class="card card-body-baas mt-2">
+  <table><tr>
+    <td>
+    {% include "baaswebapp/item_list_template.html" with field='Name' value=assessment.name%}
+    </td><td>
+    {% include "baaswebapp/item_list_template.html" with field='Rate Date' value=assessment.assessment_date%}
+    </td><td>
+    {% include "baaswebapp/item_list_template.html" with field='Crop Stage Majority' value=assessment.crop_stage_majority%}
+    </td><td>
+      {% include "baaswebapp/item_list_template.html" with field='Part Rated' value=assessment.part_rated%}
+    </td>
+    </tr></table>
+</div>
+  
   <div class="row">
     <div class="col-md-6">
-      <table><tr>
-        <td>
-        {% include "baaswebapp/item_list_template.html" with field='Name' value=assessment.name%}
-        </td><td>
-        {% include "baaswebapp/item_list_template.html" with field='Rate Date' value=assessment.assessment_date%}
-        </td><td>
-        {% include "baaswebapp/item_list_template.html" with field='Crop Stage Majority' value=assessment.crop_stage_majority%}
-        </td><td>
-          {% include "baaswebapp/item_list_template.html" with field='Part Rated' value=assessment.part_rated%}
-        </td>
-        </tr></table>
+      <div class="card card-body-baas mt-2">
+      <table class="data-table-longer">
+        <thead>
+          <tr><th class="col-md-2">Thesis</th>
+              {% if level == 'replica' %}
+                <th class="text-right col-md-1">mean</th>
+                <th class="text-right col-md-1">Replica</th>
+              {% endif %}
+              <th class="text-right col-md-1">{{assessment.rate_type}}</th></tr></thead>
+        <tbody>
+        {% for dataRow in dataRows %}
+          <tr>
+            {% if dataRow.rowspan > 0 %}
+              <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
+              {% if level == 'replica' %}
+                <td class="bg-custom-{{dataRow.color}} text-right" rowspan="{{dataRow.rowspan}}">{{dataRow.tvalue}}</td>
+              {% endif %}
+            {% endif %}
+            {% if level == 'replica' %}
+              <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
+            {% endif %}
+            <td class="bg-custom-{{dataRow.color}}">
+              <form id="form-data-input-template-{{level}}-{{dataRow.item_id}}" 
+                class='form-data-input-template'  method="POST">
+                {% csrf_token %}
+                <input type="text" name="data-point"
+                    id="{{dataRow.item_id}}"
+                    class="form-control-baas input data-input-template text-right"
+                    placeholder="-"
+                    value={{dataRow.value}}></input>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
     </div>
     <div class="col-md-6">
-      <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link {{thesis_nav}}" id="v-pills-thesis-tab" data-toggle="pill" href="#v-pills-thesis" role="tab" aria-controls="v-pills-thesis" aria-selected="true">
-          <span class="fs-2">&#9776;</span> Thesis data</a>
-        <a class="nav-link {{replica_nav}}" id="v-pills-replica-tab" data-toggle="pill" href="#v-pills-replica" role="tab" aria-controls="v-pills-replica" aria-selected="false">
-          <span class="fs-2">&#9783;</span> Replica data</a>
-        <a class="nav-link {{sample_nav}}" id="v-pills-sample-tab" data-toggle="pill" href="#v-pills-sample" role="tab" aria-controls="v-pills-sample" aria-selected="false">
-          <span class="fs-2 me-2">&#9880;</span>Sample data</a>
+      <div class="card card-body-baas mt-2">
+        {{graphData|safe}}
+      </div>
+      <div class="card card-body-baas mt-2">
+        <h5>Statistics</h5>
+        {{stats|safe}}
       </div>
     </div>
   </div>
-  
-  <div class="row">
-    <div class="col-md-6">
-    <table class="data-table-longer">
-      <thead>
-        <tr><th>Thesis</th><th class="text-right">mean</th><th class="text-right">Replica</th>
-            <th class="text-right">{{assessment.rate_type}}</th></tr></thead>
-      <tbody>
-      {% for dataRow in dataRows %}
-        <tr>
-          {% if dataRow.rowspan > 0 %}
-            <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
-
-            <td class="bg-custom-{{dataRow.color}} text-right" rowspan="{{dataRow.rowspan}}">{{dataRow.tvalue}}</td>
-          {% endif %}
-          <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
-          <td class="bg-custom-{{dataRow.color}}">
-            <form id="form-data-input-template-{{level}}-{{dataRow.item_id}}" 
-              class='form-data-input-template'  method="POST">
-              {% csrf_token %}
-              <input type="text" name="data-point"
-                  id="{{dataRow.item_id}}"
-                  class="form-control-baas input data-input-template text-right"
-                  placeholder="-"
-                  value={{dataRow.rvalue}}></input>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    </div>
-    <div class="col-md-6">
-      {{graphData|safe}}
-      {{stats|safe}}
-      {% for dataPointReference in dataPointsR %}
-        {{dataPointReference.graph|safe}}
-      {% endfor %}
-      {{dataPointsT.graph|safe}}
-      
-      {{dataPointsS.graph|safe}}
-    </div>
-  </div>
-  
-
-  <div class="tab-content" id="v-pills-tabContent">
-    <div class="tab-pane fade {{thesis_tab}}" id="v-pills-thesis" role="tabpanel" aria-labelledby="v-pills-thesis-tab">
-      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsT%}
-    </div>
-    <div class="tab-pane fade show {{replica_tab}}" id="v-pills-replica" role="tabpanel" aria-labelledby="v-pills-replica-tab">
-      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsR%}
-    </div>
-    <div class="tab-pane fade {{sample_tab}}" id="v-pills-sample" role="tabpanel" aria-labelledby="v-pills-sample-tab">
-      {% include 'trialapp/data_form_graph.html' with dataPointsForm=dataPointsS%}
-    </div>
-    <div class="tab-pane fade" id="v-pills-stats" role="tabpanel" aria-labelledby="v-pills-stats-tab">
-      <h5>Statistics and significance</h5>
-      ... work in progress ...
-    </div>
 </div>
 
 {% endblock %}

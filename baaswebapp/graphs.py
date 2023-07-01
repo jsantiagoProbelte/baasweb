@@ -272,6 +272,8 @@ class GraphTrial:
     L_DOSIS = 'dosis'
     LEVELS = [L_THESIS, L_REPLICA, L_SAMPLE]
 
+    NO_DATA_AVAILABLE = 'No data available yet'
+
     # SYMBOL_LIST = SymbolValidator().values
     SYMBOL_LIST = ['cicle', 'square', 'star', 'diamond', 'cross',
                    'x', 'triangle-up', 'triangle-down',

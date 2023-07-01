@@ -419,9 +419,11 @@ class Replica(ModelHelpers, models.Model):
     def createReplicas(cls, thesis, replicas_per_thesis):
         replicas = []
         for number in range(0, replicas_per_thesis):
+            nameId = 100*(number+1) + thesis.number
             item = Replica.objects.create(
                 number=number+1,
                 thesis=thesis,
+                name=f"{nameId}",
                 pos_x=0,
                 pos_y=0)
             replicas.append(item.id)

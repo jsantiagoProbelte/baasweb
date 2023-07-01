@@ -1,6 +1,5 @@
 from baaswebapp.models import RateTypeUnit
-from trialapp.models import Thesis, Replica, Sample, FieldTrial,\
-    TreatmentThesis
+from trialapp.models import Thesis, Replica, Sample, FieldTrial
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
 from django.shortcuts import get_object_or_404, render
@@ -136,51 +135,109 @@ class DataHelper:
         self._numThesis = len(self._thesisTrial.keys())
         self._replicas_thesis = len(self._replicas) / self._numThesis
 
+    def whatLevelToShow(self):
+        tData = ThesisData.objects.filter(
+            assessment_id=self._assessment.id).count()
+        rData = ReplicaData.objects.filter(
+            assessment_id=self._assessment.id).count()
+
+        if rData == 0 and tData == 0:
+            if self._trial.replicas_per_thesis > 0:
+                return GraphTrial.L_REPLICA
+            else:
+                return GraphTrial.L_THESIS
+
+        if rData > 0:
+            return GraphTrial.L_REPLICA
+        else:
+            return GraphTrial.L_THESIS
+
     def showDataAssessment(self):
-        common = {
-                'title': self._assessment.getTitle(),
-                'assessment': self._assessment,
-                'fieldTrial': self._trial}
-        showData = self.prepareThesisBasedData()
-        if showData is None:
+        common = {'title': self._assessment.getTitle(),
+                  'assessment': self._assessment,
+                  'fieldTrial': self._trial}
+
+        level = self.whatLevelToShow()
+        if level == GraphTrial.L_THESIS:
+            showData = self.prepareThesisBasedData()
+        if level == GraphTrial.L_REPLICA:
             showData = self.prepareReplicaBasedData()
+
         if showData:
             return {**showData, **common}
         else:
             return {**common, 'points': 0}
 
+    def referencePointsDict(self, dataPoints, referenceKey):
+        return {item[referenceKey]: item for item in dataPoints}
+
+    def thesisNumberDict(self):
+        thesisNumberDict = {self._thesisTrial[idT].number: idT
+                            for idT in self._thesisTrial}
+        thesisList = list(thesisNumberDict.keys())
+        thesisList.sort()
+        return thesisNumberDict, thesisList
+
+    def replicaNumberDict(self):
+        # _replicas is already ordered by thesis number and replica number
+        replicaNumberDict = {}
+        replicaList = []
+        for replica in self._replicas:
+            replicaNumberDict[replica.id] = replica
+            replicaList.append(replica.id)
+        return replicaNumberDict, replicaList
+
+    def buildOutput(self, level, points, stats, rows):
+        if points:
+            graphHelper = DataGraphFactory(
+                level, [self._assessment], points,
+                references=self._thesisTrial)
+            graph = graphHelper.draw()
+        else:
+            graph = GraphTrial.NO_DATA_AVAILABLE
+        return {'dataRows': rows,
+                'graphData': graph,
+                'stats': stats,
+                'level': level,
+                'points': len(points)}
+
     def prepareThesisBasedData(self):
         thesisPoints = ThesisData.dataPointsAssess([self._assessment.id])
-        if not thesisPoints:
-            return None
+        thesisPointsDict = self.referencePointsDict(thesisPoints,
+                                                    'reference__number')
+        thesisNumberDict, thesisList = self.thesisNumberDict()
+
         rows = []
-        for item in thesisPoints:
-            thesisNumber = item['reference__number']
+        for nThesis in thesisList:
+            thesisId = thesisNumberDict[nThesis]
+            if nThesis in thesisPointsDict:
+                value = thesisPointsDict[nThesis]['value']
+                if thesisPointsDict[nThesis]['reference__id'] != thesisId:
+                    return ''
+            else:
+                # assume item['reference__id'] =
+                value = ''
+            thesisName = self._thesisTrial[thesisId]
             rows.append(
-                {'thesis': self._thesisTrial[thesisNumber],
-                 'tvalue': item['value'],
-                 'rvalue': None,
+                {'thesis': thesisName,
+                 'value': value,
                  'item_id': DataModel.genDataPointId(
                     GraphTrial.L_THESIS, self._assessment.id,
-                    item['reference__id']),
+                    thesisId),
                  'rowspan': 1,
                  'replica': None,
-                 'color': thesisNumber})
-        graphHelper = DataGraphFactory(
-            GraphTrial.L_THESIS, [self._assessment], thesisPoints,
-            references=self._thesisTrial)
-        graph = graphHelper.draw()
-        return {'dataRows': rows, 'graphData': graph,
-                'stats': None,
-                'level': GraphTrial.L_THESIS,
-                'points': len(thesisPoints)}
+                 'color': nThesis})
+
+        return self.buildOutput(GraphTrial.L_THESIS,
+                                thesisPoints, None, rows)
 
     def prepareReplicaBasedData(self):
         replicaPoints = ReplicaData.dataPointsAssess([self._assessment.id])
-        if not replicaPoints:
-            return None
+        replicaPointsDict = self.referencePointsDict(replicaPoints,
+                                                     'reference__id')
+        replicaNumberDict, replicaList = self.replicaNumberDict()
         stats = None
-        if len(replicaPoints) == len(self._replicas):
+        if len(replicaPoints) > 0:
             aa = AssessmentAnalytics(self._assessment, self._numThesis)
             aa.analyse(self._replicas, dataReplica=replicaPoints)
             stats = aa.getStats()
@@ -188,36 +245,42 @@ class DataHelper:
         rows = []
         lastThesis = None
 
-        for item in replicaPoints:
-            thesisId = item['reference__thesis__id']
-            thesisNumber = item['reference__thesis__number']
+        for replicaId in replicaList:
+            if replicaId in replicaPointsDict:
+                value = replicaPointsDict[replicaId]['value']
+                if replicaPointsDict[replicaId]['reference__id'] != replicaId:
+                    return None
+            else:
+                # assume item['reference__id'] =
+                value = ''
+            replicaName = replicaNumberDict[replicaId].name
+
+            thesisId = replicaNumberDict[replicaId].thesis_id
+            thesisNumber = self._thesisTrial[thesisId].number
             span = 0
             tvalue = ''
             if lastThesis != thesisNumber:
                 lastThesis = thesisNumber
                 span = self._replicas_thesis
-                if snk:
+                if snk and thesisNumber in snk:
                     groups = ', '.join(snk[thesisNumber]['group'])
                     tvalue = f"{snk[thesisNumber]['mean']} "\
                              f"({groups})"
             rows.append(
                 {'thesis': self._thesisTrial[thesisId],
                  'tvalue': tvalue,
-                 'rvalue': item['value'],
+                 'value': value,
                  'item_id': DataModel.genDataPointId(
                     GraphTrial.L_REPLICA, self._assessment.id,
-                    item['reference__id']),
+                    replicaId),
                  'rowspan': span,
-                 'replica': item['reference__name'],
+                 'replica': replicaName,
                  'color': thesisNumber})
-        graphHelper = DataGraphFactory(
-            GraphTrial.L_REPLICA, [self._assessment], replicaPoints,
-            references=self._thesisTrial)
-        graph = graphHelper.draw()
-        return {'dataRows': rows, 'graphData': graph,
-                'stats': stats['stats'] if stats else None,
-                'level': GraphTrial.L_REPLICA,
-                'points': len(replicaPoints)}
+
+        return self.buildOutput(GraphTrial.L_REPLICA,
+                                replicaPoints,
+                                stats['stats'] if stats else None,
+                                rows)
 
 
 class DataGraphFactory():
@@ -240,7 +303,7 @@ class DataGraphFactory():
                                      traces, xAxis=xAxis,
                                      showTitle=showTitle)
         else:
-            self._graph = 'No data points found'
+            self._graph = GraphTrial.NO_DATA_AVAILABLE
 
     def dataPointValue(self, dataPoint):
         if self._level in [GraphTrial.L_REPLICA, GraphTrial.L_THESIS]:
@@ -276,20 +339,6 @@ class DataGraphFactory():
             return self._references[pointRefence].number
         else:
             return pointRefence.number
-
-    # To Delete
-    def addTreatmentToReference(self, thesis):
-        if thesis.id in self._references:
-            return
-        ttreatments = TreatmentThesis.getObjects(thesis)
-        name = ''
-        for ttreatment in ttreatments:
-            if name is not None:
-                name += ''
-            name += ttreatment.treatment.getName()
-        if name == '':
-            name = thesis.name
-        self._references[thesis.id] = name
 
     def getPointRefence(self, dataPoint):
         if self._level == GraphTrial.L_DOSIS:

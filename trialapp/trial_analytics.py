@@ -95,10 +95,11 @@ class AssessmentAnalytics:
 
     def analyse(self, replicas, dataReplica=None):
         self.prepareData(replicas, dataReplica=dataReplica)
-        self.anova()
-        self.SNK()
-        self.barlett()
-        self.levene()
+        if self._data and len(self._means) > 1:
+            self.anova()
+            self.SNK()
+            self.barlett()
+            self.levene()
 
     def getReplicaDataAndGroup(self, replicas):
         for thesisId in replicas:
@@ -254,7 +255,8 @@ class AssessmentAnalytics:
     def barlett(self):
         self._bartlett_stat, self._bartlett_p = bartlett(*self._data_groups)
         # Print the test statistic and p-value
-        text = "<table class='table'><tr><td><h4>Bartlett statistic</h4><td></td></tr>"
+        text = "<table class='table'><tr><td><h4>Bartlett statistic</h4><td>"\
+               "</td></tr>"
         text += f"<tr><td>X^2</td><td>{round(self._bartlett_stat,2)}</td><tr>"\
                 f"<tr><td>p-value</td><td>{round(self._bartlett_p,3)}</td><tr>"
         self._statsText += text
