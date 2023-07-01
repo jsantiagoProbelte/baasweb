@@ -316,49 +316,8 @@ class GraphTrial:
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
 
-    def figure(self, thisGraph,
-               typeFigure=SCATTER, orientation='v'):
-        showLegend = True
-        data = None
-        fig = go.Figure()
-
-        for traceKey in thisGraph['traces']:
-            trace = thisGraph['traces'][traceKey]
-            name = trace['name']
-            color = trace['marker_color']
-            symbol = trace['marker_symbol']
-            if orientation == 'v':
-                x = trace['x']
-                y = trace['y']
-            else:
-                x = trace['y']
-                y = trace['x']
-
-            if typeFigure == GraphTrial.BAR:
-                showLegend = False
-                data = go.Bar(orientation=orientation,
-                              name=name, marker={'color': color},
-                              x=x, y=y)
-            elif typeFigure == GraphTrial.LINE:
-                markerMode = 'lines+markers'
-                data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
-                                  mode=markerMode, marker_size=5)
-            elif typeFigure == GraphTrial.SCATTER:
-                if self._xAxis == GraphTrial.L_DATE:
-                    markerMode = 'lines+markers'
-                else:
-                    markerMode = 'markers'
-                data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
-                                  mode=markerMode, marker_size=15)
-            elif typeFigure == GraphTrial.VIOLIN:
-                data = go.Violin(name=name, x=x, y=y,
-                                 box_visible=True,
-                                 meanline_visible=True,
-                                 line_color=color)
-            fig.add_trace(data)
-
+    def formatFigure(self, fig, thisGraph, showLegend,
+                     orientation):
         # Update layout for graph object Figure
         if orientation == 'v':
             xaxis_title = thisGraph['x_axis']
@@ -382,6 +341,55 @@ class GraphTrial:
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
+
+    def figure(self, thisGraph,
+               typeFigure=SCATTER, orientation='v'):
+        showLegend = True
+        data = None
+        fig = go.Figure()
+
+        for traceKey in thisGraph['traces']:
+            trace = thisGraph['traces'][traceKey]
+            name = trace['name']
+            color = trace['marker_color']
+            symbol = trace['marker_symbol']
+            if orientation == 'v':
+                x = trace['x']
+                y = trace['y']
+            else:
+                x = trace['y']
+                y = trace['x']
+
+            if typeFigure == GraphTrial.BAR:
+                showLegend = False
+                data = go.Bar(orientation=orientation,
+                              name=name, marker={'color': color},
+                              text=x,
+                              x=x, y=y)
+            elif typeFigure == GraphTrial.LINE:
+                markerMode = 'lines+markers'
+                data = go.Scatter(name=name, x=x, y=y,
+                                  marker={'color': color, 'symbol': symbol},
+                                  mode=markerMode, marker_size=5)
+            elif typeFigure == GraphTrial.SCATTER:
+                if self._xAxis == GraphTrial.L_DATE:
+                    markerMode = 'lines+markers'
+                else:
+                    markerMode = 'markers'
+                data = go.Scatter(name=name, x=x, y=y,
+                                  marker={'color': color, 'symbol': symbol},
+                                  mode=markerMode, marker_size=15)
+            elif typeFigure == GraphTrial.VIOLIN:
+                data = go.Violin(name=name, x=x, y=y,
+                                 box_visible=True,
+                                 meanline_visible=True,
+                                 line_color=color)
+            fig.add_trace(data)
+
+            if typeFigure == GraphTrial.BAR:
+                fig.update_traces(textfont_size=20)
+
+        self.formatFigure(fig, thisGraph, showLegend, orientation)
 
         if typeFigure == GraphTrial.VIOLIN:
             fig.update_layout(violinmode='group')
