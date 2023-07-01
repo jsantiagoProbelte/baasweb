@@ -294,6 +294,7 @@ class GraphTrial:
                  showTitle=True):
         self._level = level
         self._showTitle = showTitle
+        self._xAxis = xAxis
         self._graphData = {
                 'title': self.getTitle(rateType, ratedPart),
                 'x_axis': xAxis,
@@ -341,6 +342,12 @@ class GraphTrial:
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
+
+        if self._xAxis == GraphTrial.L_DATE:
+            if orientation == 'v':
+                fig.update_layout(xaxis=dict(tickformat='%d-%m-%Y'))
+            else:
+                fig.update_layout(yaxis=dict(tickformat='%d-%m-%Y'))
 
     def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
