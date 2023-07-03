@@ -12,11 +12,11 @@ function processEnter(event,element, url, theId) {
     if(code==13){
         // Cancel the default action, if needed
         result = setDataPoint(element, url);
-        nextElement = element.parent().parent().next().find('input.'+theId);
+        nextElement = element.parent().parent().parent().next().find('input.'+theId);
         if (nextElement.length !== 0)
             nextElement[0].focus();
         else
-            scrollTo('.baas-graphs');
+            location.reload();
         return result;
     }
 };
