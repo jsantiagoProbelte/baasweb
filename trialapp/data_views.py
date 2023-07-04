@@ -264,7 +264,7 @@ class DataHelper:
             aa = AssessmentAnalytics(self._assessment, self._numThesis)
             aa.analyse(self._replicas, dataReplica=replicaPoints)
             stats = aa.getStats()
-        snk = stats['snk'] if stats else None
+        snk = stats['out'] if stats else None
         rows = []
         lastThesis = None
 
@@ -287,7 +287,9 @@ class DataHelper:
                 span = self._replicas_thesis
                 if snk and thesisNumber in snk:
                     mean = snk[thesisNumber]['mean']
-                    groups = ', '.join(snk[thesisNumber]['group'])
+                    groups = ''
+                    if 'group' in snk[thesisNumber]:
+                        groups = ', '.join(snk[thesisNumber]['group'])
                     tvalue = f"{mean} "\
                              f"({groups})"
                     efficacyData[thesisNumber] = mean

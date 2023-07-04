@@ -81,6 +81,8 @@ class AssessmentAnalytics:
     _debug = False
     _statsText = ''
     _snk = {}
+    _result = {}
+    _indexThesis = {}
 
     def __init__(self, assessment, num_thesis, debug=False):
         self._assessment = assessment
@@ -93,6 +95,8 @@ class AssessmentAnalytics:
         self._means = None
         self._std_devs = None
         self._n_samples = None
+        self._result = {}
+        self._indexThesis = {}
 
     def analyse(self, replicas, dataReplica=None):
         self.prepareData(replicas, dataReplica=dataReplica)
@@ -112,11 +116,11 @@ class AssessmentAnalytics:
 
     def groupReplicaData(self, dataReplica):
         for item in dataReplica:
-            thesisId = item['reference__thesis__number']
+            thesisNum = item['reference__thesis__number']
             value = float(item['value'])
-            if thesisId not in self._replicaData:
-                self._replicaData[thesisId] = []
-            self._replicaData[thesisId].append(value)
+            if thesisNum not in self._replicaData:
+                self._replicaData[thesisNum] = []
+            self._replicaData[thesisNum].append(value)
 
     def prepareData(self, replicas, dataReplica=None):
         means = []
@@ -128,15 +132,25 @@ class AssessmentAnalytics:
             self.getReplicaDataAndGroup(replicas)
         else:
             self.groupReplicaData(dataReplica)
-        for thesisId in self._replicaData:
-            data = self._replicaData[thesisId]
+        index = 0
+        for thesisNum in self._replicaData:
+            # Sometimes we do not have all thesis data
+            # we need to remember the order
+            self._indexThesis[index] = thesisNum
+            index += 1
+            data = self._replicaData[thesisNum]
             self._data += data
             self._data_groups.append(data)
-            means.append(np.mean(data))
-            std_devs.append(np.std(data))
+            mean = np.mean(data)
+            means.append(mean)
+            std = np.std(data)
+            std_devs.append(std)
             length = len(data)
             lens.append(length)
-            self._groups += ['__{}__'.format(thesisId)] * length
+            self._groups += ['__{}__'.format(thesisNum)] * length
+            self._result[thesisNum] = {
+                'mean': round(mean, 2),
+                'std': round(std, 2)}
 
         # Combine all groups into one array
         self._means = np.array(means)
@@ -159,7 +173,7 @@ class AssessmentAnalytics:
     def getStats(self):
         return {
             'stats': self._statsText,
-            'snk': self._snk,
+            'out': self._result,
             'abbott': self._abbott}
 
     def genSigLetter(self, num_thesis):
@@ -216,11 +230,10 @@ class AssessmentAnalytics:
                 i, k, num_thesis, sortMeans, qSwit, sigLetters, df)
 
         for index in range(num_thesis):
-            self._snk[index+1] = {'mean': round(self._means[index], 2),
-                                  'sig': round(self._std_devs[index], 2),
-                                  'group': self._sig_diff[index]}
+            thesisNum = self._indexThesis[index]
+            self._result[thesisNum]['group'] = self._sig_diff[index]
         if self._debug:
-            print(self._snk)
+            print(self._result)
 
     def SNKcompareTreatments(self, i, k, num_thesis, sortMeans, qSwit,
                              sigLetters, df):

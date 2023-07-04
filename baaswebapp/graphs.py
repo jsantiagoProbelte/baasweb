@@ -526,12 +526,9 @@ class GraphStat():
 
 class EfficacyGraph:
     @staticmethod
-    def draw(numNameDict,
-             numValueDict,
-             title_text='Efficacy (%)',
-             showLegend=False,
-             yaxis_title='Abbott (%)',
-             xaxis_title='thesis',
+    def draw(numNameDict, numValueDict,
+             title_text='Efficacy (%)', showLegend=False,
+             yaxis_title='Abbott (%)', xaxis_title='thesis',
              barmode='group'):
 
         colors = []
