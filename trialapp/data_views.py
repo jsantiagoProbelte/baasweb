@@ -5,8 +5,8 @@ from trialapp.data_models import DataModel, ThesisData,\
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from baaswebapp.graphs import GraphTrial
-from trialapp.trial_analytics import AssessmentAnalytics
+from baaswebapp.graphs import GraphTrial, EfficacyGraph
+from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 
 
 class SetDataAssessment(APIView):
@@ -134,6 +134,10 @@ class DataHelper:
         self._thesisTrial = Thesis.getObjects(self._trial, as_dict=True)
         self._numThesis = len(self._thesisTrial.keys())
         self._replicas_thesis = len(self._replicas) / self._numThesis
+        self.findUntreated()
+
+    def findUntreated(self):
+        self._untreated = 1  # number
 
     def whatLevelToShow(self):
         tData = ThesisData.objects.filter(
@@ -187,16 +191,32 @@ class DataHelper:
             replicaList.append(replica.id)
         return replicaNumberDict, replicaList
 
-    def buildOutput(self, level, points, stats, rows):
+    def efficacyGraph(self, efficacyData):
+        numNameDict = {}
+        for ref in self._thesisTrial:
+            thesis = self._thesisTrial[ref]
+            numNameDict[thesis.number] = thesis.name
+        efficacyValues = Abbott(self._untreated, efficacyData).run()
+        if efficacyValues:
+            return EfficacyGraph.draw(
+                numNameDict,
+                efficacyValues)
+        else:
+            return 'Cannot calculate efficacy.'
+
+    def buildOutput(self, level, points, stats, efficacyData, rows):
+        graph = GraphTrial.NO_DATA_AVAILABLE
+        graphEfficacy = ''
         if points:
             graphHelper = DataGraphFactory(
                 level, [self._assessment], points,
                 references=self._thesisTrial)
             graph = graphHelper.draw()
-        else:
-            graph = GraphTrial.NO_DATA_AVAILABLE
+        if efficacyData:
+            graphEfficacy = self.efficacyGraph(efficacyData)
         return {'dataRows': rows,
                 'graphData': graph,
+                'efficacy': graphEfficacy,
                 'stats': stats,
                 'level': level,
                 'points': len(points)}
@@ -208,10 +228,13 @@ class DataHelper:
         thesisNumberDict, thesisList = self.thesisNumberDict()
 
         rows = []
+        thesisValues = []
+        efficacyData = {}
         for nThesis in thesisList:
             thesisId = thesisNumberDict[nThesis]
             if nThesis in thesisPointsDict:
                 value = thesisPointsDict[nThesis]['value']
+                efficacyData[nThesis] = value
                 if thesisPointsDict[nThesis]['reference__id'] != thesisId:
                     return ''
             else:
@@ -219,17 +242,16 @@ class DataHelper:
                 value = ''
             thesisName = self._thesisTrial[thesisId]
             rows.append(
-                {'thesis': thesisName,
-                 'value': value,
+                {'thesis': thesisName, 'value': value,
                  'item_id': DataModel.genDataPointId(
-                    GraphTrial.L_THESIS, self._assessment.id,
-                    thesisId),
-                 'rowspan': 1,
-                 'replica': None,
-                 'color': nThesis})
+                    GraphTrial.L_THESIS, self._assessment.id, thesisId),
+                 'rowspan': 1, 'replica': None, 'color': nThesis})
+            thesisValues.append(value)
 
         return self.buildOutput(GraphTrial.L_THESIS,
-                                thesisPoints, None, rows)
+                                thesisPoints, None,
+                                efficacyData,
+                                rows)
 
     def prepareReplicaBasedData(self):
         replicaPoints = ReplicaData.dataPointsAssess([self._assessment.id])
@@ -237,6 +259,7 @@ class DataHelper:
                                                      'reference__id')
         replicaNumberDict, replicaList = self.replicaNumberDict()
         stats = None
+        efficacyData = {}
         if len(replicaPoints) > 0:
             aa = AssessmentAnalytics(self._assessment, self._numThesis)
             aa.analyse(self._replicas, dataReplica=replicaPoints)
@@ -263,9 +286,11 @@ class DataHelper:
                 lastThesis = thesisNumber
                 span = self._replicas_thesis
                 if snk and thesisNumber in snk:
+                    mean = snk[thesisNumber]['mean']
                     groups = ', '.join(snk[thesisNumber]['group'])
-                    tvalue = f"{snk[thesisNumber]['mean']} "\
+                    tvalue = f"{mean} "\
                              f"({groups})"
+                    efficacyData[thesisNumber] = mean
             rows.append(
                 {'thesis': self._thesisTrial[thesisId],
                  'tvalue': tvalue,
@@ -280,6 +305,7 @@ class DataHelper:
         return self.buildOutput(GraphTrial.L_REPLICA,
                                 replicaPoints,
                                 stats['stats'] if stats else None,
+                                efficacyData,
                                 rows)
 
 
@@ -322,7 +348,6 @@ class DataGraphFactory():
             # TODO: there could be data with different units
             pointRef = self.getPointRefence(dataPoint)
             traceId = self.traceId(pointRef)
-
             self.assignColor(traceId)
             if traceId not in traces:
                 traces[traceId] = self.prepareTrace(pointRef)

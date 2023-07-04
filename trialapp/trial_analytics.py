@@ -72,6 +72,7 @@ class TrialAnalytics:
 class AssessmentAnalytics:
     _assessment = None
     _anova_table = None
+    _abbott = None
     _replicaData = {}
     _groups = []
     _sig_diff = {}
@@ -158,7 +159,8 @@ class AssessmentAnalytics:
     def getStats(self):
         return {
             'stats': self._statsText,
-            'snk': self._snk}
+            'snk': self._snk,
+            'abbott': self._abbott}
 
     def genSigLetter(self, num_thesis):
         return [chr(num) for num in range(97, 97 + num_thesis + 1)]
@@ -272,3 +274,34 @@ class AssessmentAnalytics:
         self._statsText += text
         if self._debug:
             print(text)
+
+
+class Abbott():
+    _data = {}
+    _standardNumber = None
+
+    @classmethod
+    def do(cls, value, standard):
+        return round(value * 100 / standard, 2)
+
+    def __init__(self, standardNumber, values):
+        # values is a dictionary of number of thesis and their values
+        # standardIndex in the position of the performance
+        # of the standard treatment, or no treatment
+        self._standardNumber = standardNumber
+        self._data = values
+
+    def run(self):
+        efficacies = {}
+        if self._standardNumber in self._data:
+            efficacyStandard = self._data[self._standardNumber]
+        else:
+            return None
+        if efficacyStandard is None or efficacyStandard == 0:
+            return None
+
+        for number in self._data:
+            if number != self._standardNumber:
+                efficacies[number] = Abbott.do(self._data[number],
+                                               efficacyStandard)
+        return efficacies

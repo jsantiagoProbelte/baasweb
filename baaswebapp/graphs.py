@@ -522,3 +522,53 @@ class GraphStat():
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
+
+
+class EfficacyGraph:
+    @staticmethod
+    def draw(numNameDict,
+             numValueDict,
+             title_text='Efficacy (%)',
+             showLegend=False,
+             yaxis_title='Abbott (%)',
+             xaxis_title='thesis',
+             barmode='group'):
+
+        colors = []
+        values = []
+        labels = []
+        for key in numNameDict:
+            if key in numValueDict:
+                values.append(numValueDict[key])
+                colors.append(GraphTrial.COLOR_LIST[key])
+                labels.append(numNameDict[key])
+
+        # Create a bar trace
+        trace = go.Bar(
+            x=labels,
+            y=values,
+            text=values,
+            marker=dict(color=colors))
+
+        # Create the figure
+        figure = go.Figure(data=[trace])
+        figure.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="white",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='white',
+            title_text=title_text,
+            showlegend=showLegend,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-1,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title,
+            barmode=barmode)
+        figure.update_traces(textfont_size=20)
+
+        plotly_plot_obj = plot({'data': figure}, output_type='div')
+        return plotly_plot_obj
