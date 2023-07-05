@@ -97,7 +97,7 @@ class StatsDataApi(APIView):
         stats = [[self.generateDataDimension('trial_status', 'Trial Status'),
                   self.generateDataDimension('product', 'Products')],
                  [self.generateDataDimension('crop', 'Crops'),
-                  self.generateDataDimension('plague', 'Plagues & Sickness')]]
+                  self.generateDataDimension('plague', 'Pests & Diseases')]]
 
         data = {'stats': stats, 'totalTrials': totalTrials}
         return render(request, StatsDataApi.TEMPLATE, data)
