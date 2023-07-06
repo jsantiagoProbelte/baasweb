@@ -20,31 +20,46 @@
     </tr></table>
 </div>
   
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card card-body-baas mt-2">
-      <table class="data-table-longer">
-        <thead>
-          <tr><th class="col-md-2">Thesis</th>
-              {% if level == 'replica' %}
-                <th class="text-right col-md-1">mean</th>
-                <th class="text-right col-md-1">Replica</th>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card card-body-baas mt-2">
+    <div class="table-container-long">
+    <table class="data-table-longer">
+      <thead>
+        <tr><th class="col-md-2">Thesis</th>
+            {% if level != 'thesis' %}
+              <th class="text-right col-md-1">avg</th>
+              {% if level == 'sample' %}
+                <th></th>
               {% endif %}
-              <th class="text-right col-md-1">{{assessment.rate_type}}</th></tr></thead>
-        <tbody>
-        {% for dataRow in dataRows %}
-          <tr>
-            {% if dataRow.rowspan > 0 %}
-              <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
-              {% if level == 'replica' %}
-                <td class="bg-custom-{{dataRow.color}} text-right" rowspan="{{dataRow.rowspan}}">{{dataRow.tvalue}}</td>
-              {% endif %}
+              <th class="text-right col-md-1">replica</th>
             {% endif %}
-            {% if level == 'replica' %}
-              <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
+            <th class="text-right col-md-1">value</th>
+            {% if sampleNums %}
+              <th></th>
+              {% for num in sampleNums %}
+                <th class="text-right col-md-1">{{num}}</th>
+              {% endfor %}
             {% endif %}
-            <td class="bg-custom-{{dataRow.color}}">
-              <form id="form-data-input-template-{{level}}-{{dataRow.item_id}}" 
+        </tr></thead>
+      <tbody>
+      {% for dataRow in dataRows %}
+        <tr>
+          {% if dataRow.rowspan > 0 %}
+            <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
+            {% if level != 'thesis' %}
+              <td class="bg-custom-{{dataRow.color}} text-right" rowspan="{{dataRow.rowspan}}">{{dataRow.tvalue}}</td>
+            {% endif %}
+          {% endif %}
+          {% if level == 'sample' %}
+            <td>&ThickSpace;</td>
+          {% endif %}
+          {% if level != 'thesis' %}
+            <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
+          {% endif %}
+          <td class="bg-custom-{{dataRow.color}} text-right">
+            {% if dataRow.item_id %}
+              <form id="form-data-input-template-{{dataRow.item_id}}" 
                 class='form-data-input-template'  method="POST">
                 {% csrf_token %}
                 <input type="text" name="data-point"
@@ -53,25 +68,48 @@
                     placeholder="-"
                     value={{dataRow.value}}></input>
               </form>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      </div>
+            {% else %}
+              {{dataRow.value}}
+            {% endif %}
+          </td>
+          {% if dataRow.sampleCols %}
+            <td>&ThickSpace;</td>
+            {% for col in dataRow.sampleCols %}
+              <td class="bg-custom-{{dataRow.color}} text-right">
+                {% if col.item_id %}
+                  <form id="form-data-input-template-{{col.item_id}}" class='form-data-input-template'  method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="data-point"
+                        id="{{col.item_id}}"
+                        class="form-control-baas input data-input-template text-right"
+                        placeholder="-"
+                        value={{col.value}}></input>
+                  </form>
+                {% else %}
+                  {{col.value}}
+                {% endif %}
+              </td>
+            {% endfor %}
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
     </div>
-    <div class="col-md-6">
-      <div class="card card-body-baas mt-2">
-        {{efficacy|safe}}
-        {{graphData|safe}}
-      </div>
-      <div class="card card-body-baas mt-2">
-        <h5>Statistics</h5>
-        {{stats|safe}}
-      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card card-body-baas mt-2">
+      {{efficacy|safe}}
+      {{graphData|safe}}
+    </div>
+    <div class="card card-body-baas mt-2">
+      <h5>Statistics</h5>
+      {{stats|safe}}
     </div>
   </div>
 </div>
+
 
 {% endblock %}
 

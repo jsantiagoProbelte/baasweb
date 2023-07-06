@@ -351,6 +351,9 @@ input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
   background-color: grey;
 }
 
+.table-container-long {
+  overflow-x: auto;
+}
 
 .data-table-longer {
   width:100%;

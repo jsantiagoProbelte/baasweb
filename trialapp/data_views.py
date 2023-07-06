@@ -144,14 +144,20 @@ class DataHelper:
             assessment_id=self._assessment.id).count()
         rData = ReplicaData.objects.filter(
             assessment_id=self._assessment.id).count()
+        sData = SampleData.objects.filter(
+            assessment_id=self._assessment.id).count()
 
-        if rData == 0 and tData == 0:
+        if rData == 0 and tData == 0 and sData == 0:
+            if self._trial.samples_per_replica > 0:
+                return GraphTrial.L_SAMPLE + GraphTrial.L_REPLICA
             if self._trial.replicas_per_thesis > 0:
                 return GraphTrial.L_REPLICA
             else:
                 return GraphTrial.L_THESIS
 
-        if rData > 0:
+        if sData > 0:
+            return GraphTrial.L_SAMPLE
+        elif rData > 0:
             return GraphTrial.L_REPLICA
         else:
             return GraphTrial.L_THESIS
@@ -164,8 +170,17 @@ class DataHelper:
         level = self.whatLevelToShow()
         if level == GraphTrial.L_THESIS:
             showData = self.prepareThesisBasedData()
-        if level == GraphTrial.L_REPLICA:
+        elif level == GraphTrial.L_REPLICA:
             showData = self.prepareReplicaBasedData()
+        else:
+            samplesNums = [i+1 for i in
+                           range(self._trial.samples_per_replica)]
+            common['sampleNums'] = samplesNums
+            showReplicaInput = True
+            if level == GraphTrial.L_SAMPLE:
+                showReplicaInput = False
+            showData = self.prepareSampleBasedData(samplesNums,
+                                                   showReplicaInput)
 
         if showData:
             return {**showData, **common}
@@ -269,43 +284,119 @@ class DataHelper:
         lastThesis = None
 
         for replicaId in replicaList:
+            value = ''
             if replicaId in replicaPointsDict:
                 value = replicaPointsDict[replicaId]['value']
-                if replicaPointsDict[replicaId]['reference__id'] != replicaId:
-                    return None
-            else:
-                # assume item['reference__id'] =
-                value = ''
-            replicaName = replicaNumberDict[replicaId].name
-
-            thesisId = replicaNumberDict[replicaId].thesis_id
-            thesisNumber = self._thesisTrial[thesisId].number
-            span = 0
-            tvalue = ''
-            if lastThesis != thesisNumber:
-                lastThesis = thesisNumber
-                span = self._replicas_thesis
-                if snk and thesisNumber in snk:
-                    mean = snk[thesisNumber]['mean']
-                    groups = ''
-                    if 'group' in snk[thesisNumber]:
-                        groups = ', '.join(snk[thesisNumber]['group'])
-                    tvalue = f"{mean} "\
-                             f"({groups})"
-                    efficacyData[thesisNumber] = mean
-            rows.append(
-                {'thesis': self._thesisTrial[thesisId],
-                 'tvalue': tvalue,
-                 'value': value,
-                 'item_id': DataModel.genDataPointId(
-                    GraphTrial.L_REPLICA, self._assessment.id,
-                    replicaId),
-                 'rowspan': span,
-                 'replica': replicaName,
-                 'color': thesisNumber})
+            lastThesis = self.addReplicaInfo(
+                replicaNumberDict, value, replicaId, lastThesis,
+                snk, efficacyData, rows)
 
         return self.buildOutput(GraphTrial.L_REPLICA,
                                 replicaPoints,
+                                stats['stats'] if stats else None,
+                                efficacyData,
+                                rows)
+
+    def addReplicaInfo(self, replicaNumberDict, value, replicaId, lastThesis,
+                       snk, efficacyData, rows, sampleCols=None,
+                       genReplicaId=True):
+        replicaName = replicaNumberDict[replicaId].name
+        thesisId = replicaNumberDict[replicaId].thesis_id
+        thesisNumber = self._thesisTrial[thesisId].number
+        span = 0
+        tvalue = ''
+        if lastThesis != thesisNumber:
+            lastThesis = thesisNumber
+            span = self._replicas_thesis
+            if snk and thesisNumber in snk:
+                mean = snk[thesisNumber]['mean']
+                groups = ''
+                if 'group' in snk[thesisNumber]:
+                    groups = ', '.join(snk[thesisNumber]['group'])
+                tvalue = f"{mean} ({groups})"
+                efficacyData[thesisNumber] = mean
+        rItemId = None
+        if genReplicaId:
+            rItemId = DataModel.genDataPointId(
+                            GraphTrial.L_REPLICA, self._assessment.id,
+                            replicaId)
+        rows.append(
+                {'thesis': self._thesisTrial[thesisId],
+                 'tvalue': tvalue,
+                 'value': value,
+                 'item_id': rItemId,
+                 'rowspan': span,
+                 'replica': replicaName,
+                 'color': thesisNumber,
+                 'sampleCols': sampleCols})
+
+    def genSampleColums(self, sampleNums, existingSamplesInReplica,
+                        samplePointsDict, replicaId):
+        sampleCols = []
+        rValueAgg = 0
+        rValueCount = 0
+        for sampleNum in sampleNums:
+            sValue = ''
+            sampleId = None
+            if sampleNum in existingSamplesInReplica:
+                sampleId = existingSamplesInReplica[sampleNum]
+            if sampleId in samplePointsDict:
+                sValue = samplePointsDict[sampleId]['value']
+                rValueAgg += sValue
+                rValueCount += 1
+            sampleCols.append({
+                'value': sValue,
+                'item_id': DataModel.genDataPointId(
+                    GraphTrial.L_SAMPLE, self._assessment.id,
+                    replicaId, fakeId=sampleNum)})
+        rValue = None
+        if rValueCount > 1:
+            rValue = round(rValueAgg / rValueCount, 2)
+        return sampleCols, rValue
+
+    def prepareSampleBasedData(self, sampleNums, showReplicaInput):
+        samplePoints = SampleData.dataPointsAssess([self._assessment.id])
+        # We need to use reference__id because referece__number is not unique
+        samplePointsDict = self.referencePointsDict(samplePoints,
+                                                    'reference__id')
+        replicaNumberDict, replicaList = self.replicaNumberDict()
+        replicaSampleDict = Sample.replicaSampleDict(self._trial)
+
+        stats = None
+        efficacyData = {}
+        if len(samplePoints) > 0:
+            aa = AssessmentAnalytics(self._assessment, self._numThesis)
+            # TODO aa.analyse(self._replicas, dataReplica=samplePoints)
+            stats = aa.getStats()
+        snk = stats['out'] if stats else None
+        rows = []
+        lastThesis = None
+
+        for replicaId in replicaList:
+            existingSamplesInReplica = {}
+            if replicaId in replicaSampleDict:
+                # we may not have all of them.
+                existingSamplesInReplica = replicaSampleDict[replicaId]
+
+            sampleCols, rValue = self.genSampleColums(
+                sampleNums, existingSamplesInReplica,
+                samplePointsDict, replicaId)
+
+            genReplicaId = False
+            if not rValue and showReplicaInput:
+                # We generate the form to input replica value
+                # if the samples are None and we allow to
+                # showReplicaInput, which is the first time
+                # we show a new assessment page
+                genReplicaId = True
+
+            lastThesis = self.addReplicaInfo(
+                replicaNumberDict, rValue, replicaId, lastThesis,
+                snk, efficacyData, rows, sampleCols=sampleCols,
+                genReplicaId=genReplicaId)
+
+        return self.buildOutput(GraphTrial.L_SAMPLE,
+                                samplePoints,
                                 stats['stats'] if stats else None,
                                 efficacyData,
                                 rows)
@@ -334,10 +425,10 @@ class DataGraphFactory():
             self._graph = GraphTrial.NO_DATA_AVAILABLE
 
     def dataPointValue(self, dataPoint):
-        if self._level in [GraphTrial.L_REPLICA, GraphTrial.L_THESIS]:
-            return dataPoint['value']
-        else:
+        if self._level in [GraphTrial.L_DOSIS, GraphTrial.L_DAF]:
             return dataPoint.value
+        else:
+            return dataPoint['value']
 
     def buildData(self, dataPoints, xAxis):
         # This is for diplay purposes. [[,],[,]...]
@@ -362,10 +453,10 @@ class DataGraphFactory():
     def traceId(self, pointRefence):
         if self._level == GraphTrial.L_DOSIS:
             return pointRefence.name
-        elif self._level in [GraphTrial.L_THESIS, GraphTrial.L_REPLICA]:
-            return self._references[pointRefence].number
-        else:
+        elif self._level == GraphTrial.L_DAF:
             return pointRefence.number
+        else:
+            return self._references[pointRefence].number
 
     def getPointRefence(self, dataPoint):
         if self._level == GraphTrial.L_DOSIS:
@@ -373,19 +464,19 @@ class DataGraphFactory():
         else:
             if self._level in GraphTrial.L_THESIS:
                 return dataPoint['reference__id']
-            elif GraphTrial.L_REPLICA:
+            elif self._level == GraphTrial.L_REPLICA:
                 return dataPoint['reference__thesis__id']
             elif self._level == GraphTrial.L_SAMPLE:
-                return dataPoint.reference.replica.thesis
+                return dataPoint['reference__replica__thesis__id']
             return None
 
     def getTraceName(self, pointRefence):
         if self._level == GraphTrial.L_DOSIS:
             return pointRefence.name
-        elif self._level in [GraphTrial.L_THESIS, GraphTrial.L_REPLICA]:
-            return self._references[pointRefence].name
-        else:
+        elif self._level == GraphTrial.L_DAF:
             return self._references[pointRefence.id]
+        else:
+            return self._references[pointRefence].name
 
     def getTraceColor(self, pointRefence):
         color = self.traceId(pointRefence)

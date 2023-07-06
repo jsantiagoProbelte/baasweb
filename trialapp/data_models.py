@@ -46,7 +46,7 @@ class Assessment(ModelHelpers, models.Model):
 
     def getTitle(self):
         return "[{}] {}".format(self.assessment_date,
-                                self.name)
+                                self.rate_type)
 
     def get_success_url(self):
         return "/assessment_list/%i/" % self.field_trial.id
@@ -226,7 +226,7 @@ class ThesisData(DataModel, models.Model):
 
     @classmethod
     def dataPointsAssess(cls, assIds):
-        return ThesisData.objects.values(
+        return cls.objects.values(
             'id', 'reference__id', 'value', 'assessment__id',
             'reference__number'
             ).filter(assessment_id__in=assIds).order_by(
@@ -242,7 +242,7 @@ class ReplicaData(DataModel, models.Model):
 
     @classmethod
     def dataPointsAssess(cls, assIds):
-        return ReplicaData.objects.values(
+        return cls.objects.values(
             'reference__thesis__id', 'reference__name', 'value',
             'reference__id', 'assessment__id',
             'reference__thesis__number'
@@ -259,7 +259,17 @@ class SampleData(DataModel, models.Model):
 
     @classmethod
     def getDataPointsPerSampleNumber(cls, assessment, number):
-        return SampleData.objects.filter(
-                    assessment=assessment,
-                    reference__number=number).\
-                order_by('reference__number')
+        return cls.objects.filter(
+                assessment=assessment,
+                reference__number=number).\
+            order_by('reference__number')
+
+    @classmethod
+    def dataPointsAssess(cls, assIds):
+        return cls.objects.values(
+            'reference__replica__id', 'value',
+            'reference__id', 'assessment__id',
+            'reference__replica__thesis__id',
+            'reference__replica__number'
+            ).filter(assessment_id__in=assIds).order_by(
+            'reference__replica__number', 'reference__number')

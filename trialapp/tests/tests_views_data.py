@@ -2,7 +2,7 @@ from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import Thesis, Replica
 from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
-    Assessment
+    Assessment, SampleData, Sample
 from baaswebapp.graphs import GraphTrial
 from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi,\
     DataGraphFactory
@@ -162,8 +162,7 @@ class DataViewsTest(TestCase):
         request = self._apiFactory.get('trial_data')
         self._apiFactory.setUser(request)
         apiView = TrialDataApi()
-        response = apiView.get(request,
-                               pk=trial.id)
+        response = apiView.get(request, pk=trial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, trial.name)
 
@@ -198,8 +197,11 @@ class DataViewsTest(TestCase):
         self.assertEqual(dataShow['points'], 0)
         self.assertEqual(dataShow['level'], level)
         self.assertEqual(len(dataShow['dataRows']), num_references)
-        self.assertEqual(dataShow['graphData'],
-                         GraphTrial.NO_DATA_AVAILABLE)
+        self.assertEqual(dataShow['graphData'], GraphTrial.NO_DATA_AVAILABLE)
+        self.assertNotEqual(dataShow['dataRows'][0]['item_id'], None)
+        self.assertTrue(level in dataShow['dataRows'][0]['item_id'])
+        if 'sampleCols' in dataShow['dataRows'][0]:
+            self.assertTrue(dataShow['dataRows'][0]['sampleCols'] is None)
 
         # Create an object
         classData.objects.create(value=66,
@@ -211,6 +213,11 @@ class DataViewsTest(TestCase):
         self.assertEqual(len(dataShow['dataRows']), num_references)
         self.assertNotEqual(dataShow['graphData'],
                             GraphTrial.NO_DATA_AVAILABLE)
+        self.assertNotEqual(dataShow['dataRows'][0]['item_id'], None)
+        self.assertTrue(level in dataShow['dataRows'][0]['item_id'])
+        self.assertEqual(dataShow['dataRows'][0]['value'], 66)
+        if 'sampleCols' in dataShow['dataRows'][0]:
+            self.assertTrue(dataShow['dataRows'][0]['sampleCols'] is None)
 
     def test_incompleteDatasetThesis(self):
         datagenerator = DataGenerator(thesisGen=False, replicaGen=False)
@@ -236,120 +243,154 @@ class DataViewsTest(TestCase):
                                Replica.getFieldTrialObjects(trial),
                                assmt, ReplicaData)
 
-    # def test_setSampleData(self):
-    #     datagenerator = DataGenerator()
-    #     assName = '15 DA-E'
-    #     assmt = datagenerator[assName]
-    #     dataHelper = DataHelper(assmt.id)
-    #     dataPointList, totalPoints = dataHelper.showDataAssessment()
-    #     token = DataHelper.TOKEN_LEVEL[GraphTrial.L_SAMPLE]
-    #     self.assertEqual(token, 'dataPointsS')
-    #     self.assertTrue(
-    #         'Number of samples per replica' in
-    #         dataPointList[token][0]['errors'])
-    #     # we expect a redirect to define a samples per replica,
-    #     # since the associated field trial has not defined
+    def test_assessmentSampleIntoSampleDataSet(self):
+        datagenerator = DataGenerator(thesisGen=False, replicaGen=False,
+                                      sampleGen=True)
+        trial = datagenerator._fieldTrials[0]
+        assName = '15 DA-E'
+        assmt = datagenerator._assessments[assName]
 
-    #     # let's set it manually and try again
-    #     samplesNum = 25
-    #     self._fieldTrial.samples_per_replica = samplesNum
-    #     self._fieldTrial.save()
-    #     dataHelper._fieldTrial = self._fieldTrial
+        replicas = Replica.getFieldTrialObjects(trial)
+        num_replicas = len(replicas)
+        dataHelper = DataHelper(assmt.id)
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 0)
+        self.assertTrue('sample' in dataShow['level'])
+        self.assertEqual(len(dataShow['dataRows']), num_replicas)
+        self.assertEqual(dataShow['graphData'], GraphTrial.NO_DATA_AVAILABLE)
+        self.assertNotEqual(dataShow['dataRows'][0]['item_id'], None)
+        self.assertTrue('replica' in dataShow['dataRows'][0]['item_id'])
+        self.assertEqual(len(dataShow['dataRows'][0]['sampleCols']),
+                         trial.samples_per_replica)
+        self.assertTrue('sample' in
+                        dataShow['dataRows'][0]['sampleCols'][0]['item_id'])
 
-    #     dataPointList, totalPoints = dataHelper.showDataPerLevel(
-    #         GraphTrial.L_SAMPLE, onlyThisData=True)
-    #     token = DataHelper.TOKEN_LEVEL[GraphTrial.L_SAMPLE]
-    #     self.assertEqual(token, 'dataPointsS')
-    #     self.assertFalse(
-    #         'Number of samples per replica' in
-    #         dataPointList[token][0]['errors'])
+        # Create a sample data
+        fakeSmpId = 1
+        value = 33
+        self.assertEqual(ThesisData.objects.count(), 0)
+        addData = {'data_point_id': DataModel.generateDataPointId(
+                    'sample', assmt, replicas[0], fakeSmpId),
+                   'data-point': value}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        apiView = SetDataAssessment()
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        samples = Sample.objects.all()
+        self.assertEqual(len(samples), 1)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 1)
+        self.assertEqual(tPoints[0].value, value)
+        self.assertEqual(tPoints[0].assessment.id,
+                         assmt.id)
+        self.assertEqual(tPoints[0].reference.number,
+                         fakeSmpId)
 
-    #     # Now, the user should have select a replica and then
-    #     # she should get a page to input data per sample, even
-    #     # if samples are not created yet. Le's check that
-    #     replicas = Replica.getFieldTrialObjects(
-    #         self._fieldTrial)
-    #     selectedReplica = replicas[0]
-    #     samples = Sample.getObjects(selectedReplica)
-    #     self.assertEqual(len(samples), 0)
-    #     # Realize that we do not need to create he samples anymore.
-    #     # We fake them during the view representation,
-    #     # and we only create them after data input
-    #     #
-    #     # we have as many rows as samples
-    #     self.assertEqual(len(dataPointList[token][0]['rows']), samplesNum)
-    #     fakeSmpId = 16
-    #     dataPoints = dataPointList[token][0]['rows'][fakeSmpId-1]
-    #       ['dataPoints']
-    #     # Extract itemIds
-    #     itemIds = []
-    #     for dataPoint in dataPoints:
-    #         itemIds.append(dataPoint['item_id'])
-    #         self.assertEqual(dataPoint['value'], '')
-    #     # Per row, we have as many columns as replicas
-    #     self.assertEqual(len(itemIds), len(replicas))
-    #     # in the same row, we get all the samples for the sample number
-    #     for replica in replicas:
-    #         idInput = DataModel.generateDataPointId(
-    #             GraphTrial.L_SAMPLE, self._assessment, replica, fakeSmpId)
-    #         self.assertTrue(idInput in itemIds)
+        # See that now we do not see the replicaId
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 1)
+        self.assertTrue('sample' in dataShow['level'])
+        self.assertEqual(len(dataShow['dataRows']), num_replicas)
+        self.assertNotEqual(dataShow['graphData'],
+                            GraphTrial.NO_DATA_AVAILABLE)
+        self.assertEqual(dataShow['dataRows'][0]['item_id'], None)
+        self.assertEqual(len(dataShow['dataRows'][0]['sampleCols']),
+                         trial.samples_per_replica)
+        self.assertEqual(value,
+                         dataShow['dataRows'][0]['sampleCols'][0]['value'])
 
-    #     # Le's add data
-    #     self.assertEqual(ThesisData.objects.count(), 0)
-    #     addData = {'data_point_id': DataModel.generateDataPointId(
-    #                 'sample', self._assessment, selectedReplica, fakeSmpId),
-    #                'data-point': 33}
-    #     addDataPoint = self._apiFactory.post(
-    #         'set_data_point',
-    #         data=addData)
-    #     apiView = SetDataAssessment()
-    #     response = apiView.post(addDataPoint)
-    #     self.assertEqual(response.status_code, 200)
-    #     tPoints = SampleData.objects.all()
-    #     self.assertEqual(len(tPoints), 1)
-    #     self.assertEqual(tPoints[0].value, 33)
-    #     self.assertEqual(tPoints[0].assessment.id,
-    #                      self._assessment.id)
-    #     self.assertEqual(tPoints[0].reference.number,
-    #                      fakeSmpId)
+        # Now lets simulate that we actualy input a thesis value.
+        # lets remove the existing data sample
+        tPoints[0].delete()
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 0)
+        self.assertEqual(ThesisData.objects.count(), 0)
+        addData = {'data_point_id': DataModel.generateDataPointId(
+                    'replica', assmt, replicas[0]),
+                   'data-point': value}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        apiView = SetDataAssessment()
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 1)
+        self.assertEqual(dataShow['level'], 'replica')
+        self.assertEqual(len(dataShow['dataRows']), num_replicas)
+        self.assertNotEqual(dataShow['graphData'],
+                            GraphTrial.NO_DATA_AVAILABLE)
+        self.assertTrue('replica' in dataShow['dataRows'][0]['item_id'])
+        self.assertTrue(dataShow['dataRows'][0]['sampleCols'] is None)
 
-    #     # add bad values
-    #     self.assertEqual(ThesisData.objects.count(), 0)
-    #     addBadData = {'data_point_id': DataModel.generateDataPointId(
-    #                 'badboy', self._assessment, selectedReplica, fakeSmpId),
-    #                'data-point': 33}
-    #     addBadDataPoint = self._apiFactory.post(
-    #         'set_data_point',
-    #         data=addBadData)
-    #     response = apiView.post(addBadDataPoint)
-    #     self.assertEqual(response.status_code, 500)
+    def test_setSampleData(self):
+        datagenerator = DataGenerator()
+        trial = datagenerator._fieldTrials[0]
+        assName = '15 DA-E'
+        assmt = datagenerator._assessments[assName]
+        replicas = Replica.getFieldTrialObjects(trial)
+        fakeSmpId = 1
 
-    #     # modify
-    #     addData = {'data_point_id': DataModel.generateDataPointId(
-    #                 'sample', self._assessment, selectedReplica, fakeSmpId),
-    #                'data-point': 66}
-    #     addDataPoint = self._apiFactory.post(
-    #         'set_data_point',
-    #         data=addData)
-    #     response = apiView.post(addDataPoint)
-    #     tPoints = SampleData.objects.all()
-    #     self.assertEqual(len(tPoints), 1)
-    #     self.assertEqual(tPoints[0].value, 66)
+        # add bad values
+        addBadData = {'data_point_id': DataModel.generateDataPointId(
+                    'badboy', assmt, replicas[0], fakeSmpId),
+                   'data-point': 33}
+        addBadDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addBadData)
+        apiView = SetDataAssessment()
+        response = apiView.post(addBadDataPoint)
+        self.assertEqual(response.status_code, 500)
 
-    #     # add new point
-    #     addData = {'data_point_id': DataModel.generateDataPointId(
-    #         'sample', self._assessment, selectedReplica, fakeSmpId+1),
-    #         'data-point': 99}
-    #     addDataPoint = self._apiFactory.post(
-    #         'set_data_point',
-    #         data=addData)
-    #     response = apiView.post(addDataPoint)
-    #     tPoints = SampleData.objects.all()
-    #     self.assertEqual(len(tPoints), 2)
-    #     self.assertEqual(tPoints[1].value, 99)
+        fakeSmpId = 1
+        value = 33
+        addData = {'data_point_id': DataModel.generateDataPointId(
+                    'sample', assmt, replicas[0], fakeSmpId),
+                   'data-point': value}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        apiView = SetDataAssessment()
+        response = apiView.post(addDataPoint)
+        self.assertEqual(response.status_code, 200)
+        samples = Sample.objects.all()
+        self.assertEqual(len(samples), 1)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 1)
+        self.assertEqual(tPoints[0].value, value)
+        self.assertEqual(tPoints[0].assessment.id,
+                         assmt.id)
+        self.assertEqual(tPoints[0].reference.number,
+                         fakeSmpId)
 
-    #     dataPointList, totalPoints = dataHelper.showDataPerLevel(
-    #         GraphTrial.L_SAMPLE, onlyThisData=True)
-    #     self.assertEqual(totalPoints, 2)
-    #     self.assertEqual(totalPoints, Sample.objects.count())
-    #     self.assertEqual(totalPoints, SampleData.objects.count())
+        # modify
+        addData = {'data_point_id': DataModel.generateDataPointId(
+                    'sample', assmt, replicas[0], fakeSmpId),
+                   'data-point': 66}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        response = apiView.post(addDataPoint)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 1)
+        self.assertEqual(tPoints[0].value, 66)
+
+        # add new point
+        addData = {'data_point_id': DataModel.generateDataPointId(
+            'sample', assmt, replicas[0], fakeSmpId+1),
+            'data-point': 99}
+        addDataPoint = self._apiFactory.post(
+            'set_data_point',
+            data=addData)
+        response = apiView.post(addDataPoint)
+        tPoints = SampleData.objects.all()
+        self.assertEqual(len(tPoints), 2)
+        self.assertEqual(tPoints[1].value, 99)
+
+        dataHelper = DataHelper(assmt.id)
+        dataShow = dataHelper.showDataAssessment()
+        self.assertEqual(dataShow['points'], 2)
+        self.assertEqual(dataShow['points'], Sample.objects.count())
+        self.assertEqual(dataShow['points'], SampleData.objects.count())

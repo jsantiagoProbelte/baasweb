@@ -9,6 +9,7 @@ from trialapp.trial_analytics import TrialAnalytics, SNK_Table
 class DataGenerator:
     _fieldTrials = {}
     _assessments = {}
+    SAMPLES = 6
     dataAssessment = {
         '15 DA-E': {
             1: [97.60, 97.20, 97.20],
@@ -33,7 +34,8 @@ class DataGenerator:
             4: [75.2, 8.3, 47.5, 0],
             5: [0, 0, 0, 0]}}
 
-    def __init__(self, replicaGen=True, thesisGen=False):
+    def __init__(self, replicaGen=True, thesisGen=False,
+                 sampleGen=False, num_samples=SAMPLES):
         TrialDbInitialLoader.loadInitialTrialValues()
         # Create as many as trials as assessments to try
         # different conditions
@@ -46,6 +48,13 @@ class DataGenerator:
             trialData['name'] = f"trial{i}"
             trial = FieldTrial.create_fieldTrial(**trialData)
             self._fieldTrials[i] = trial
+
+            if sampleGen:
+                # We do not need to create samples
+                # They are created when data is inputed
+                # But we need to modify the fieldTrial
+                trial.samples_per_replica = num_samples
+                trial.save()
 
             assName = assessList[i]
             assInfo = {
@@ -74,6 +83,7 @@ class DataGenerator:
                             assessment_id=assId,
                             reference_id=replicas[j][index],
                             value=assData[j][index])
+
                 if thesisGen:
                     ThesisData.objects.create(
                         assessment_id=assId,

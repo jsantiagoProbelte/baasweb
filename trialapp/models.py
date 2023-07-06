@@ -490,3 +490,17 @@ class Sample(ModelHelpers, models.Model):
             Sample.objects.create(
                 number=number+1,
                 replica=replica)
+
+    @classmethod
+    def replicaSampleDict(cls, trial):
+        # we want a dictionary with sampleId -> replicaId
+        theDict = {}
+        samples = cls.objects.values(
+            'number', 'id', 'replica_id'
+            ).filter(replica__thesis__field_trial=trial)
+        for sample in samples:
+            replicaId = sample['replica_id']
+            if replicaId not in theDict:
+                theDict[replicaId] = {}
+            theDict[replicaId][sample['number']] = sample['id']
+        return theDict
