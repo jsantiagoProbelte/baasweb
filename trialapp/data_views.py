@@ -329,6 +329,7 @@ class DataHelper:
                  'replica': replicaName,
                  'color': thesisNumber,
                  'sampleCols': sampleCols})
+        return lastThesis
 
     def genSampleColums(self, sampleNums, existingSamplesInReplica,
                         samplePointsDict, replicaId):
