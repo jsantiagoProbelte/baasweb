@@ -264,6 +264,7 @@ class DataViewsTest(TestCase):
                          trial.samples_per_replica)
         self.assertTrue('sample' in
                         dataShow['dataRows'][0]['sampleCols'][0]['item_id'])
+        self.assertTrue(dataShow['stats'] is None)
 
         # Create a sample data
         fakeSmpId = 1
@@ -300,6 +301,7 @@ class DataViewsTest(TestCase):
                          trial.samples_per_replica)
         self.assertEqual(value,
                          dataShow['dataRows'][0]['sampleCols'][0]['value'])
+        self.assertTrue(dataShow['stats'] is not None)
 
         # Now lets simulate that we actualy input a thesis value.
         # lets remove the existing data sample
@@ -394,3 +396,4 @@ class DataViewsTest(TestCase):
         self.assertEqual(dataShow['points'], 2)
         self.assertEqual(dataShow['points'], Sample.objects.count())
         self.assertEqual(dataShow['points'], SampleData.objects.count())
+        self.assertTrue(dataShow['stats'] is not None)
