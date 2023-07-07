@@ -270,6 +270,7 @@ class SampleData(DataModel, models.Model):
             'reference__replica__id', 'value',
             'reference__id', 'assessment__id',
             'reference__replica__thesis__id',
+            'reference__replica__thesis__number',
             'reference__replica__number'
             ).filter(assessment_id__in=assIds).order_by(
             'reference__replica__number', 'reference__number')

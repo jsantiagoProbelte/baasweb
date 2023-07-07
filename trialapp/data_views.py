@@ -31,6 +31,8 @@ class SetDataAssessment(APIView):
             item = get_object_or_404(Replica, pk=refereceId)
             ReplicaData.setDataPoint(item, assessment, value)
         elif level == GraphTrial.L_SAMPLE:
+            if value == '':
+                return Response({'success': False})
             sampleNumber = theIds[-1]
             item = Sample.findOrCreate(replica_id=refereceId,
                                        number=sampleNumber)
@@ -312,8 +314,8 @@ class DataHelper:
                 mean = snk[thesisNumber]['mean']
                 groups = ''
                 if 'group' in snk[thesisNumber]:
-                    groups = ', '.join(snk[thesisNumber]['group'])
-                tvalue = f"{mean} ({groups})"
+                    groups = f" ({', '.join(snk[thesisNumber]['group'])})"
+                tvalue = f"{mean}{groups}"
                 efficacyData[thesisNumber] = mean
         rItemId = None
         if genReplicaId:
@@ -366,8 +368,9 @@ class DataHelper:
         stats = None
         efficacyData = {}
         if len(samplePoints) > 0:
-            aa = AssessmentAnalytics(self._assessment, self._numThesis)
-            # TODO aa.analyse(self._replicas, dataReplica=samplePoints)
+            aa = AssessmentAnalytics(self._assessment, self._numThesis,
+                                     isSampleData=True)
+            aa.analyse(self._replicas, dataReplica=samplePoints)
             stats = aa.getStats()
         snk = stats['out'] if stats else None
         rows = []
@@ -384,12 +387,14 @@ class DataHelper:
                 samplePointsDict, replicaId)
 
             genReplicaId = False
-            if not rValue and showReplicaInput:
-                # We generate the form to input replica value
-                # if the samples are None and we allow to
-                # showReplicaInput, which is the first time
-                # we show a new assessment page
-                genReplicaId = True
+            if not rValue:
+                rValue = ''
+                if showReplicaInput:
+                    # We generate the form to input replica value
+                    # if the samples are None and we allow to
+                    # showReplicaInput, which is the first time
+                    # we show a new assessment page
+                    genReplicaId = True
 
             lastThesis = self.addReplicaInfo(
                 replicaNumberDict, rValue, replicaId, lastThesis,

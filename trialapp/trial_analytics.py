@@ -83,8 +83,11 @@ class AssessmentAnalytics:
     _snk = {}
     _result = {}
     _indexThesis = {}
+    _thesisGroupTag = None
 
-    def __init__(self, assessment, num_thesis, debug=False):
+    def __init__(self, assessment, num_thesis,
+                 isSampleData=False,
+                 debug=False):
         self._assessment = assessment
         # significant lettters
         self._sig_letters = self.genSigLetter(num_thesis)
@@ -97,6 +100,10 @@ class AssessmentAnalytics:
         self._n_samples = None
         self._result = {}
         self._indexThesis = {}
+        if isSampleData:
+            self._thesisGroupTag = 'reference__replica__thesis__number'
+        else:
+            self._thesisGroupTag = 'reference__thesis__number'
 
     def analyse(self, replicas, dataReplica=None):
         self.prepareData(replicas, dataReplica=dataReplica)
@@ -116,7 +123,7 @@ class AssessmentAnalytics:
 
     def groupReplicaData(self, dataReplica):
         for item in dataReplica:
-            thesisNum = item['reference__thesis__number']
+            thesisNum = item[self._thesisGroupTag]
             value = float(item['value'])
             if thesisNum not in self._replicaData:
                 self._replicaData[thesisNum] = []
