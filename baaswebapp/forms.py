@@ -39,5 +39,53 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                         'submit',
                         'Login',
                         css_class="btn btn-primary float-end"))
-                )
             )
+        )
+
+
+class CreateInviteForm(forms.Form):
+    """Form for creating invite to Baas."""
+
+    username = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput({
+            'class': 'form-control',
+            'placeholder': 'Username'}))
+
+    first_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput({
+            'class': 'form-control',
+            'placeholder': 'First name'}))
+    last_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput({
+            'class': 'form-control',
+            'placeholder': 'Last name'}))
+
+    email = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput({
+            'class': 'form-control',
+            'placeholder': 'Email address'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-login'
+        self.helper.form_class = 'login-form'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'invite'
+        self.helper.layout = Layout(
+            Div(
+                Field('username', css_class='mb-3'),
+                Field('first_name', css_class='mb-3'),
+                Field('last_name', css_class='mb-3'),
+                Field('email', css_class='mb-3'),
+                FormActions(
+                    Submit(
+                        'submit',
+                        'Generate Invite',
+                        css_class="btn btn-primary float-end"))
+            )
+        )

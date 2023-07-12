@@ -31,6 +31,8 @@ urlpatterns = [
     path('', include('labapp.urls')),
     path("logout", views.logout_request, name="logout"),
     path("login", views.login_request, name="login"),
+    path("invite", views.invite_request, name="invite"),
+    path("accept", views.accept_request, name="accept"),
     path('admin/', admin.site.urls),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]

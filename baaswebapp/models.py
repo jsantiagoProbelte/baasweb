@@ -1,7 +1,9 @@
 from django.db import models
 from datetime import datetime, timedelta
+from django.conf import settings
 import urllib.parse
 import requests
+import uuid
 
 
 class ModelHelpers:
@@ -210,3 +212,14 @@ class Weather(ModelHelpers, models.Model):
 
     def __str__(self):
         return str(self.date)
+
+
+class FaceIdUser(models.Model):
+    invite_code = models.UUIDField(default=uuid.uuid4)
+    person_group_id = models.UUIDField(null=True, default=None)
+    accepted_invite = models.BooleanField(default=False)
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
