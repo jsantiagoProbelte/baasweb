@@ -1,0 +1,68 @@
+{% extends "baaswebapp/layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<head>
+  <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/baaswebapp/content/loading-bar.min.css"/>
+  <script type="text/javascript" src="/static/baaswebapp/scripts/loading-bar.min.js"></script>
+</head> 
+<style>
+  #progressbar {
+    width: 80%;
+  }
+</style>
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6 p-5 text-center ">
+        <div class="card no-border p-4" style="background:#fff; border-radius:20px;">
+            <div class="card-header" style="border:none;">
+                <h2 class="fw-bold">Welcome, {{user.first_name}} {{user.last_name}}!</h2>
+                <p>Please use the webcam to capture three clear images of your face.</p>
+            </div>
+            <div class="card-body">
+              <div class="row d-flex justify-content-center">
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="canvas" class="d-none"></canvas>
+              </div>
+              <div class="row d-flex justify-content-center mt-3">
+                <button onclick="capture()" type="button" class="btn btn-primary">Take Picture</button>
+              </div>
+              <div class="row d-flex justify-content-center mt-3">
+                <div
+                  id="progressbar"
+                  data-preset="stripe"
+                  class="ldBar label-center"
+                  data-value="0"
+                ></div>
+              </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  const webcamElement = document.getElementById('webcam');
+  const canvasElement = document.getElementById('canvas');
+  const webcam = new Webcam(webcamElement, 'user', canvasElement);
+  var imagesTaken = 0
+
+  var progressBar = new ldBar("#progressbar");
+  progressBar.set(0)
+  webcam.start()
+   .then(result =>{
+      console.log("webcam started");
+   })
+   .catch(err => {
+       console.log(err);
+   });
+
+  function capture(){
+    if (imagesTaken <= 3){
+      progressBar.set(imagesTaken * 30)
+    }
+    let picture = webcam.snap();
+    console.log(picture)
+  }
+</script>
+{% endblock %}
+
+
