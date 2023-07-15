@@ -564,7 +564,7 @@ class TrialPermission:
 
     def canEditTrial(self):
         edit = False
-        if self._trial.contact == self._user.username:
+        if self._trial.responsible == self._user.username:
             edit = True
         elif self._user.is_superuser:
             edit = True
@@ -573,12 +573,13 @@ class TrialPermission:
 
     def canAddData(self):
         add_data = False
-        if self._trial.contact == self._user:
+        if self._trial.trial_status.name == TrialStatus.FINISHED:
+            return
+        elif self._trial.responsible == self._user.username:
             add_data = True
         elif self._user.is_superuser:
             add_data = True
-        elif self._trial.trial_status.name == TrialStatus.FINISHED:
-            return
+
         if add_data:
             self._permissions[TrialPermission.ADD_DATA] = add_data
 

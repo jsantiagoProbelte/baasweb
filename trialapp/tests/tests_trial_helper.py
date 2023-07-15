@@ -1,10 +1,19 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Replica
+from trialapp.models import FieldTrial, Thesis, Replica, TrialStatus
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.trial_helper import LayoutTrial
+from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.thesis_views import SetReplicaPosition
+
+
+class UserStub:
+    username = None
+    is_superuser = None
+
+    def __init__(self, name, superUser):
+        self.username = name
+        self.is_superuser = superUser
 
 
 class TrialHelperTest(TestCase):
@@ -141,3 +150,30 @@ class TrialHelperTest(TestCase):
         headers = LayoutTrial.headerLayout(self._fieldTrial)
         self.assertEqual(len(headers), self._fieldTrial.blocks)
         self.assertEqual(headers[0]['name'], 'A')
+
+    def test_permisions(self):
+        trial = self._fieldTrial
+        owner = self._fieldTrial.responsible
+
+        trialP = TrialPermission(trial, UserStub(owner, False)).getPermisions()
+        self.assertTrue(trialP[TrialPermission.ADD_DATA])
+        self.assertTrue(trialP[TrialPermission.EDIT])
+
+        trialP = TrialPermission(trial, UserStub('GOD', False)).getPermisions()
+        self.assertFalse(trialP[TrialPermission.ADD_DATA])
+        self.assertFalse(trialP[TrialPermission.EDIT])
+
+        trialP = TrialPermission(trial, UserStub('GOD', True)).getPermisions()
+        self.assertTrue(trialP[TrialPermission.ADD_DATA])
+        self.assertTrue(trialP[TrialPermission.EDIT])
+
+        finishStatus = TrialStatus.objects.get(name=TrialStatus.FINISHED)
+        trial.trial_status = finishStatus
+        trial.save()
+        trialP = TrialPermission(trial, UserStub('GOD', True)).getPermisions()
+        self.assertFalse(trialP[TrialPermission.ADD_DATA])
+        self.assertTrue(trialP[TrialPermission.EDIT])
+
+        trialP = TrialPermission(trial, UserStub(owner, False)).getPermisions()
+        self.assertFalse(trialP[TrialPermission.ADD_DATA])
+        self.assertTrue(trialP[TrialPermission.EDIT])
