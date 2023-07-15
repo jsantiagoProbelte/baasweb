@@ -2,11 +2,14 @@ from baaswebapp.models import RateTypeUnit
 from trialapp.models import Thesis, Replica, Sample, FieldTrial
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from baaswebapp.graphs import GraphTrial, EfficacyGraph
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
+from trialapp.trial_helper import TrialPermission
 
 
 class SetDataAssessment(APIView):
@@ -42,15 +45,28 @@ class SetDataAssessment(APIView):
         return Response({'success': True})
 
 
-class TrialDataApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class TrialDataApi(LoginRequiredMixin, DetailView):
+    model = FieldTrial
+    template_name = 'trialapp/trial_data.html'
+    context_object_name = 'fieldTrial'
     _trial = None
     _assessments = None
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self._trial = self.get_object()
+        permisions = TrialPermission(
+            self._trial, self.request.user).getPermisions()
+        self._assessments = Assessment.getObjects(
+            self._trial, date_order=False)
+        header = self.prepareHeader()
+        showData = {'header': header, 'dataRows': self.preparaRows(),
+                    'ratings': RateTypeUnit.getSelectList(asDict=True)}
+        return {**context, **permisions, **showData}
+
     def addValue(self, array, assessment, key, value):
-        array.append({'name': key, 'value': value, 'id': assessment.id})
+        array.append({'name': key, 'value': value,
+                      'id': assessment.id})
 
     def prepareHeader(self):
         partRatedArr = []
@@ -105,7 +121,7 @@ class TrialDataApi(APIView):
                 values.append({
                     'value': value,
                     'item_id': DataModel.generateDataPointId(
-                         GraphTrial.L_REPLICA, ass, replica)})
+                        GraphTrial.L_REPLICA, ass, replica)})
             rows.append(
                 {'thesis': thesisName,
                  'rowspan': thisRowspan,
@@ -114,29 +130,18 @@ class TrialDataApi(APIView):
                  'values': values})
         return rows
 
-    def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/trial_data.html'
-        trial_id = kwargs.get('pk', None)
-        self._trial = get_object_or_404(FieldTrial, pk=trial_id)
-        self._assessments = Assessment.getObjects(
-            self._trial, date_order=False)
-        header = self.prepareHeader()
-        showData = {'header': header, 'dataRows': self.preparaRows(),
-                    'ratings': RateTypeUnit.getSelectList(asDict=True),
-                    'fieldTrial': self._trial}
-        return render(request, template_name, showData)
-
 
 # Show Data methods
 class DataHelper:
-    def __init__(self, assessmentId):
-        self._assessment = get_object_or_404(Assessment, pk=assessmentId)
+    def __init__(self, assessment, editable=True):
+        self._assessment = assessment
         self._trial = self._assessment.field_trial
         self._replicas = Replica.getFieldTrialObjects(self._trial)
         self._thesisTrial = Thesis.getObjects(self._trial, as_dict=True)
         self._numThesis = len(self._thesisTrial.keys())
         self._replicas_thesis = len(self._replicas) / self._numThesis
         self.findUntreated()
+        self._editable = editable
 
     def findUntreated(self):
         self._untreated = 1  # number
@@ -166,7 +171,6 @@ class DataHelper:
 
     def showDataAssessment(self):
         common = {'title': self._assessment.getTitle(),
-                  'assessment': self._assessment,
                   'fieldTrial': self._trial}
 
         level = self.whatLevelToShow()
@@ -258,10 +262,12 @@ class DataHelper:
                 # assume item['reference__id'] =
                 value = ''
             thesisName = self._thesisTrial[thesisId]
+            itemId = DataModel.genDataPointId(
+                GraphTrial.L_THESIS,
+                self._assessment.id, thesisId) if self._editable else None
             rows.append(
                 {'thesis': thesisName, 'value': value,
-                 'item_id': DataModel.genDataPointId(
-                    GraphTrial.L_THESIS, self._assessment.id, thesisId),
+                 'item_id': itemId,
                  'rowspan': 1, 'replica': None, 'color': nThesis})
             thesisValues.append(value)
 
@@ -317,11 +323,9 @@ class DataHelper:
                     groups = f" ({', '.join(snk[thesisNumber]['group'])})"
                 tvalue = f"{mean}{groups}"
                 efficacyData[thesisNumber] = mean
-        rItemId = None
-        if genReplicaId:
-            rItemId = DataModel.genDataPointId(
-                            GraphTrial.L_REPLICA, self._assessment.id,
-                            replicaId)
+        rItemId = DataModel.genDataPointId(
+            GraphTrial.L_REPLICA, self._assessment.id,
+            replicaId) if genReplicaId and self._editable else None
         rows.append(
                 {'thesis': self._thesisTrial[thesisId],
                  'tvalue': tvalue,
@@ -347,11 +351,12 @@ class DataHelper:
                 sValue = samplePointsDict[sampleId]['value']
                 rValueAgg += sValue
                 rValueCount += 1
+            itemId = DataModel.genDataPointId(
+                GraphTrial.L_SAMPLE, self._assessment.id, replicaId,
+                fakeId=sampleNum) if self._editable else None
             sampleCols.append({
                 'value': sValue,
-                'item_id': DataModel.genDataPointId(
-                    GraphTrial.L_SAMPLE, self._assessment.id,
-                    replicaId, fakeId=sampleNum)})
+                'item_id': itemId})
         rValue = None
         if rValueCount > 1:
             rValue = round(rValueAgg / rValueCount, 2)

@@ -34,12 +34,10 @@ class DataViewsTest(TestCase):
             'crop_stage_majority': '89, 89, 89',
             'field_trial_id': trial.id}
         assmt = Assessment.objects.create(**emptyAssInfo)
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 0)
-        self.assertEqual(
-            dataShow['assessment'].assessment_date.isoformat(),
-            assmt.assessment_date)
+        self.assertEqual(dataShow['level'], 'replica')
 
         theses = Thesis.getObjects(trial, as_dict=True)
         thesis = theses[1]
@@ -100,12 +98,10 @@ class DataViewsTest(TestCase):
         trial = datagenerator._fieldTrials[0]
         assName = '15 DA-E'
         assmt = datagenerator._assessments[assName]
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 0)
-        self.assertEqual(
-            dataShow['assessment'].assessment_date.isoformat(),
-            assmt.assessment_date)
+        self.assertEqual(dataShow['level'], 'replica')
 
         # Validate when no data yet
         replicas = Replica.getFieldTrialObjects(trial)
@@ -152,7 +148,7 @@ class DataViewsTest(TestCase):
         self.assertEqual(len(tPoints), 2)
         self.assertEqual(tPoints[1].value, 99)
 
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 2)
         self.assertEqual(dataShow['level'], GraphTrial.L_REPLICA)
@@ -161,8 +157,8 @@ class DataViewsTest(TestCase):
         # View trial_data
         request = self._apiFactory.get('trial_data')
         self._apiFactory.setUser(request)
-        apiView = TrialDataApi()
-        response = apiView.get(request, pk=trial.id)
+        response = TrialDataApi.as_view()(
+            request, pk=trial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, trial.name)
 
@@ -171,7 +167,7 @@ class DataViewsTest(TestCase):
         trial = datagenerator._fieldTrials[0]
         assName = '15 DA-E'
         assmt = datagenerator._assessments[assName]
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         replicas = Replica.getFieldTrialObjects(trial)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], len(replicas))
@@ -183,7 +179,7 @@ class DataViewsTest(TestCase):
         trial = datagenerator._fieldTrials[0]
         assName = '15 DA-E'
         assmt = datagenerator._assessments[assName]
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         replicas = Replica.getFieldTrialObjects(trial)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], len(replicas))
@@ -192,7 +188,7 @@ class DataViewsTest(TestCase):
 
     def incompleteDataset(self, level, references, assmt, classData):
         num_references = len(references)
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 0)
         self.assertEqual(dataShow['level'], level)
@@ -252,7 +248,7 @@ class DataViewsTest(TestCase):
 
         replicas = Replica.getFieldTrialObjects(trial)
         num_replicas = len(replicas)
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 0)
         self.assertTrue('sample' in dataShow['level'])
@@ -391,7 +387,7 @@ class DataViewsTest(TestCase):
         self.assertEqual(len(tPoints), 2)
         self.assertEqual(tPoints[1].value, 99)
 
-        dataHelper = DataHelper(assmt.id)
+        dataHelper = DataHelper(assmt)
         dataShow = dataHelper.showDataAssessment()
         self.assertEqual(dataShow['points'], 2)
         self.assertEqual(dataShow['points'], Sample.objects.count())

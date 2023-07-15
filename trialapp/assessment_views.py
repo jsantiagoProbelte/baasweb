@@ -6,10 +6,10 @@ from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial, Thesis
 from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
     Assessment
-from django.shortcuts import get_object_or_404, render
-from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataHelper, DataGraphFactory
+from django.views.generic import DetailView, View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse
@@ -18,7 +18,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.trial_helper import MyDateInput
+from trialapp.trial_helper import MyDateInput, TrialPermission
 
 CLASS_DATA_LEVEL = {
     GraphTrial.L_REPLICA: ReplicaData,
@@ -123,12 +123,15 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         #     GraphTrial.L_SAMPLE, rateSets, ratedParts)
         weatherData = self.getWeatherData()
         weatherGraph = self.graphWeatherData(weatherData)
+        permisions = TrialPermission(
+            self._trial, self.request.user).getPermisions()
         return {'object_list': new_list,
                 'title': f"({len(new_list)}) Assessments",
                 'fieldTrial': self._trial,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
-                'weatherGraph': weatherGraph}
+                'weatherGraph': weatherGraph,
+                **permisions}
 
 
 class AssessmentFormLayout(FormHelper):
@@ -201,7 +204,7 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
             return HttpResponseRedirect(assessment.get_absolute_url())
 
 
-class AssessmentDeleteView(DeleteView):
+class AssessmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Assessment
     template_name = 'trialapp/assessment_delete.html'
     _trial = None
@@ -221,17 +224,7 @@ class AssessmentDeleteView(DeleteView):
         return respose
 
 
-class AssessmentApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get', 'post']
-
-    def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/assessment_show.html'
-        assessment_id = kwargs.get('assessment_id', None)
-        dataHelper = DataHelper(assessment_id)
-        dataAssessment = dataHelper.showDataAssessment()
-        return render(request, template_name, dataAssessment)
+class AssessmentApi(LoginRequiredMixin, View):
 
     # see generateDataPointId
     def post(self, request, format=None):
@@ -253,3 +246,21 @@ class AssessmentApi(APIView):
             ass.crop_stage_majority = request.POST['crop_stage_majority']
         ass.save()
         return Response({'success': True})
+
+
+class AssessmentView(LoginRequiredMixin, DetailView):
+    model = Assessment
+    template_name = 'trialapp/assessment_show.html'
+    context_object_name = 'assessment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assessment = self.get_object()
+        # Add additional data to the context
+        trialPermision = TrialPermission(
+            assessment.field_trial,
+            self.request.user).getPermisions()
+        dataHelper = DataHelper(assessment,
+                                trialPermision[TrialPermission.EDIT])
+        return {**context, **dataHelper.showDataAssessment(),
+                **trialPermision}

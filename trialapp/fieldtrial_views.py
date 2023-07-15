@@ -1,14 +1,13 @@
 import datetime
 from django.db.models import Q, Count
 from django.urls import reverse_lazy
-from rest_framework.views import APIView
-from django.shortcuts import render, get_object_or_404
 from django import forms
 from django.http import HttpResponseRedirect, FileResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 import django_filters
 from django_filters.views import FilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
@@ -16,7 +15,7 @@ from trialapp.models import FieldTrial, Thesis, Objective,\
     Product, TrialStatus, TrialType, Crop, Plague, Application
 from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialHelper, TrialModel,\
-    PdfTrial
+    PdfTrial, TrialPermission
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -106,15 +105,17 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'filter': filter}
 
 
-class FieldTrialApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class FieldTrialApi(LoginRequiredMixin, DetailView):
+    model = FieldTrial
+    template_name = 'trialapp/fieldtrial_show.html'
+    context_object_name = 'fieldTrial'
 
-    def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/labtrial_show.html'
-        field_trial_id = kwargs.get('field_trial_id', None)
-        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        fieldTrial = self.get_object()
+        # Add additional data to the context
+        trialPermision = TrialPermission(fieldTrial,
+                                         self.request.user).getPermisions()
         allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
         assessments = Assessment.getObjects(fieldTrial)
 
@@ -122,7 +123,7 @@ class FieldTrialApi(APIView):
         for item in assessments:
             dataTrial['Assessments'].append(
                 {'value': item.getContext(), 'name': item.assessment_date,
-                 'link': 'assessment_api', 'id': item.id})
+                 'link': 'assessment', 'id': item.id})
         showData = {
             'fieldTrial': fieldTrial, 'titleView': fieldTrial.code,
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
@@ -130,7 +131,6 @@ class FieldTrialApi(APIView):
             'numberThesis': len(allThesis)}
 
         if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
-            template_name = 'trialapp/fieldtrial_show.html'
             for item in Application.getObjects(fieldTrial):
                 dataTrial['Applications'].append(
                     {'name': item.getName(), 'value': item.app_date})
@@ -139,7 +139,7 @@ class FieldTrialApi(APIView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
                                                               None,
                                                               allThesis)
-        return render(request, template_name, showData)
+        return {**context, **showData, **trialPermision}
 
 
 class FieldTrialFormLayout(FormHelper):
@@ -305,7 +305,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             datetime.date.today(), True)
         form.fields['responsible'].initial = self.request.user.get_username()
         form.fields['trial_status'].initial = TrialStatus.objects.get(
-            name='Open').id
+            name=TrialStatus.OPEN).id
         return form
 
     def form_valid(self, form):
@@ -329,23 +329,20 @@ class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
         return form
 
 
-class FieldTrialDeleteView(DeleteView):
+class FieldTrialDeleteView(LoginRequiredMixin, DeleteView):
     model = FieldTrial
     success_url = reverse_lazy('fieldtrial-list')
     template_name = 'trialapp/fieldtrial_delete.html'
 
 
-class DownloadTrial(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class DownloadTrial(LoginRequiredMixin, DetailView):
+    model = FieldTrial
 
-    # see generateDataPointId
-    def get(self, request, field_trial_id):
-        trial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        export = PdfTrial(trial, useBuffer=True)
-        export.produce()
+    def get(self, request, *args, **kwargs):
+        trial = self.get_object()
+        exportFile = PdfTrial(trial, useBuffer=True)
+        exportFile.produce()
         # Create a FileResponse with the PDF file and appropriate content type
-        response = FileResponse(export.getBuffer(), as_attachment=True,
-                                filename=export.getName())
+        response = FileResponse(exportFile.getBuffer(), as_attachment=True,
+                                filename=exportFile.getName())
         return response

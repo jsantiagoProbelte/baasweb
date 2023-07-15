@@ -882,7 +882,8 @@ class ImportPdfTrial:
                 plague=Plague.getUnknown(),
                 blocks=4,
                 replicas_per_thesis=0,
-                trial_status=TrialStatus.objects.get(name='Imported'),
+                trial_status=TrialStatus.objects.get(
+                    name=TrialStatus.IMPORTED),
                 trial_type=TrialType.getUnknown(),
                 code=code)
         for evalTable in self._evals:

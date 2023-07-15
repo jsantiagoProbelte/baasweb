@@ -6,7 +6,8 @@ from trialapp.data_models import Assessment, ThesisData, ReplicaData
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.assessment_views import\
     AssessmentUpdateView, AssessmentCreateView,\
-    AssessmentApi, AssessmentListView, AssessmentDeleteView
+    AssessmentApi, AssessmentListView, AssessmentDeleteView,\
+    AssessmentView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -79,7 +80,7 @@ class AssessmentViewsTest(TestCase):
         self.assertEqual(assessment.name, assessmentData['name'])
         self.assertEqual(response.status_code, 302)
         self.assertTrue('-BBCH' in assessment.getContext())
-        self.assertTrue('/assessment_api/{}/'.format(assessment.id) ==
+        self.assertTrue('/assessment/{}/'.format(assessment.id) ==
                         assessment.get_absolute_url())
         # TODO: self.assertContains(response, assessment.assessment_date)
 
@@ -116,9 +117,9 @@ class AssessmentViewsTest(TestCase):
         item = Assessment.objects.get(name=itemData['name'])
 
         getRequest = self._apiFactory.get('thesis_api')
-        apiView = AssessmentApi()
-        response = apiView.get(getRequest,
-                               **{'assessment_id': item.id})
+        self._apiFactory.setUser(getRequest)
+        response = AssessmentView.as_view()(
+            getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.name)
 
@@ -152,10 +153,10 @@ class AssessmentViewsTest(TestCase):
         item = Assessment.objects.get(name=assessmentData['name'])
         self.assertEqual(item.getName(), '66-BBCH')
 
-        apiView = AssessmentApi()
-        getRequest = self._apiFactory.get('assessment_api')
-        response = apiView.get(getRequest,
-                               **{'assessment_id': item.id})
+        getRequest = self._apiFactory.get('assessment')
+        self._apiFactory.setUser(getRequest)
+        response = AssessmentView.as_view()(
+            getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
         # No data, it enables samples views
 
@@ -164,10 +165,10 @@ class AssessmentViewsTest(TestCase):
             ThesisData.objects.create(
                 value=66, reference=thesis, assessment=item)
 
-        apiView = AssessmentApi()
         getRequest = self._apiFactory.get('assessment_api')
-        response = apiView.get(getRequest,
-                               **{'assessment_id': item.id})
+        self._apiFactory.setUser(getRequest)
+        response = AssessmentView.as_view()(
+            getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
 
         # Lets add some replica data to test we have replica view activated
@@ -176,10 +177,10 @@ class AssessmentViewsTest(TestCase):
             ReplicaData.objects.create(
                 value=66, reference=replica, assessment=item)
 
-        apiView = AssessmentApi()
         getRequest = self._apiFactory.get('assessment_api')
-        response = apiView.get(getRequest,
-                               **{'assessment_id': item.id})
+        self._apiFactory.setUser(getRequest)
+        response = AssessmentView.as_view()(
+            getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
 
         # if we go to assessment list, we show thesis as active

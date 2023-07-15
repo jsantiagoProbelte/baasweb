@@ -79,12 +79,10 @@ class ApplicationViewsTest(TestCase):
         item = Application.objects.get(app_date=applicationData['app_date'])
 
         getRequest = self._apiFactory.get('application_api')
-        apiView = ApplicationApi()
-        response = apiView.get(getRequest,
-                               **{'application_id': item.id})
+        self._apiFactory.setUser(getRequest)
+        response = ApplicationApi.as_view()(getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,
-                            item.comment)
+        self.assertContains(response, item.comment)
 
         # Let's create another one
         applicationData2 = TrialAppModelTest.APPLICATION[1]

@@ -156,9 +156,8 @@ class FieldTrialViewsTest(TestCase):
         # Download it
         request = self._apiFactory.get('download_pdf')
         self._apiFactory.setUser(request)
-        apiView = DownloadTrial()
-        response = apiView.get(request,
-                               field_trial_id=fieldTrial.id)
+        response = DownloadTrial.as_view()(
+            request, pk=fieldTrial.id)
         self.assertTrue(os.path.exists(trialFile))
         os.remove(trialFile)
 
@@ -190,9 +189,7 @@ class FieldTrialViewsTest(TestCase):
 
         request = self._apiFactory.get('fieldtrial_api')
         self._apiFactory.setUser(request)
-        apiView = FieldTrialApi()
-        response = apiView.get(request,
-                               field_trial_id=fieldTrial.id)
+        response = FieldTrialApi.as_view()(request, pk=fieldTrial.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, fieldTrial.name)
         self.assertContains(response, 'field trial')

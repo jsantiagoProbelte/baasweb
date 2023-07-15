@@ -42,7 +42,7 @@ class Assessment(ModelHelpers, models.Model):
                 self.rate_type.getName())
 
     def get_absolute_url(self):
-        return "/assessment_api/%i/" % self.id
+        return "/assessment/%i/" % self.id
 
     def getTitle(self):
         return "[{}] {}".format(self.assessment_date,

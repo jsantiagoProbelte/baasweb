@@ -16,7 +16,7 @@ urlpatterns = [
          fieldtrial_views.FieldTrialUpdateView.as_view(),
          name='fieldtrial-update'),
     path(
-        'fieldtrial_api/<int:field_trial_id>/',
+        'fieldtrial_api/<int:pk>/',
         fieldtrial_views.FieldTrialApi.as_view(),
         name='fieldtrial_api'),
     path(
@@ -24,7 +24,7 @@ urlpatterns = [
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
     path(
-        'download_pdf/<int:field_trial_id>/',
+        'download_pdf/<int:pk>/',
         fieldtrial_views.DownloadTrial.as_view(),
         name='download_pdf'),
     # Thesis urls
@@ -32,7 +32,7 @@ urlpatterns = [
         'thesislist/<int:field_trial_id>/',
         thesis_views.ThesisListView.as_view(),
         name='thesis-list'),
-    path('thesis_api/<int:thesis_id>/',
+    path('thesis_api/<int:pk>/',
          thesis_views.ThesisApi.as_view(),
          name='thesis_api'),
     path('thesis/add/<int:field_trial_id>/',
@@ -57,9 +57,9 @@ urlpatterns = [
          name='treatment_thesis-delete'),
     # Assessment urls
     path(
-        'assessment_api/<int:assessment_id>/',
-        assessment_views.AssessmentApi.as_view(),
-        name='assessment_api'),
+        'assessment/<int:pk>/',
+        assessment_views.AssessmentView.as_view(),
+        name='assessment'),
     path(
         'assessment_list/<int:field_trial_id>/',
         assessment_views.AssessmentListView.as_view(),
@@ -92,7 +92,7 @@ urlpatterns = [
         'applicationlist/<int:field_trial_id>/',
         application_views.ApplicationListView.as_view(),
         name='application-list'),
-    path('application/<int:application_id>/',
+    path('application/<int:pk>/',
          application_views.ApplicationApi.as_view(),
          name='application_api'),
     path('application/add/<int:field_trial_id>/',
