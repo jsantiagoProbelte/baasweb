@@ -2,9 +2,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import Application, FieldTrial
-from django.shortcuts import get_object_or_404, render
-from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from django.views.generic.list import ListView
+from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse
@@ -13,6 +13,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import MyDateInput
+from trialapp.trial_helper import TrialPermission
 
 
 class ApplicationListView(LoginRequiredMixin, ListView):
@@ -23,8 +24,11 @@ class ApplicationListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         field_trial_id = self.kwargs['field_trial_id']
         fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
+        permisions = TrialPermission(
+            fieldTrial, self.request.user).getPermisions()
         return {'object_list': Application.getObjects(fieldTrial),
-                'fieldTrial': fieldTrial}
+                'fieldTrial': fieldTrial,
+                **permisions}
 
 
 class ApplicationFormLayout(FormHelper):
@@ -95,7 +99,7 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
             return HttpResponseRedirect(application.get_success_url())
 
 
-class ApplicationDeleteView(DeleteView):
+class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
     model = Application
     template_name = 'trialapp/application_delete.html'
     _trial = None
@@ -115,16 +119,15 @@ class ApplicationDeleteView(DeleteView):
         return respose
 
 
-class ApplicationApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class ApplicationApi(LoginRequiredMixin, DetailView):
+    model = Application
+    template_name = 'trialapp/application_show.html'
+    context_object_name = 'application'
 
-    def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/application_show.html'
-        application_id = kwargs['application_id']
-        application = get_object_or_404(Application, pk=application_id)
-        return render(
-            request, template_name, {
-                'fieldTrial': application.field_trial,
-                'application': application})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        trial = self.get_object().field_trial
+        permisions = TrialPermission(trial, self.request.user).getPermisions()
+        return {**context,
+                'fieldTrial': trial,
+                **permisions}

@@ -13,7 +13,7 @@
       <tr><th></th><th class="text-right">Assessment</th>
         {% for itemId in header.ids %}
           <th class="text-right">
-            <a href="{% url 'assessment_api' itemId.id %}" class="btn btn-secondary">
+            <a href="{% url 'assessment' itemId.id %}" class="btn btn-secondary">
               {{itemId.name}}</a>
           </th>
         {% endfor %}
@@ -33,15 +33,19 @@
             <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
         {% for dataPointValue in dataRow.values %}
           <td class="bg-custom-{{dataRow.color}}">
-            <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
-              class='form-data-input-template'  method="POST">
-              {% csrf_token %}
-              <input type="text" name="data-point"
-                  id="{{dataPointValue.item_id}}"
-                  class="form-control-baas input data-input-template text-right"
-                  placeholder="-"
-                  value={{dataPointValue.value}}></input>
-            </form>
+            {% if edit_data %}
+              <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
+                class='form-data-input-template'  method="POST">
+                {% csrf_token %}
+                <input type="text" name="data-point"
+                    id="{{dataPointValue.item_id}}"
+                    class="form-control-baas input data-input-template text-right"
+                    placeholder="-"
+                    value={{dataPointValue.value}}></input>
+              </form>
+            {% else %}
+              {{dataPointValue.value}}
+            {% endif %}
           </td>
         {% endfor %}
         </tr>

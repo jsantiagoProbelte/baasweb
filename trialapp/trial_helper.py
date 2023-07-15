@@ -544,3 +544,43 @@ class PdfTrial:
         self._canvas.showPage()
         (x, y) = self.writeAssessmentInfo(self._page_start - 50)
         self._canvas.save()
+
+
+class TrialPermission:
+    _trial = None
+    _user = None
+    _permissions = {}
+    EDIT = 'edit_data'
+    ADD_DATA = 'add_data'
+
+    def __init__(self, trial, user):
+        self._trial = trial
+        self._user = user
+        self._permissions = {
+            TrialPermission.EDIT: False,
+            TrialPermission.ADD_DATA: False}
+        self.canEditTrial()
+        self.canAddData()
+
+    def canEditTrial(self):
+        edit = False
+        if self._trial.contact == self._user.username:
+            edit = True
+        elif self._user.is_superuser:
+            edit = True
+        if edit:
+            self._permissions[TrialPermission.EDIT] = edit
+
+    def canAddData(self):
+        add_data = False
+        if self._trial.contact == self._user:
+            add_data = True
+        elif self._user.is_superuser:
+            add_data = True
+        elif self._trial.trial_status.name == TrialStatus.FINISHED:
+            return
+        if add_data:
+            self._permissions[TrialPermission.ADD_DATA] = add_data
+
+    def getPermisions(self):
+        return self._permissions

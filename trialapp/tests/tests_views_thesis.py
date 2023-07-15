@@ -149,10 +149,9 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(Replica.objects.count(),
                          expectedReplicas)
 
-        getRequest = self._apiFactory.post('thesis_api')
-        apiView = ThesisApi()
-        response = apiView.get(getRequest,
-                               **{'thesis_id': item.id})
+        getRequest = self._apiFactory.get('thesis_api')
+        self._apiFactory.setUser(getRequest)
+        response = ThesisApi.as_view()(getRequest, pk=item.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
                             item.getTitle())

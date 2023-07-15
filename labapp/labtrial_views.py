@@ -145,7 +145,7 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
             name='LabTrial')
         form.fields['samples_per_replica'].initial = 24
         form.fields['trial_status'].initial = TrialStatus.objects.get(
-            name='Open').id
+            name=TrialStatus.OPEN).id
         form.fields['responsible'].initial = self.request.user.get_username()
         return form
 

@@ -29,15 +29,19 @@
     <div class="card no-border" >
         <div class="card-body-baas">
               <h4>Treatments 
+                {%if edit_data %}
                 <span><a href="{% url 'treatment_thesis-add' thesis.id %}" class="btn btn-info btn-sm fs-4"
                 data-toggle="tooltip" data-placement="top" title='Add treatment'>&#43;</a></span>
+                {% endif %}
               </h4>
               <ul class="list-group list-group-flush">
                 {% for treatment in treatments %}
                 <li class="list-group-item list-group-item-baas">
                     {{treatment.name}}
+                    {%if edit_data %}
                     <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-3"
                         data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a></span>
+                    {% endif %}
                 </li>
               
                 {% empty %}

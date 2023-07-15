@@ -4,18 +4,20 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from trialapp.models import FieldTrial,\
     Thesis, Replica, TreatmentThesis
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework.views import APIView
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from crispy_forms.helper import FormHelper
+from django.views.generic import DetailView
 from django.urls import reverse
+from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import MyDateInput
 from catalogue.models import Treatment
+from trialapp.trial_helper import TrialPermission
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -32,10 +34,13 @@ class ThesisListView(LoginRequiredMixin, ListView):
             {'value': item.id, 'number': item.thesis.number,
              'name': item.getTitle()}
             for item in Replica.getFieldTrialObjects(fieldTrial)]
+        permisions = TrialPermission(
+            fieldTrial, self.request.user).getPermisions()
         return {'thesisList': thesisDisplay,
                 'fieldTrial': fieldTrial,
                 'rowsReplicaHeader': headerRows,
                 'replicas': replicas,
+                **permisions,
                 'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
                                                        None,
                                                        allThesis)}
@@ -144,7 +149,7 @@ class ThesisUpdateView(LoginRequiredMixin, UpdateView):
         return form
 
 
-class ThesisDeleteView(DeleteView):
+class ThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = Thesis
     template_name = 'trialapp/thesis_delete.html'
     _trial_id = None
@@ -162,10 +167,31 @@ class ThesisDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class ThesisApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class ThesisApi(LoginRequiredMixin, DetailView):
+    model = Thesis
+    template_name = 'trialapp/thesis_show.html'
+    context_object_name = 'thesis'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self._thesis = self.get_object()
+        trial = self._thesis.field_trial
+        headerRows = LayoutTrial.headerLayout(trial)
+        layout = LayoutTrial.showLayout(
+            self._thesis.field_trial, None,
+            Thesis.getObjects(trial),
+            onlyThis=self._thesis.id)
+        treatments = [{'name': tt.getName(), 'id': tt.id}
+                      for tt in TreatmentThesis.getObjects(self._thesis)]
+        permisions = TrialPermission(trial, self.request.user).getPermisions()
+        return {**context,
+                'fieldTrial': trial,
+                'title': self._thesis.getTitle(),
+                'thesisVolume': self.getThesisVolume(),
+                'treatments': treatments,
+                'rowsReplicaHeader': headerRows,
+                'rowsReplicas': layout,
+                **permisions}
 
     def getThesisVolume(self):
         trial = self._thesis.field_trial
@@ -200,28 +226,6 @@ class ThesisApi(APIView):
                     appVolume, grossArea, numberThesis)
         return {'value': '{} {}'.format(round(thesisVolume, rounding), unit),
                 'detail': detail}
-
-    def get(self, request, *args, **kwargs):
-        template_name = 'trialapp/thesis_show.html'
-        thesis_id = kwargs['thesis_id']
-        self._thesis = get_object_or_404(Thesis, pk=thesis_id)
-        trial = self._thesis.field_trial
-        headerRows = LayoutTrial.headerLayout(trial)
-        layout = LayoutTrial.showLayout(
-            self._thesis.field_trial, None,
-            Thesis.getObjects(trial), onlyThis=thesis_id)
-        treatments = [{'name': tt.getName(), 'id': tt.id}
-                      for tt in TreatmentThesis.getObjects(self._thesis)]
-
-        return render(
-            request, template_name, {
-                'fieldTrial': trial,
-                'thesis': self._thesis,
-                'title': self._thesis.getTitle(),
-                'thesisVolume': self.getThesisVolume(),
-                'treatments': treatments,
-                'rowsReplicaHeader': headerRows,
-                'rowsReplicas': layout})
 
 
 class TreatmentThesisFormLayout(FormHelper):
@@ -273,12 +277,10 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect(self.get_success_url(thesis_id))
 
     def get_success_url(self, thesis_id):
-        return reverse(
-            'thesis_api',
-            kwargs={'thesis_id': thesis_id})
+        return reverse('thesis_api', kwargs={'pk': thesis_id})
 
 
-class TreatmentThesisDeleteView(DeleteView):
+class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = TreatmentThesis
     template_name = 'trialapp/treatment_thesis_delete.html'
     _thesis = None

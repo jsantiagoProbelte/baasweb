@@ -11,7 +11,7 @@
         <tbody>
         {% for item in object_list %}
             <tr id="item-{{ item.id }}">
-                <td><a href="{% url 'assessment_api' item.id %}" class="btn btn-secondary">{{ item.assessment_date }}</a></td>
+                <td><a href="{% url 'assessment' item.id %}" class="btn btn-secondary">{{ item.assessment_date }}</a></td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.crop_stage_majority }} BBCH</td>
                 <td>{{ item.rate_type }}</td>

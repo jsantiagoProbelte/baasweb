@@ -56,6 +56,9 @@ class CultivationMethod(ModelHelpers, models.Model):
 
 class TrialStatus(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+    FINISHED = 'Finished'
+    OPEN = 'Open'
+    IMPORTED = 'Imported'
 
 
 class FieldTrial(ModelHelpers, models.Model):
