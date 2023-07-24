@@ -1,6 +1,9 @@
 
+{% if showAsList %}
+<select id="input-select-{{tag}}-{{item_id}}" size=10 name='{{tag}}' class="form-select form-select-lg list-group-item-baas-select no-border">
+{% else %}
 <select id="input-select-{{tag}}-{{item_id}}" name='{{tag}}' class="form-control no-border">
-    
+{% endif %}
     {% if currentValue == "" %}
         <option value selected>.....</option>
     {% else %}
