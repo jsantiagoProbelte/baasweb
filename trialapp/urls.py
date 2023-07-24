@@ -50,7 +50,7 @@ urlpatterns = [
         name='set-replica-position'),
     # treatment in thesis
     path('treatment_thesis/add/<int:thesis_id>/',
-         thesis_views.TreatmentThesisCreateView.as_view(),
+         thesis_views.TreatmentThesisSetView.as_view(),
          name='treatment_thesis-add'),
     path('treatment_thesis/delete/<int:pk>/',
          thesis_views.TreatmentThesisDeleteView.as_view(),

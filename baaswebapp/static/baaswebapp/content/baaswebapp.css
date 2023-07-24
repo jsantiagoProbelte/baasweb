@@ -241,6 +241,21 @@
   background-color: var(--custom-bg-color-cards);
 }
 
+.list-group-item-baas-select {
+  color: #fff;
+  background-color: var(--custom-bg-color-cards);
+}
+
+.list-group-item-baas-select option {
+  padding: 5px;
+}
+
+/* Hover effect for list items */
+.list-group-item-baas-select option:hover {
+  background-color: #ddd;
+  color: #000
+}
+
 .text-white{
   color: #fff;
 }

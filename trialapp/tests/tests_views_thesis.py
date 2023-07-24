@@ -7,7 +7,7 @@ from trialapp.models import FieldTrial, Thesis, Replica,\
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.thesis_views import\
     ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView,\
-    ThesisListView, TreatmentThesisCreateView, TreatmentThesisDeleteView
+    ThesisListView, TreatmentThesisSetView, TreatmentThesisDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -97,24 +97,34 @@ class ThesisViewsTest(TestCase):
                 "batch": batch})
 
         # TODO: Let;s add some ThesisTreatment
-        data = {'treatment': treatment.id,
-                'thesis_id': thesis.id}
         token = 'treatment_thesis'
-        createView = TreatmentThesisCreateView
+        setTreatView = TreatmentThesisSetView
         deleteView = TreatmentThesisDeleteView
         theClass = TreatmentThesis
         url_add = token+'-add'
         url_delete = token+'-delete'
-        createGet = self._apiFactory.get(url_add, data=data)
+        createGet = self._apiFactory.get(url_add)
         self._apiFactory.setUser(createGet)
-        response = createView.as_view()(createGet,
-                                        thesis_id=thesis.id)
+        response = setTreatView.as_view()(
+            createGet, thesis_id=thesis.id)
         self.assertTrue(response.status_code, 200)
 
-        createPost = self._apiFactory.post(url_add, data=data)
-        self._apiFactory.setUser(createPost)
-        response = createView.as_view()(createPost,
-                                        thesis_id=thesis.id)
+        data = {'product': product.id}
+        setProductGet = self._apiFactory.get(url_add, data=data)
+        self._apiFactory.setUser(setProductGet)
+        response = setTreatView.as_view()(
+            setProductGet, thesis_id=thesis.id)
+        self.assertTrue(response.status_code, 200)
+        # no existe todavia
+        self.assertFalse(theClass.objects.filter(
+            treatment=treatment).exists())
+
+        data = {'treatment': treatment.id,
+                'thesis_id': thesis.id}
+        setTreatmentGet = self._apiFactory.get(url_add, data=data)
+        self._apiFactory.setUser(setTreatmentGet)
+        response = setTreatView.as_view()(
+            setTreatmentGet, thesis_id=thesis.id)
         self.assertTrue(response.status_code, 302)
         theItem = theClass.objects.get(treatment=treatment)
 

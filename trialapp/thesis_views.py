@@ -6,9 +6,10 @@ from trialapp.models import FieldTrial,\
     Thesis, Replica, TreatmentThesis
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework.views import APIView
+from django.shortcuts import render
 from trialapp.trial_helper import LayoutTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import DetailView
+from django.views.generic import DetailView, View
 from django.urls import reverse
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
@@ -16,7 +17,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import MyDateInput
-from catalogue.models import Treatment
+from catalogue.models import Treatment, Product
 from trialapp.trial_helper import TrialPermission
 
 
@@ -233,8 +234,9 @@ class TreatmentThesisFormLayout(FormHelper):
         super().__init__()
         title = 'Add treatment to thesis [{}]'.format(thesisName)
         self.add_layout(Layout(Div(
-            HTML(title), css_class="h4 mt-4"),
-            Div(Field('treatment', css_class='mb-3'),
+            HTML(title), css_class="h3 mt-4"),
+            Div(Field('product', css_class='mb-3'),
+                Field('treatment', css_class='mb-3'),
                 FormActions(
                     Submit('submit', 'Add', css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -245,10 +247,12 @@ class TreatmentThesisFormLayout(FormHelper):
 class TreatmentThesisForm(forms.ModelForm):
     class Meta:
         model = TreatmentThesis
-        fields = ('treatment',)
+        fields = ('treatment', )
 
     def __init__(self, *args, **kwargs):
         super(TreatmentThesisForm, self).__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.all(
+            ).order_by('name')
         listt = Treatment.objects.all().order_by(
             'batch__product_variant__product__name',
             'batch__product_variant__name',
@@ -257,10 +261,9 @@ class TreatmentThesisForm(forms.ModelForm):
         self.fields['treatment'].queryset = listt
 
 
-class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
+class TreatmentThesisSetView(LoginRequiredMixin, View):
     model = TreatmentThesis
-    form_class = TreatmentThesisForm
-    template_name = 'baaswebapp/model_edit_form.html'
+    template_name = 'trialapp/treatment_select.html'
 
     def get_form(self, form_class=TreatmentThesisForm):
         form = super().get_form(form_class)
@@ -278,6 +281,52 @@ class TreatmentThesisCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self, thesis_id):
         return reverse('thesis_api', kwargs={'pk': thesis_id})
+
+    # see generateDataPointId
+    # 3 thing can happen here:
+    # - first time. There will be no product nor treatment,
+    #   then show all products and all treatments
+    # - product is selected, then filter product´ treatments
+    # - treatment is selected, then assign that treatment to thesis
+    #   and redirect to tesis
+    def get(self, request, *args, **kwargs):
+        theId = kwargs.get('thesis_id', None)
+        thesis = get_object_or_404(Thesis, pk=theId)
+
+        treatmentId = request.GET.get('treatment', None)
+        if treatmentId:
+            TreatmentThesis.findOrCreate(
+                thesis=thesis,
+                treatment_id=int(treatmentId))
+            return HttpResponseRedirect(thesis.get_absolute_url())
+
+        productId = request.GET.get('product', None)
+        products = Product.getSelectList(asDict=True)
+        currentTreatment = ''
+        if productId:
+            productId = int(productId)
+            treatments = Treatment.objects.filter(
+                batch__product_variant__product_id=productId)
+            currentTreatment = 0
+        else:
+            treatments = Treatment.objects.all()
+            productId = ''
+
+        treatments = treatments.order_by(
+                'batch__product_variant__product__name',
+                'batch__product_variant__name',
+                'batch__name',
+                'rate')
+        treats = TreatmentThesis._getSelectList(treatments,
+                                                asDict=True)
+        return render(request, self.template_name,
+                      {'thesis': thesis,
+                       'title': f'Add treatment to [{thesis.name}]',
+                       'fieldTrial': thesis.field_trial,
+                       'productId': productId,
+                       'products': products,
+                       'currentTreatment': currentTreatment,
+                       'treatments': treats})
 
 
 class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
@@ -330,5 +379,4 @@ class SetReplicaPosition(APIView):
             newReplica.pos_x = x
             newReplica.pos_y = y
             newReplica.save()
-        return redirect('thesis-list',
-                        field_trial_id=trialId)
+        return redirect('thesis-list', field_trial_id=trialId)
