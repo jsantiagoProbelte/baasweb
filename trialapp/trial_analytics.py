@@ -47,12 +47,17 @@ class SNK_Table:
         if df < 1:
             return None
         elif df > 120:
-            return cls.qCritical__0_05['inf'][p-2]
+            row = cls.qCritical__0_05['inf']
         elif df not in cls.qCritical__0_05:
             return cls.qCriticalSNK(df-1, p)
-        if p > 1 and p < 21:
-            return cls.qCritical__0_05[df][p-2]
-        return None
+        else:
+            row = cls.qCritical__0_05[df]
+        if p < 2:
+            return None
+        index = p - 2
+        if len(row) <= index:
+            index = -1
+        return row[index]
 
 
 class TrialAnalytics:
