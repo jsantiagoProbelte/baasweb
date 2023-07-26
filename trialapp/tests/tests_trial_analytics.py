@@ -3,7 +3,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.data_models import ReplicaData, Assessment, ThesisData
-from trialapp.trial_analytics import TrialAnalytics, SNK_Table
+from trialapp.trial_analytics import TrialAnalytics, SNK_Table, Abbott
 
 
 class DataGenerator:
@@ -138,3 +138,12 @@ class TrialAnalyticsTest(TestCase):
         self.assertEqual(
             SNK_Table.qCriticalSNK(15, 21),
             None)
+
+    def test_abbott(self):
+        self.assertEqual(Abbott.do(80, 100), -20)
+        self.assertEqual(Abbott.do(100, 80), 25)
+
+        self.assertEqual(Abbott(0, {0: 0, 1: 80, 2: 100}).run(), None)
+        self.assertEqual(Abbott(0, {1: 80, 2: 100}).run(), None)
+        self.assertEqual(Abbott(0, {0: 80, 1: 100, 2: 160, 3: 40}).run(),
+                         {1: 25, 2: 100, 3: -50})
