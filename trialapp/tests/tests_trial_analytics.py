@@ -135,9 +135,19 @@ class TrialAnalyticsTest(TestCase):
         self.assertEqual(
             SNK_Table.qCriticalSNK(15, 1),
             None)
-        self.assertEqual(
-            SNK_Table.qCriticalSNK(15, 21),
-            None)
+        values = {15: 15, 120: 120, 115: 60, 121: 'inf'}
+        for df in values:
+            row = values[df]
+            lastK = len(SNK_Table.qCritical__0_05[row]) + 2
+            self.assertEqual(
+                SNK_Table.qCriticalSNK(df, lastK-1),
+                SNK_Table.qCritical__0_05[row][lastK-3])
+            self.assertEqual(
+                SNK_Table.qCriticalSNK(df, lastK),
+                SNK_Table.qCritical__0_05[row][-1])
+            self.assertEqual(
+                SNK_Table.qCriticalSNK(df, lastK+1),
+                SNK_Table.qCritical__0_05[row][-1])
 
     def test_abbott(self):
         self.assertEqual(Abbott.do(80, 100), -20)
