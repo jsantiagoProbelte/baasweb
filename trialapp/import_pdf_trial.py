@@ -14,6 +14,7 @@ from catalogue.models import Product, Treatment, Batch, ProductVariant,\
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
 from trialapp.trial_helper import TrialHelper, PdfTrial  # noqa: E402
 import glob  # noqa: E402
+import csv  # noqa: E402
 
 
 class TrialTags:
@@ -350,14 +351,14 @@ class AssmtTable:
 
     def getCropStage(self, columnName):
         bbch = self.getTagPositionValue(
-            columnName, TrialTags.TAG_STAGES, 'Undefined')
+            columnName, TrialTags.TAG_STAGES, ModelHelpers.UNDEFINED)
         if bbch is None:
-            bbch = 'Undefined'
+            bbch = ModelHelpers.UNDEFINED
         return bbch
 
     def getPartRated(self, columnName):
         return self.getTagPositionValue(
-            columnName, TrialTags.TAG_PARTS, 'Undefined')
+            columnName, TrialTags.TAG_PARTS, ModelHelpers.UNDEFINED)
 
     def isColumnWithValues(self, columnName):
         value1 = self._table.loc[self._firstRowValuesNames, columnName]
@@ -1167,10 +1168,91 @@ def exportPdf():
     export.produce()
 
 
+def createThesisReplicas(trialNumber):
+    trial = FieldTrial.objects.get(code=trialNumber)
+    fileName = '/Users/jsantiago/Code/dumps/treatments.csv'
+    theses = {item.name: item for item in
+              Thesis.getObjects(trial)}
+    replicas = {item.name: item for item in
+                Replica.getFieldTrialObjects(trial)}
+    number = len(theses.keys()) + 1
+    with open(fileName) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        for row in reader:
+            thesisName = row['\ufeffTreatment']
+            if thesisName not in theses:
+                thesis = Thesis.objects.create(name=thesisName,
+                                               field_trial=trial,
+                                               number=number)
+                number += 1
+                theses[thesisName] = thesis
+            else:
+                thesis = theses[thesisName]
+            plot = row['Plot']
+            if plot not in replicas:
+                counts = Replica.objects.filter(thesis=thesis).count()
+                Replica.objects.create(name=plot, number=counts+1,
+                                       thesis=thesis)
+
+
+def importConcreateCSV():
+    trialNumber = '20230406'
+    fileName = '/Users/jsantiago/Code/dumps/Disease Severity Data.csv'
+    dates = {'Harvest 1': '2023-03-28',
+             'Harvest 2': '2023-04-04',
+             'Harvest 3': '2023-04-11',
+             'Harvest 4': '2023-04-18',
+             'Harvest 5': '2023-04-25',
+             'Harvest 6': '2023-05-02',
+             'Harvest 7': '2023-05-09',
+             'Harvest 8': '2023-05-16'}
+    # createThesisReplicas(trialNumber)
+    rateType = RateTypeUnit.objects.filter(name='PESSEV', unit='%, 0, 100')
+    importCSV(trialNumber, fileName, rateType[0], 'FRUIT P', dates)
+
+
+def importCSV(trialNumber, fileName, rateType, partRated, dates):
+    trial = FieldTrial.objects.get(code=trialNumber)
+    replicas = {replica.name: replica for replica in
+                Replica.getFieldTrialObjects(trial)}
+
+    with open(fileName) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        header = reader.fieldnames
+
+        assessments = {}
+        for column in header:
+            if column == '\ufeffPlot Number':
+                continue
+            assessments[column] = Assessment.findOrCreate(
+                name=column,
+                assessment_date=dates[column],
+                part_rated=partRated,
+                field_trial=trial,
+                crop_stage_majority=ModelHelpers.UNDEFINED,
+                rate_type=rateType)
+
+        for row in reader:
+            plot = row['\ufeffPlot Number']
+            # Create replica if need it
+            for column in header:
+                if column == '\ufeffPlot Number':
+                    continue
+                value = row[column]
+                value = value.replace(',', '.')
+                valueF = float(value)
+
+                ReplicaData.objects.create(
+                    reference=replicas[plot],
+                    assessment=assessments[column],
+                    value=valueF)
+
+
 if __name__ == '__main__':
+    importConcreateCSV()
     # createThesisTreatments()
     # importOne()
-    exportPdf()
+    # exportPdf()
     # importOneMapa()
     # discoverReports()
     # testArchive()
