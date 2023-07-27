@@ -1,6 +1,6 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import Thesis, Replica
+from trialapp.models import Thesis, Replica, TreatmentThesis
 from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
     Assessment, SampleData, Sample
 from baaswebapp.graphs import GraphTrial
@@ -8,6 +8,7 @@ from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi,\
     DataGraphFactory
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_trial_analytics import DataGenerator
+from catalogue.models import Treatment, UNTREATED
 
 
 class DataViewsTest(TestCase):
@@ -393,3 +394,21 @@ class DataViewsTest(TestCase):
         self.assertEqual(dataShow['points'], Sample.objects.count())
         self.assertEqual(dataShow['points'], SampleData.objects.count())
         self.assertTrue(dataShow['stats'] is not None)
+
+    def test_find_untreated(self):
+        datagenerator = DataGenerator(thesisGen=False, replicaGen=False)
+        trial = datagenerator._fieldTrials[0]
+        theses = Thesis.getObjects(trial)
+        lastOne = len(theses) - 1
+        self.assertGreater(lastOne, 1)
+        assName = '15 DA-E'
+        assmt = datagenerator._assessments[assName]
+
+        dHelper = DataHelper(assmt)
+        self.assertEqual(dHelper._untreated, 1)
+
+        untreated = Treatment.objects.filter(name=UNTREATED)[0]
+        TreatmentThesis.objects.create(thesis=theses[lastOne],
+                                       treatment=untreated)
+        dHelper = DataHelper(assmt)
+        self.assertEqual(dHelper._untreated, theses[lastOne].number)

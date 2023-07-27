@@ -45,43 +45,6 @@
             "justMyCode": true
         },
         {
-            "name": "Stats",
-            "type": "python",
-            "request": "launch",
-            "module": "catalogue.stats_generator",
-            "justMyCode": true,
-        },
-        {
-            "name": "Import trial",
-            "type": "python",
-            "request": "launch",
-            "module": "trialapp.import_pdf_trial",
-            "justMyCode": true,
-        },
-        {
-            "name": "Run all Tests",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "test"
-            ],
-            "django": true,
-            "justMyCode": true
-        },
-        {
-            "name": "Test Import",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "test",
-                "trialapp.tests.t_import_pdf"
-            ],
-            "django": true,
-            "justMyCode": true
-        },
-        {
             "name": "Run One Test",
             "type": "python",
             "request": "launch",
@@ -101,6 +64,43 @@
             ],
             "django": true,
             "justMyCode": true
+        },
+        {
+            "name": "Run all Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Import trial",
+            "type": "python",
+            "request": "launch",
+            "module": "trialapp.import_pdf_trial",
+            "justMyCode": true,
+        },
+        {
+            "name": "Test Import",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test",
+                "trialapp.tests.t_import_pdf"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Stats",
+            "type": "python",
+            "request": "launch",
+            "module": "catalogue.stats_generator",
+            "justMyCode": true,
         },
     ]
 }
