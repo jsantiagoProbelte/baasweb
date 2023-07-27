@@ -1,5 +1,6 @@
 from baaswebapp.models import RateTypeUnit
-from trialapp.models import Thesis, Replica, Sample, FieldTrial
+from trialapp.models import Thesis, Replica, Sample, FieldTrial,\
+    TreatmentThesis
 from trialapp.data_models import DataModel, ThesisData,\
     ReplicaData, Assessment, SampleData
 from django.shortcuts import get_object_or_404
@@ -7,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from catalogue.models import UNTREATED
 from baaswebapp.graphs import GraphTrial, EfficacyGraph
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
@@ -145,6 +147,13 @@ class DataHelper:
 
     def findUntreated(self):
         self._untreated = 1  # number
+        for thesisId in self._thesisTrial:
+            thesis = self._thesisTrial[thesisId]
+            treatments = TreatmentThesis.getObjects(thesis)
+            for treat in treatments:
+                if treat.treatment.name == UNTREATED:
+                    self._untreated = thesis.number
+                    return
 
     def whatLevelToShow(self):
         tData = ThesisData.objects.filter(

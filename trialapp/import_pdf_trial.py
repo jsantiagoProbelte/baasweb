@@ -1197,7 +1197,8 @@ def createThesisReplicas(trialNumber):
 
 def importConcreateCSV():
     trialNumber = '20230406'
-    fileName = '/Users/jsantiago/Code/dumps/Disease Severity Data.csv'
+    # fileName = '/Users/jsantiago/Code/dumps/Disease Severity Data.csv'
+    fileName = '/Users/jsantiago/Code/dumps/incidencia.csv'
     dates = {'Harvest 1': '2023-03-28',
              'Harvest 2': '2023-04-04',
              'Harvest 3': '2023-04-11',
@@ -1207,7 +1208,8 @@ def importConcreateCSV():
              'Harvest 7': '2023-05-09',
              'Harvest 8': '2023-05-16'}
     # createThesisReplicas(trialNumber)
-    rateType = RateTypeUnit.objects.filter(name='PESSEV', unit='%, 0, 100')
+    # rateType = RateTypeUnit.objects.filter(name='PESSEV', unit='%, 0, 100')
+    rateType = RateTypeUnit.objects.filter(name='PESINC', unit='NUMBER')
     importCSV(trialNumber, fileName, rateType[0], 'FRUIT P', dates)
 
 
