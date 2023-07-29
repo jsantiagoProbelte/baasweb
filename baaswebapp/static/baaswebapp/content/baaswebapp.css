@@ -24,7 +24,13 @@
 } 
 
 :root{
-  --custom-main-color: #a500a5;
+  --bs-text-color: #282828;
+  --bs-text-color-table: #282828;
+  --custom-bg-color: #F7F7F7; /*rgba(3,53,104,0.05);*/
+  --custom-bg-color-cards:#fff;
+  --bs-body-background: #F7F7F7;
+  --custom-brand-color: #a500a5;
+  --custom-baas: #aa4ae4;
   --custom-red: #ff6e73;
   --custom-yellow: #ffd26e;
   --custom-green: #92eeb9;
@@ -35,6 +41,30 @@
   --custom-morado: #a500a5;
   --custom-violeta: #cfc9ff;
 }
+
+.no-gutters{
+--bs-gutter-x: 0;
+--bs-gutter-y: 0;
+}
+
+.container-baas
+{
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.brand-image {
+  display: inline-block;
+  width: 100%;
+
+}
+
+.navbar-baas {
+  color: var(--bs-text-color);
+  background-color: var(--custom-bg-color-cards);
+}
+
 
 .bg-project {
   background: var(--custom-morado );
@@ -61,19 +91,78 @@
 }
 
 .bg-custom-main{
-  background: var(--custom-main-color);
+  background: var(--custom-brand-color);
 }
 
 .txt-custom-main{
-  color: var(--custom-main-color);
+  color: var(--custom-brand-color);
+}
+
+.txt-brand{
+  color: var(--custom-brand-color);
 }
 
 .baas-body{
+  background-color: var(--bs-body-background);
+}
+
+.baas-content{
+  padding: 2rem;
+}
+
+.btn-brand {
+  color: #fff;
+  background-color: var(--custom-brand-color);
+  border-radius: 50rem !important;
+}
+
+.btn-brand:hover {
+  color: #fff;
+  background-color: var(--custom-baas);
+  border-radius: 50rem !important;
+}
+
+.btn-outline-brand {
+  color: var(--custom-brand-color);
+  border-color: var(--custom-brand-color);
+  border-radius: 50rem !important;
+}
+
+.btn-outline-brand:hover {
+  color: var(--custom-brand-color);
+  border-color: var(--custom-brand-color);
   background-color: var(--custom-bg-color);
+  border-radius: 50rem !important;
+}
+
+
+.btn-baas {
+  color: #fff;
+  background-color: var(--custom-baas);
+  border-radius: 50rem !important;
+}
+
+.btn-baas:hover {
+  color: #fff;
+  background-color: var(--custom-brand-color);
+  border-radius: 50rem !important;
+}
+
+.btn-outline-baas {
+  color: var(--custom-baas);
+  border-color: var(--custom-baas);
+  border-radius: 50rem !important;
+}
+
+.btn-outline-baas:hover {
+  color: var(--custom-baas);
+  border-color: var(--custom-baas);
+  background-color: var(--custom-bg-color);
+  border-radius: 50rem !important;
 }
 
 .bg-custom-bg{
-  background-color: var(--custom-bg-color);
+  background-color: #fff;
 }
 .bg-custom-morado{
   background: var(--custom-morado );
@@ -146,7 +235,7 @@
 .navbar-nav .nav-link{
   font-size: 1rem !important;
   text-transform: capitalize !important;
-  color: #fff !important;
+  color: var(--bs-text-color) !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
@@ -157,7 +246,7 @@
   font-size:1.25rem;
 }
 .custom-border{
-  border: 1px solid var(--custom-main-color);
+  border: 1px solid var(--custom-brand-color);
 }
 .custom-bottom{
   border-radius: 2rem;
@@ -173,7 +262,7 @@
   border: none !important;
   background: #29abe0 !important;
 	background-size: 200% 200%;
-  color: var(--custom-main-color) !important;
+  color: var(--custom-brand-color) !important;
   font-weight: bold !important;
 }
 
@@ -184,7 +273,7 @@
   background: linear-gradient(270deg, #da444f, #fe7965, #f9d400, #c9d222, #3bcf82);
 	background-size: 200% 200%;
 	animation: gradient 4s ease infinite;
-  color: var(--custom-main-color) !important;
+  color: var(--custom-brand-color) !important;
   font-weight: bold !important;
 }
 .telegraf{
@@ -261,7 +350,6 @@
 }
 
 .text-big-number{
-
   font-size: 64px;
   color: var( --bs-text-color);
 }
@@ -304,14 +392,7 @@ select, textarea, input[type=number], input[type=date]{
 input[type='checkbox'], input[type="radio"] {
   border-radius:2px !important;
 }
-input[type='submit'], button[type='submit'], .btn-primary {
-  border-radius: 10px !important;
-  background: var(--custom-main-color);
-  color:#fff;
-}
-input[type='submit']:hover, button[type='submit']:hover, .btn-primary:hover {
-  background: #499ff0;
-}
+
 .btn-step_by_step a{
   margin: 0 10px;
   border-radius: 20px !important;
