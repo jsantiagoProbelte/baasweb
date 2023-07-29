@@ -37,10 +37,6 @@
   --bs-font-sans-serif: 'Rubik', Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: 'Rubik',SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-  --bs-text-color: #f4f4f4;
-  --bs-text-color-table: #fff;
-  --custom-bg-color: #282828; /*rgba(3,53,104,0.05);*/
-  --custom-bg-color-cards:#333333;
 }
 
 *,
@@ -62,7 +58,7 @@ body {
   font-weight: 400;
   line-height: 1.5;
   color: var(--bs-text-color);
-  background-color: #fff;
+  background-color: var(--bs-font-sans-serif);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -2114,8 +2110,8 @@ progress {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #fff;
-  background-color: #3e3f3a;
+  color: var(--bs-text-color);
+  background-color: var(--bs-body-background);
   background-clip: padding-box;
   /* border: 1px solid #ced4da; */
   -webkit-appearance: none;
@@ -3080,7 +3076,6 @@ fieldset:disabled .btn {
 .btn-secondary {
   color: #fff;
   background-color: #8e8c84;
-  border-color: #8e8c84;
 }
 
 .btn-secondary:hover {
