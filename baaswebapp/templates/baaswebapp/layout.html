@@ -24,12 +24,13 @@
 <body class="baas-body">
   <div class="row no-gutters">
     <div class="col-md-1 navbar-baas">
-        <a class="navbar-brand" href="{% url 'home' %}"><img class="brand-image" src="{% static 'baaswebapp/img/logo_probelte.png' %}"></a>
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <img class="brand-image" src="{% static 'baaswebapp/img/logo_probelte.png' %}"></a>
     </div>
     <div class="col-md-11">
       <nav class="navbar navbar-expand-lg navbar-light navbar-baas">
         <div class="container-fluid">
-          <p class="txt-brand h1 ms-4" href="#">BaaS Copilot</a>
+          <span class="navbar-text txt-brand h1 ms-4">BaaS Copilot</span>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarActions" aria-controls="navbarActions" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
