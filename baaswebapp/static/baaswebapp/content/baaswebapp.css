@@ -99,7 +99,7 @@
 }
 
 .txt-brand{
-  color: var(--custom-brand-color);
+  color: var(--custom-brand-color) !important;
 }
 
 .baas-body{
