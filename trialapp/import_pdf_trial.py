@@ -1250,8 +1250,20 @@ def importCSV(trialNumber, fileName, rateType, partRated, dates):
                     value=valueF)
 
 
+def cleanPlagues():
+    for plague in Plague.objects.all():
+        tt = FieldTrial.objects.filter(plague=plague).count()
+        if tt == 0:
+            plague.delete()
+        else:
+            if plague.scientific is not None:
+                plague.name = plague.scientific
+                plague.save()
+
+
 if __name__ == '__main__':
-    importConcreateCSV()
+    cleanPlagues()
+    #importConcreateCSV()
     # createThesisTreatments()
     # importOne()
     # exportPdf()
