@@ -31,6 +31,7 @@
   --bs-body-background: #F7F7F7;
   --custom-brand-color: #a500a5;
   --custom-baas: #aa4ae4;
+  --custom-baas-alt: #cfc9ff;
   --custom-red: #ff6e73;
   --custom-yellow: #ffd26e;
   --custom-green: #92eeb9;
@@ -60,11 +61,22 @@
 
 }
 
+.txt-baas{
+  color: var(--bs-text-color);
+}
+
 .navbar-baas {
   color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
 }
 
+.bg-baas{
+  background: var(--custom-baas );
+}
+
+.bg-baas-alt{
+  background: var(--custom-baas-alt );
+}
 
 .bg-project {
   background: var(--custom-morado );
