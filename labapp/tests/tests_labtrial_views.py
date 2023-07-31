@@ -4,8 +4,8 @@ from trialapp.models import FieldTrial
 from trialapp.tests.tests_models import TrialAppModelTest
 from labapp.labtrial_views import LabTrialView, DataLabHelper
 from labapp.models import LabDataPoint, LabAssessment, LabThesis
-from labapp.labtrial_views import LabTrialCreateView,\
-    LabTrialUpdateView, LabTrialListView, SetLabDataPoint,\
+from labapp.labtrial_views import LabTrialCreateView, \
+    LabTrialUpdateView, LabTrialListView, SetLabDataPoint, \
     SetLabThesis
 
 

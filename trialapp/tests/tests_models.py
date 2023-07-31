@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.models import ModelHelpers
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Crop, Plague,\
+from trialapp.models import FieldTrial, Crop, Plague, \
                             Thesis, Sample, Replica, TrialType
 from trialapp.data_models import ThesisData, SampleData, Assessment
 import datetime

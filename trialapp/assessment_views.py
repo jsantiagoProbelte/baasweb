@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
 from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial, Thesis
-from trialapp.data_models import ThesisData, ReplicaData, SampleData,\
+from trialapp.data_models import ThesisData, ReplicaData, SampleData, \
     Assessment
 from django.shortcuts import get_object_or_404
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory

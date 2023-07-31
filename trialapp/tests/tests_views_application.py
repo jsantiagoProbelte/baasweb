@@ -3,7 +3,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Application
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.application_views import\
-    ApplicationCreateView, ApplicationUpdateView, ApplicationApi,\
+    ApplicationCreateView, ApplicationUpdateView, ApplicationApi, \
     ApplicationDeleteView, ApplicationListView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 

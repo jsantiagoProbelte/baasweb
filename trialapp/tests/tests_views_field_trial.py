@@ -3,8 +3,8 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Application, Replica
 from trialapp.data_models import Assessment, ReplicaData
 from trialapp.tests.tests_models import TrialAppModelTest
-from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi,\
-    FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView,\
+from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi, \
+    FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView, \
     DownloadTrial
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.trial_helper import TrialHelper, PdfTrial

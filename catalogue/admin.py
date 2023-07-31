@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Register your models here.
-from catalogue.models import Product, Vendor, ProductCategory, RateUnit,\
+from catalogue.models import Product, Vendor, ProductCategory, RateUnit, \
     Batch, ProductVariant, Treatment
 
 admin.site.register(Vendor)

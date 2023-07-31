@@ -1,12 +1,12 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from catalogue.models import Product, ProductVariant, Batch, Treatment,\
+from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit, UNTREATED
-from trialapp.models import FieldTrial, Thesis, Replica,\
+from trialapp.models import FieldTrial, Thesis, Replica, \
                             ApplicationMode, TreatmentThesis
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.thesis_views import\
-    ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView,\
+    ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView, \
     ThesisListView, TreatmentThesisSetView, TreatmentThesisDeleteView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 

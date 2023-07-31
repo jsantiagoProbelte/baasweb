@@ -2,7 +2,7 @@
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from rest_framework import permissions
-from trialapp.models import FieldTrial,\
+from trialapp.models import FieldTrial, \
     Thesis, Replica, TreatmentThesis
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework.views import APIView

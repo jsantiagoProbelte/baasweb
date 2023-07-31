@@ -2,10 +2,10 @@ from datetime import datetime
 from django.test import TestCase
 from baaswebapp.models import ModelHelpers
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import Crop, Plague, FieldTrial,\
+from trialapp.models import Crop, Plague, FieldTrial, \
                             Thesis, Replica
 from trialapp.data_models import ReplicaData
-from trialapp.import_pdf_trial import ImportPdfTrial, TrialTags,\
+from trialapp.import_pdf_trial import ImportPdfTrial, TrialTags, \
      AssmtTableSimpleHeader
 
 

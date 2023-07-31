@@ -1,10 +1,10 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import FieldTrial, Plague, Crop, TrialStatus,\
+from trialapp.models import FieldTrial, Plague, Crop, TrialStatus, \
                             Objective, TrialType
 from catalogue.models import Product
 from baaswebapp.models import RateTypeUnit
-from labapp.models import LabDataPoint, LabThesis, LabAssessment,\
+from labapp.models import LabDataPoint, LabThesis, LabAssessment, \
                           LabDosis
 import datetime
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
