@@ -1263,7 +1263,7 @@ def cleanPlagues():
 
 if __name__ == '__main__':
     cleanPlagues()
-    #importConcreateCSV()
+    # importConcreateCSV()
     # createThesisTreatments()
     # importOne()
     # exportPdf()

@@ -4,100 +4,107 @@
 {% load widget_tweaks %}
 
 {% block content %}
+<div class='card-body-baas mt-3 mb-3'>
+    <form method="get" class="">
+        <div class="row mb-3">
+            <div class="form-group col-sm-1 ">
+                {{ filter.form.product.label_tag }}
+                {% render_field filter.form.product class="form-control" %}
+            </div>
+            
+            <div class="form-group col-sm-1 ">
+                {{ filter.form.plague.label_tag }}
+                {% render_field filter.form.plague class="form-control" %}
+            </div>
+            
 
-<div class="row mt-4">
-    <div class="col-md-5">
-        {% include "baaswebapp/header_page.html" with title=titleList new_href=add_url %}
-        <div class='card-body-baas mb-3'>
-            <form method="get" class="">
-                <div class="row mb-3">
-                    <div class="form-group col-sm-2 col-md-4">
-                        {{ filter.form.name.label_tag }}
-                        {% render_field filter.form.name class="form-control" placeholder="name, code, responsible"%}
-                    </div>
-                    
-                    <div class="form-group col-sm-1 col-md-2">
-                        {{ filter.form.trial_status.label_tag }}
-                        {% render_field filter.form.trial_status class="form-control" %}
-                    </div>
-                    <div class="form-group col-sm-1 col-md-3">
-                        {{ filter.form.product.label_tag }}
-                        {% render_field filter.form.product class="form-control" %}
-                    </div>
-                    <div class="form-group col-sm-1 col-md-3">
-                        {{ filter.form.crop.label_tag }}
-                        {% render_field filter.form.crop class="form-control" %}
-                    </div>
-                    
-                </div>
-                <div class="row">
-                    <div class="form-group col-sm-1 col-md-3">
-                        {{ filter.form.trial_type.label_tag }}
-                        {% render_field filter.form.trial_type class="form-control" %}
-                    </div>
-                    <div class="form-group col-sm-1 col-md-3">
-                        {{ filter.form.objective.label_tag }}
-                        {% render_field filter.form.objective class="form-control" %}
-                    </div>
-                    <div class="form-group col-sm-1 col-md-3">
-                        {{ filter.form.plague.label_tag }}
-                        {% render_field filter.form.plague class="form-control" %}
-                    </div>
-                    <div class="form-group col-sm-1 col-md-3">
-                        <button type="submit" class="btn btn-info mt-4 float-end ">Search</button>
-                    </div>
-                </div>
-            </form>
+            <div class="form-group col-sm-1 ">
+                {{ filter.form.crop.label_tag }}
+                {% render_field filter.form.crop class="form-control" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-3">
+                {{ filter.form.name.label_tag }}
+                {% render_field filter.form.name class="form-control" placeholder="name, code, responsible"%}
+            </div>
         </div>
-        <div id="map" class='mt-3 mb-3' width="100%" style='height:650px'></div>
-    </div>
-    <div class="col-md-7">
+        <div class="row">
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_status.label_tag }}
+                {% render_field filter.form.trial_status class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.trial_type.label_tag }}
+                {% render_field filter.form.trial_type class="form-control" %}
+            </div>
+            <div class="form-group col-sm-1 col-md-1">
+                {{ filter.form.objective.label_tag }}
+                {% render_field filter.form.objective class="form-control" %}
+            </div>
 
-<div class="card card-body-baas">
-<table class="table">
-    <thead>
-        <tr>
-            <th>Status</th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Thesis</th>
-            <th>Data</th>
-            <th>Keywords</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for item in object_list %}
-    {% if item.latitude %}
-        <div class="show_poi" hidden>lat={{item.latitude}},long={{item.longitude}},label={{item.code}}</div>
-    {% endif %}
-    <tr id="item-{{item.id}}">
-        <td><span class="badge">{{ item.trial_status }}</span></td>
-        <td><a class="btn btn-light fs-6 me-3" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a></td>
-        <td> {{item.name}}</td>
-        <td>
-            <a class="badge btn btn-outline-secondary fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
-        </td>
-        <td>
-            {% if item.thesis > 0 %}
-                <a class="badge btn btn-outline-secondary fs-5" href="{% url 'trial_data' item.id%}">{{item.assessments}} &#43;</a>
-            {% else %}
-                <small>Please define thesis first</small>
-            {% endif %}
-        </td>
-        <td>
-            <span class="badge bg-plague">{{ item.plague }}</span>
-            <span class="badge bg-crop">{{ item.crop }}</span>
-            <span class="badge bg-product">{{ item.product }}</span>
-        </td>
-    </tr>
-   
-    {% empty %}
-        <p>No Trials yet.</p>
-    {% endfor %}
-    </tbody> 
-</table>
+            <div class="form-group col-sm-1 col-md-3">
+                <button type="submit" class="btn btn-info mt-4 float-end ">Search</button>
+            </div>
+        </div>
+    </form>
 </div>
-</div></div>
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card card-body-baas">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Thesis</th>
+                        <th>Data</th>
+                        <th>Keywords</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in object_list %}
+                <tr id="item-{{item.id}}">
+                    
+                    <td>
+                        <a class="btn btn-light fs-6 me-3" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a>
+                        {% if item.latitude %}
+                            <span class="show_poi" hidden>lat={{item.latitude}},long={{item.longitude}},label={{item.code}}</span>
+                        {% endif %}
+
+                    <td><p class='txt-baas'><span class="badge bg-baas-alt me-3">{{ item.trial_status }}</span>{{item.name}}</p></td>
+                    <td>
+                        
+                        <a class="badge btn btn-outline-baas fs-5" href="{% url 'thesis-list' item.id%}">{{item.thesis}} &#10000;</a>
+                        
+                    </td>
+                    <td>
+                        {% if item.thesis > 0 %}
+                            <a class="badge btn btn-outline-baas " href="{% url 'trial_data' item.id%}">{{item.assessments}} &#43;</a>
+                        {% else %}
+                            <small>Please define thesis first</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-plague">{{ item.plague }}</span>
+                        <span class="badge bg-crop">{{ item.crop }}</span>
+                        <span class="badge bg-product">{{ item.product }}</span>
+                    </td>
+                </tr>
+               
+                {% empty %}
+                    <p>No Trials yet.</p>
+                {% endfor %}
+                </tbody> 
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-body-baas">
+            {% include "baaswebapp/header_page.html" with title=titleList new_href=add_url %}
+        </div>
+        
+        <div id="map" class='mt-3 mb-3 card card-body-baas' width="100%" style='height:650px'></div>
+    </div>
+</div>
 
 
 {% endblock %}
