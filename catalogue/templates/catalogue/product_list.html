@@ -5,28 +5,39 @@
 
 {% block content %}
 
-{% include "baaswebapp/header_page.html" with title=titleList new_href='product-add'%}
 
-<div class="card card-body-baas">
-<table class="table">
-    <thead>
-        <tr><th>Name</th><th># trials</th><th>Dimensions</th><th>Crops</th>
-            <th>Plagues</th></tr>
-    </thead>
-    <tbody>
-    {% for item in object_list %}
-    <tr id="item-{{item.id}}">
-        <td class="col-md-2"><a class="btn btn-info" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
-        <td class="col-md-1"><a class="btn btn-sm btn-secondary" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.fieldtrials}}</a></td>
-        <td class="col-md-2">{% include "catalogue/show_tags.html" with tags=item.dimensions badge_class='bg-light'%}</td> 
-        <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.crops badge_class='bg-primary' %}</td>
-        <td class="col-md-3">{% include "catalogue/show_tags.html" with tags=item.plagues badge_class='bg-secondary'%}</td>
-    </tr>
-    </tbody>
-    {% empty %}
-        <p>Products yet.</p>
-    {% endfor %}
-</table>
+
+<div class="row mt-3">
+    <div class="col-md-9">
+        <div class="card card-body-baas">
+        <table class="table">
+            <thead>
+                <tr><th>PRODUCT</th><th>PRODUCT TYPE</th><th>Active Substance</th><th>Efficacy Range</th>
+                    <th>Trials Date</th><th></th></tr>
+            </thead>
+            <tbody>
+            {% for item in object_list %}
+            <tr id="item-{{item.id}}">
+                <td><a class="btn btn-outline-brand" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
+                <td><span class='badge {{item.color_category}} rounded-pill fs-5'>{{item.category}}</span></td>
+                <td>{{item.active_substance}}</td> 
+                <td>{{item.efficacies}}</td>
+                <td>{{item.time_range}}</td>
+                <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.fieldtrials}} trials -></a></td>
+            </tr>
+            </tbody>
+            {% empty %}
+                <p>Products yet.</p>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-body-baas">
+            {% include "baaswebapp/header_page.html" with title=titleList new_href='product-add'%}
+        </div>
+        
+    </div>
 </div>
 {% endblock %}
 

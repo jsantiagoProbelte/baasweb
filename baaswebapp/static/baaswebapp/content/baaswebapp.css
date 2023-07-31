@@ -78,6 +78,23 @@
   background: var(--custom-baas-alt );
 }
 
+.bs_nutritional{
+  background: var(--custom-green );
+}
+
+.bs_estimulant{
+  background: var(--custom-yellow );
+}
+
+.bs_control{
+  background: var(--custom-blue );
+}
+
+.bs_category_unknown{
+  background: var(--custom-grey );
+}
+
+
 .bg-project {
   background: var(--custom-morado );
 }

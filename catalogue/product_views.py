@@ -1,6 +1,6 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, ModelHelpers
 from catalogue.models import Product, Batch, Treatment, ProductVariant,\
     Vendor, ProductCategory
 from trialapp.models import Crop, Plague, TreatmentThesis
@@ -26,6 +26,7 @@ class ProductFormLayout(FormHelper):
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(Field('name', css_class='mb-3'),
+                Field('active_substance', css_class='mb-3'),
                 Field('vendor', css_class='mb-3'),
                 Field('category', css_class='mb-3'),
                 FormActions(
@@ -37,7 +38,7 @@ class ProductFormLayout(FormHelper):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('name', 'vendor', 'category')
+        fields = ('name', 'vendor', 'category', 'active_substance')
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -85,6 +86,22 @@ class ProductDeleteView(DeleteView):
     template_name = 'catalogue/product_delete.html'
 
 
+class CategoryColor:
+    @staticmethod
+    def do(name):
+        # Returns a css class from baaswebapp.css
+        if name in ['Biofertilizer', 'Fertilizer']:
+            return 'bs_nutritional'
+        elif name in ['Bioestimulant']:
+            return 'bs_estimulant'
+        elif name in ['Biocontrol', 'Biofungicide', 'Bionematicide',
+                      'Bioherbicide', 'Fungicide', 'Nematicide',
+                      'Herbicide']:
+            return 'bs_control'
+        else:
+            return 'bs_category_unknown'
+
+
 class ProductListView(LoginRequiredMixin, FilterView):
     model = Product
     paginate_by = 100  # if pagination is desired
@@ -93,14 +110,19 @@ class ProductListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         new_list = []
-        objectList = Product.getObjects()
+        objectList = Product.objects.order_by('-vendor__name', 'name')
         for item in objectList:
+            category = ModelHelpers.UNKNOWN
+            if item.category:
+                category = item.category.name
             new_list.append({
                 'name': item.name,
+                'active_substance': item.active_substance,
+                'category': category,
+                'color_category': CategoryColor.do(category),
+                'efficacies': '??',
+                'time_range': '2020-',
                 'fieldtrials': DataModel.getCountFieldTrials(item),
-                'crops': DataModel.getCrops(item),
-                'plagues': DataModel.getPlagues(item),
-                'dimensions': DataModel.dimensionsValues(item),
                 'id': item.id})
         return {'object_list': new_list,
                 'titleList': '({}) Products'.format(len(objectList))}
