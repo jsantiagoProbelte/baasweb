@@ -111,7 +111,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         new_list = []
-        objectList = Product.objects.order_by('-vendor__name', 'name')
+        objectList = Product.objects.order_by('vendor__id', 'name')
         for item in objectList:
             category = ModelHelpers.UNKNOWN
             if item.category:
