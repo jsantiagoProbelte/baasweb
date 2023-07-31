@@ -1,7 +1,7 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from trialapp.models import FieldTrial, Plague, Crop, TrialStatus,\
-                            Objective, Project, TrialType
+                            Objective, TrialType
 from catalogue.models import Product
 from baaswebapp.models import RateTypeUnit
 from labapp.models import LabDataPoint, LabThesis, LabAssessment,\
@@ -84,8 +84,7 @@ class LabTrialFormLayout(FormHelper):
                     css_class='col-md-2 text-sm-end'),
                 css_class='mt-3 mb-3'),
             Row(Div(Div(HTML('Goal'), css_class="card-header-baas h4"),
-                    Div(Div(Field('project', css_class='mb-2'),
-                            Field('objective', css_class='mb-2'),
+                    Div(Div(Field('objective', css_class='mb-2'),
                             Field('product', css_class='mb-2'),
                             Field('crop', css_class='mb-2'),
                             Field('plague', css_class='mb-2'),
@@ -137,7 +136,6 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
         form.fields['name'].initial = code + ' Bio Trial'
         form.fields['initiation_date'].initial = datetime.date.today()
         form.fields['product'].initial = Product.getUnknown()
-        form.fields['project'].initial = Project.getUnknown()
         form.fields['objective'].initial = Objective.getUnknown()
         form.fields['crop'].initial = Crop.getUnknown()
         form.fields['plague'].initial = Plague.getUnknown()

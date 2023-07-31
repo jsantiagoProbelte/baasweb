@@ -17,7 +17,6 @@ class TrialAppModelTest(TestCase):
             'objective': 1,
             'responsible': 'Waldo',
             'product': 1,
-            'project': 1,
             'crop': 1,
             'plague': 1,
             'initiation_date': '2021-07-01',

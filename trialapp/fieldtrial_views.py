@@ -70,7 +70,6 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'crop': item.crop.name,
                 'product': item.product.name,
                 'trial_status': item.trial_status if item.trial_status else '',
-                'project': item.project.name,
                 'objective': item.objective.name,
                 'plague': item.plague.name if item.plague else '',
                 'latitude': item.latitude,
@@ -147,8 +146,7 @@ class FieldTrialFormLayout(FormHelper):
     def showGoal(self):
         return Div(
             Div(HTML('Goal'), css_class="card-header-baas h4"),
-            Div(Div(Field('project', css_class='mb-2'),
-                    Field('objective', css_class='mb-2'),
+            Div(Div(Field('objective', css_class='mb-2'),
                     Field('product', css_class='mb-2'),
                     Field('crop', css_class='mb-2'),
                     Field('plague', css_class='mb-2'),

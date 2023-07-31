@@ -7,7 +7,7 @@ from baaswebapp.models import ModelHelpers, RateTypeUnit
 from catalogue.models import Product, ProductCategory, Vendor, Batch,\
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
-                            Project, Objective, Plague, Crop, FieldTrial,\
+                            Objective, Plague, Crop, FieldTrial,\
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
 
@@ -27,10 +27,6 @@ class TrialDbInitialLoader:
                 ModelHelpers.UNKNOWN, 'Foliar', 'Foliar Spray', 'Drench',
                 'Fertigation', 'Seeder', 'Fertiliser', 'Specific',
                 'Irrigation', 'Drip Irrigation'],
-            Project: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',
-                      'Belthirul',
-                      'Biopron', 'Bulhnova',
-                      'Nemapron', 'Nutrihealth', 'Verticibel'],
             Objective: [ModelHelpers.UNKNOWN, 'Fertilizer Reduction',
                         'Biological effectiveness'],
             Product: [ModelHelpers.UNKNOWN, 'Botrybel', 'ExBio', 'Beltanol',

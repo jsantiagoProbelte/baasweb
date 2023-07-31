@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
-from trialapp.models import FieldTrial, Crop, Project, Objective, Plague,\
+from trialapp.models import FieldTrial, Crop, Objective, Plague,\
     Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant,\
@@ -877,7 +877,6 @@ class ImportPdfTrial:
                 name=name,
                 objective=Objective.getUnknown(),
                 responsible='BaaS Imported',
-                project=Project.getUnknown(),
                 product=self.getProduct(name),
                 crop=Crop.getUnknown(),
                 plague=Plague.getUnknown(),
