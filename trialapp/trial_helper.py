@@ -5,7 +5,7 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
-    FieldTrial, Thesis, Project, Objective, Replica,\
+    FieldTrial, Thesis, Objective, Replica,\
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
     Plague, CultivationMethod, Irrigation, Application
 from trialapp.data_models import ReplicaData
@@ -29,8 +29,6 @@ class TrialModel():
     T_T = 'TypeText'
     FIELDS = {
         'Goal': {
-            'project': {'label': "Project", 'required': True, 'type': T_N,
-                        'cls': Project},
             'objective': {'label': "Objective", 'required': True, 'type': T_N,
                           'cls': Objective},
             'product': {'label': "Main Product", 'required': True,
@@ -124,14 +122,14 @@ class TrialModel():
 
     LAB_TRIAL_FIELDS = (
             'name', 'trial_type', 'objective', 'responsible', 'description',
-            'project', 'code',
+            'code',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
             'trial_status', 'contact', 'replicas_per_thesis',
             'samples_per_replica')
 
     FIELD_TRIAL_FIELDS = (
             'name', 'trial_type', 'objective', 'responsible', 'description',
-            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria', 'project',
+            'ref_to_eppo', 'ref_to_criteria', 'comments_criteria',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
             'trial_status', 'contact', 'cro', 'location', 'blocks',
             'replicas_per_thesis', 'samples_per_replica',
@@ -159,7 +157,6 @@ class TrialModel():
                     trialForm.fields[field].widget = forms.Textarea(
                         attrs={'rows': fieldData['rows']})
         # Querysets
-        trialForm.fields['project'].queryset = Project.getObjects()
         trialForm.fields['objective'].queryset = Objective.getObjects()
         trialForm.fields['product'].queryset = Product.getObjects()
         trialForm.fields['crop'].queryset = Crop.getObjects()

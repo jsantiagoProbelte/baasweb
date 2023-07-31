@@ -34,10 +34,6 @@ class Irrigation(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class Project(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-
-
 class Objective(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -83,7 +79,6 @@ class FieldTrial(ModelHelpers, models.Model):
     ref_to_criteria = models.CharField(max_length=100, null=True)
     comments_criteria = models.TextField(null=True)
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
     crop_variety = models.ForeignKey(CropVariety,
@@ -187,7 +182,6 @@ class FieldTrial(ModelHelpers, models.Model):
             objective=Objective.objects.get(pk=kwargs['objective']),
             responsible=kwargs['responsible'],
             product=Product.objects.get(pk=kwargs['product']),
-            project=Project.objects.get(pk=kwargs['project']),
             crop=Crop.objects.get(pk=kwargs['crop']),
             plague=Plague.objects.get(pk=kwargs['plague']),
             initiation_date=kwargs['initiation_date'],
