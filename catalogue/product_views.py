@@ -46,6 +46,7 @@ class ProductForm(forms.ModelForm):
         self.fields['vendor'].queryset = vendors
         categories = ProductCategory.objects.all().order_by('name')
         self.fields['category'].queryset = categories
+        self.fields['active_substance'].required = False
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
