@@ -26,6 +26,7 @@ class Product(ModelHelpers, models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE,
                                  null=True)
+    active_substance = models.CharField(max_length=100, null=True)
 
     def get_absolute_url(self):
         return "/product/%i/" % self.id
