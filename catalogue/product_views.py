@@ -1,9 +1,10 @@
 from django_filters.views import FilterView
+from django.db.models import Min, Max
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit, ModelHelpers
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor, ProductCategory
-from trialapp.models import Crop, Plague, TreatmentThesis
+from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, Assessment
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -109,6 +110,27 @@ class ProductListView(LoginRequiredMixin, FilterView):
     login_url = '/login'
     template_name = 'catalogue/product_list.html'
 
+    def getMinMaxYears(self, product):
+        # Step 1: Retrieve the list of items with the date attribute
+        items = FieldTrial.objects.filter(product=product)
+        # Step 2: Use Django's aggregation functions to find the minimum 
+        # and maximum dates
+        min_date = items.aggregate(Min('initiation_date'))[
+            'initiation_date__min']
+        max_date = items.aggregate(Max('initiation_date'))[
+            'initiation_date__max']
+        # Step 3: Extract the years from the dates
+        min_year = min_date.year if min_date else None
+        max_year = max_date.year if max_date else None
+
+        # Step 4: Return the minimum and maximum years
+        if min_year is None:
+            return '-'
+        elif min_year == max_year:
+            return f'{min_year}'
+
+        return f'{min_year}-{max_year}'
+
     def get_context_data(self, **kwargs):
         new_list = []
         objectList = Product.objects.order_by('vendor__id', 'name')
@@ -122,7 +144,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'category': category,
                 'color_category': CategoryColor.do(category),
                 'efficacies': '??',
-                'time_range': '2020-',
+                'time_range': self.getMinMaxYears(item),
                 'fieldtrials': DataModel.getCountFieldTrials(item),
                 'id': item.id})
         return {'object_list': new_list,
