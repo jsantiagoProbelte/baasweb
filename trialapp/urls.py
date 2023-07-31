@@ -1,5 +1,5 @@
 from django.urls import path
-from . import assessment_views, fieldtrial_views, thesis_views, data_views,\
+from . import assessment_views, fieldtrial_views, thesis_views, data_views, \
     application_views
 import baaswebapp.meteo_api as meteo_api
 

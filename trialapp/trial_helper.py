@@ -5,8 +5,8 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
-    FieldTrial, Thesis, Objective, Replica,\
-    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety,\
+    FieldTrial, Thesis, Objective, Replica, \
+    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety, \
     Plague, CultivationMethod, Irrigation, Application
 from trialapp.data_models import ReplicaData
 from catalogue.models import RateUnit

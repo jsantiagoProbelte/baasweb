@@ -5,7 +5,7 @@ from panel.statsdata import StatsDataApi
 from panel.quality_panel import ThesisPanelApi
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis
 from trialapp.tests.tests_models import TrialAppModelTest
-from catalogue.models import Product, ProductVariant, Batch, Treatment,\
+from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit
 
 

@@ -7,10 +7,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
-from trialapp.models import FieldTrial, Crop, Objective, Plague,\
+from trialapp.models import FieldTrial, Crop, Objective, Plague, \
     Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
-from catalogue.models import Product, Treatment, Batch, ProductVariant,\
+from catalogue.models import Product, Treatment, Batch, ProductVariant, \
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
 from trialapp.trial_helper import TrialHelper, PdfTrial  # noqa: E402
 import glob  # noqa: E402

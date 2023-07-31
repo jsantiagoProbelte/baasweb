@@ -1,10 +1,10 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import Thesis, Replica, TreatmentThesis
-from trialapp.data_models import DataModel, ThesisData, ReplicaData,\
+from trialapp.data_models import DataModel, ThesisData, ReplicaData, \
     Assessment, SampleData, Sample
 from baaswebapp.graphs import GraphTrial
-from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi,\
+from trialapp.data_views import DataHelper, SetDataAssessment, TrialDataApi, \
     DataGraphFactory
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_trial_analytics import DataGenerator

@@ -5,8 +5,8 @@ from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import Assessment, ThesisData, ReplicaData
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.assessment_views import\
-    AssessmentUpdateView, AssessmentCreateView,\
-    AssessmentApi, AssessmentListView, AssessmentDeleteView,\
+    AssessmentUpdateView, AssessmentCreateView, \
+    AssessmentApi, AssessmentListView, AssessmentDeleteView, \
     AssessmentView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 

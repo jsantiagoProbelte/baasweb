@@ -4,10 +4,10 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
 from baaswebapp.models import ModelHelpers, RateTypeUnit
-from catalogue.models import Product, ProductCategory, Vendor, Batch,\
+from catalogue.models import Product, ProductCategory, Vendor, Batch, \
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
-from trialapp.models import TrialType, TrialStatus, ApplicationMode,\
-                            Objective, Plague, Crop, FieldTrial,\
+from trialapp.models import TrialType, TrialStatus, ApplicationMode, \
+                            Objective, Plague, Crop, FieldTrial, \
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
 

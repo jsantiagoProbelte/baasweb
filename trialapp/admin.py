@@ -1,7 +1,7 @@
 from django.contrib import admin
 # Register your models here.
-from trialapp.models import FieldTrial, Crop, TrialType, Objective,\
-    Plague, TrialStatus, Irrigation, CropVariety, ApplicationMode,\
+from trialapp.models import FieldTrial, Crop, TrialType, Objective, \
+    Plague, TrialStatus, Irrigation, CropVariety, ApplicationMode, \
     CultivationMethod, TreatmentThesis
 from trialapp.data_models import Assessment
 from baaswebapp.models import Weather
