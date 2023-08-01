@@ -22,65 +22,69 @@
 </head>
 
 <body class="baas-body">
-  <div class="row no-gutters">
-    <div class="col-md-1 navbar-baas">
-        <a class="navbar-brand" href="{% url 'home' %}">
-          <img class="brand-image" src="{% static 'baaswebapp/img/logo_probelte.png' %}"></a>
-    </div>
-    <div class="col-md-11">
-      <nav class="navbar navbar-expand-lg navbar-light navbar-baas">
-        <div class="container-fluid">
-          <span class="navbar-text txt-brand h1 ms-4">BaaS Copilot</span>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarActions" aria-controls="navbarActions" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse me-4" id="navbarActions">
-            
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-              <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
-                <input class="form-control me-sm-2" type="text" placeholder="name, code, responsible" name="name">
-                <button class="btn btn-baas" type="submit">Search</button>
-              </form></li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarActionsDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                  Menu
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="navbarActionsDropdownMenu">
-                  <li><a class="dropdown-item" href="{% url 'fieldtrial-list' %}">Field Trials</a></li>
-                  <li><a class="dropdown-item" href="{% url 'labtrial-list' %}">Lab Trials</a></li>
-                  <li><a class="dropdown-item" href="{% url 'product-list' %}">Product</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url 'statsdata' %}">Stats</a></li>
-                  <li><a class="dropdown-item" href="{% url 'thesis_quality_panel' %}">Correct thesis</a></li>
-                  <li><a class="dropdown-item" href="{% url 'admin:index' %}">Configuration</a></li>
-                </ul>
-              </li>
-
-              <li class="nav-item">
-                {% if user.is_authenticated %}
-                  <p class="nav-link">Hi {{ user.username }}!</p>
-                {% endif %}
-              </li>
-              
-              <li class="nav-item">
-                {% if user.is_authenticated %}
-                  <a class="nav-link btn btn-outline-baas" href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                  <a class="nav-link btn btn-outline-baas" href="{% url 'login' %}">Login</a>
-                {% endif %}
-              </li>
-            </ul>
-
-          </div>
-        </div>
-      </nav>
-      <div class="container-fluid baas-body baas-content">
-        {% block content %}
-        {% endblock %}
+  <nav class="navbar navbar-expand-lg fixed-top navbar-light navbar-baas horizontal-bottom-line">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img class="icon-baas" src="{% static 'baaswebapp/img/logo_probelte.png' %}">
+      </a>
+      <div class="vertical-line-right vertical-line-left">
+        <a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a>
       </div>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarActions" aria-controls="navbarActions" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+      <div class="collapse navbar-collapse" id="navbarActions">
+        
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+          <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
+            <input class="form-control me-sm-2" type="text" placeholder="name, code, responsible" name="name">
+            <button class="btn btn-baas" type="submit">Search</button>
+          </form></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarActionsDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              Menu
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="navbarActionsDropdownMenu">
+              <li><a class="dropdown-item" href="{% url 'fieldtrial-list' %}">Field Trials</a></li>
+              <li><a class="dropdown-item" href="{% url 'labtrial-list' %}">Lab Trials</a></li>
+              <li><a class="dropdown-item" href="{% url 'product-list' %}">Product</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'statsdata' %}">Stats</a></li>
+              <li><a class="dropdown-item" href="{% url 'thesis_quality_panel' %}">Correct thesis</a></li>
+              <li><a class="dropdown-item" href="{% url 'admin:index' %}">Configuration</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+              <p class="nav-link">Hi {{ user.username }}!</p>
+            {% endif %}
+          </li>
+          
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+              <a class="nav-link btn btn-outline-baas" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+              <a class="nav-link btn btn-outline-baas" href="{% url 'login' %}">Login</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="sidenav-baas">
+  </div>
+  
+  <!-- Page content -->
+  <div class="main-baas">
+    <div class="container-fluid baas-body baas-content">
+      {% block content %}
+      {% endblock %}
     </div>
   </div>
 

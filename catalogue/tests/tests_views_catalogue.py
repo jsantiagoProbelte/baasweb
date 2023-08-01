@@ -106,7 +106,7 @@ class ProductViewsTest(TestCase):
         numberProducts = Product.objects.count()
         self.assertContains(
             response,
-            '({}) Products'.format(numberProducts))
+            '<h1>{}</h1>'.format(numberProducts))
         products = Product.objects.all()
         for product in products:
             self.assertContains(response, product.name)

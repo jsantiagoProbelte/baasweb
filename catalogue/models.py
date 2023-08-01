@@ -29,7 +29,7 @@ class Product(ModelHelpers, models.Model):
     active_substance = models.CharField(max_length=100, null=True)
 
     def get_absolute_url(self):
-        return "/product/%i/" % self.id
+        return f"/product/{self.id}/"
 
 
 class ProductVariant(ModelHelpers, models.Model):
