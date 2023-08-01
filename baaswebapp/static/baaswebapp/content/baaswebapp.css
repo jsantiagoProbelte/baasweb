@@ -21,12 +21,13 @@
   font-weight: 200;
   font-style: normal;
   font-display: swap;
-} 
+}
 
 :root{
   --bs-text-color: #282828;
   --bs-text-color-table: #282828;
   --custom-bg-color: #F7F7F7; /*rgba(3,53,104,0.05);*/
+  --custom-lines: #e1e1e1;
   --custom-bg-color-cards:#fff;
   --bs-body-background: #F7F7F7;
   --custom-brand-color: #a500a5;
@@ -55,10 +56,29 @@
   margin-left: auto;
 }
 
-.brand-image {
-  display: inline-block;
-  width: 100%;
 
+.icon-baas {
+  width: 75px;
+}
+
+
+.sidenav-baas {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 100px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 100px; /* Stay at the top */
+  left: 0;
+  background-color: var(--custom-bg-color-cards); /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  border-right: 2px solid var(--custom-lines);
+}
+
+/* Style page content */
+.main-baas {
+  margin-left: 100px; /* Same as the width of the sidebar */
+  margin-top: 100px; /* Same as the width of the sidebar */
 }
 
 .txt-baas{
@@ -188,6 +208,30 @@
   border-color: var(--custom-baas);
   background-color: var(--custom-bg-color);
   border-radius: 50rem !important;
+}
+
+.vertical-line-right {
+  border-right: 2px solid var(--custom-lines);
+}
+
+.vertical-line-left {
+  border-left: 2px solid var(--custom-lines);
+}
+
+.horizontal-top-line {
+  border-top: 2px solid var(--custom-lines);
+  border-width: 100%;
+}
+
+.horizontal-bottom-line {
+  border-bottom: 2px solid var(--custom-lines);
+  border-width: 100%;
+}
+
+
+.vertical-line-brand {
+  border-right: 5px solid var(--custom-brand-color);
+  height: 100%;
 }
 
 .bg-custom-bg{
@@ -335,7 +379,6 @@
 .navbar .nav-item .dropdown-menu .dropdown-divider{
   margin: 20px;
 }
-
 
 .card-header-baas {
   padding: 0.5rem 1rem;

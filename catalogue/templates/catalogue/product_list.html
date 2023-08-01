@@ -6,7 +6,6 @@
 {% block content %}
 
 
-
 <div class="row mt-3">
     <div class="col-md-9">
         <div class="card card-body-baas">
@@ -23,7 +22,7 @@
                 <td>{{item.active_substance}}</td> 
                 <td>{{item.efficacies}}</td>
                 <td>{{item.time_range}}</td>
-                <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.fieldtrials}} trials -></a></td>
+                <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.trials}} trials &#10132;</a></td>
             </tr>
             </tbody>
             {% empty %}
@@ -33,19 +32,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-body-baas">
-            {% include "baaswebapp/header_page.html" with title=titleList new_href='product-add'%}
-        </div>
-        
+        {% include "baaswebapp/two_boxes.html" with left_text='products' right_text='trials' left_number=num_products right_rumber=num_trials %}
     </div>
 </div>
-{% endblock %}
-
-
-{% block scripts %}
-<script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>
-    var manageItemEndPoint='/product_api';
-</script>
-
 {% endblock %}

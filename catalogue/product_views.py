@@ -113,7 +113,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
     def getMinMaxYears(self, product):
         # Step 1: Retrieve the list of items with the date attribute
         items = FieldTrial.objects.filter(product=product)
-        # Step 2: Use Django's aggregation functions to find the minimum 
+        # Step 2: Use Django's aggregation functions to find the min
         # and maximum dates
         min_date = items.aggregate(Min('initiation_date'))[
             'initiation_date__min']
@@ -134,10 +134,13 @@ class ProductListView(LoginRequiredMixin, FilterView):
     def get_context_data(self, **kwargs):
         new_list = []
         objectList = Product.objects.order_by('vendor__id', 'name')
+        num_trials = 0
         for item in objectList:
             category = ModelHelpers.UNKNOWN
             if item.category:
                 category = item.category.name
+            trials = DataModel.getCountFieldTrials(item)
+            num_trials += trials
             new_list.append({
                 'name': item.name,
                 'active_substance': item.active_substance,
@@ -145,9 +148,11 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'color_category': CategoryColor.do(category),
                 'efficacies': '??',
                 'time_range': self.getMinMaxYears(item),
-                'fieldtrials': DataModel.getCountFieldTrials(item),
+                'trials': trials,
                 'id': item.id})
         return {'object_list': new_list,
+                'num_products': len(objectList),
+                'num_trials': num_trials,
                 'titleList': '({}) Products'.format(len(objectList))}
 
 
