@@ -15,6 +15,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 import logging.config
+import passkeys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -28,6 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent
 SECRET_KEY = 'django-insecure-t78nwv1+tehfr27dg2jq!$!(!1k3bt2@vw98r37$2r=c3!9+)7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
+AUTHENTICATION_BACKENDS = ['passkeys.backend.PasskeyModelBackend']
+KEY_ATTACHMENT = passkeys.Attachment.CROSS_PLATFORM
+# Server rp id for FIDO2, it the full domain of your project
+FIDO_SERVER_ID = "localhost"
+FIDO_SERVER_NAME = "BaasWebApp"
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +55,7 @@ EXTENDED_APPS = [
     'rest_framework',
     'widget_tweaks',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'passkeys'
 ]
 
 CUSTOM_APPS = [

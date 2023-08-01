@@ -39,6 +39,23 @@ def logout_request(request):
     return redirect("home")
 
 
+def login_request_passkey(request):
+    if request.method == 'POST':
+        user = authenticate(
+            request, username=request.POST["username"], password=request.POST["password"])
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, "Invalidpasskey")
+
+    formLogin = BootstrapAuthenticationForm()
+    return render(
+        request=request,
+        template_name="baaswebapp/login.html",
+        context={"formLogin": formLogin})
+
+
 def login_request(request):
     if request.method == 'POST':
         form = AuthenticationForm(request=request, data=request.POST)

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from baaswebapp import views
 from django.conf.urls.static import static
@@ -24,13 +24,14 @@ admin.autodiscover()
 
 urlpatterns = [
     path('', views.home, name='home'),
+    re_path(r'^passkeys/', include('passkeys.urls')),
     path('baaswebapp_index', views.baaswebapp_index, name='baaswebapp_index'),
     path('', include('trialapp.urls')),
     path('', include('catalogue.urls')),
     path('', include('panel.urls')),
     path('', include('labapp.urls')),
     path("logout", views.logout_request, name="logout"),
-    path("login", views.login_request, name="login"),
+    path("login", views.login_request_passkey, name="login"),
     path('admin/', admin.site.urls),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
