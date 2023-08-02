@@ -22,7 +22,7 @@
 </head>
 
 <body class="baas-body">
-  <nav class="navbar navbar-expand-lg fixed-top navbar-light navbar-baas horizontal-bottom-line">
+  <nav class="navbar navbar-expand fixed-top navbar-light navbar-baas horizontal-bottom-line">
     <div class="container-fluid">
       <a class="navbar-brand" href="{% url 'home' %}">
         <img class="icon-baas" src="{% static 'baaswebapp/img/logo_probelte.png' %}">
@@ -37,28 +37,29 @@
 
       <div class="collapse navbar-collapse" id="navbarActions">
 
-        <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav ms-4">
 
           {% block topbaasheader %}
           {% endblock %}
 
-          <li class="nav-item vertical-line-left">
-            {% if user.is_authenticated %}
-              <p class="nav-link">Hi {{ user.username }}!</p>
-            {% endif %}
-          </li>
-          
-          <li class="nav-item">
-            {% if user.is_authenticated %}
-              <a class="nav-link btn btn-outline-baas" href="{% url 'logout' %}">Logout</a>
-            {% else %}
-              <a class="nav-link btn btn-outline-baas" href="{% url 'login' %}">Login</a>
-            {% endif %}
-          </li>
         </ul>
+        <span class="navbar-text vertical-line-left ms-auto">
+          {% if user.is_authenticated %}
+            <p class="h5 ms-3">Hi {{ user.username }} !</p>
+          {% endif %}
+        </span>
+        <span class="navbar-text ms-4 me-4">
+          {% if user.is_authenticated %}
+            <a class="nav-link btn btn-outline-baas" href="{% url 'logout' %}">Logout</a>
+          {% else %}
+            <a class="nav-link btn btn-outline-baas" href="{% url 'login' %}">Login</a>
+          {% endif %}
+        </span>
       </div>
     </div>
   </nav>
+
+  
   <div class="sidenav-baas">
     {% block sidenav %}
     {% endblock %}
