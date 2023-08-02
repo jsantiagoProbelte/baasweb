@@ -1,6 +1,11 @@
 {% extends "baaswebapp/layout.html" %}
 {% load humanize %}
 {% load static %}
+
+{% block topbaasheader %}
+{% include "baaswebapp/default_top_header.html" with trialfilter=trialfilter %}
+{% endblock %}
+
 {% block content %}
 <br/><br/>
 <div class="row g-10 text-center">

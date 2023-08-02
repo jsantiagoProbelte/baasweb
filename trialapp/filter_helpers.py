@@ -1,6 +1,7 @@
 from django.db.models import Q, Count
 import django_filters
 from trialapp.models import FieldTrial, Crop, Plague
+from catalogue.models import Product
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -17,10 +18,15 @@ class TrialFilter(django_filters.FilterSet):
 class TrialFilterHelper:
     _attributes = None
     _trials = None
+    _trialFilter = None
 
     # Add self.request.GET as attributes
     def __init__(self, attributes):
         self._attributes = attributes.copy()
+        self._trialFilter = TrialFilter(attributes)
+
+    def getFilter(self):
+        return self._trialFilter
 
     # add extra param:
     def addProduct(self, product):
@@ -41,6 +47,17 @@ class TrialFilterHelper:
     def filter(self):
         q_objects = self.prepareFilter()
         self.getTrialList(q_objects)
+
+    def getClsObjects(self, cls):
+        if len(self._attributes) > 0:
+            trialIds = [item.id for item in self._trials]
+            if cls == Product:
+                valuesIds = FieldTrial.objects.filter(
+                    id__in=trialIds).values('product_id')
+                ids = [item['product_id'] for item in valuesIds]
+                return cls.objects.filter(id__in=ids)
+        else:
+            return cls.objects.all()
 
     def getAttrValue(self, label):
         value = self._attributes.get(label, None)

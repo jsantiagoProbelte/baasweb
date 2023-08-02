@@ -135,10 +135,10 @@ class ProductListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         new_list = []
-        objectList = Product.objects.order_by('vendor__id', 'name')
-        num_trials = 0
         fHelper = TrialFilterHelper(self.request.GET)
         fHelper.filter()
+        objectList = fHelper.getClsObjects(Product).order_by(
+            'vendor__id', 'name')
         num_trials = fHelper.countTrials()
         countCategories = fHelper.countProductCategories()
         graphCategories = ProductCategoryGraph.draw(countCategories)
@@ -158,6 +158,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'id': item.id})
         return {'object_list': new_list,
                 'num_products': len(objectList),
+                'trialfilter': fHelper.getFilter(),
                 'num_trials': num_trials,
                 'graphCategories': graphCategories,
                 'titleList': '({}) Products'.format(len(objectList))}

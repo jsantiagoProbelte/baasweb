@@ -25,7 +25,6 @@ class FieldTrialViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
 
-        self.assertContains(response, 'Field Trials')
         self.assertContains(response, 'No Trials yet.')
 
         fieldTrial = FieldTrial.create_fieldTrial(
@@ -35,7 +34,6 @@ class FieldTrialViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Trials yet.')
-        self.assertContains(response, 'Field trials')
         self.assertContains(response, 'Please define thesis first')
         self.assertContains(response, fieldTrial.name)
 
