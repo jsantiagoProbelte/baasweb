@@ -20,29 +20,25 @@ class TrialFilterHelper:
     _trials = None
     _trialFilter = None
 
+    KEY_PER_CLS = {Product: 'product_id',
+                   Crop: 'crop_id',
+                   Plague: 'plague_id'}
+
     # Add self.request.GET as attributes
     def __init__(self, attributes):
-        self._attributes = attributes.copy()
-        self._trialFilter = TrialFilter(attributes)
+        self.setTrialFilter(attributes)
+
+    def setTrialFilter(self, attributes):
+        # Take of remove empty values
+        self._attributes = {}
+        for key in attributes:
+            value = attributes.get(key, None)
+            if value:
+                self._attributes[key] = value
+        self._trialFilter = TrialFilter(self._attributes)
 
     def getFilter(self):
         return self._trialFilter
-
-    # add extra param:
-    def addProduct(self, product):
-        self._attributes['product'] = product
-
-    # add extra param:
-    def addCrop(self, crop):
-        self._attributes['crop'] = crop
-
-    # add extra param:
-    def addPlague(self, plague):
-        self._attributes['plague'] = plague
-
-    # add extra text:
-    def addText(self, text):
-        self._attributes['name'] = text
 
     def filter(self):
         q_objects = self.prepareFilter()
@@ -51,13 +47,13 @@ class TrialFilterHelper:
     def getClsObjects(self, cls):
         if len(self._attributes) > 0:
             trialIds = [item.id for item in self._trials]
-            if cls == Product:
+            keyPerCls = TrialFilterHelper.KEY_PER_CLS.get(cls, None)
+            if keyPerCls:
                 valuesIds = FieldTrial.objects.filter(
-                    id__in=trialIds).values('product_id')
-                ids = [item['product_id'] for item in valuesIds]
+                    id__in=trialIds).values(keyPerCls)
+                ids = [item[keyPerCls] for item in valuesIds]
                 return cls.objects.filter(id__in=ids)
-        else:
-            return cls.objects.all()
+        return cls.objects.all()
 
     def getAttrValue(self, label):
         value = self._attributes.get(label, None)
@@ -76,13 +72,14 @@ class TrialFilterHelper:
                 q_name |= Q(name__icontains=paramId)
                 q_name |= Q(responsible__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
+                q_name |= Q(product__active_substance=paramId)
                 q_objects &= q_name
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
         return q_objects
 
     def countTrials(self):
-        return self._trials.count()
+        return len(self._trials)
 
     def countProductCategories(self):
         return self.countBy('product__category__name')
@@ -95,6 +92,12 @@ class TrialFilterHelper:
         ).order_by(param)
 
         return {item[param]: item['total'] for item in counts}
+
+    def generateParamUrl(self):
+        params = ''
+        for attribute in self._attributes:
+            params += f'&{attribute}={self._attributes[attribute]}'
+        return params
 
     @classmethod
     def getCountFieldTrials(cls, product):
