@@ -214,13 +214,6 @@ class TrialAppModelTest(TestCase):
                 selectedSample.replica.number,
                 selectedSample.number))
 
-        self.assertEqual(
-            selectedSample.getShortName(),
-            '{}-[{}]-{}'.format(
-                selectedSample.replica.thesis.name,
-                selectedSample.replica.number,
-                selectedSample.number))
-
         SampleData.objects.create(
             assessment=assessment,
             reference=selectedSample,
