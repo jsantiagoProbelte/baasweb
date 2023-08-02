@@ -36,9 +36,9 @@ COLOR_bs_danger = '#d9534f'
 COLOR_bs_light = '#f8f5f0'
 COLOR_bs_dark = '#3e3f3a'
 COLOR_bs_text_color = '#f4f4f4'
-COLOR_bs_text_color_table = '#fff'
+COLOR_bs_text_color_table = '#000'
 COLOR_bg_color = '#282828'
-COLOR_bg_color_cards = '#333333'
+COLOR_bg_color_cards = '#fff'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_blue, COLOR_grey, COLOR_bio_morado,
@@ -508,8 +508,8 @@ class GraphStat():
             showlegend=showLegend,
             legend=dict(
                 orientation="h",
-                yanchor="bottom",
-                y=-1,
+                yanchor="top",
+                y=0,
                 xanchor="left",
                 x=0),
             xaxis_title=xaxis_title,
@@ -558,13 +558,83 @@ class EfficacyGraph:
             showlegend=showLegend,
             legend=dict(
                 orientation="h",
-                yanchor="bottom",
-                y=-1,
+                yanchor="top",
+                y=0,
                 xanchor="left",
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
             barmode=barmode)
+        figure.update_traces(textfont_size=20)
+
+        plotly_plot_obj = plot({'data': figure}, output_type='div')
+        return plotly_plot_obj
+
+
+class ProductCategoryGraph:
+    CATEGORY_COLORS = {
+        'Biofertilizer': COLOR_green,
+        'Fertilizer': COLOR_green,
+        'Bioestimulant': COLOR_yellow,
+        'Biocontrol': COLOR_blue,
+        'Biofungicide': COLOR_blue,
+        'Bionematicide': COLOR_blue,
+        'Bioherbicide': COLOR_blue,
+        'Fungicide': COLOR_blue,
+        'Nematicide': COLOR_blue,
+        'Herbicide': COLOR_blue,
+        'BIO': COLOR_bio_morado
+    }
+
+    @staticmethod
+    def draw(dictValues,
+             title_text='Trials by product type', showLegend=True,
+             yaxis_title='trials', xaxis_title='Trials'):
+
+        colors = []
+        values = []
+        labels = []
+        bios = 0
+        totals = 0
+        for key in dictValues:
+            value = dictValues[key]
+            key = key if key else 'Undefined'
+            totals += value
+            if key and 'Bio' in key:
+                bios += value
+            values.append(value)
+            colors.append(
+                ProductCategoryGraph.CATEGORY_COLORS.get(key, COLOR_bs_gray))
+            labels.append(f'{value} {key}')
+
+        # Create a bar trace
+        trace = go.Pie(
+            labels=labels,
+            values=values,
+            marker_colors=colors,
+            hole=.8)
+
+        # Create the figure
+        figure = go.Figure(data=[trace])
+
+        figure.update_layout(
+            annotations=[dict(text=f'{totals} trials',
+                              x=0.5, y=0.5, font_size=20,
+                              showarrow=False)],
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color="black",
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color='black',
+            title_text=title_text,
+            showlegend=showLegend,
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=0,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
         figure.update_traces(textfont_size=20)
 
         plotly_plot_obj = plot({'data': figure}, output_type='div')

@@ -212,10 +212,6 @@ class DataModel(ModelHelpers):
         else:
             return RateTypeUnit.objects.filter(id__in=theIds)
 
-    @classmethod
-    def getCountFieldTrials(cls, product):
-        return FieldTrial.objects.filter(product=product).count()
-
 
 class ThesisData(DataModel, models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)

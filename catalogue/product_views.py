@@ -5,10 +5,12 @@ from baaswebapp.models import RateTypeUnit, ModelHelpers
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor, ProductCategory
 from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
-from trialapp.data_models import ThesisData, DataModel, ReplicaData, Assessment
+from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
+    Assessment
+from trialapp.filter_helpers import TrialFilterHelper
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from baaswebapp.graphs import GraphTrial
+from baaswebapp.graphs import GraphTrial, ProductCategoryGraph
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
@@ -135,12 +137,16 @@ class ProductListView(LoginRequiredMixin, FilterView):
         new_list = []
         objectList = Product.objects.order_by('vendor__id', 'name')
         num_trials = 0
+        fHelper = TrialFilterHelper(self.request.GET)
+        fHelper.filter()
+        num_trials = fHelper.countTrials()
+        countCategories = fHelper.countProductCategories()
+        graphCategories = ProductCategoryGraph.draw(countCategories)
+        trialsPerProduct = fHelper.countBy('product__name')
         for item in objectList:
             category = ModelHelpers.UNKNOWN
             if item.category:
                 category = item.category.name
-            trials = DataModel.getCountFieldTrials(item)
-            num_trials += trials
             new_list.append({
                 'name': item.name,
                 'active_substance': item.active_substance,
@@ -148,11 +154,12 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'color_category': CategoryColor.do(category),
                 'efficacies': '??',
                 'time_range': self.getMinMaxYears(item),
-                'trials': trials,
+                'trials': trialsPerProduct.get(item.name, None),
                 'id': item.id})
         return {'object_list': new_list,
                 'num_products': len(objectList),
                 'num_trials': num_trials,
+                'graphCategories': graphCategories,
                 'titleList': '({}) Products'.format(len(objectList))}
 
 
@@ -340,10 +347,12 @@ class ProductApi(APIView):
         filterData, titleGraph = self.filterData(request.GET, product)
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
+        numTrials = TrialFilterHelper.getCountFieldTrials(product)
+
         return render(request, template_name,
                       {'product': product,
                        'deleteProductForm': ProductDeleteView(),
-                       'fieldtrials': DataModel.getCountFieldTrials(product),
+                       'fieldtrials': numTrials,
                        'filterData': filterData,
                        'titleGraph': titleGraph,
                        'graphs': graphs,
