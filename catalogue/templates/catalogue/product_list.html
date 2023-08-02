@@ -36,6 +36,10 @@
     </div>
     <div class="col-md-3">
         {% include "baaswebapp/two_boxes.html" with left_text='products' right_text='trials' left_number=num_products right_rumber=num_trials %}
+        <div class="card card-body-baas mt-3 ms-3 me-3">
+            {{graphCategories|safe}}
+        </div>
+        
     </div>
 </div>
 {% endblock %}
