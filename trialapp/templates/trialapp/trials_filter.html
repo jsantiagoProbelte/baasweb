@@ -1,0 +1,19 @@
+{% load widget_tweaks %}
+
+<li class="nav-item">
+    <form method="get" class="">
+        <div class="row mb-3">
+            <div class="form-group col-sm-1 col-md-3">
+                <button type="submit" class="btn btn-baas mt-4 float-end ">Search Trials</button>
+            </div>
+            <div class="form-group col-md-3 ">
+                {{ trialfilter.form.crop.label_tag }}
+                {% render_field trialfilter.form.crop class="form-control rounded-pill" %}
+            </div>
+            <div class="form-group col-md-3 ">
+                {{ trialfilter.form.plague.label_tag }}
+                {% render_field trialfilter.form.plague class="form-control rounded-pill" %}
+            </div>
+        </div>
+    </form>
+</li>
