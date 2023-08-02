@@ -255,12 +255,6 @@ class Thesis(ModelHelpers, models.Model):
             thesis.save()
         return thesis
 
-    def getReferenceIndexDataInput(self):
-        return self.number
-
-    def getBackgroundColor(self):
-        return self.number
-
     @classmethod
     def computeNumber(cls, fieldTrial, increment):
         counts = Thesis.objects.filter(
@@ -399,9 +393,6 @@ class Replica(ModelHelpers, models.Model):
         else:
             return self.number
 
-    def getShortName(self):
-        return self.getKey()
-
     def getTitle(self):
         return "T{} - R{}".format(
             self.thesis.number, self.getKey())
@@ -442,12 +433,6 @@ class Replica(ModelHelpers, models.Model):
             rict[thesisId].append(replica.id)
         return rict
 
-    def getReferenceIndexDataInput(self):
-        return self.thesis.getName()
-
-    def getBackgroundColor(self):
-        return self.thesis.getBackgroundColor()
-
 
 class Sample(ModelHelpers, models.Model):
     number = models.IntegerField()
@@ -465,21 +450,6 @@ class Sample(ModelHelpers, models.Model):
             self.replica.thesis.name,
             self.replica.number,
             self.number)
-
-    def getKey(self):
-        return self.number
-
-    def getShortName(self):
-        return ('{}-[{}]-{}').format(
-            self.replica.thesis.name,
-            self.replica.number,
-            self.number)
-
-    def getReferenceIndexDataInput(self):
-        return self.replica.getName()
-
-    def getBackgroundColor(self):
-        return self.replica.getBackgroundColor()
 
     @classmethod
     def createSamples(cls, replica, samples_per_replica):

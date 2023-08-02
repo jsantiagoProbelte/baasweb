@@ -42,9 +42,6 @@ class LabThesis(ModelHelpers, models.Model):
                                      trial=trial)
         return LabThesis.objects.filter(trial=trial).order_by('name')
 
-    def getReferenceIndexDataInput(self):
-        return self.id
-
     @classmethod
     def getObjectsByTrial(cls, trial):
         return LabThesis.objects.filter(trial=trial).order_by('name')
