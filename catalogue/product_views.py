@@ -1,10 +1,9 @@
 from django_filters.views import FilterView
-from django.db.models import Min, Max
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit, ModelHelpers
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor, ProductCategory
-from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
+from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
@@ -90,48 +89,11 @@ class ProductDeleteView(DeleteView):
     template_name = 'catalogue/product_delete.html'
 
 
-class CategoryColor:
-    @staticmethod
-    def do(name):
-        # Returns a css class from baaswebapp.css
-        if name in ['Biofertilizer', 'Fertilizer']:
-            return 'bs_nutritional'
-        elif name in ['Bioestimulant']:
-            return 'bs_estimulant'
-        elif name in ['Biocontrol', 'Biofungicide', 'Bionematicide',
-                      'Bioherbicide', 'Fungicide', 'Nematicide',
-                      'Herbicide']:
-            return 'bs_control'
-        else:
-            return 'bs_category_unknown'
-
-
 class ProductListView(LoginRequiredMixin, FilterView):
     model = Product
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
     template_name = 'catalogue/product_list.html'
-
-    def getMinMaxYears(self, product):
-        # Step 1: Retrieve the list of items with the date attribute
-        items = FieldTrial.objects.filter(product=product)
-        # Step 2: Use Django's aggregation functions to find the min
-        # and maximum dates
-        min_date = items.aggregate(Min('initiation_date'))[
-            'initiation_date__min']
-        max_date = items.aggregate(Max('initiation_date'))[
-            'initiation_date__max']
-        # Step 3: Extract the years from the dates
-        min_year = min_date.year if min_date else None
-        max_year = max_date.year if max_date else None
-
-        # Step 4: Return the minimum and maximum years
-        if min_year is None:
-            return '-'
-        elif min_year == max_year:
-            return f'{min_year}'
-
-        return f'{min_year}-{max_year}'
 
     def get_context_data(self, **kwargs):
         new_list = []
@@ -151,9 +113,9 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'name': item.name,
                 'active_substance': item.active_substance,
                 'category': category,
-                'color_category': CategoryColor.do(category),
+                'color_category': TrialFilterHelper.colorCategory(category),
                 'efficacies': '??',
-                'time_range': self.getMinMaxYears(item),
+                'time_range': fHelper.getMinMaxYears(item),
                 'trials': trialsPerProduct.get(item.name, None),
                 'id': item.id})
         return {'object_list': new_list,
