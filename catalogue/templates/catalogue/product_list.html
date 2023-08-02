@@ -1,7 +1,5 @@
 {% extends "baaswebapp/layout.html" %}
-
 {% load widget_tweaks %}
-
 
 {% block topbaasheader %}
 {% include "trialapp/trials_filter.html" with trialfilter=trialfilter %}
@@ -20,15 +18,15 @@
             {% for item in object_list %}
             <tr id="item-{{item.id}}">
                 <td><a class="btn btn-light rounded-pill" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
-                <td><span class='badge {{item.color_category}} rounded-pill fs-5'>{{item.category}}</span></td>
+                <td><span class='badge {{item.color_category}} rounded-pill fs-6'>{{item.category}}</span></td>
                 <td>{{item.active_substance}}</td> 
                 <td>{{item.efficacies}}</td>
                 <td>{{item.time_range}}</td>
-                <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}">{{item.trials}} trials &#10132;</a></td>
+                <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}{{extra_params}}">{{item.trials}} trials &#10132;</a></td>
             </tr>
             </tbody>
             {% empty %}
-                <p>Products yet.</p>
+                <p>No Products yet.</p>
             {% endfor %}
         </table>
         </div>

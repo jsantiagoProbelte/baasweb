@@ -161,6 +161,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'trialfilter': fHelper.getFilter(),
                 'num_trials': num_trials,
                 'graphCategories': graphCategories,
+                'extra_params': fHelper.generateParamUrl(),
                 'titleList': '({}) Products'.format(len(objectList))}
 
 
