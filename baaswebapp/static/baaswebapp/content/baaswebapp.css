@@ -24,8 +24,8 @@
 }
 
 :root{
-  --bs-text-color: #282828;
-  --bs-text-color-table: #282828;
+  --bs-text-color: ##333;
+  --bs-text-color-table: ##333;
   --custom-bg-color: #F7F7F7; /*rgba(3,53,104,0.05);*/
   --custom-lines: #e1e1e1;
   --custom-bg-color-cards:#fff;
@@ -401,12 +401,12 @@
 }
 
 .list-group-item-baas {
-  color: #fff;
+  color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
 }
 
 .list-group-item-baas-select {
-  color: #fff;
+  color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
 }
 

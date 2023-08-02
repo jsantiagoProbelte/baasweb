@@ -39,6 +39,8 @@ COLOR_bs_text_color = '#f4f4f4'
 COLOR_bs_text_color_table = '#000'
 COLOR_bg_color = '#282828'
 COLOR_bg_color_cards = '#fff'
+COLOR_TEXT = '#333'
+COLOR_bg_color_cards_weather = '#F5FFFF'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_blue, COLOR_grey, COLOR_bio_morado,
@@ -96,10 +98,10 @@ class WeatherGraph:
                         color='royalblue', opacity=0.3), secondary_y=True)
 
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             showlegend=False,
             autosize=True
         )
@@ -120,10 +122,10 @@ class WeatherGraph:
         self.addTrace(fig, self.max_temps, 'Max Temp', 'firebrick')
 
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             showlegend=False,
             autosize=True
         )
@@ -149,10 +151,10 @@ class WeatherGraph:
                       '100-255cm', '#558d55', non_recent=True)
 
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             autosize=True
         )
 
@@ -180,10 +182,10 @@ class WeatherGraph:
                       '#558d55', non_recent=True)
 
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             autosize=True
         )
 
@@ -204,10 +206,10 @@ class WeatherGraph:
         self.addTrace(fig, self.rel_humid, 'Relative Humidity',
                       COLOR_bs_purple, non_recent=True)
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             autosize=True
         )
         fig.update_yaxes(title_text="Relative Humidity (%)")
@@ -223,10 +225,10 @@ class WeatherGraph:
         self.addTrace(fig, self.dew_point, 'Dew Point', COLOR_bs_blue,
                       non_recent=True)
         fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
-            plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            paper_bgcolor=COLOR_bg_color_cards_weather,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards_weather,
+            font_color=COLOR_TEXT,
             autosize=True
         )
         fig.update_yaxes(title_text="Dew Point (°C)")
@@ -329,9 +331,9 @@ class GraphTrial:
 
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
+            title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            font_color=COLOR_TEXT,
             title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
             legend=dict(
@@ -501,9 +503,9 @@ class GraphStat():
 
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
+            title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            font_color=COLOR_TEXT,
             title_text=self._graphData['title'] if self._showTitle else '',
             showlegend=showLegend,
             legend=dict(
@@ -551,9 +553,9 @@ class EfficacyGraph:
         figure = go.Figure(data=[trace])
         figure.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="white",
+            title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
-            font_color='white',
+            font_color=COLOR_TEXT,
             title_text=title_text,
             showlegend=showLegend,
             legend=dict(
@@ -622,9 +624,9 @@ class ProductCategoryGraph:
                               x=0.5, y=0.5, font_size=20,
                               showarrow=False)],
             paper_bgcolor=COLOR_bg_color_cards,
-            title_font_color="black",
+            title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
-            font_color='black',
+            font_color=COLOR_TEXT,
             title_text=title_text,
             showlegend=showLegend,
             legend=dict(

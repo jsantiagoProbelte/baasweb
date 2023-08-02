@@ -229,58 +229,9 @@ class ThesisApi(LoginRequiredMixin, DetailView):
                 'detail': detail}
 
 
-class TreatmentThesisFormLayout(FormHelper):
-    def __init__(self, thesisName):
-        super().__init__()
-        title = 'Add treatment to thesis [{}]'.format(thesisName)
-        self.add_layout(Layout(Div(
-            HTML(title), css_class="h3 mt-4"),
-            Div(Field('product', css_class='mb-3'),
-                Field('treatment', css_class='mb-3'),
-                FormActions(
-                    Submit('submit', 'Add', css_class="btn btn-info"),
-                    css_class='text-sm-end'),
-                css_class="card-body-baas mt-2")
-            ))
-
-
-class TreatmentThesisForm(forms.ModelForm):
-    class Meta:
-        model = TreatmentThesis
-        fields = ('treatment', )
-
-    def __init__(self, *args, **kwargs):
-        super(TreatmentThesisForm, self).__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all(
-            ).order_by('name')
-        listt = Treatment.objects.all().order_by(
-            'batch__product_variant__product__name',
-            'batch__product_variant__name',
-            'batch__name',
-            'rate')
-        self.fields['treatment'].queryset = listt
-
-
 class TreatmentThesisSetView(LoginRequiredMixin, View):
     model = TreatmentThesis
     template_name = 'trialapp/treatment_select.html'
-
-    def get_form(self, form_class=TreatmentThesisForm):
-        form = super().get_form(form_class)
-        thesisName = Thesis.objects.get(id=self.kwargs['thesis_id'])
-        form.helper = TreatmentThesisFormLayout(thesisName)
-        return form
-
-    def form_valid(self, form):
-        if form.is_valid():
-            thesis_id = self.kwargs["thesis_id"]
-            treatmentThesis = form.instance
-            treatmentThesis.thesis_id = thesis_id
-            treatmentThesis.save()
-            return HttpResponseRedirect(self.get_success_url(thesis_id))
-
-    def get_success_url(self, thesis_id):
-        return reverse('thesis_api', kwargs={'pk': thesis_id})
 
     # see generateDataPointId
     # 3 thing can happen here:
