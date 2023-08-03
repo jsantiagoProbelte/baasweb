@@ -26,8 +26,10 @@
 :root{
   --bs-text-color: ##333;
   --bs-text-color-table: ##333;
-  --custom-bg-color: #F7F7F7; /*rgba(3,53,104,0.05);*/
+  --custom-bg-color: #F9F9F9; /*rgba(3,53,104,0.05);*/
   --custom-lines: #e1e1e1;
+  --custom-table-borders: #E7E7E7;
+  --custom-bg-focus: #fff;
   --custom-bg-color-cards:#fff;
   --bs-body-background: #F7F7F7;
   --custom-brand-color: #a500a5;
@@ -549,8 +551,8 @@ table.data-table-longer thead th {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #fff;
-  background-color: #3e3f3a;
+  color: var(--bs-text-color);
+  background-color: var(--bs-body-background);
   background-clip: padding-box;
   /* border: 1px solid #ced4da; */
   -webkit-appearance: none;
@@ -559,6 +561,14 @@ table.data-table-longer thead th {
   border-radius: 0.25rem;
   float: right !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control-baas:focus {
+  color: var(--bs-text-color);
+  background-color: var(--custom-bg-focus);
+  border-color: #99aec4;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(50, 93, 136, 0.25);
 }
 
 .form-control-baas-longer {
