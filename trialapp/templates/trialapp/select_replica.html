@@ -1,10 +1,10 @@
 <form action="{% url 'set-replica-position' item.x item.y item.replica_id%}" method="POST">
 {% csrf_token %}
-    <select name='replica_position' class="form-control replica-position-selection no-border">
+    <select name='replica_position' class="form-select replica-position-selection no-border">
         {% if item.name == "-" %}
-            <option value selected>.....</option>
+            <option value selected>Choose ...</option>
         {% else %}
-            <option value>.....</option>
+            <option value>Choose ...</option>
         {% endif %}
         {% for selectOption in selectOptions%}
             {% if selectOption.value == item.replica_id %}

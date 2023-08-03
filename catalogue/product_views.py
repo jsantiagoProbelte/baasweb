@@ -6,7 +6,7 @@ from catalogue.models import Product, Batch, Treatment, ProductVariant, \
 from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
-from trialapp.filter_helpers import TrialFilterHelper
+from trialapp.filter_helpers import TrialFilterHelper, BaaSView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial, ProductCategoryGraph
@@ -121,6 +121,8 @@ class ProductListView(LoginRequiredMixin, FilterView):
         return {'object_list': new_list,
                 'num_products': len(objectList),
                 'trialfilter': fHelper.getFilter(),
+                'groupbyfilter': BaaSView.groupByOptions(),
+                'groupby': BaaSView.PRODUCT,
                 'num_trials': num_trials,
                 'graphCategories': graphCategories,
                 'extra_params': fHelper.generateParamUrl(),

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import assessment_views, fieldtrial_views, thesis_views, data_views, \
-    application_views
+    application_views, filter_helpers
 import baaswebapp.meteo_api as meteo_api
 
 urlpatterns = [
@@ -109,5 +109,9 @@ urlpatterns = [
     path(
         'meteo_api/<int:field_trial_id>/',
         meteo_api.MeteoApi.as_view(),
-        name='meteo_api')
+        name='meteo_api'),
+    # BaaS-Views
+    path('baasview', filter_helpers.BaaSView.as_view(), name='baasview')
+
+
 ]

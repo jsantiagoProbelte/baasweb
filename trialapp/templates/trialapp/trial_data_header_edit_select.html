@@ -7,7 +7,7 @@
           class='form-header-input-template'  method="POST">
         {% csrf_token %}
         <select id="assessment-input-{{itemHeader.name}}-{{itemHeader.id}}" name='{{itemHeader.name}}' 
-                class="form-control no-border assessment-input-form">
+                class="form-select no-border assessment-input-form">
           {% if currentValue == "" %}
               <option value selected>.....</option>
           {% else %}
