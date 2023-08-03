@@ -307,7 +307,7 @@ tfoot,
 tr,
 td,
 th {
-  border-color: inherit;
+  border-color: pink;
   border-style: solid;
   border-width: 0;
 }

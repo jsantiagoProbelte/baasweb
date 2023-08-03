@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="row mt-3">
-    <div class="col-md-9">
-        <div class="card card-body-baas">
+<div class="row ms-3 me-3">
+    <div class="col-md-9 col-sm-12">
+        <div class="card card-body-baas mt-3">
         <table class="table">
             <thead>
                 <tr><th>PRODUCT</th><th>PRODUCT TYPE</th><th>Active Substance</th><th>Efficacy Range</th>
@@ -31,9 +31,9 @@
         </table>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-12">
         {% include "baaswebapp/two_boxes.html" with left_text='products' right_text='trials' left_number=num_products right_rumber=num_trials %}
-        <div class="card card-body-baas mt-3 ms-3 me-3">
+        <div class="card card-body-baas mt-3">
             {{graphCategories|safe}}
         </div>
     </div>
