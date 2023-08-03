@@ -6,6 +6,10 @@ import baaswebapp.meteo_api as meteo_api
 urlpatterns = [
     # Field Trials urls
     path(
+        'trials',
+        filter_helpers.TrialListView.as_view(),
+        name='trial-list'),
+    path(
         'fieldtrials',
         fieldtrial_views.FieldTrialListView.as_view(),
         name='fieldtrial-list'),

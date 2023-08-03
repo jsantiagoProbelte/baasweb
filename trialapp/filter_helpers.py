@@ -5,6 +5,9 @@ from catalogue.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.http import HttpResponseRedirect
+from django_filters.views import FilterView
+from baaswebapp.models import ModelHelpers
+from baaswebapp.graphs import ProductCategoryGraph
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -45,7 +48,10 @@ class TrialFilterHelper:
 
     def filter(self):
         q_objects = self.prepareFilter()
-        self.getTrialList(q_objects)
+        self.filterTrials(q_objects)
+
+    def getTrials(self):
+        return self._trials
 
     def getClsObjects(self, cls):
         if len(self._attributes) > 0:
@@ -62,7 +68,7 @@ class TrialFilterHelper:
         value = self._attributes.get(label, None)
         return None if value == '' else value
 
-    def getTrialList(self, filter):
+    def filterTrials(self, filter):
         self._trials = FieldTrial.objects.filter(filter)
 
     def prepareFilter(self):
@@ -154,7 +160,7 @@ class BaaSView(LoginRequiredMixin, View):
     GROUP_BY = {PRODUCT: ('Product', 'products'),
                 CROP: ('Crop', 'products'),
                 PLAGUE: ('Plague', 'products'),
-                TRIALS: ('Ungrouped', 'fieldtrials')}
+                TRIALS: ('Ungrouped', 'trials')}
 
     @staticmethod
     def groupByOptions():
@@ -166,3 +172,50 @@ class BaaSView(LoginRequiredMixin, View):
         groupbyTag = request.GET.get('groupby', None)
         redirectTuple = BaaSView.GROUP_BY.get(groupbyTag, (0, 'product'))
         return HttpResponseRedirect(redirectTuple[1])
+
+
+class TrialListView(LoginRequiredMixin, FilterView):
+    model = FieldTrial
+    paginate_by = 100  # if pagination is desired
+    login_url = '/login'
+    template_name = 'baaswebapp/baas_view_list.html'
+
+    def get_context_data(self, **kwargs):
+        new_list = []
+        fHelper = TrialFilterHelper(self.request.GET)
+        fHelper.filter()
+        objectList = fHelper.getTrials().order_by('-code')
+        num_trials = fHelper.countTrials()
+        countCategories = fHelper.countProductCategories()
+        graphCategories = ProductCategoryGraph.draw(countCategories)
+        products = set()
+        for item in objectList:
+            category = ModelHelpers.UNKNOWN
+            products.add(item.product.id)
+            if item.product.category:
+                category = item.product.category.name
+            description = f'{item.crop}'
+            if item.plague:
+                description += f' + {item.plague}'
+
+            new_list.append({
+                'code': item.code,
+                'description': description,
+                'location': item.location if item.location else '',
+                'active_substance': item.product.active_substance,
+                'product': item.product,
+                'category': category,
+                'color_category': TrialFilterHelper.colorCategory(category),
+                'efficacies': '??',
+                'date_range': item.initiation_date.year if item.initiation_date
+                              else '',
+                'trials': '',
+                'id': item.id})
+        return {'object_list': new_list,
+                'num_products': len(products),
+                'trialfilter': fHelper.getFilter(),
+                'groupbyfilter': BaaSView.groupByOptions(),
+                'groupby': BaaSView.TRIALS,
+                'num_trials': num_trials,
+                'graphCategories': graphCategories,
+                'extra_params': fHelper.generateParamUrl()}

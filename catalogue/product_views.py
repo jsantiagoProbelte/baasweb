@@ -93,7 +93,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
     model = Product
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
-    template_name = 'catalogue/product_list.html'
+    template_name = 'baaswebapp/baas_view_list.html'
 
     def get_context_data(self, **kwargs):
         new_list = []
@@ -115,7 +115,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'category': category,
                 'color_category': TrialFilterHelper.colorCategory(category),
                 'efficacies': '??',
-                'time_range': fHelper.getMinMaxYears(item),
+                'date_range': fHelper.getMinMaxYears(item),
                 'trials': trialsPerProduct.get(item.name, None),
                 'id': item.id})
         return {'object_list': new_list,
@@ -125,8 +125,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'groupby': BaaSView.PRODUCT,
                 'num_trials': num_trials,
                 'graphCategories': graphCategories,
-                'extra_params': fHelper.generateParamUrl(),
-                'titleList': '({}) Products'.format(len(objectList))}
+                'extra_params': fHelper.generateParamUrl()}
 
 
 class ProductApi(APIView):
