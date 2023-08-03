@@ -307,7 +307,7 @@ tfoot,
 tr,
 td,
 th {
-  border-color: pink;
+  border-color: var(--custom-table-borders); /*inherit;*/
   border-style: solid;
   border-width: 0;
 }
@@ -1898,7 +1898,7 @@ progress {
 }
 
 .table > :not(:last-child) > :last-child > * {
-  border-bottom-color: currentColor;
+  border-bottom-color: var(--custom-table-borders); /*currentColor;*/
 }
 
 .caption-top {
@@ -2136,7 +2136,7 @@ progress {
 
 .form-control:focus {
   color: var(--bs-text-color);
-  background-color: #3e3f3a;
+  background-color: var(--custom-bg-focus);
   border-color: #99aec4;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(50, 93, 136, 0.25);
