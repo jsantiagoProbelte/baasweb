@@ -2,6 +2,9 @@ from django.db.models import Q, Count, Min, Max
 import django_filters
 from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
+from django.http import HttpResponseRedirect
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -137,3 +140,29 @@ class TrialFilterHelper:
             return f'{min_year}'
 
         return f'{min_year}-{max_year}'
+
+
+class BaaSView(LoginRequiredMixin, View):
+    model = FieldTrial
+    template_name = 'trialapp/treatment_select.html'
+
+    PRODUCT = 'product'
+    CROP = 'crop'
+    PLAGUE = 'plague'
+    TRIALS = 'trials'
+    # value on select : (label on select , url )
+    GROUP_BY = {PRODUCT: ('Product', 'products'),
+                CROP: ('Crop', 'products'),
+                PLAGUE: ('Plague', 'products'),
+                TRIALS: ('Ungrouped', 'fieldtrials')}
+
+    @staticmethod
+    def groupByOptions():
+        return [{'value': item,
+                 'name': BaaSView.GROUP_BY[item][0]}
+                for item in BaaSView.GROUP_BY]
+
+    def get(self, request, *args, **kwargs):
+        groupbyTag = request.GET.get('groupby', None)
+        redirectTuple = BaaSView.GROUP_BY.get(groupbyTag, (0, 'product'))
+        return HttpResponseRedirect(redirectTuple[1])

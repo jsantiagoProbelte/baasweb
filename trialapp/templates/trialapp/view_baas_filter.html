@@ -1,0 +1,25 @@
+<div class="container-fluid" >
+    <form class="d-flex" method="GET" action="{% url 'baasview' %}">
+        <div class="input-group me-3 ">
+            <span class="input-group-text baas-box-shadow" id="basic-addon1">Group Trials by</span>
+            <select class="form-select me-2 baas-box-shadow" name="groupby" aria-describedby="basic-addon1">
+                {% for selectOption in groupbyfilter%}
+                    {% if selectOption.value == groupby %}
+                        <option value="{{selectOption.value}}" selected>{{selectOption.name}}</option>
+                    {% else %}
+                        <option value="{{selectOption.value}}">{{selectOption.name}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group me-3">
+            <span class="input-group-text baas-box-shadow" id="basic-addon2">&#128269; Search</span>
+            <input class="form-control me-2 baas-box-shadow" type="search" aria-label="Search" placeholder="i.e. product, code, crop, responsible" name="name" aria-describedby="basic-addon2">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text baas-box-shadow" id="basic-addon3">&#128197; Date</span>
+            <input class="form-control mydateinput me-2 baas-box-shadow" type="date" aria-label="Date"  name="date" aria-describedby="basic-addon3">
+        </div>
+        <button class="btn btn-outline-baas" type="submit">Filter</button>
+    </form>
+</div>

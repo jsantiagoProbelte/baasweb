@@ -6,7 +6,9 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="row ms-3 me-3">
+    {% include 'trialapp/view_baas_filter.html' with groupbyfilter=groupbyfilter groupby=groupby%}
     <div class="col-md-9 col-sm-12">
         <div class="card card-body-baas mt-3">
         <table class="table">
