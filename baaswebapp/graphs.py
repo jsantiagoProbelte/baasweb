@@ -41,6 +41,7 @@ COLOR_bg_color = '#282828'
 COLOR_bg_color_cards = '#fff'
 COLOR_TEXT = '#333'
 COLOR_bg_color_cards_weather = '#F5FFFF'
+COLOR_grid = '#f0f0f0'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_blue, COLOR_grey, COLOR_bio_morado,
@@ -103,8 +104,8 @@ class WeatherGraph:
             plot_bgcolor=COLOR_bg_color_cards_weather,
             font_color=COLOR_TEXT,
             showlegend=False,
-            autosize=True
-        )
+            autosize=True)
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_xaxes(title_text="Date")
         fig.update_yaxes(title_text="Precipitation Hours", secondary_y=False)
         fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=True)
@@ -129,7 +130,7 @@ class WeatherGraph:
             showlegend=False,
             autosize=True
         )
-
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_xaxes(title_text="Date")
         fig.update_yaxes(title_text="Temperatures (°C)")
 
@@ -157,7 +158,7 @@ class WeatherGraph:
             font_color=COLOR_TEXT,
             autosize=True
         )
-
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_xaxes(title_text="Date")
         fig.update_yaxes(title_text="Soil Temperatures (°C)")
 
@@ -188,7 +189,7 @@ class WeatherGraph:
             font_color=COLOR_TEXT,
             autosize=True
         )
-
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_xaxes(title_text="Date")
         fig.update_yaxes(title_text="Soil Moisture (m³/m³)")
 
@@ -212,6 +213,7 @@ class WeatherGraph:
             font_color=COLOR_TEXT,
             autosize=True
         )
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_yaxes(title_text="Relative Humidity (%)")
         fig.update_xaxes(title_text="Date")
         plotly_plot_obj = plot({'data': fig}, output_type='div')
@@ -231,6 +233,7 @@ class WeatherGraph:
             font_color=COLOR_TEXT,
             autosize=True
         )
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_yaxes(title_text="Dew Point (°C)")
         fig.update_xaxes(title_text="Date")
         plotly_plot_obj = plot({'data': fig}, output_type='div')
@@ -325,9 +328,11 @@ class GraphTrial:
         if orientation == 'v':
             xaxis_title = thisGraph['x_axis']
             yaxis_title = thisGraph['y_axis']
+            fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         else:
             xaxis_title = thisGraph['y_axis']
             yaxis_title = thisGraph['x_axis']
+            fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
 
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
@@ -497,9 +502,11 @@ class GraphStat():
         if self._orientation == 'v':
             xaxis_title = self._graphData['x_axis']
             yaxis_title = self._graphData['y_axis']
+            fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         else:
             xaxis_title = self._graphData['y_axis']
             yaxis_title = self._graphData['x_axis']
+            fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
 
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
@@ -568,7 +575,7 @@ class EfficacyGraph:
             yaxis_title=yaxis_title,
             barmode=barmode)
         figure.update_traces(textfont_size=20)
-
+        figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         plotly_plot_obj = plot({'data': figure}, output_type='div')
         return plotly_plot_obj
 
@@ -638,6 +645,6 @@ class ProductCategoryGraph:
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
         figure.update_traces(textfont_size=20)
-
+        figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         plotly_plot_obj = plot({'data': figure}, output_type='div')
         return plotly_plot_obj
