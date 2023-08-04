@@ -113,9 +113,9 @@ class ProductListView(LoginRequiredMixin, FilterView):
                 'name': item.name,
                 'active_substance': item.active_substance,
                 'category': category,
-                'color_category': TrialFilterHelper.colorCategory(category),
+                'color_category': TrialFilterHelper.colorProductType(category),
                 'efficacies': '??',
-                'date_range': fHelper.getMinMaxYears(item),
+                'date_range': fHelper.getMinMaxYears({'product': item}),
                 'trials': trialsPerProduct.get(item.name, None),
                 'id': item.id})
         return {'object_list': new_list,

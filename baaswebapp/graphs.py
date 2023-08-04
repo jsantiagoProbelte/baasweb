@@ -7,9 +7,13 @@ from plotly.subplots import make_subplots
 COLOR_main_color = '#a500a5'
 COLOR_red = '#ff6e73'
 COLOR_yellow = '#ffd26e'
+COLOR_estimulant = '#ffd26e'
 COLOR_green = '#92eeb9'
+COLOR_nutritional = '#92eeb9'
 COLOR_blue = '#00bdeb'
+COLOR_control = '#00bdeb'
 COLOR_grey = '#F0EEEB'
+COLOR_unknown = '#F0EEEB'
 COLOR_black = '#333333'
 COLOR_bio_morado = '#aa4ae4'
 COLOR_morado = '#a500a5'
@@ -581,19 +585,6 @@ class EfficacyGraph:
 
 
 class ProductCategoryGraph:
-    CATEGORY_COLORS = {
-        'Biofertilizer': COLOR_green,
-        'Fertilizer': COLOR_green,
-        'Bioestimulant': COLOR_yellow,
-        'Biocontrol': COLOR_blue,
-        'Biofungicide': COLOR_blue,
-        'Bionematicide': COLOR_blue,
-        'Bioherbicide': COLOR_blue,
-        'Fungicide': COLOR_blue,
-        'Nematicide': COLOR_blue,
-        'Herbicide': COLOR_blue,
-        'BIO': COLOR_bio_morado
-    }
 
     @staticmethod
     def draw(dictValues,
@@ -606,14 +597,14 @@ class ProductCategoryGraph:
         bios = 0
         totals = 0
         for key in dictValues:
-            value = dictValues[key]
+            value = dictValues[key]['value']
+            color = dictValues[key]['color']
             key = key if key else 'Undefined'
             totals += value
             if key and 'Bio' in key:
                 bios += value
             values.append(value)
-            colors.append(
-                ProductCategoryGraph.CATEGORY_COLORS.get(key, COLOR_bs_gray))
+            colors.append(color)
             labels.append(f'{value} {key}')
 
         # Create a bar trace

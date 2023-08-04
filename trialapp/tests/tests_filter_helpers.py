@@ -49,7 +49,8 @@ class TrialFilterTest(TestCase):
             lastYear = TrialFilterTest.FIRST_YEAR + totalCrops
             rangeYears = f'{firstYear}-{lastYear}'
             theProduct = Product.objects.get(id=productId)
-            self.assertEqual(fHelper.getMinMaxYears(theProduct), rangeYears)
+            self.assertEqual(fHelper.getMinMaxYears(
+                {'product': theProduct}), rangeYears)
 
     def test_cropfilter(self):
         # we are going to filter for 1 crop
@@ -74,34 +75,36 @@ class TrialFilterTest(TestCase):
             firstYear = TrialFilterTest.FIRST_YEAR + productId
             rangeYears = f'{firstYear}'
             theProduct = Product.objects.get(id=productId)
-            self.assertEqual(fHelper.getMinMaxYears(theProduct), rangeYears)
+            self.assertEqual(fHelper.getMinMaxYears(
+                {'product': theProduct}), rangeYears)
 
             # add unknown product
             otherP = Product.objects.create(name='whatever')
-            self.assertEqual(fHelper.getMinMaxYears(otherP), '-')
+            self.assertEqual(fHelper.getMinMaxYears(
+                {'product': otherP}), '-')
 
     def test_colors(self):
-        self.assertTrue(TrialFilterHelper.colorCategory('Biofertilizer'),
-                        'bs_nutritional')
-        self.assertTrue(TrialFilterHelper.colorCategory('Fertilizer'),
-                        'bs_nutritional')
-        self.assertTrue(TrialFilterHelper.colorCategory('Bioestimulant'),
-                        'bs_estimulant')
-        self.assertTrue(TrialFilterHelper.colorCategory('Biocontrol'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Biofungicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Bionematicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Bioherbicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Fungicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Nematicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('Herbicide'),
-                        'bs_control')
-        self.assertTrue(TrialFilterHelper.colorCategory('blabla'),
-                        'bs_category_unknown')
-        self.assertTrue(TrialFilterHelper.colorCategory(None),
-                        'bs_category_unknown')
+        self.assertTrue(TrialFilterHelper.colorProductType('Biofertilizer'),
+                        'bg-nutritional')
+        self.assertTrue(TrialFilterHelper.colorProductType('Fertilizer'),
+                        'bg-nutritional')
+        self.assertTrue(TrialFilterHelper.colorProductType('Bioestimulant'),
+                        'bg-estimulant')
+        self.assertTrue(TrialFilterHelper.colorProductType('Biocontrol'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Biofungicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Bionematicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Bioherbicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Fungicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Nematicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('Herbicide'),
+                        'bg-control')
+        self.assertTrue(TrialFilterHelper.colorProductType('blabla'),
+                        'bg-unknown')
+        self.assertTrue(TrialFilterHelper.colorProductType(None),
+                        'bg-unknown')

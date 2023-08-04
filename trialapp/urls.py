@@ -10,9 +10,9 @@ urlpatterns = [
         filter_helpers.TrialListView.as_view(),
         name='trial-list'),
     path(
-        'plagues',
-        filter_helpers.PlaguesListView.as_view(),
-        name='plagues-list'),
+        'crops',
+        filter_helpers.CropListView.as_view(),
+        name='crop-list'),
     path(
         'fieldtrials',
         fieldtrial_views.FieldTrialListView.as_view(),
