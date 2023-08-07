@@ -1,6 +1,6 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from baaswebapp.models import RateTypeUnit, ModelHelpers
+from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor, ProductCategory
 from trialapp.models import Crop, Plague, TreatmentThesis
@@ -31,6 +31,8 @@ class ProductFormLayout(FormHelper):
                 Field('active_substance', css_class='mb-3'),
                 Field('vendor', css_class='mb-3'),
                 Field('category', css_class='mb-3'),
+                Field('type_product', css_class='mb-3'),
+                Field('biological', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -40,7 +42,8 @@ class ProductFormLayout(FormHelper):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('name', 'vendor', 'category', 'active_substance')
+        fields = ('name', 'vendor', 'category', 'active_substance',
+                  'type_product', 'biological')
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -106,14 +109,12 @@ class ProductListView(LoginRequiredMixin, FilterView):
         graphCategories = ProductCategoryGraph.draw(countCategories)
         trialsPerProduct = fHelper.countBy('product__name')
         for item in objectList:
-            category = ModelHelpers.UNKNOWN
-            if item.category:
-                category = item.category.name
             new_list.append({
                 'name': item.name,
                 'active_substance': item.active_substance,
-                'category': category,
-                'color_category': TrialFilterHelper.colorProductType(category),
+                'type': item.nameType(),
+                'color_category': TrialFilterHelper.colorProductType(
+                    item.type_product),
                 'efficacies': '??',
                 'date_range': fHelper.getMinMaxYears({'product': item}),
                 'trials': trialsPerProduct.get(item.name, None),
@@ -313,7 +314,6 @@ class ProductApi(APIView):
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
-
         return render(request, template_name,
                       {'product': product,
                        'deleteProductForm': ProductDeleteView(),

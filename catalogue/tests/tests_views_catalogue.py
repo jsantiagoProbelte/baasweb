@@ -198,7 +198,8 @@ class ProductViewsTest(TestCase):
 
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
-                'category': 1}
+                'category': 1, 'biological': True,
+                'type_product': Product.PType.FUNGICIDE}
         request = self._apiFactory.post(
             'product-add',
             data=data)
