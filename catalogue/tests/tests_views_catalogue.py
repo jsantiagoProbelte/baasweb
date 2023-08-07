@@ -94,7 +94,7 @@ class ProductViewsTest(TestCase):
             field_trial=self._fieldTrials[0],
             crop_stage_majority=65+i) for i in range(1, 3)]
 
-    def test_trialapp_index(self):
+    def test_catalogue_index(self):
         request = self._apiFactory.get('product-list')
         self._apiFactory.setUser(request)
         response = ProductListView.as_view()(request)

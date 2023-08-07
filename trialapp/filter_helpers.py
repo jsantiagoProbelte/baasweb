@@ -94,7 +94,7 @@ class TrialFilterHelper:
         self._trials = FieldTrial.objects.filter(filter)
 
     def prepareFilter(self):
-        paramsReplyTemplate = TrialFilter.Meta.fields
+        paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)

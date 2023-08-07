@@ -190,7 +190,11 @@ class FieldTrial(ModelHelpers, models.Model):
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
             blocks=kwargs['blocks'])
-        trial.setCode(increment=False)
+        if 'code' in kwargs:
+            trial.code = kwargs['code']
+            trial.save()
+        else:
+            trial.setCode(increment=False)
         return trial
 
     def plantDensity(self):
