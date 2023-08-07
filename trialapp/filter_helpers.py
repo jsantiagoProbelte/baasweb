@@ -31,26 +31,22 @@ class TrialFilterHelper:
                    Crop: 'crop_id',
                    Plague: 'plague_id'}
 
-    NUTRITIONAL = 'Nutritional'
-    CONTROL = 'Control'
-    ESTIMULANT = 'Estimulant'
-    UNKNOWN = 'Unknown'
     COLOR_CATEGORY = {
-        NUTRITIONAL: 'bg-nutritional',
-        ESTIMULANT: 'bg-estimulant',
-        CONTROL: 'bg-control',
-        UNKNOWN: 'bg-unknown'}
+        Product.Category.NUTRITIONAL: 'bg-nutritional',
+        Product.Category.ESTIMULANT: 'bg-estimulant',
+        Product.Category.CONTROL: 'bg-control',
+        Product.Category.UNKNOWN: 'bg-unknown'}
     COLOR_CODE = {
         'bg-nutritional': COLOR_nutritional,
         'bg-estimulant': COLOR_estimulant,
         'bg-control': COLOR_control,
         'bg-unknown': COLOR_unknown}
 
-    LABEL_CATEGORY = {
-        NUTRITIONAL: 'nutritional',
-        ESTIMULANT: 'estimulant',
-        CONTROL: 'control',
-        UNKNOWN: 'unknown'}
+    # LABEL_CATEGORY = {
+    #     NUTRITIONAL: 'nutritional',
+    #     ESTIMULANT: 'estimulant',
+    #     CONTROL: 'control',
+    #     UNKNOWN: 'unknown'}
 
     # Add self.request.GET as attributes
     def __init__(self, attributes):
@@ -113,16 +109,17 @@ class TrialFilterHelper:
         return len(self._trials)
 
     def countProductCategories(self):
-        counts = self.countBy('product__category__name')
+        counts = self.countBy('product__type_product')
         countCategories = {}
         for productType in counts:
-            category = TrialFilterHelper.productCategory(productType)
-            if category not in countCategories:
+            category = Product.getCategory(productType)
+            label = category.label
+            if label not in countCategories:
                 color = TrialFilterHelper.colorCategory(category)
                 codeColor = TrialFilterHelper.COLOR_CODE[color]
-                countCategories[category] = {'value': 0,
-                                             'color': codeColor}
-            countCategories[category]['value'] += counts[productType]
+                countCategories[label] = {'value': 0,
+                                          'color': codeColor}
+            countCategories[label]['value'] += counts[productType]
         return countCategories
 
     def countBy(self, param):
@@ -147,7 +144,7 @@ class TrialFilterHelper:
         productTypes = Product.objects.filter(
             id__in=productIds).values('id', 'category__name')
         productCategories = {item['id']:
-                             TrialFilterHelper.productCategory(
+                             Product.getCategory(
                                 item['category__name'])
                              for item in productTypes}
         counts = {}
@@ -178,22 +175,8 @@ class TrialFilterHelper:
             productCategory, 'bg-unknown')
 
     @staticmethod
-    def productCategory(productType):
-        if productType in ['Biofertilizer', 'Fertilizer']:
-            return TrialFilterHelper.NUTRITIONAL
-        elif productType in ['Bioestimulant']:
-            return TrialFilterHelper.ESTIMULANT
-        elif productType in [
-                'Biocontrol', 'Biofungicide', 'Bionematicide',
-                'Bioherbicide', 'Fungicide', 'Nematicide',
-                'Herbicide']:
-            return TrialFilterHelper.CONTROL
-        else:
-            return TrialFilterHelper.UNKNOWN
-
-    @staticmethod
     def colorProductType(productType):
-        category = TrialFilterHelper.productCategory(productType)
+        category = Product.getCategory(productType)
         return TrialFilterHelper.colorCategory(category)
 
     def getMinMaxYears(self, param):
@@ -273,7 +256,7 @@ class TrialListView(LoginRequiredMixin, FilterView):
                 'description': description,
                 'location': item.location if item.location else '',
                 'active_substance': item.product.active_substance,
-                'product': item.product,
+                'product': item.product.nameType(),
                 'category': category,
                 'color_category': TrialFilterHelper.colorProductType(category),
                 'efficacies': '??',
@@ -300,7 +283,7 @@ class CropListView(LoginRequiredMixin, FilterView):
     def prepareBar(self, productInfo, cropId):
         counts = productInfo.get(cropId, None)
         if not counts:
-            vals = {TrialFilterHelper.LABEL_CATEGORY[category]: 0 for category
+            vals = {category: 0 for category
                     in TrialFilterHelper.COLOR_CATEGORY}
             return 0, vals
         total = counts['total']
@@ -308,7 +291,7 @@ class CropListView(LoginRequiredMixin, FilterView):
         for category in TrialFilterHelper.COLOR_CATEGORY:
             value = counts.get(category, 0)
             percentage = int(round(value * 100 / total, 0))
-            label = TrialFilterHelper.LABEL_CATEGORY[category]
+            label = category
             countCategories[label] = round(percentage, 0)
         return total, countCategories
 

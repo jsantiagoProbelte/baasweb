@@ -66,7 +66,7 @@ class TrialFilterTest(TestCase):
             counts, countProductIds = fHelper.countProductCategoriesAndCrop()
             self.assertEqual(countProductIds, totalProducts)
             self.assertEqual(len(counts), totalCrops)
-            self.assertEqual(counts[1][TrialFilterHelper.UNKNOWN],
+            self.assertEqual(counts[1][Product.Category.UNKNOWN],
                              totalProducts)
 
     def test_cropfilter(self):
@@ -105,7 +105,7 @@ class TrialFilterTest(TestCase):
             counts, countProductIds = fHelper.countProductCategoriesAndCrop()
             self.assertEqual(countProductIds, expectedProducts)
             self.assertEqual(len(counts), 1)
-            self.assertEqual(counts[cropId][TrialFilterHelper.UNKNOWN],
+            self.assertEqual(counts[cropId][Product.Category.UNKNOWN],
                              expectedProducts)
 
     def test_namefilter(self):
