@@ -107,6 +107,11 @@ class TrialFilterHelper:
     def countTrials(self):
         return len(self._trials)
 
+    def graphProductCategories(self):
+        countCategories = self.countProductCategories()
+        bios = self.countBios()
+        return ProductCategoryGraph.draw(countCategories, bios)
+
     def countProductCategories(self):
         counts = self.countBy('product__type_product')
         countCategories = {}
@@ -120,6 +125,10 @@ class TrialFilterHelper:
                                           'color': codeColor}
             countCategories[label]['value'] += counts[productType]
         return countCategories
+
+    def countBios(self):
+        bios = self.countBy('product__biological')
+        return bios.get(True, 0)
 
     def countProducts(self):
         return len(list(self.countBy('product', True).keys()))
@@ -255,8 +264,7 @@ class TrialListView(LoginRequiredMixin, FilterView):
         fHelper.filter()
         objectList = fHelper.getTrials().order_by('-code')
         num_trials = fHelper.countTrials()
-        countCategories = fHelper.countProductCategories()
-        graphCategories = ProductCategoryGraph.draw(countCategories)
+        graphCategories = fHelper.graphProductCategories()
         products = set()
         for item in objectList:
             products.add(item.product.id)
@@ -316,8 +324,7 @@ class CropListView(LoginRequiredMixin, FilterView):
         fHelper.filter()
         objectList = fHelper.getClsObjects(Crop).order_by('name')
         num_trials = fHelper.countTrials()
-        countCategories = fHelper.countProductCategories()
-        graphCategories = ProductCategoryGraph.draw(countCategories)
+        graphCategories = fHelper.graphProductCategories()
         trialsPerCrop = fHelper.countBy('crop__name')
         productInfo, totalProducts = fHelper.countProductCategoriesAndCrop()
         for item in objectList:

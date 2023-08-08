@@ -9,7 +9,7 @@ from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
 from trialapp.filter_helpers import TrialFilterHelper, BaaSView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from baaswebapp.graphs import GraphTrial, ProductCategoryGraph
+from baaswebapp.graphs import GraphTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
@@ -102,8 +102,7 @@ class ProductListView(LoginRequiredMixin, FilterView):
         objectList = fHelper.getClsObjects(Product).order_by(
             'vendor__id', 'name')
         num_trials = fHelper.countTrials()
-        countCategories = fHelper.countProductCategories()
-        graphCategories = ProductCategoryGraph.draw(countCategories)
+        graphCategories = fHelper.graphProductCategories()
         trialsPerProduct = fHelper.countBy('product__name')
         for item in objectList:
             new_list.append({
