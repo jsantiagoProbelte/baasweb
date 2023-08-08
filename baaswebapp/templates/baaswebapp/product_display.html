@@ -1,0 +1,12 @@
+<td>
+<table>
+    <tr><td>
+        <span class='badge {{item.color_category}} rounded-pill fs-6'>{{item.type_product}}</span>
+    </td><td>
+        {% if item.biological %}
+            <div class='dot-bio'></div>
+        {% endif %}
+    </td></tr>
+</table>
+</td>
+<td>{{item.active_substance}}</td>

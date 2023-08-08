@@ -109,7 +109,8 @@ class ProductListView(LoginRequiredMixin, FilterView):
             new_list.append({
                 'name': item.name,
                 'active_substance': item.active_substance,
-                'type': item.nameType(),
+                'type_product': item.nameType(),
+                'biological': item.biological,
                 'color_category': TrialFilterHelper.colorProductType(
                     item.type_product),
                 'efficacies': '??',

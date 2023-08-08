@@ -9,8 +9,7 @@
         <td><a class="btn btn-light rounded-pill" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a></td>
         <td><p>{{item.description}}</p>{{item.location}}</td>
         <td><strong>{{item.product}}</strong></td>
-        <td><span class='badge {{item.color_category}} rounded-pill fs-6'>{{item.type_product}}</span></td>
-        <td>{{item.active_substance}}</td> 
+        {% include 'baaswebapp/product_display.html' %} 
         <td>{{item.efficacies}}</td>
         <td>{{item.date_range}}</td>
     </tr>
