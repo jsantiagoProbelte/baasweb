@@ -142,10 +142,10 @@ class TrialFilterHelper:
             productIds.add(trial.product.id)
         # Find categories for products
         productTypes = Product.objects.filter(
-            id__in=productIds).values('id', 'category__name')
+            id__in=productIds).values('id', 'type_product')
         productCategories = {item['id']:
                              Product.getCategory(
-                                item['category__name'])
+                                item['type_product'])
                              for item in productTypes}
         counts = {}
         for cropId in cropProducts:
@@ -243,10 +243,7 @@ class TrialListView(LoginRequiredMixin, FilterView):
         graphCategories = ProductCategoryGraph.draw(countCategories)
         products = set()
         for item in objectList:
-            category = ModelHelpers.UNKNOWN
             products.add(item.product.id)
-            if item.product.category:
-                category = item.product.category.name
             description = f'{item.crop}'
             if item.plague:
                 description += f' + {item.plague}'
@@ -256,9 +253,10 @@ class TrialListView(LoginRequiredMixin, FilterView):
                 'description': description,
                 'location': item.location if item.location else '',
                 'active_substance': item.product.active_substance,
-                'product': item.product.nameType(),
-                'category': category,
-                'color_category': TrialFilterHelper.colorProductType(category),
+                'product': item.product,
+                'type_product': item.product.nameType(),
+                'color_category': TrialFilterHelper.colorProductType(
+                    item.product.type_product),
                 'efficacies': '??',
                 'date_range': item.initiation_date.year if item.initiation_date
                               else '',

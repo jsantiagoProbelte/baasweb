@@ -30,7 +30,6 @@ class ProductFormLayout(FormHelper):
             Div(Field('name', css_class='mb-3'),
                 Field('active_substance', css_class='mb-3'),
                 Field('vendor', css_class='mb-3'),
-                Field('category', css_class='mb-3'),
                 Field('type_product', css_class='mb-3'),
                 Field('biological', css_class='mb-3'),
                 FormActions(
@@ -42,7 +41,7 @@ class ProductFormLayout(FormHelper):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('name', 'vendor', 'category', 'active_substance',
+        fields = ('name', 'vendor', 'active_substance',
                   'type_product', 'biological')
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +49,6 @@ class ProductForm(forms.ModelForm):
         vendors = Vendor.objects.all().order_by('name')
         self.fields['vendor'].queryset = vendors
         categories = ProductCategory.objects.all().order_by('name')
-        self.fields['category'].queryset = categories
         self.fields['active_substance'].required = False
 
 

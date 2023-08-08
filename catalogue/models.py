@@ -25,8 +25,6 @@ class RateUnit(ModelHelpers, models.Model):
 class Product(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
-    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE,
-                                 null=True)
     active_substance = models.CharField(max_length=100, null=True)
 
     class PType(models.TextChoices):
