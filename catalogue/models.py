@@ -10,10 +10,6 @@ class Vendor(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class ProductCategory(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-
-
 class RateUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 

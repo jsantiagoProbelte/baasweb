@@ -2,7 +2,7 @@ from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
-    Vendor, ProductCategory
+    Vendor
 from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
