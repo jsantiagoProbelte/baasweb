@@ -252,13 +252,10 @@ class TrialListView(LoginRequiredMixin, FilterView):
         products = set()
         for item in objectList:
             products.add(item.product.id)
-            description = f'{item.crop}'
-            if item.plague:
-                description += f' + {item.plague}'
 
             new_list.append({
                 'code': item.code,
-                'description': description,
+                'description': item.getDescription(),
                 'location': item.location if item.location else '',
                 'active_substance': item.product.active_substance,
                 'product': item.product,
