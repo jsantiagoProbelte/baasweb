@@ -11,6 +11,10 @@
                 {% render_field trialfilter.form.crop class="form-select rounded-pill baas-box-shadow" %}
             </div>
             <div class="form-group col-md-3 ">
+                {{ trialfilter.form.product__type_product.label_tag }}
+                {% render_field trialfilter.form.product__type_product class="form-select rounded-pill baas-box-shadow" %}
+            </div>
+            <div class="form-group col-md-3 ">
                 {{ trialfilter.form.plague.label_tag }}
                 {% render_field trialfilter.form.plague class="form-select rounded-pill baas-box-shadow" %}
             </div>

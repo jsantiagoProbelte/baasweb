@@ -18,7 +18,7 @@ class TrialFilter(django_filters.FilterSet):
 
     class Meta:
         model = FieldTrial
-        fields = ['crop', 'plague']
+        fields = ['crop', 'plague', 'product__type_product']
 
 
 class TrialFilterHelper:
@@ -100,6 +100,8 @@ class TrialFilterHelper:
                 q_name |= Q(code__icontains=paramId)
                 q_name |= Q(product__active_substance=paramId)
                 q_objects &= q_name
+            elif paramIdName in ['product__type_product'] and paramId:
+                q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
         return q_objects
@@ -152,8 +154,7 @@ class TrialFilterHelper:
         productTypes = Product.objects.filter(
             id__in=productIds).values('id', 'type_product')
         productCategories = {item['id']:
-                             Product.getCategory(
-                                item['type_product'])
+                             Product.getCategory(item['type_product'])
                              for item in productTypes}
         counts = {}
         for cropId in cropProducts:
