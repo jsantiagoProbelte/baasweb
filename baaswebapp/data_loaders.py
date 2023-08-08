@@ -4,7 +4,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
 from baaswebapp.models import ModelHelpers, RateTypeUnit
-from catalogue.models import Product, ProductCategory, Vendor, Batch, \
+from catalogue.models import Product, Vendor, Batch, \
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, TrialStatus, ApplicationMode, \
                             Objective, Plague, Crop, FieldTrial, \
@@ -37,9 +37,6 @@ class TrialDbInitialLoader:
             CultivationMethod: [
                 ModelHelpers.UNKNOWN, 'Open Air', 'Greenhouse', 'Netting'],
             RateUnit: ['Kg/hectare', 'Liters/hectare', DEFAULT, 'ml/l'],
-            ProductCategory: [
-                'Fertilizers', 'Pest Control', 'Herbicide', 'Fungicide',
-                'Other'],
             Vendor: [
                 'Probelte', 'Syngenta', 'BASF', 'Corteva']
         }
