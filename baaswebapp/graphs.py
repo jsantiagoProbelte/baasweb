@@ -46,6 +46,7 @@ COLOR_bg_color_cards = '#fff'
 COLOR_TEXT = '#333'
 COLOR_bg_color_cards_weather = '#F5FFFF'
 COLOR_grid = '#f0f0f0'
+COLOR_bio = '#aa4ae4'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_blue, COLOR_grey, COLOR_bio_morado,
@@ -587,47 +588,70 @@ class EfficacyGraph:
 class ProductCategoryGraph:
 
     @staticmethod
-    def draw(dictValues,
+    def draw(dictValues, bios=3,
              title_text='Trials by product type', showLegend=True,
              yaxis_title='trials', xaxis_title='Trials'):
 
         colors = []
         values = []
         labels = []
-        bios = 0
         totals = 0
         for key in dictValues:
             value = dictValues[key]['value']
             color = dictValues[key]['color']
             key = key if key else 'Undefined'
             totals += value
-            if key and 'Bio' in key:
-                bios += value
             values.append(value)
             colors.append(color)
             labels.append(f'{value} {key}')
 
         # Create a bar trace
-        trace = go.Pie(
+        trace_outer = go.Pie(
             labels=labels,
             values=values,
             marker_colors=colors,
-            hole=.8)
+            textinfo='none',  # Do not display labels on the chart
+            hoverinfo='label',
+            hole=0.9)
+
+        trace_center = go.Pie(
+            labels=[' '],
+            values=[totals],
+            marker_colors=[COLOR_bs_white],
+            textinfo='none',
+            hole=0.85)
+
+        trace_inner = go.Pie(
+            labels=[' ', f'{bios} Bio'],
+            values=[totals-bios, bios],
+            marker_colors=[COLOR_bs_white, COLOR_bio],
+            textinfo='none',  # Do not display labels on the chart
+            hoverinfo='label',
+            hole=0.8)
 
         # Create the figure
-        figure = go.Figure(data=[trace])
+        figure = go.Figure(data=[trace_inner, trace_center, trace_outer])
+
+        annotations = [
+            dict(text='trials',
+                 x=0.5, y=0.3, font_size=20,
+                 font_color='grey',
+                 showarrow=False),
+            dict(text=f'{totals}',
+                 x=0.5, y=0.5, font_size=64,
+                 showarrow=False)]
 
         figure.update_layout(
-            annotations=[dict(text=f'{totals} trials',
-                              x=0.5, y=0.5, font_size=20,
-                              showarrow=False)],
+            annotations=annotations,
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
+            font_size=20,
             title_text=title_text,
             showlegend=showLegend,
             legend=dict(
+                font_size=14,
                 orientation="h",
                 yanchor="top",
                 y=0,
