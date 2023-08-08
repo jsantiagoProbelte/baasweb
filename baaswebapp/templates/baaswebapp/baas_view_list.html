@@ -1,6 +1,13 @@
 {% extends "baaswebapp/layout.html" %} {% load widget_tweaks %} {% block
-topbaasheader %} {% include "baaswebapp/baas_view_filter_top.html" with
-trialfilter=trialfilter %} {% endblock %} {% block content %}
+topbaastitle %}
+<div class="vertical-line-right vertical-line-left">
+  <a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}"
+    >BaaS Copilot</a
+  >
+</div>
+{% endblock %} {% block topbaasheader %} {% include
+"baaswebapp/baas_view_filter_top.html" with trialfilter=trialfilter %} {%
+endblock %} {% block content %}
 
 <div class="row ms-3 me-3">
   {% include 'baaswebapp/baas_view_filter.html' with groupbyfilter=groupbyfilter
