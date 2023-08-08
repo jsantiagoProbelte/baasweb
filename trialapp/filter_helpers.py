@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.http import HttpResponseRedirect
 from django_filters.views import FilterView
-from baaswebapp.models import ModelHelpers
 from baaswebapp.graphs import ProductCategoryGraph, COLOR_control, \
     COLOR_estimulant, COLOR_nutritional, COLOR_unknown
 
