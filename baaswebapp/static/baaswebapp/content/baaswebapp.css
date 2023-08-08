@@ -43,6 +43,7 @@
   --custom-grey: #F0EEEB;
   --custom-black: #333333;
   --custom-bio-morado: #aa4ae4;
+  --custom-bio: #aa4ae4;
   --custom-morado: #a500a5;
   --custom-violeta: #cfc9ff;
 }
@@ -211,6 +212,13 @@
   border-color: var(--custom-baas);
   background-color: var(--custom-bg-color);
   border-radius: 50rem !important;
+}
+
+.dot-bio {
+  width: 20px;
+  height: 20px;
+  background-color: var(--custom-bio); /* Change color as desired */
+  border-radius: 50%;
 }
 
 .vertical-line-right {

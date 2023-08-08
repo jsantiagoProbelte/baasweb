@@ -254,6 +254,7 @@ class TrialListView(LoginRequiredMixin, FilterView):
                 'active_substance': item.product.active_substance,
                 'product': item.product,
                 'type_product': item.product.nameType(),
+                'biological': item.product.biological,
                 'color_category': TrialFilterHelper.colorProductType(
                     item.product.type_product),
                 'efficacies': '??',
