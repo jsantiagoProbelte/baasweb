@@ -48,7 +48,6 @@ class ProductForm(forms.ModelForm):
         super(ProductForm, self).__init__(*args, **kwargs)
         vendors = Vendor.objects.all().order_by('name')
         self.fields['vendor'].queryset = vendors
-        categories = ProductCategory.objects.all().order_by('name')
         self.fields['active_substance'].required = False
 
 
