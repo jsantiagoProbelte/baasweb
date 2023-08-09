@@ -1,0 +1,25 @@
+<table class="table">
+    <thead>
+        <tr><th>PLAGUE</th><th>PRODUCTS</th><th>Efficacy Range</th><th>Trials Date</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for item in object_list %}
+    <tr id="item-{{item.id}}">
+        <td><b>{{item.name}}</b></td>
+        <td>
+            <div style="height: 100%; width:100%">
+                <div class="progress" style="height: 20px;">
+                    <div class="progress-bar bg-success" style="width: {{item.progress}}%" role="progressbar" aria-valuenow={{item.product_count}} aria-valuemin="0" aria-valuemax={{num_products}}>{{item.product_count}}</div>
+                </div>
+            </div>
+        </td>
+        <td>??</td>     
+        <td><b>{{item.date_range}}</b></td>
+        <td><a href="#" class='badge badge-pill rounded-pill bg-secondary'>Trials {{item.trial_count}} &#8594;</a></td>
+    </tr>
+    </tbody>
+    {% empty %}
+        <p>No Products yet.</p>
+    {% endfor %}
+</table>
+
