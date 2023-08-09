@@ -761,3 +761,8 @@ table.data-table-longer thead th {
 .sidebar-item:hover {
   color: #000;
 }
+
+.menu-icon {
+  font-size: 24px; /* Adjust the size as needed */
+  color: var(--custom-baas);    /* Adjust the color as needed */
+}
