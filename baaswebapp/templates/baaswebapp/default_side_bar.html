@@ -1,0 +1,63 @@
+<a class="btn btn-light ms-4" data-bs-toggle="offcanvas" href="#offcanvasSideBar" role="button" aria-controls="offcanvasSideBar">
+  <span class="navbar-toggler-icon"></span>
+</a>
+
+<div class="offcanvas offcanvas-start"  tabindex="-1" id="offcanvasSideBar" aria-labelledby="offcanvasSideBarLabel">
+      <br><br><br><br><br><br>
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title txt-brand" id="offcanvasExampleLabel">BaaS Copilot</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+      <ul class="list-unstyled mb-0 py-3 pt-md-1">
+        
+        <li class="mb-1">
+          <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#browse-collapse" aria-expanded="false">
+            Browse list
+          </button>
+  
+          <div class="collapse" id="browse-collapse">
+            <ul class="list-unstyled fw-normal pb-1 small">    
+              <li><a class="d-inline-flex align-items-center nav-link sidebar-item" href="{% url 'product-list' %}">Product</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'crop-list' %}">Crops</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'trial-list' %}">Trials</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-list' %}">Lab Trials</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="mb-1">
+          <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#add-items-collapse" aria-expanded="false">
+            Add items
+          </button>
+  
+          <div class="collapse" id="add-items-collapse">
+            <ul class="list-unstyled fw-normal pb-1 small">
+              <li><a class="d-inline-flex align-items-center sidebar-item " href="{% url 'fieldtrial-add' %}">new trial</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'product-add' %}">new product</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-add' %}">new lab trial</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="mb-1">
+          <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#customize-collapse" aria-expanded="false">
+            Config
+          </button>
+  
+          <div class="collapse" id="customize-collapse">
+            <ul class="list-unstyled fw-normal pb-1 small">    
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'statsdata' %}">Stats</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'thesis_quality_panel' %}">Correct thesis</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'admin:index' %}">Configuration</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="mb-1">
+          <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
+            <input class="form-control me-sm-2" type="text" placeholder="name, code, responsible" name="name">
+            <button class="btn btn-baas" type="submit">Search</button>
+          </form>
+        </li>
+      </ul>
+      </div>
+</div>
+

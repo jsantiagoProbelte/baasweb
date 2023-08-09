@@ -748,3 +748,16 @@ table.data-table-longer thead th {
   font-weight: bold;
   margin-bottom: 0rem !important;
 }
+
+.sidebar-item {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  color: var(--bs-text-color);
+  text-decoration: none;
+  padding: 0.25rem 1rem;
+}
+
+.sidebar-item:hover {
+  color: #000;
+}
