@@ -9,6 +9,9 @@ urlpatterns = [
         'trials',
         filter_helpers.TrialListView.as_view(),
         name='trial-list'),
+    path('products',
+         filter_helpers.ProductListView.as_view(),
+         name='product-list'),
     path(
         'crops',
         filter_helpers.CropListView.as_view(),

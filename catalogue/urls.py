@@ -3,9 +3,6 @@ from . import product_views
 
 urlpatterns = [
     # Field Trials urls
-    path('products',
-         product_views.ProductListView.as_view(),
-         name='product-list'),
     path('product/<int:product_id>/',
          product_views.ProductApi.as_view(),
          name='product_api'),
