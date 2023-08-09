@@ -95,7 +95,7 @@
 }
 
 .bg-baas-alt{
-  background: var(--custom-baas-alt );
+  background-color: var(--custom-baas-alt ) !important;
 }
 
 .bg-nutritional{
@@ -428,12 +428,21 @@
 
 .card-body-baas {
   background-color:var(--custom-bg-color-cards);
-  border-radius:10px !important;
+  border-radius: 5px !important;
   padding:20px;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   border: 1px solid #E7E7E7 !important;
-  box-shadow: 0px 0px 4px 0px #00000026;
+  box-shadow: 0px 0px 4px 0px #00000015;
+}
+
+.card-baas-alt {
+  background-color: #efedff;
+  border-radius:2px !important;
+  border: 1px solid #efedff !important;
+  padding:20px;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .list-group-item-baas {
@@ -687,4 +696,55 @@ table.data-table-longer thead th {
   background-color: #f8f5f0;
   border-color: #dfd7ca;
   color: #dfd7ca;
+}
+
+.txt-regular-12 {
+  font-size: 12px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-regular-13 {
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-regular-14 {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-bold-22 {
+  font-size: 22px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
+
+.txt-open-semibold-14 {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-semibold-15 {
+  font-size: 15px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-encode-20 {
+  font-size: 20px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+}
+
+.txt-encode-14 {
+  font-size: 14px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
 }
