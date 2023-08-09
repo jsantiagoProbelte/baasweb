@@ -304,7 +304,8 @@ class CropListView(BaaSView):
         for category in TrialFilterHelper.COLOR_CATEGORY:
             value = counts.get(category, 0)
             percentage = int(round(value * 100 / total, 0))
-            label = category
+            # see expected values in product_bar.html
+            label = category.label.lower()
             countCategories[label] = round(percentage, 0)
         return total, countCategories
 
