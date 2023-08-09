@@ -1,4 +1,3 @@
-from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
@@ -6,7 +5,7 @@ from catalogue.models import Product, Batch, Treatment, ProductVariant, \
 from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
-from trialapp.filter_helpers import TrialFilterHelper, BaaSView
+from trialapp.filter_helpers import TrialFilterHelper
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial
@@ -87,43 +86,6 @@ class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('product-list')
     template_name = 'catalogue/product_delete.html'
-
-
-class ProductListView(LoginRequiredMixin, FilterView):
-    model = Product
-    paginate_by = 100  # if pagination is desired
-    login_url = '/login'
-    template_name = 'baaswebapp/baas_view_list.html'
-
-    def get_context_data(self, **kwargs):
-        new_list = []
-        fHelper = TrialFilterHelper(self.request.GET)
-        fHelper.filter()
-        objectList = fHelper.getClsObjects(Product).order_by(
-            'vendor__id', 'name')
-        num_trials = fHelper.countTrials()
-        graphCategories = fHelper.graphProductCategories()
-        trialsPerProduct = fHelper.countBy('product__name')
-        for item in objectList:
-            new_list.append({
-                'name': item.name,
-                'active_substance': item.active_substance,
-                'type_product': item.nameType(),
-                'biological': item.biological,
-                'color_category': TrialFilterHelper.colorProductType(
-                    item.type_product),
-                'efficacies': '??',
-                'date_range': fHelper.getMinMaxYears({'product': item}),
-                'trials': trialsPerProduct.get(item.name, None),
-                'id': item.id})
-        return {'object_list': new_list,
-                'num_products': len(objectList),
-                'trialfilter': fHelper.getFilter(),
-                'groupbyfilter': BaaSView.groupByOptions(),
-                'groupby': BaaSView.PRODUCT,
-                'num_trials': num_trials,
-                'graphCategories': graphCategories,
-                'extra_params': fHelper.generateParamUrl()}
 
 
 class ProductApi(APIView):

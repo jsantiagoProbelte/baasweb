@@ -5,7 +5,7 @@ from catalogue.models import Product, ProductVariant, RateUnit, \
     Batch, Treatment, DEFAULT
 from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
-from catalogue.product_views import ProductListView, ProductApi, \
+from catalogue.product_views import ProductApi, \
     ProductCreateView, ProductUpdateView, ProductDeleteView, \
     ProductVariantCreateView, ProductVariantUpdateView, \
     ProductVariantDeleteView, BatchCreateView, BatchUpdateView, \
@@ -14,6 +14,7 @@ from catalogue.product_views import ProductListView, ProductApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.filter_helpers import ProductListView
 
 
 class ProductViewsTest(TestCase):

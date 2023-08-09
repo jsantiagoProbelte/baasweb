@@ -4,10 +4,10 @@ from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.http import HttpResponseRedirect
-from django_filters.views import FilterView
 from baaswebapp.graphs import ProductCategoryGraph, COLOR_control, \
     COLOR_estimulant, COLOR_nutritional, COLOR_unknown
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -40,12 +40,6 @@ class TrialFilterHelper:
         'bg-estimulant': COLOR_estimulant,
         'bg-control': COLOR_control,
         'bg-unknown': COLOR_unknown}
-
-    # LABEL_CATEGORY = {
-    #     NUTRITIONAL: 'nutritional',
-    #     ESTIMULANT: 'estimulant',
-    #     CONTROL: 'control',
-    #     UNKNOWN: 'unknown'}
 
     # Add self.request.GET as attributes
     def __init__(self, attributes):
@@ -98,7 +92,7 @@ class TrialFilterHelper:
                 q_name |= Q(name__icontains=paramId)
                 q_name |= Q(responsible__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
-                q_name |= Q(product__active_substance=paramId)
+                q_name |= Q(product__active_substance__icontains=paramId)
                 q_objects &= q_name
             elif paramIdName in ['product__type_product'] and paramId:
                 q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
@@ -212,47 +206,54 @@ class TrialFilterHelper:
 
 class BaaSView(LoginRequiredMixin, View):
     model = FieldTrial
-    template_name = 'trialapp/treatment_select.html'
+    paginate_by = 15  # if pagination is desired
+    login_url = '/login'
+    template_name = 'baaswebapp/baas_view_list.html'
+    _fHelper = None
 
     PRODUCT = 'product'
     CROP = 'crop'
     PLAGUE = 'plague'
     TRIALS = 'trials'
     # value on select : (label on select , url )
-    GROUP_BY = {PRODUCT: ('Product', 'products'),
-                CROP: ('Crop', 'crops'),
-                PLAGUE: ('Plague', 'products'),
-                TRIALS: ('Ungrouped', 'trials')}
+    GROUP_BY = {PRODUCT: ('Product', 'product-list'),
+                CROP: ('Crop', 'crop-list'),
+                PLAGUE: ('Plague', 'product-list'),
+                TRIALS: ('Ungrouped', 'trial-list')}
 
     @staticmethod
     def groupByOptions():
-        return [{'value': item,
-                 'name': BaaSView.GROUP_BY[item][0]}
+        return [{'value': item, 'name': BaaSView.GROUP_BY[item][0]}
                 for item in BaaSView.GROUP_BY]
 
     def get(self, request, *args, **kwargs):
         groupbyTag = request.GET.get('groupby', None)
-        redirectTuple = BaaSView.GROUP_BY.get(groupbyTag, (0, 'product'))
-        return HttpResponseRedirect(redirectTuple[1])
+        if groupbyTag and groupbyTag != self._groupbyTag:
+            redirectTuple = BaaSView.GROUP_BY.get(groupbyTag,
+                                                  (0, BaaSView.PRODUCT))
+            return redirect(reverse(redirectTuple[1]))
+
+        self._fHelper = TrialFilterHelper(self.request.GET)
+        self._fHelper.filter()
+        context = self.get_context_data()
+        context['trialfilter'] = self._fHelper.getFilter()
+        context['groupbyfilter'] = BaaSView.groupByOptions()
+        context['extra_params'] = self._fHelper.generateParamUrl()
+        context['groupby'] = self._groupbyTag
+        context['graphCategories'] = self._fHelper.graphProductCategories()
+        context['num_trials'] = self._fHelper.countTrials()
+        return render(request, self.template_name, context)
 
 
-class TrialListView(LoginRequiredMixin, FilterView):
-    model = FieldTrial
-    paginate_by = 100  # if pagination is desired
-    login_url = '/login'
-    template_name = 'baaswebapp/baas_view_list.html'
+class TrialListView(BaaSView):
+    _groupbyTag = BaaSView.TRIALS
 
     def get_context_data(self, **kwargs):
         new_list = []
-        fHelper = TrialFilterHelper(self.request.GET)
-        fHelper.filter()
-        objectList = fHelper.getTrials().order_by('-code')
-        num_trials = fHelper.countTrials()
-        graphCategories = fHelper.graphProductCategories()
+        objectList = self._fHelper.getTrials().order_by('-code')
         products = set()
         for item in objectList:
             products.add(item.product.id)
-
             new_list.append({
                 'code': item.code,
                 'description': item.getDescription(),
@@ -269,20 +270,11 @@ class TrialListView(LoginRequiredMixin, FilterView):
                 'trials': '',
                 'id': item.id})
         return {'object_list': new_list,
-                'num_products': len(products),
-                'trialfilter': fHelper.getFilter(),
-                'groupbyfilter': BaaSView.groupByOptions(),
-                'groupby': BaaSView.TRIALS,
-                'num_trials': num_trials,
-                'graphCategories': graphCategories,
-                'extra_params': fHelper.generateParamUrl()}
+                'num_products': len(products)}
 
 
-class CropListView(LoginRequiredMixin, FilterView):
-    model = FieldTrial
-    paginate_by = 15  # if pagination is desired
-    login_url = '/login'
-    template_name = 'baaswebapp/baas_view_list.html'
+class CropListView(BaaSView):
+    _groupbyTag = BaaSView.CROP
 
     def prepareBar(self, productInfo, cropId):
         counts = productInfo.get(cropId, None)
@@ -301,28 +293,42 @@ class CropListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         new_list = []
-        fHelper = TrialFilterHelper(self.request.GET)
-        fHelper.filter()
-        objectList = fHelper.getClsObjects(Crop).order_by('name')
-        num_trials = fHelper.countTrials()
-        graphCategories = fHelper.graphProductCategories()
-        trialsPerCrop = fHelper.countBy('crop__name')
-        productInfo, totalProducts = fHelper.countProductCategoriesAndCrop()
+        objectList = self._fHelper.getClsObjects(Crop).order_by('name')
+        trialsPerCrop = self._fHelper.countBy('crop__name')
+        prodInfo, totalProducts = self._fHelper.countProductCategoriesAndCrop()
         for item in objectList:
-            tProduct, barValues = self.prepareBar(productInfo, item.id)
+            tProduct, barValues = self.prepareBar(prodInfo, item.id)
             new_list.append({
                 'name': item.name,
                 'efficacies': '??',
-                'date_range': fHelper.getMinMaxYears({'crop': item}),
+                'date_range': self._fHelper.getMinMaxYears({'crop': item}),
                 'trials': trialsPerCrop.get(item.name, None),
                 'products': tProduct,
                 'bar_values': barValues,
                 'id': item.id})
         return {'object_list': new_list,
-                'num_products': totalProducts,
-                'trialfilter': fHelper.getFilter(),
-                'groupbyfilter': BaaSView.groupByOptions(),
-                'groupby': BaaSView.CROP,
-                'num_trials': num_trials,
-                'graphCategories': graphCategories,
-                'extra_params': fHelper.generateParamUrl()}
+                'num_products': totalProducts}
+
+
+class ProductListView(BaaSView):
+    _groupbyTag = BaaSView.PRODUCT
+
+    def get_context_data(self, **kwargs):
+        new_list = []
+        objectList = self._fHelper.getClsObjects(Product).order_by(
+            'vendor__id', 'name')
+        trialsPerProduct = self._fHelper.countBy('product__name')
+        for item in objectList:
+            new_list.append({
+                'name': item.name,
+                'active_substance': item.active_substance,
+                'type_product': item.nameType(),
+                'biological': item.biological,
+                'color_category': TrialFilterHelper.colorProductType(
+                    item.type_product),
+                'efficacies': '??',
+                'date_range': self._fHelper.getMinMaxYears({'product': item}),
+                'trials': trialsPerProduct.get(item.name, None),
+                'id': item.id})
+        return {'object_list': new_list,
+                'num_products': len(objectList)}
