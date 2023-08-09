@@ -634,7 +634,7 @@ class ProductCategoryGraph:
 
         annotations = [
             dict(text='trials',
-                 x=0.5, y=0.3, font_size=20,
+                 x=0.5, y=0.2, font_size=20,
                  font_color='grey',
                  showarrow=False),
             dict(text=f'{totals}',
