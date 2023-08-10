@@ -19,11 +19,12 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from baaswebapp import views
 from django.conf.urls.static import static
 from django.conf import settings
-
+from trialapp import filter_helpers
 admin.autodiscover()
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', filter_helpers.ProductListView.as_view(), name='home'),
+    path('hidden_home', views.home, name='hidden-home'),
     path('baaswebapp_index', views.baaswebapp_index, name='baaswebapp_index'),
     path('', include('trialapp.urls')),
     path('', include('catalogue.urls')),

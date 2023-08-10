@@ -1,0 +1,19 @@
+<table class="table">
+    <thead>
+        <tr><th>CROP</th><th>PRODUCTs</th><th>Efficacy Range</th>
+            <th>Trials Date</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for item in object_list %}
+    <tr id="item-{{item.id}}">
+        <td>{{ item.name }}</td>
+        <td>{% include 'trialapp/product_bar.html' with values=item.bar_values total=item.products%}</td> 
+        <td>{{item.efficacies}}</td>
+        <td>{{item.date_range}}</td>
+        <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?crop={{item.id}}{{extra_params}}">{{item.trials}} trials &#10132;</a></td>
+    </tr>
+    </tbody>
+    {% empty %}
+        <p>No Products yet.</p>
+    {% endfor %}
+</table>

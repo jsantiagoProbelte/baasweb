@@ -173,6 +173,34 @@ class FieldTrial(ModelHelpers, models.Model):
         self.code = self.getLabCode(self.created, increment)
         self.save()
 
+    def getDescription(self):
+        description = f'{self.crop}'
+        if self.plague:
+            description += f' + {self.plague}'
+        return description
+
+    def getLocation(self):
+        if self.location:
+            return self.location
+        else:
+            return 'Undefined Location'
+
+    def getPeriod(self):
+        period = 'Undefined period'
+        if self.initiation_date:
+            period = self.initiation_date.strftime("%B")
+            if not self.completion_date:
+                period += f' {self.initiation_date.year} - ...'
+        if self.completion_date:
+            if self.completion_date.year == self.initiation_date.year:
+                if self.completion_date.month != self.initiation_date.month:
+                    period += f' - {self.completion_date.strftime("%B")}'
+            else:
+                period += f' {self.initiation_date.year}'
+                period += f' - {self.completion_date.strftime("%B")}'
+            period += f' {self.completion_date.year}'
+        return period
+
     @classmethod
     def create_fieldTrial(cls, **kwargs):
         trial = cls.objects.create(
@@ -190,7 +218,11 @@ class FieldTrial(ModelHelpers, models.Model):
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
             blocks=kwargs['blocks'])
-        trial.setCode(increment=False)
+        if 'code' in kwargs:
+            trial.code = kwargs['code']
+            trial.save()
+        else:
+            trial.setCode(increment=False)
         return trial
 
     def plantDensity(self):

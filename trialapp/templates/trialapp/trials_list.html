@@ -6,11 +6,10 @@
     <tbody>
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td><a class="btn btn-light rounded-pill" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a></td>
+        <td><a class="btn btn-light rounded-pill" href="{% url 'trial_api' item.id%}">{{ item.code }}</a></td>
         <td><p>{{item.description}}</p>{{item.location}}</td>
-        <td>{{item.product}}</td>
-        <td><span class='badge {{item.color_category}} rounded-pill fs-6'>{{item.category}}</span></td>
-        <td>{{item.active_substance}}</td> 
+        <td><strong>{{item.product}}</strong></td>
+        {% include 'baaswebapp/product_display.html' %} 
         <td>{{item.efficacies}}</td>
         <td>{{item.date_range}}</td>
     </tr>

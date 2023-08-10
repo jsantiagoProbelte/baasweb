@@ -80,7 +80,7 @@ class BaaSWebAppTest(TestCase):
                 'password': 'badpassword'})
         self.assertNotEqual(user.get_username(), ApiRequestHelperTest.USER)
 
-    def test_home(self):
+    def test_hidden_home(self):
         response = self.client.get(
-            reverse('home'))
+            reverse('hidden-home'))
         self.assertContains(response, 'Dashboard')

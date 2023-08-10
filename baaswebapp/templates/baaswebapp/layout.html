@@ -18,21 +18,20 @@
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/baaswebapp.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/mapbox-gl-geocoder.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'baaswebapp/content/mapbox-gl.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
 
 <body class="baas-body">
   <nav class="navbar navbar-expand fixed-top navbar-light navbar-baas horizontal-bottom-line">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">
-        <img class="icon-baas" src="{% static 'baaswebapp/img/logo_probelte.png' %}">
-      </a>
-      <div class="vertical-line-right vertical-line-left">
-        <a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a>
-      </div>
-      
+      <a class="navbar-brand" href="{% url 'home' %}"><img class="icon-baas" src="{% static 'baaswebapp/img/logo_probelte.png' %}"></a>
+      {% block topbaastitle %}
+      {% endblock %}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarActions" aria-controls="navbarActions" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="material-icons">menu</span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarActions">
@@ -61,8 +60,9 @@
 
   
   <div class="sidenav-baas">
+    {% include 'baaswebapp/default_side_bar.html' %}
     {% block sidenav %}
-    {% endblock %}
+    {% endblock %}        
   </div>
   
   <!-- Page content -->

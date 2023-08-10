@@ -1,15 +1,14 @@
-from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from baaswebapp.models import RateTypeUnit, ModelHelpers
+from baaswebapp.models import RateTypeUnit
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
-    Vendor, ProductCategory
+    Vendor
 from trialapp.models import Crop, Plague, TreatmentThesis
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
-from trialapp.filter_helpers import TrialFilterHelper, BaaSView
+from trialapp.filter_helpers import TrialFilterHelper
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from baaswebapp.graphs import GraphTrial, ProductCategoryGraph
+from baaswebapp.graphs import GraphTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
@@ -30,7 +29,8 @@ class ProductFormLayout(FormHelper):
             Div(Field('name', css_class='mb-3'),
                 Field('active_substance', css_class='mb-3'),
                 Field('vendor', css_class='mb-3'),
-                Field('category', css_class='mb-3'),
+                Field('type_product', css_class='mb-3'),
+                Field('biological', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -40,14 +40,13 @@ class ProductFormLayout(FormHelper):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('name', 'vendor', 'category', 'active_substance')
+        fields = ('name', 'vendor', 'active_substance',
+                  'type_product', 'biological')
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         vendors = Vendor.objects.all().order_by('name')
         self.fields['vendor'].queryset = vendors
-        categories = ProductCategory.objects.all().order_by('name')
-        self.fields['category'].queryset = categories
         self.fields['active_substance'].required = False
 
 
@@ -87,45 +86,6 @@ class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('product-list')
     template_name = 'catalogue/product_delete.html'
-
-
-class ProductListView(LoginRequiredMixin, FilterView):
-    model = Product
-    paginate_by = 100  # if pagination is desired
-    login_url = '/login'
-    template_name = 'baaswebapp/baas_view_list.html'
-
-    def get_context_data(self, **kwargs):
-        new_list = []
-        fHelper = TrialFilterHelper(self.request.GET)
-        fHelper.filter()
-        objectList = fHelper.getClsObjects(Product).order_by(
-            'vendor__id', 'name')
-        num_trials = fHelper.countTrials()
-        countCategories = fHelper.countProductCategories()
-        graphCategories = ProductCategoryGraph.draw(countCategories)
-        trialsPerProduct = fHelper.countBy('product__name')
-        for item in objectList:
-            category = ModelHelpers.UNKNOWN
-            if item.category:
-                category = item.category.name
-            new_list.append({
-                'name': item.name,
-                'active_substance': item.active_substance,
-                'category': category,
-                'color_category': TrialFilterHelper.colorCategory(category),
-                'efficacies': '??',
-                'date_range': fHelper.getMinMaxYears(item),
-                'trials': trialsPerProduct.get(item.name, None),
-                'id': item.id})
-        return {'object_list': new_list,
-                'num_products': len(objectList),
-                'trialfilter': fHelper.getFilter(),
-                'groupbyfilter': BaaSView.groupByOptions(),
-                'groupby': BaaSView.PRODUCT,
-                'num_trials': num_trials,
-                'graphCategories': graphCategories,
-                'extra_params': fHelper.generateParamUrl()}
 
 
 class ProductApi(APIView):
@@ -313,7 +273,6 @@ class ProductApi(APIView):
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
-
         return render(request, template_name,
                       {'product': product,
                        'deleteProductForm': ProductDeleteView(),

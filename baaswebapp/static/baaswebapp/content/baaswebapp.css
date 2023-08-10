@@ -24,8 +24,8 @@
 }
 
 :root{
-  --bs-text-color: ##333;
-  --bs-text-color-table: ##333;
+  --bs-text-color: #333;
+  --bs-text-color-table: #333;
   --custom-bg-color: #F9F9F9; /*rgba(3,53,104,0.05);*/
   --custom-lines: #e1e1e1;
   --custom-table-borders: #E7E7E7;
@@ -43,6 +43,7 @@
   --custom-grey: #F0EEEB;
   --custom-black: #333333;
   --custom-bio-morado: #aa4ae4;
+  --custom-bio: #aa4ae4;
   --custom-morado: #a500a5;
   --custom-violeta: #cfc9ff;
 }
@@ -84,10 +85,6 @@
   margin-top: 100px; /* Same as the width of the sidebar */
 }
 
-.txt-baas{
-  color: var(--bs-text-color);
-}
-
 .navbar-baas {
   color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
@@ -98,22 +95,22 @@
 }
 
 .bg-baas-alt{
-  background: var(--custom-baas-alt );
+  background-color: var(--custom-baas-alt ) !important;
 }
 
-.bs_nutritional{
+.bg-nutritional{
   background: var(--custom-green );
 }
 
-.bs_estimulant{
+.bg-estimulant{
   background: var(--custom-yellow );
 }
 
-.bs_control{
+.bg-control{
   background: var(--custom-blue );
 }
 
-.bs_category_unknown{
+.bg-unknown{
   background: var(--custom-grey );
 }
 
@@ -150,6 +147,10 @@
   color: var(--custom-brand-color);
 }
 
+.txt-baas{
+  color: var(--bs-text-color) !important;
+}
+
 .txt-brand{
   color: var(--custom-brand-color) !important;
 }
@@ -178,6 +179,7 @@
   color: var(--custom-brand-color);
   border-color: var(--custom-brand-color);
   border-radius: 50rem !important;
+  border-width: 3px;
 }
 
 .btn-outline-brand:hover {
@@ -185,6 +187,7 @@
   border-color: var(--custom-brand-color);
   background-color: var(--custom-bg-color);
   border-radius: 50rem !important;
+  border-width: 3px;
 }
 
 
@@ -192,6 +195,13 @@
   color: #fff;
   background-color: var(--custom-baas);
   border-radius: 50rem !important;
+}
+
+.btn-baas-alt {
+  color: #000;
+  background-color: var(--custom-baas-alt);
+  border-radius: 50rem !important;
+  border-color: var(--custom-baas-alt);
 }
 
 .btn-baas:hover {
@@ -204,6 +214,7 @@
   color: var(--custom-baas);
   border-color: var(--custom-baas);
   border-radius: 50rem !important;
+  border-width: 3px;
 }
 
 .btn-outline-baas:hover {
@@ -211,6 +222,28 @@
   border-color: var(--custom-baas);
   background-color: var(--custom-bg-color);
   border-radius: 50rem !important;
+}
+
+.btn-outline-baas-alt {
+  color: var(--bs-text-color);
+  border-color: var(--custom-baas-alt);
+  border-radius: 50rem !important;
+  border-width: 3px;
+}
+
+.btn-outline-baas-alt:hover {
+  color: var(--bs-text-color);
+  border-color: var(--custom-baas-alt);
+  background-color: var(--custom-bg-color);
+  border-radius: 50rem !important;
+  border-width: 3px;
+}
+
+.dot-bio {
+  width: 20px;
+  height: 20px;
+  background-color: var(--custom-bio); /* Change color as desired */
+  border-radius: 50%;
 }
 
 .vertical-line-right {
@@ -395,12 +428,21 @@
 
 .card-body-baas {
   background-color:var(--custom-bg-color-cards);
-  border-radius:10px !important;
+  border-radius: 5px !important;
   padding:20px;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   border: 1px solid #E7E7E7 !important;
-  box-shadow: 0px 0px 4px 0px #00000026;
+  box-shadow: 0px 0px 4px 0px #00000015;
+}
+
+.card-baas-alt {
+  background-color: #efedff;
+  border-radius:2px !important;
+  border: 1px solid #efedff !important;
+  padding:20px;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .list-group-item-baas {
@@ -569,7 +611,7 @@ table.data-table-longer thead th {
   background-color: var(--custom-form-background-focus);
   border-color: #99aec4;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(50, 93, 136, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(170, 74, 228, 0.25); /* custom-baas */
 }
 
 .form-control-baas-longer {
@@ -588,4 +630,139 @@ table.data-table-longer thead th {
 .baas-box-shadow {
   box-shadow: 0px 0px 4px 0px #00000026;
   border: 1px solid #E7E7E7 !important;
+}
+
+.baas-box-shadow:focus {
+  box-shadow: 0px 0px 4px 0px #aa4ae4;
+  border: 1px solid #aa4ae4 !important;
+}
+
+
+.nav-tabs-baas {
+  border-bottom: 1px solid var(--custom-table-borders);
+}
+
+.nav-tabs-baas .nav-link {
+  margin-bottom: -1px;
+  background: none;
+  border: 1px solid transparent;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.nav-tabs-baas .nav-link:hover, .nav-tabs-baas .nav-link:focus {
+  border-color: var(--custom-baas);
+  background-color: var(--custom-baas);
+  isolation: isolate;
+}
+
+.nav-tabs-baas .nav-link.disabled {
+  color: #dfd7ca;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.nav-tabs-baas .nav-link.active,
+.nav-tabs-baas .nav-item.show .nav-link {
+  color: var(--custom-baas) !important;
+  background-color: var(--custom-bg-color);
+  border-bottom-color: var(--custom-baas);
+  border-bottom-width: 5px;
+}
+
+.nav-tabs-baas .dropdown-menu {
+  margin-top: -1px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.nav-tabs-baas .nav-link {
+  background-color: var(--custom-bg-color);
+  border-color: var(--custom-bg-color);
+}
+
+.nav-tabs-baas .nav-link,
+.nav-tabs-baas .nav-link:focus {
+  color: var(--bs-text-color);
+}
+
+.nav-tabs-baas .nav-link:hover {
+  color: #fff;
+}
+
+.nav-tabs-baas .nav-link.disabled,
+.nav-tabs-baas .nav-link.disabled:hover,
+.nav-tabs-baas .nav-link.disabled:focus {
+  background-color: #f8f5f0;
+  border-color: #dfd7ca;
+  color: #dfd7ca;
+}
+
+.txt-regular-12 {
+  font-size: 12px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-regular-13 {
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-regular-14 {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-bold-22 {
+  font-size: 22px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
+
+.txt-open-semibold-14 {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-semibold-15 {
+  font-size: 15px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-encode-20 {
+  font-size: 20px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+}
+
+.txt-encode-14 {
+  font-size: 14px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.sidebar-item {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  color: var(--bs-text-color);
+  text-decoration: none;
+  padding: 0.25rem 1rem;
+}
+
+.sidebar-item:hover {
+  color: #000;
+}
+
+.menu-icon {
+  font-size: 32px; /* Adjust the size as needed */
+  color: var(--custom-baas);    /* Adjust the color as needed */
 }

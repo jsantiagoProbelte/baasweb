@@ -5,7 +5,7 @@ from catalogue.models import Product, ProductVariant, RateUnit, \
     Batch, Treatment, DEFAULT
 from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
-from catalogue.product_views import ProductListView, ProductApi, \
+from catalogue.product_views import ProductApi, \
     ProductCreateView, ProductUpdateView, ProductDeleteView, \
     ProductVariantCreateView, ProductVariantUpdateView, \
     ProductVariantDeleteView, BatchCreateView, BatchUpdateView, \
@@ -14,6 +14,7 @@ from catalogue.product_views import ProductListView, ProductApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.filter_helpers import ProductListView
 
 
 class ProductViewsTest(TestCase):
@@ -94,7 +95,7 @@ class ProductViewsTest(TestCase):
             field_trial=self._fieldTrials[0],
             crop_stage_majority=65+i) for i in range(1, 3)]
 
-    def test_trialapp_index(self):
+    def test_catalogue_index(self):
         request = self._apiFactory.get('product-list')
         self._apiFactory.setUser(request)
         response = ProductListView.as_view()(request)
@@ -198,7 +199,8 @@ class ProductViewsTest(TestCase):
 
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
-                'category': 1}
+                'biological': True,
+                'type_product': Product.PType.FUNGICIDE}
         request = self._apiFactory.post(
             'product-add',
             data=data)

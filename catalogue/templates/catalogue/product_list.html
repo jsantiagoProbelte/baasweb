@@ -7,8 +7,7 @@
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
         <td><a class="btn btn-light rounded-pill" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
-        <td><span class='badge {{item.color_category}} rounded-pill fs-6'>{{item.category}}</span></td>
-        <td>{{item.active_substance}}</td> 
+        {% include 'baaswebapp/product_display.html' %} 
         <td>{{item.efficacies}}</td>
         <td>{{item.date_range}}</td>
         <td><a class="btn  btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}{{extra_params}}">{{item.trials}} trials &#10132;</a></td>

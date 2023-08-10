@@ -2,8 +2,12 @@
 {% load humanize %}
 {% load static %}
 
+{% block topbaastitle %}
+<div class="vertical-line-right vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
+{% endblock %}
+
 {% block topbaasheader %}
-{% include "baaswebapp/default_top_header.html" with trialfilter=trialfilter %}
+
 {% endblock %}
 
 {% block content %}

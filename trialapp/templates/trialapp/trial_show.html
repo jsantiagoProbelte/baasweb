@@ -1,0 +1,86 @@
+{% extends "baaswebapp/layout.html" %}
+{% load widget_tweaks %}
+
+{% block topbaastitle %}
+<div class="vertical-line-right vertical-line-left">
+    <a class="navbar-brand txt-brand h1 ms-4 fs-2" href="{% url 'product_api' trial.product.id %}">{{trial.product}}</a>
+</div>
+{% endblock %}
+
+{% block topbaasheader %}
+    <li class="nav-item">
+        <a class="navbar-brand txt-brand h2 ms-3 fs-2" href="{% url 'trial_api' trial.id %}">{{description}}</a>
+    </li>
+    <li class="nav-item">
+        <p class="navbar-brand txt-baas h4 ms-3" >{{location}}, {{period}}</p>
+    </li>
+    <li class="nav-item">
+        <div class="btn btn-outline-baas-alt ms-3" >{{trial.code}}</div>
+    </li>
+    <li class="nav-item">
+        <div class="btn btn-baas-alt ms-3">Efficacy<span class='strong ms-2'>{{efficacy}}%</span></div>
+    </li>
+</ul>
+<ul class="navbar-nav ms-4 vertical-line-left">
+    <li class="nav-item  ms-3">
+        <a class="btn btn-outline-brand ms-3" href="{% url 'fieldtrial-list'%}?product={{item.product.id}}">{{other_trials}} {{trial.product}} trials &#10132;</a>
+    </li>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row ">
+    <div class="col-md-10 offset-md-1">
+    <ul class="nav nav-tabs-baas" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active txt-open-semibold-15" id="conclusions-tab" data-bs-toggle="tab" data-bs-target="#nav-conclusions" type="button" role="tab" aria-controls="nav-conclusions" aria-selected="true">Conclusions</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link txt-open-semibold-15" id="design-trial-tab" data-bs-toggle="tab" data-bs-target="#nav-design-trial" type="button" role="tab" aria-controls="nav-design-trial" aria-selected="true">Trial Design</button>
+        </li>
+        <li class="nav-item">
+        <button class="nav-link txt-open-semibold-15" id="result-summary-tab" data-bs-toggle="tab" data-bs-target="#nav-result-summary" type="button" role="tab" aria-controls="nav-result-summary" aria-selected="true">Result Summary</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link txt-open-semibold-15" id="trends-tab" data-bs-toggle="tab" data-bs-target="#nav-trends" type="button" role="tab" aria-controls="nav-trends" aria-selected="true">Trends</button>
+        </li>
+        <li class="nav-item">
+        <button class="nav-link txt-open-semibold-15" id="data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="true">Data</button>
+        </li>
+        <li class="nav-item">
+        <button class="nav-link txt-open-semibold-15" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#nav-assessment" type="button" role="tab" aria-controls="nav-assessment" aria-selected="true">Assessments</button>
+        </li>
+        <li class="nav-item">
+        <button class="nav-link txt-open-semibold-15" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15"
+                data-toggle="tooltip" data-placement="top" title='Download trial'>Download trial &dHar;</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="nav-trial">
+        <div class="tab-pane fade show active" id="nav-conclusions" role="tabpanel" aria-labelledby="conclusions-tab">
+            {% include 'trialapp/trial_conclusions.html' %}
+        </div>
+        <div class="tab-pane fade" id="nav-design-trial" role="tabpanel" aria-labelledby="design-trial-tab">
+            Trial Design
+        </div>
+        <div class="tab-pane fade" id="nav-result-summary" role="tabpanel" aria-labelledby="result-summary-tab">
+            Result Summary
+        </div>
+        <div class="tab-pane fade" id="nav-trends" role="tabpanel" aria-labelledby="trends-tab">
+            trends
+        </div>
+        <div class="tab-pane fade" id="nav-data" role="tabpanel" aria-labelledby="data-tab">
+            data
+        </div>
+        <div class="tab-pane fade" id="nav-assessment" role="tabpanel" aria-labelledby="assessment-tab">
+            assessment
+        </div>
+        <div class="tab-pane fade" id="nav-info" role="tabpanel" aria-labelledby="info-tab">
+            info
+        </div>
+    </div>
+</div>
+{% endblock %}
