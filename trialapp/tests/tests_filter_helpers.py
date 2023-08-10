@@ -1,10 +1,10 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Crop
+from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
-    CropListView
+    CropListView, PlaguesListView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -166,9 +166,8 @@ class TrialFilterTest(TestCase):
         for item in items:
             self.assertContains(response, item.name)
 
-    # # For Angel
-    # def test_plagues(self):
-    #     response, items = self.listQuery('plagues', PlagueListView,
-    #                                      Plague)
-    #     for item in items:
-    #         self.assertContains(response, item.name)
+    def test_plagues(self):
+        response, items = self.listQuery('plagues', PlaguesListView,
+                                         Plague)
+        for item in items:
+            self.assertContains(response, item.name)
