@@ -589,7 +589,7 @@ class ProductCategoryGraph:
 
     @staticmethod
     def draw(dictValues, bios=3,
-             title_text='Trials by product type', showLegend=True,
+             title_text=None, showLegend=True,
              yaxis_title='trials', xaxis_title='Trials'):
 
         colors = []
@@ -634,7 +634,7 @@ class ProductCategoryGraph:
 
         annotations = [
             dict(text='trials',
-                 x=0.5, y=0.2, font_size=20,
+                 x=0.5, y=0.3, font_size=20,
                  font_color='grey',
                  showarrow=False),
             dict(text=f'{totals}',
@@ -647,9 +647,15 @@ class ProductCategoryGraph:
             title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
-            font_size=20,
+            font_size=24,
             title_text=title_text,
             showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
             legend=dict(
                 font_size=14,
                 orientation="h",
@@ -660,6 +666,5 @@ class ProductCategoryGraph:
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
         figure.update_traces(textfont_size=20)
-        figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         plotly_plot_obj = plot({'data': figure}, output_type='div')
         return plotly_plot_obj
