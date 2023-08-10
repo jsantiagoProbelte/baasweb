@@ -230,8 +230,8 @@ class BaaSView(LoginRequiredMixin, View):
     # value on select : (label on select , url )
     GROUP_BY = {PRODUCT: ('Product', 'products'),
                 CROP: ('Crop', 'crop-list'),
-                PLAGUE: ('Plague', 'plagues'),
-                TRIALS: ('Ungrouped', 'trials')}
+                PLAGUE: ('Plague', 'plagues-list'),
+                TRIALS: ('Ungrouped', 'trials-list')}
 
     @staticmethod
     def groupByOptions():
