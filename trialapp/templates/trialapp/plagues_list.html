@@ -1,20 +1,28 @@
 <table class="table">
     <thead>
-        <tr><th>PLAGUE</th><th>PRODUCTS</th><th>Efficacy Range</th><th>Trials Date</th><th></th></tr>
+        <tr class="txt-open-semibold-11"><th>PEST / DISEASE</th><th>PRODUCTS</th><th>EFFICACY RANGE</th>
+            <th>TRIALS DATE</th><th></th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td><b>{{item.name}}</b></td>
+        <td><p class="txt-open-semibold-14">{{item.name}}</p></td>
         <td>
-            <div style="height: 100%; width:100%">
-                <div class="progress" style="height: 20px;">
-                    <div class="progress-bar bg-success" style="width: {{item.progress}}%" role="progressbar" aria-valuenow={{item.product_count}} aria-valuemin="0" aria-valuemax={{num_products}}>{{item.product_count}}</div>
+            <div class="row">
+                <div class='col-md-3'>
+                    <p class="txt-open-bold-16">{{item.product_count}}</p>
+                </div>
+                <div class='col-md-8'>
+                    <div style="height: 100%; width:100%">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" style="width: {{item.progress}}%" role="progressbar" aria-valuenow={{item.product_count}} aria-valuemin="0" aria-valuemax={{num_products}}></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </td>
-        <td>??</td>     
-        <td><b>{{item.date_range}}</b></td>
+        <td><p class="txt-open-bold-15">??</p></td>     
+        <td><p class="txt-regular-13">{{item.date_range}}</p></td>
         <td><a href="{% url 'fieldtrial-list'%}?plague={{item.id}}{{extra_params}}" class='btn  btn-outline-baas'>Trials {{item.trial_count}} &#8594;</a></td>
     </tr>
     </tbody>

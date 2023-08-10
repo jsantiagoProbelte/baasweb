@@ -10956,7 +10956,7 @@ fieldset:disabled .btn {
   font-size: 13px;
   line-height: 22px;
   font-weight: 500;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 .navbar-form input,
