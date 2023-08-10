@@ -19,6 +19,8 @@
                 {% include 'catalogue/product_list.html' %}
             {% elif groupby == 'trials' %}
                 {% include 'trialapp/trials_list.html' %}
+            {% elif groupby == 'plague' %}
+                {% include 'trialapp/plagues_list.html' %}
             {% elif groupby == 'crop' %}
                 {% include 'trialapp/crop_list.html' %}
             {% endif %}

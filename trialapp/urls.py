@@ -17,6 +17,10 @@ urlpatterns = [
         filter_helpers.CropListView.as_view(),
         name='crop-list'),
     path(
+        'plagues',
+        filter_helpers.PlaguesListView.as_view(),
+        name='plagues-list'),
+    path(
         'fieldtrials',
         fieldtrial_views.FieldTrialListView.as_view(),
         name='fieldtrial-list'),
