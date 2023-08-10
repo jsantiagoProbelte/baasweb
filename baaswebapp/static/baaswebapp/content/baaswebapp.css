@@ -100,14 +100,17 @@
 
 .bg-nutritional{
   background: var(--custom-green );
+  color: #000;
 }
 
 .bg-estimulant{
   background: var(--custom-yellow );
+  color: #000;
 }
 
 .bg-control{
   background: var(--custom-blue );
+  color: #000;
 }
 
 .bg-unknown{
@@ -165,6 +168,9 @@
 
 .btn-brand {
   color: #fff;
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
   background-color: var(--custom-brand-color);
   border-radius: 50rem !important;
 }
@@ -180,6 +186,9 @@
   border-color: var(--custom-brand-color);
   border-radius: 50rem !important;
   border-width: 3px;
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
 }
 
 .btn-outline-brand:hover {
@@ -195,6 +204,9 @@
   color: #fff;
   background-color: var(--custom-baas);
   border-radius: 50rem !important;
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
 }
 
 .btn-baas-alt {
@@ -202,6 +214,9 @@
   background-color: var(--custom-baas-alt);
   border-radius: 50rem !important;
   border-color: var(--custom-baas-alt);
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
 }
 
 .btn-baas:hover {
@@ -215,6 +230,9 @@
   border-color: var(--custom-baas);
   border-radius: 50rem !important;
   border-width: 3px;
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
 }
 
 .btn-outline-baas:hover {
@@ -229,6 +247,9 @@
   border-color: var(--custom-baas-alt);
   border-radius: 50rem !important;
   border-width: 3px;
+  font-size: 13 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
 }
 
 .btn-outline-baas-alt:hover {
@@ -343,7 +364,6 @@
 
 .navbar-nav .nav-link{
   font-size: 1rem !important;
-  text-transform: capitalize !important;
   color: var(--bs-text-color) !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
@@ -716,10 +736,48 @@ table.data-table-longer thead th {
   margin-bottom: 0rem !important;
 }
 
+.txt-regular-16 {
+  font-size: 16px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-semibold-14 {
+  font-size: 14px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
+
+.txt-open-bold-15 {
+  font-size: 15px;
+  font-family: 'Open Sans', serif;
+  font-weight: bolder;
+}
+
+.txt-open-bold-16 {
+  font-size: 16px;
+  font-family: 'Open Sans', serif;
+  font-weight: bolder;
+}
+
 .txt-open-bold-22 {
   font-size: 22px;
   font-family: 'Open Sans', serif;
   font-weight: bold;
+}
+
+.txt-open-semibold-11 {
+  font-size: 11px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-open-semibold-13 {
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
 }
 
 .txt-open-semibold-14 {

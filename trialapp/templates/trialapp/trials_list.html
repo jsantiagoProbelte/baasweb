@@ -1,17 +1,18 @@
 <table class="table">
     <thead>
-        <tr><th>TRIAL</th><th>Description</th><th>PRODUCT</th><th>PRODUCT TYPE</th><th>Active Substance</th><th>Efficacy Range</th>
-            <th>Trial Date</th></tr>
+        <tr class="txt-open-semibold-11"><th class="col-md-2">TRIAL</th><th>TRIAL ID</th><th>PRODUCT</th><th>PRODUCT TYPE</th>
+            <th class="col-md-2">ACTIVE SUBSTANCE</th><th>EFFICACY RANGE</th><th>TRIALS DATE</th><th></th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td><a class="btn btn-light rounded-pill" href="{% url 'trial_api' item.id%}">{{ item.code }}</a></td>
-        <td><p>{{item.description}}</p>{{item.location}}</td>
-        <td><strong>{{item.product}}</strong></td>
+        <td><p class="txt-open-semibold-14">{{item.description}}</p>
+            <p class="txt-regular-13">{{item.location}}</p></td>
+        <td><a class="btn btn-light txt-regular-12 rounded-pill" href="{% url 'trial_api' item.id%}">{{ item.code }}</a></td>
+        <td><p class="txt-open-semibold-14">{{item.product}}</p></td>
         {% include 'baaswebapp/product_display.html' %} 
-        <td>{{item.efficacies}}</td>
-        <td>{{item.date_range}}</td>
+        <td><p class="txt-open-bold-15">{{item.efficacies}}</p></td>
+        <td><p class="txt-regular-13">{{item.date_range}}</p></td>
     </tr>
     </tbody>
     {% empty %}
