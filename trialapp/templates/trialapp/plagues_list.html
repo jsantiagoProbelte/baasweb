@@ -15,7 +15,7 @@
         </td>
         <td>??</td>     
         <td><b>{{item.date_range}}</b></td>
-        <td><a href="#" class='badge badge-pill rounded-pill bg-secondary'>Trials {{item.trial_count}} &#8594;</a></td>
+        <td><a href="{% url 'fieldtrial-list'%}?plague={{item.id}}{{extra_params}}" class='btn  btn-outline-baas'>Trials {{item.trial_count}} &#8594;</a></td>
     </tr>
     </tbody>
     {% empty %}
