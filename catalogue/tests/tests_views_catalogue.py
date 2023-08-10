@@ -105,9 +105,9 @@ class ProductViewsTest(TestCase):
         response = ProductListView.as_view()(request)
         self.assertNotContains(response, 'No Product yet.')
         numberProducts = Product.objects.count()
-        self.assertContains(
+        self.assertTrue(
             response,
-            '<h1>{}</h1>'.format(numberProducts))
+            'analytics</span> {}</p>'.format(numberProducts))
         products = Product.objects.all()
         for product in products:
             self.assertContains(response, product.name)
