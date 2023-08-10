@@ -122,6 +122,9 @@ class TrialFilterHelper:
             countCategories[label]['value'] += counts[productType]
         return countCategories
 
+    def countProducts(self):
+        return len(list(self.countBy('product', True).keys()))
+
     def countBios(self):
         bios = self.countBy('product__biological')
         return bios.get(True, 0)
@@ -136,6 +139,15 @@ class TrialFilterHelper:
             total=Count('id', distinct=isDistinct)
         ).order_by(param)
         return {item[param]: item['total'] for item in counts}
+
+    def getGroupedPlagues(self):
+        return Plague.objects.annotate(
+            trial_count=Count('fieldtrial'),
+            product_count=Count('fieldtrial__product', distinct=True),
+            min_date=Min('fieldtrial__initiation_date'),
+            max_date=Max('fieldtrial__initiation_date')
+        ).values('name', 'id', 'trial_count', 'product_count',
+                 'min_date', 'max_date')
 
     def countProductCategoriesAndCrop(self):
         cropProducts = {}
