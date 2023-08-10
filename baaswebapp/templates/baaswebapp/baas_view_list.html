@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block topbaastitle %}
-<div class="vertical-line-right vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
+<div class="vertical-line-right txt-presicav-18 vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
 {% endblock %}
 
 {% block topbaasheader %}
@@ -29,6 +29,7 @@
     <div class="col-md-3 col-sm-12">
         {% include "baaswebapp/two_boxes.html" with left_text='products' right_text='trials' left_number=num_products right_rumber=num_trials %}
         <div class="card card-body-baas mt-3">
+            <p class="card-title txt-encode-18">Trials by product type</p>
             {{graphCategories|safe}}
         </div>
     </div>

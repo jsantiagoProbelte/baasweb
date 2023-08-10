@@ -1,27 +1,12 @@
 
 @font-face {
-  font-family: 'Rubik';
-  src: url('/static/baaswebapp/content/Rubik-ExtraBold.ttf') format('ttf');
+  font-family: 'Presicav';
+  src: url('/static/baaswebapp/content/PresicavRg-Regular.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Rubik';
-  src: url('/static/baaswebapp/content/Rubik-Regular.ttf') format('ttf') ;
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Rubik';
-  src: url('/static/baaswebapp/content/Rubik-Light.ttf') format('ttf') ;
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
 
 :root{
   --bs-text-color: #333;
@@ -748,6 +733,12 @@ table.data-table-longer thead th {
   font-weight: bold;
 }
 
+.txt-open-bold-13 {
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  font-weight: bolder;
+}
+
 .txt-open-bold-15 {
   font-size: 15px;
   font-family: 'Open Sans', serif;
@@ -762,6 +753,12 @@ table.data-table-longer thead th {
 
 .txt-open-bold-22 {
   font-size: 22px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
+
+.txt-open-bold-24 {
+  font-size: 24px;
   font-family: 'Open Sans', serif;
   font-weight: bold;
 }
@@ -807,6 +804,27 @@ table.data-table-longer thead th {
   margin-bottom: 0rem !important;
 }
 
+.txt-encode-18 {
+  font-size: 18px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-presicav-14 {
+  font-size: 14px;
+  font-family: 'Presicav';
+  margin-bottom: 0rem !important;
+}
+
+.txt-presicav-18 {
+  font-size: 18px;
+  font-family: 'Presicav';
+  margin-bottom: 0rem !important;
+}
+
+
+
 .sidebar-item {
   font-size: 14px;
   font-family: 'Open Sans', serif;
@@ -821,6 +839,12 @@ table.data-table-longer thead th {
 }
 
 .menu-icon {
-  font-size: 32px; /* Adjust the size as needed */
+  font-size: 64px; /* Adjust the size as needed */
   color: var(--custom-baas);    /* Adjust the color as needed */
+}
+
+.small-icon {
+  font-size: 24px; /* Adjust the size as needed */
+  vertical-align: middle;
+  /* color: var(--custom-baas);    Adjust the color as needed */
 }
