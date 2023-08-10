@@ -121,7 +121,7 @@ class TrialFilterHelper:
                                           'color': codeColor}
             countCategories[label]['value'] += counts[productType]
         return countCategories
-    
+
     def countProducts(self):
         return len(list(self.countBy('product', True).keys()))
 
@@ -136,7 +136,7 @@ class TrialFilterHelper:
             total=Count('id', distinct=isDistinct)
         ).order_by(param)
         return {item[param]: item['total'] for item in counts}
-    
+
     def getGroupedPlagues(self):
         return Plague.objects.annotate(
             trial_count=Count('fieldtrial'),
