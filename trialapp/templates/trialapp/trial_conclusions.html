@@ -56,9 +56,14 @@
             <p class="card-title txt-encode-20">{{period}}</p>
         </div>
         <div class="card card-baas-alt mt-2">
-            <p >Location</p>
-            <h6 class="card-title txt-encode-20">{{trial.location}}</h6>
+            <p class="txt-regular-12">Location</p>
+            <p class="txt-encode-20">{{trial.location}}</p>
         </div>
+        {% if trial.latitude %}
+            <div id="map" width="100%" style='height:250px'></div><div id="show_marker"></div>
+            {% else %}
+                <small> You can now define the latitude and longitude of this trial. Please add it</small>
+            {% endif %}
         <div class="card card-baas-alt mt-2">
             <p class="card-title txt-encode-20">Weather Conditions</p>
             <p class="card-title card-title txt-regular-12">{{period}}</p>

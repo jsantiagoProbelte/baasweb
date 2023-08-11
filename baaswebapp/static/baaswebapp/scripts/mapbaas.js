@@ -109,7 +109,12 @@ if (show_maker.length>0) {
     const marker1 = new mapboxgl.Marker()
     .setLngLat([longitude, latitude])
     .addTo(map);
-}
+
+    map.flyTo({
+        center: [longitude, latitude],
+        zoom: 7,
+        essential: true })
+    }
 
 function extraCoord(coords, pattern){
     var match = coords.match(pattern);

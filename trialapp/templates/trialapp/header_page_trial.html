@@ -3,7 +3,7 @@
     <span> <div class="btn-group float-end" role="group">
         <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
             data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
-        <a href="{% url 'fieldtrial_api' fieldTrial.id%}" class="btn btn-light"
+        <a href="{% url 'trial_api' fieldTrial.id%}" class="btn btn-light"
             data-toggle="tooltip" data-placement="top" title='Go to field trial'>{{fieldTrial.code}}</a>
         <a href="{% url 'thesis-list' fieldTrial.id%}" class="btn btn-dark "
             data-toggle="tooltip" data-placement="top" title='Thesis list'>Thesis</a>
