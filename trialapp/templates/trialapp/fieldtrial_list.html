@@ -63,7 +63,7 @@
                 {% for item in object_list %}
                 <tr id="item-{{item.id}}">
                     <td>
-                        <a class="btn btn-light fs-6 me-3" href="{% url 'fieldtrial_api' item.id%}">{{ item.code }}</a>
+                        <a class="btn btn-light fs-6 me-3" href="{% url 'trial_api' item.id%}">{{ item.code }}</a>
                         {% if item.latitude %}
                             <span class="show_poi" hidden>lat={{item.latitude}},long={{item.longitude}},label={{item.code}}</span>
                         {% endif %}

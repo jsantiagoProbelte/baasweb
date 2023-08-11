@@ -29,7 +29,7 @@
 <br/><br/>
 <h6>Relations ({{foundTrials}}) total trials ({{foundTreatments}}) thesis</h6>
 {% for trial in foundRelations %}
-    <a class='btn btn-info' href="{% url 'fieldtrial_api' trial.id %}" >{{trial.name}}</a>
+    <a class='btn btn-info' href="{% url 'trial_api' trial.id %}" >{{trial.name}}</a>
     <br/>
     {% for thesis in trial.thesis %}
         <a href="{% url 'thesis_api' thesis.id %}" >{{thesis.name}}</a>
