@@ -2,123 +2,171 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% block content %}
-<h5 class="mt-4 ms-4 text-muted">{{product.category}} - {{product.vendor}}</h5>
-<h2 class="fw-bold mt-4 ms-4 mb-3">
-  {{product.name}}
-  <span class="text-muted ml-2">product</span>
-  <span> <div class="btn-group float-end " role="group">
-      <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
-          data-toggle="tooltip" data-placement="top" title='Go to product list'>&#8679;</a>
-      <a class="btn btn-dark" href="{% url 'fieldtrial-list'%}?product={{product.id}}">{{fieldtrials}} # trials</a>
-      <a href="{% url 'product-update' product.id %}" class="btn btn-secondary btn-sm fs-3"
-          data-toggle="tooltip" data-placement="top" title='Edit product'>&#10000;</a>
-      <a href="{% url 'product-delete' product.id %}" class="btn btn-warning btn-sm fs-3"
-          data-toggle="tooltip" data-placement="top" title='Delete product'>&cross;</a>
-  </span>
-</h2>
 
-<div class="row ms-4">
-    <div class="col-md-3 ">
-      <div class="card no-border mb-3">
-        <div class="card-header-baas h5">Variants, batches and treatments</div>
-        <ul class="list-group list-group-flush">
-        {% for variant in variants %}
-          <li class="list-group-item list-group-item-baas">
-            <a class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" href="{% url 'product_variant-api' variant.id%}">{{variant.name}}</a>
-            <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#variant-block-{{variant.id}}" aria-expanded="false" aria-controls="collapseExample">
-              ...
-            </button>
-            <ul class="list-group list-group-flush collapse" id="variant-block-{{variant.id}}">
-            {% for batch in variant.batches %}
-              <li class="list-group-item list-group-item-baas">
-                <a class="btn btn-dark btn-sm" href="{% url 'batch-api' batch.id%}">{{batch.name}}</a>
-                <button class="btn btn-dark btn-sm float-end" type="button" data-bs-toggle="collapse" data-bs-target="#batch-block-{{batch.id}}" aria-expanded="false" aria-controls="collapseExample">
-                  ...
-                </button>
-                <ul class="list-group list-group-flush collapse" id="batch-block-{{batch.id}}">
-                {% for treatment in batch.treatments %}
-                  <li class="list-group-item list-group-item-baas">
-                    <a class="btn btn-dark btn-sm" href="{% url 'treatment-api' treatment.id%}">{{treatment.name}}</a>
-                  </li>
-                {% endfor %}
-                <li class="list-group-item list-group-item-baas">
-                  <a href="{% url 'treatment-add' batch.id %}" class="btn btn-dark btn-sm fs-3"
-                     data-toggle="tooltip" data-placement="top" title='Create treatment'>+</a>
-                  <small>add treatment</small>
-                </li>
-                </ul>
-              </li>
-            {% endfor %}
-            <li class="list-group-item list-group-item-baas">
-              <a href="{% url 'batch-add' variant.id %}" class="btn btn-dark btn-sm fs-3"
-                 data-toggle="tooltip" data-placement="top" title='Create batch'>+</a>
-              <small>add batch</small>
-            </li>
-            </ul>
-          </li>
-        {% endfor %}
-        <li class="list-group-item list-group-item-baas">
-          <a href="{% url 'product_variant-add' product.id %}" class="btn btn-dark btn-sm fs-3"
-          data-toggle="tooltip" data-placement="top" title='Create product'>&#43;</a>
-          <small>add product variant</small>
+{% block topbaastitle %}
+<div class="vertical-line-right vertical-line-left center-items-vertical w-25">
+    <a class="navbar-brand txt-brand h1 ms-4 fs-2" href="{% url 'product_api' product.id %}">{{ product.name }}</a>
+    <span class="badge badge-pill custom-badge-type center-items-vertical">{{ category }}</span>
+    <div class="badge badge-pill custom-badge-efficacy center-items-vertical"><span>Efficacy Range</span><h6 style="display: inline-block;"><b>94-97%</b></h6></div>
+</div>
+{% endblock %}
+
+<ul class="nav nav-tabs product-primary-tabs">
+  <li class="nav-item product-recommendations-tab">
+    <button id="product-tab" data-bs-toggle="tab" data-bs-target="#products" role="tab" aria-controls="products"
+      aria-selected="true" class="nav-link active product-recommendations-link">Product Recommendations</button>
+  </li>
+  <li class="nav-item product-trials-tab">
+    <button id="trials-tab" data-bs-toggle="tab" data-bs-target="#trials" role="tab" aria-controls="trials"
+      class="nav-link product-recommendations-link">Trials</button>
+  </li>
+  <li id="download-link">
+    <a href="#" class="baas-link"><span class="boostrap-icon">&#xF30A;</span> Download Product Info</a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <!-- PRODUCT RECOMMENDATIONS -->
+  <div class="tab-pane fade active show" id="products" role="tabpanel" aria-labelledby="product-tab">
+    <div class="row ms-4 product-variant-tabs">
+      <ul class="nav flex-column">
+        <p class="title">PRODUCT VARIANTS</p>
+        <li class="nav-item">
+          <button class="nav-link product-variant-link active">{{product.name}}</button>
         </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="col-md-9">
-      <div class="card no-border mb-3">
-        
-        <div class="card-header-baas h5">
-            Data points
-        </div>
-        <form id="product-show-data-{{product.id}}" action="{% url 'product_api' product.id %}" method="GET">
-          {% csrf_token %}
-          {{ form|crispy }}
-          <ul class="list-group list-group-horizontal mt-4 mb-4">
-            {% for tagValues in filterData %}
-
-              <div class="form-floating col-md-2 ms-2 me-2">
-                {% include 'baaswebapp/input_select_template.html' with tag=tagValues.name item_id='new' currentValue=tagValues.current selectOptions=tagValues.values addNull=True%}
-                <label class='mb-2' for="floatingInputValue">{{tagValues.name}}</label>
-              </div>
-             
-            {% endfor %}
-            <input type="submit" name="show_data" value="Show data" class="btn btn-primary btn-sm ms-4 me-4"/>
-          </ul>
-        </form>
-      </div>
-
-      {% if errors %}
-        <div class="alert alert-primary" role="alert">{{errors}}</div>
-      {% endif %}
-      
-      <div class="card no-border mb-3">
-        <div class="card-header-baas h5">
-          {{titleGraph}}
-        </div>
-        {% for graphDim in graphs %}
-          {% for graphRow in graphDim.values %}
-            <ul class="list-group list-group-horizontal mb-4">
-              {% for item in graphRow %}
-              <li class="list-group-item list-group-item-baas {{classGraphCol}}">
-                <div class="row">
-                  <div class="col-md-11">
-                    {{item.graph|safe}}
-                  </div>
-                  <div class="col-md-1">
-                    {% for trial in item.trials %}
-                      <a href="{% url 'fieldtrial_api' trial.id%}" class="btn btn-sm btn-dark mb-2">{{trial.code}}</a>
-                      {% endfor %}
-                  </div>
-                </div>
-              </li>
-              {% endfor %}
-            </ul>
-          {% endfor %}
+        {% for variant in variants %}
+        <li class="nav-item">
+          <button class="nav-link product-variant-link">{{variant.name}}</button>
+        </li>
         {% endfor %}
-      </div>
-      
+      </ul>
     </div>
+    <div class="container">
+      <div class="row">
+        <!--EFFICACY RANGE-->
+        <div id="efficacy-range" class="card-baas-alt col-3">
+          <div class="labels">
+            <p>Efficacy Range</p>
+            <small>*All products trials efficacy range</small>
+          </div>
+          <div class="range">
+            <h3>94-97%</h3>
+          </div>
+        </div>
+        <!--ACTIVE SUBSTANCE-->
+        <div id="active-substance" class="card-baas-alt col-3">
+          <div class="labels">
+            <small>ACTIVE SUBSTANCE</small>
+          </div>
+          <p><b>{{ product.active_substance }}</b></p>
+        </div>
+        <!--PLAGUES-->
+        <div id="plagues" class="card-baas-alt col-3">
+          <div class="labels">
+            <small>PLAGUE</small>
+          </div>
+          <p><b>Lorem ipsum</b></p>
+        </div>
+      </div>
+      <div class="row">
+        <!-- PRODUCT BASICS INFO -->
+        <div id="product-basics" class="rounded-box card-baas-alt col-3">
+          <p class="title">Product Basics</p>
+          <div class="container">
+            <div class="row">
+              <div class="col-5">
+                <small>CONCENTRATION</small>
+                <p>Lorem ipsum sit amet</p>
+              </div>
+              <div class="col-5">
+                <small>PH</small>
+                <p>5,96</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <small>PRESENTATION</small>
+                <p>Polvo Mojable (WP)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- APPLICATION -->
+        <div id="application" class="card-baas-alt col-7">
+          <p class="title">Application</p>
+          <div class="container">
+            <div class="row">
+              <div class="col-5">
+                <small>APPLICATION</small>
+                <p>Pulverización</p>
+                <p>PH del agua ligeramente neutro</p>
+              </div>
+              <div class="col-5">
+                <small>WEATHER</small>
+                <p>Temperatura &lt; *30C</p>
+                <p>Humedad &gt; 40%</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5">
+                <small>SECURITY PERIOD</small>
+                <p>No plazo de seguridad</p>
+              </div>
+              <div class="col-5">
+                <small>MEZCLAS</small>
+                <p>No mezclar con otros productos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- CROPS TABLE -->
+      <div id="crops-table" class="rounded-box row">
+        <div class="container">
+          <div id="header" class="row flex-nowrap">
+            <div class="col-2"><small>CROP</small></div>
+            <div class="col-2"><small>PLAGUES</small></div>
+            <div class="col-2"><small>DOSE</small></div>
+            <div class="col-2"><small>SOLUTION VOLUME</small></div>
+            <div class="col-2"><small>NUM. OF APPLICATIONS</small></div>
+            <div class="col-1"><small style="white-space: nowrap">DAY INTERVALS</small></div>
+            <div class="col-1"></div>
+          </div>
+          {% for crop in crops %}
+            <div key="{{ crop.id }}" class="row crop-row flex-nowrap">
+              <div class="col-2">
+                <p class="name"><b>{{ crop.name }}</b></p>
+                <p class="trials-number">Trials {{ crop.trialsCount }}</p>
+              </div>
+              <div class="col-2">{{ crop.strAgents }}</div>
+              <div class="col-2">Lorem Ipsum</div>
+              <div class="col-2">Lorem Ipsum</div>
+              <div class="col-2">{{ crop.samples }}</div>
+              <div class="col-1" style="white-space: nowrap">7-14</div>
+              <div class="col-1 button-row">
+                <button class="collapse-trials-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trials-{{ crop.id }}" aria-expanded="false" aria-controls="trials-{{ crop.id }}">
+                  <span class="chevron-placeholder"></span>
+                </button>
+              </div>
+            </div>
+            <div class="row collapse" id="trials-{{ crop.id }}">
+              <div class="card-baas-alt trial-row">
+                {% for trial in crop.trials %}
+                <div class="trial-line">
+                  <p key="{{ trial.id }}"><a href="{%  url 'trial_api' trial.id %}">{{ trial.name }}</a></p>
+                  <span></span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- TRIALS -->
+  <div class="tab-pane fade" id="trials" role="tabpanel" aria-labelledby="trials-tab">
+    {% include 'trialapp/trials_list.html' %}
+  </div>
 </div>
 {% endblock %}
