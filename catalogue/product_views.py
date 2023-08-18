@@ -300,7 +300,7 @@ class ProductApi(APIView):
                     cropsTable[cropName]["strAgents"] = ', '.join(cropsTable[cropName]["agents"])
 
         return cropsTable.values()
-    
+
     def get(self, request, *args, **kwargs):
         product_id = None
         product_id = kwargs['product_id']
