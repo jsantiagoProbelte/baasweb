@@ -11,6 +11,7 @@ from baaswebapp.data_loaders import TrialStats
 from sesame.utils import get_query_string
 import sendgrid
 from sendgrid.helpers.mail import Email, To, Content, Mail
+from django.utils.translation import activate
 
 sg = sendgrid.SendGridAPIClient(settings.SENDGRID_KEY)
 
@@ -102,3 +103,9 @@ def login_request(request):
         request=request,
         template_name="baaswebapp/login.html",
         context={"formLogin": formLogin})
+
+
+def change_language(request, language_code):
+    activate(language_code)
+    request.session['django_language'] = language_code
+    return redirect(request.META.get('HTTP_REFERER', '/'))

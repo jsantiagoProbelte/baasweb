@@ -40,6 +40,7 @@ urlpatterns = [
     path('', include('drfpasswordless.urls')),
 
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 

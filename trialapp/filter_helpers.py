@@ -302,6 +302,47 @@ class TrialListView(BaaSView):
                 'num_products': len(products)}
 
 
+class PlaguesListView(BaaSView):
+    _groupbyTag = BaaSView.PLAGUE
+    model = FieldTrial
+    paginate_by = 100  # if pagination is desired
+    login_url = '/login'
+    template_name = 'baaswebapp/baas_view_list.html'
+
+    def get_context_data(self, **kwargs):
+        plagues_list = []
+        fHelper = TrialFilterHelper(self.request.GET)
+        fHelper.filter()
+        num_trials = fHelper.countTrials()
+        countCategories = fHelper.countProductCategories()
+        graphCategories = ProductCategoryGraph.draw(countCategories)
+        plagues = fHelper.getGroupedPlagues()
+        totalProducts = fHelper.countProducts()
+        print("TRACE | filterHelper | PlaguesListView | plagues")
+        for plague in plagues:
+            minYear = ''
+            if plague['min_date'] is not None:
+                minYear = str(plague['min_date'].year)
+            maxYear = ''
+            if plague['max_date'] is not None:
+                str(plague['max_date'].year)
+            progress = (plague['product_count'] * 100) / totalProducts
+            plagues_list.append(
+                {
+                    'name': plague['name'],
+                    'product_count': plague['product_count'],
+                    'trial_count': plague['trial_count'],
+                    'id': plague['id'],
+                    'progress': progress,
+                    'date_range': f"{minYear} - {maxYear}"
+                }
+            )
+        return {'object_list': plagues_list,
+                'num_products': totalProducts,
+                'num_trials': num_trials,
+                'graphCategories': graphCategories}
+
+
 class CropListView(BaaSView):
     _groupbyTag = BaaSView.CROP
 

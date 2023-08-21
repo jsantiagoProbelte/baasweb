@@ -1,3 +1,4 @@
+python manage.py compilemessages
 ./run_test.sh 
 if [ $? -eq 0 ]; then
     git push

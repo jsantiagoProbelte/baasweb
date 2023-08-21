@@ -144,6 +144,10 @@
   color: var(--bs-text-color) !important;
 }
 
+.txt-baas-baas{
+  color: var(--bs-custom-bio) !important;
+}
+
 .txt-brand{
   color: var(--custom-brand-color) !important;
 }
@@ -287,6 +291,7 @@
 .bg-custom-morado{
   background: var(--custom-morado );
 }
+
 .bg-custom-bio-morado{
   background: var(--custom-bio-morado );
 }
