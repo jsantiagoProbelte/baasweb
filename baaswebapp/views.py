@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from baaswebapp.forms import BootstrapAuthenticationForm
 from baaswebapp.data_loaders import TrialStats
+from django.utils.translation import activate
 
 
 def home(request):
@@ -59,3 +60,9 @@ def login_request(request):
         request=request,
         template_name="baaswebapp/login.html",
         context={"formLogin": formLogin})
+
+
+def change_language(request, language_code):
+    activate(language_code)
+    request.session['django_language'] = language_code
+    return redirect(request.META.get('HTTP_REFERER', '/'))

@@ -303,16 +303,20 @@ class PlaguesListView(BaaSView):
         totalProducts = fHelper.countProducts()
         print("TRACE | filterHelper | PlaguesListView | plagues")
         for plague in plagues:
-            print(plague)
-            minYear = str(plague['min_date'].year) if plague['min_date'] is not None else ''
-            maxYear = str(plague['max_date'].year) if plague['max_date'] is not None else ''
+            minYear = ''
+            if plague['min_date'] is not None:
+                minYear = str(plague['min_date'].year)
+            maxYear = ''
+            if plague['max_date'] is not None:
+                str(plague['max_date'].year)
+            progress = (plague['product_count'] * 100) / totalProducts
             plagues_list.append(
                 {
                     'name': plague['name'],
                     'product_count': plague['product_count'],
                     'trial_count': plague['trial_count'],
                     'id': plague['id'],
-                    'progress': (plague['product_count'] * 100) / totalProducts,
+                    'progress': progress,
                     'date_range': f"{minYear} - {maxYear}"
                 }
             )
