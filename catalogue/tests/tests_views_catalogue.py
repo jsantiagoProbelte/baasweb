@@ -15,6 +15,7 @@ from catalogue.product_views import ProductApi, \
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_models import TrialAppModelTest
 from trialapp.filter_helpers import ProductListView
+from django.utils.translation import gettext_lazy as _
 
 
 class ProductViewsTest(TestCase):
@@ -129,8 +130,11 @@ class ProductViewsTest(TestCase):
                                                pk=product.id)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
-        # This works with get
-        self.assertContains(response, 'Are you sure to delete')
+        # TODO. It should show the product but is showing {{item.name}}
+        # # This works with get
+        self.assertContains(
+            response, 
+            _('Are you sure to delete'))
 
         # Now let's post and really delete
         deleteRequest = self._apiFactory.delete('product-delete')

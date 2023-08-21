@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-21 15:12+0200\n"
+"POT-Creation-Date: 2023-08-21 17:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,8 +30,85 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
+#: baaswebapp/templates/baaswebapp/baas_view_filter.html:5
+msgid "Group Trials by"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_filter.html:18
+msgid "Search i.e. product, code, crop, responsible"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_filter_top.html:20
+msgid "Search Trials"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:31
+msgid "products"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:32
+msgid "trials"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:35
+msgid "Trials by product type"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:16
+msgid "Browse list"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:21
+msgid "Product"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:22
+msgid "Crops"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:23
+#: catalogue/templates/catalogue/product_show.html:22
+msgid "Trials"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:24
+msgid "Lab Trials"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:30
+msgid "Add items"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:35
+msgid "new trial"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:36
+msgid "new product"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:37
+msgid "new lab trial"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:43
+msgid "Config"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:56
+msgid "name, code, responsible"
+msgstr ""
+
 #: baaswebapp/templates/baaswebapp/layout.html:52
 msgid "Hello"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/model_delete.html:8
+msgid "Are you sure to delete"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/model_delete.html:12
+msgid "Cancel"
 msgstr ""
 
 #: catalogue/models.py:27 catalogue/models.py:39
@@ -69,6 +146,85 @@ msgstr ""
 
 #: catalogue/models.py:38
 msgid "Control"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:11
+#: catalogue/templates/catalogue/product_show.html:50
+msgid "Efficacy Range"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:18
+msgid "Product Recommendations"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:25
+msgid "Download Product Info"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:34
+msgid "product variants"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:51
+msgid "*All products trials efficacy range"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:60
+msgid "active substance"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:67
+#: catalogue/templates/catalogue/product_show.html:129
+msgid "Pests / Sickness"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:75
+msgid "Product Basics"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:79
+msgid "concentration"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:89
+msgid "presentation"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:97
+#: catalogue/templates/catalogue/product_show.html:101
+msgid "Application"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:106
+msgid "weather"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:113
+msgid "Security period"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:117
+msgid "Mixes"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:128
+msgid "Crop"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:130
+msgid "Dosis"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:131
+msgid "Solution Volume"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:132
+msgid "Number Applications"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:133
+msgid "DAY INTERVALS"
 msgstr ""
 
 #: trialapp/models.py:64

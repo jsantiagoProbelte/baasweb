@@ -1,0 +1,3 @@
+# For translations
+googletrans==4.0.0-rc1
+poli

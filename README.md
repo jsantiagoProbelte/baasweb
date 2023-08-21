@@ -46,3 +46,17 @@ This workflow will build and push a Docker container to an Azure Web App when a 
 
 # To make migrations on production:
 # python manage.py migrate --database=shhtunnel_db
+
+# Notes over Location
+
+# 1. primero pones en el código lo que quieres localizar. usando o bien _(blabla) siendo _ from django.utils.translation import gettext_lazy as _ o en los templates : {% trans "balvlab"%}
+# 2. Entonces corres el django-admin makemessages -l es -l en. que identifica los mensajes ,marcados en los py o en los html. y los describe en los ficheros po
+# 3.Traduces... (usando chat gt jajaj y un bonito prompt que he creado"
+# 4. django-admin compilemessages para convertir los po a los mo.
+
+# 5. Django encontrar las traducciones en este setting:
+
+# LOCALE_PATHS = ('locale',)
+
+# use the translate.sh to generate automatically the translations 
+# This command will be called on submit.sh
