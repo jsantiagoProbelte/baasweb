@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-21 17:19+0200\n"
+"POT-Creation-Date: 2023-08-22 00:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,6 +104,7 @@ msgid "Hello"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
+#: catalogue/tests/tests_views_catalogue.py:137
 msgid "Are you sure to delete"
 msgstr ""
 
@@ -225,6 +226,14 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:133
 msgid "DAY INTERVALS"
+msgstr ""
+
+#: labapp/tests/tests_labtrial_views.py:59
+#: trialapp/tests/tests_views_field_trial.py:70
+#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
+#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
+#: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
+msgid "This field is required."
 msgstr ""
 
 #: trialapp/models.py:64
@@ -525,12 +534,6 @@ msgid "{len_type} values are required, but {len_value} was given."
 msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
-
-#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
-#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
-#: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
-msgid "This field is required."
-msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_layout.py:392
 msgid "i18n text"
