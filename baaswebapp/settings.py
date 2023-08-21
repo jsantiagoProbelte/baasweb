@@ -84,13 +84,14 @@ INSTALLED_APPS = BASE_APPS + EXTENDED_APPS + CUSTOM_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+
 ]
 
 ROOT_URLCONF = 'baaswebapp.urls'
@@ -151,7 +152,7 @@ LANGUAGES = [
 
 LANGUAGE_CODE = 'es'
 
-LOCALE_PATH = ['locale']
+LOCALE_PATHS = ('locale',)
 
 TIME_ZONE = 'Europe/Amsterdam'
 
