@@ -1,7 +1,8 @@
+{% load i18n %}
 <div class="container-fluid" >
     <form class="d-flex" method="GET">
         <div class="input-group me-3 ">
-            <span class="input-group-text baas-box-shadow txt-regular-13" id="basic-addon1">Group Trials by</span>
+            <span class="input-group-text baas-box-shadow txt-regular-13" id="basic-addon1">{% trans "Group Trials by"%}</span>
             <select class="form-select me-2 baas-box-shadow txt-regular-13" name="groupby" aria-describedby="basic-addon1">
                 {% for selectOption in groupbyfilter%}
                     {% if selectOption.value == groupby %}
@@ -14,7 +15,7 @@
         </div>
         <div class="input-group me-3">
             <span class="input-group-text baas-box-shadow txt-regular-13 material-symbols-outlined" id="basic-addon2">Search</span>
-            <input class="form-control me-2 baas-box-shadow" type="search" aria-label="Search" placeholder="Search i.e. product, code, crop, responsible" name="name" aria-describedby="basic-addon2">
+            <input class="form-control me-2 baas-box-shadow" type="search" aria-label="Search" placeholder="{% trans 'Search i.e. product, code, crop, responsible'%}" name="name" aria-describedby="basic-addon2">
         </div>
         <div class="input-group">
             <span class="input-group-text baas-box-shadow material-symbols-outlined" id="basic-addon3">Today</span>

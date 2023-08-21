@@ -1,3 +1,4 @@
+{% load i18n %}
 <a class="btn ms-4" data-bs-toggle="offcanvas" href="#offcanvasSideBar" role="button" aria-controls="offcanvasSideBar">
   <span class="material-symbols-outlined menu-icon">menu</span>
 </a>
@@ -12,48 +13,48 @@
       <ul class="list-unstyled mb-0 py-3 pt-md-1">
         <li class="mb-1">
           <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#browse-collapse" aria-expanded="false">
-            Browse list
+            {% trans "Browse list"%}
           </button>
   
           <div class="collapse" id="browse-collapse">
             <ul class="list-unstyled fw-normal pb-1 small">    
-              <li><a class="d-inline-flex align-items-center nav-link sidebar-item" href="{% url 'product-list' %}">Product</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'crop-list' %}">Crops</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'trial-list' %}">Trials</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-list' %}">Lab Trials</a></li>
+              <li><a class="d-inline-flex align-items-center nav-link sidebar-item" href="{% url 'product-list' %}">{% trans "Product"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'crop-list' %}">{% trans "Crops"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'trial-list' %}">{% trans "Trials"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-list' %}">{% trans "Lab Trials"%}</a></li>
             </ul>
           </div>
         </li>
         <li class="mb-1">
           <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#add-items-collapse" aria-expanded="false">
-            Add items
+            {% trans "Add items"%}
           </button>
   
           <div class="collapse" id="add-items-collapse">
             <ul class="list-unstyled fw-normal pb-1 small">
-              <li><a class="d-inline-flex align-items-center sidebar-item " href="{% url 'fieldtrial-add' %}">new trial</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'product-add' %}">new product</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-add' %}">new lab trial</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item " href="{% url 'fieldtrial-add' %}">{% trans "new trial"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'product-add' %}">{% trans "new product"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-add' %}">{% trans "new lab trial"%}</a></li>
             </ul>
           </div>
         </li>
         <li class="mb-1">
           <button class="btn d-inline-flex align-items-center rounded collapsed dropdown-toggle txt-open-semibold-15" data-bs-toggle="collapse" data-bs-target="#customize-collapse" aria-expanded="false">
-            Config
+            {% trans "Config"%}
           </button>
   
           <div class="collapse" id="customize-collapse">
             <ul class="list-unstyled fw-normal pb-1 small">    
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'statsdata' %}">Stats</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'thesis_quality_panel' %}">Correct thesis</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'admin:index' %}">Configuration</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'statsdata' %}">{% trans "Stats"}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'thesis_quality_panel' %}">{% trans "Correct thesis"}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'admin:index' %}">{% trans "Configuration"}</a></li>
             </ul>
           </div>
         </li>
         <li class="mb-1">
           <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
-            <input class="form-control me-sm-2" type="text" placeholder="name, code, responsible" name="name">
-            <button class="btn btn-baas" type="submit">Search</button>
+            <input class="form-control me-sm-2" type="text" placeholder="{% trans 'name, code, responsible'%}" name="name">
+            <button class="btn btn-baas" type="submit">{% trans "Search"}</button>
           </form>
         </li>
       </ul>

@@ -85,5 +85,12 @@
             "module": "catalogue.stats_generator",
             "justMyCode": true,
         },
+        {
+            "name": "translate",
+            "type": "python",
+            "request": "launch",
+            "module": "scripts.translate",
+            "justMyCode": true,
+        },
     ]
 }
