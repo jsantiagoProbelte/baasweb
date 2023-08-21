@@ -133,7 +133,7 @@ class ProductViewsTest(TestCase):
         # TODO. It should show the product but is showing {{item.name}}
         # # This works with get
         self.assertContains(
-            response, 
+            response,
             _('Are you sure to delete'))
 
         # Now let's post and really delete

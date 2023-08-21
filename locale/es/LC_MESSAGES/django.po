@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-21 17:19+0200\n"
+"POT-Creation-Date: 2023-08-22 00:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,6 +114,7 @@ msgid "Hello"
 msgstr "Hola "
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
+#: catalogue/tests/tests_views_catalogue.py:137
 msgid "Are you sure to delete"
 msgstr "¿Seguro que eliminará"
 
@@ -124,7 +125,7 @@ msgstr "Cancelar"
 #: catalogue/models.py:27 catalogue/models.py:39
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:794
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: catalogue/models.py:28
 msgid "Fertilizer"
@@ -237,6 +238,14 @@ msgstr "Numérico de Aplicaciones"
 msgid "DAY INTERVALS"
 msgstr "Interval de Dias"
 
+#: labapp/tests/tests_labtrial_views.py:59
+#: trialapp/tests/tests_views_field_trial.py:70
+#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
+#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
+#: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
+msgid "This field is required."
+msgstr "Este campo es obligatorio."
+
 #: trialapp/models.py:64
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
@@ -326,7 +335,7 @@ msgstr "env var: {var}"
 
 #: venv_baas/lib/python3.9/site-packages/click/core.py:2764
 msgid "(dynamic)"
-msgstr ""
+msgstr "(dynamic)"
 
 #: venv_baas/lib/python3.9/site-packages/click/core.py:2777
 #, python-brace-format
@@ -335,7 +344,7 @@ msgstr "predeterminado: {default}"
 
 #: venv_baas/lib/python3.9/site-packages/click/core.py:2790
 msgid "required"
-msgstr ""
+msgstr "requerido"
 
 #: venv_baas/lib/python3.9/site-packages/click/decorators.py:400
 #, python-format
@@ -397,7 +406,7 @@ msgstr "No hay tal opción: {name}"
 #: venv_baas/lib/python3.9/site-packages/click/exceptions.py:223
 #, python-brace-format
 msgid "Did you mean {possibility}?"
-msgid_plural "(Possible options: {possibility})"
+msgid_plural "(Possible options: {possibilities})"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -542,12 +551,6 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
 
-#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
-#: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
-#: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
-msgid "This field is required."
-msgstr "Este campo es obligatorio."
-
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_layout.py:392
 msgid "i18n text"
 msgstr "I18n texto"
@@ -647,8 +650,7 @@ msgstr "Ingrese solo dígitos separados por comas."
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:354
 #, python-format
 msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-"Asegúrese de que este valor sea %(limit_value)s (es %(show_value)s)."
+msgstr "Asegúrese de que este valor sea %(limit_value)s (es %(show_value)s)."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:389
 #, python-format
@@ -724,8 +726,8 @@ msgid ""
 "File extension “%(extension)s” is not allowed. Allowed extensions are: "
 "%(allowed_extensions)s."
 msgstr ""
-"La extensión del archivo \"%(extension)s\" no está permitida.Las "
-"extensiones permitidas son: %(allowed_extensions)s."
+"La extensión del archivo \"%(extension)s\" no está permitida.Las extensiones"
+" permitidas son: %(allowed_extensions)s."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:602
 msgid "Null characters are not allowed."
@@ -865,8 +867,8 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in [DD] "
 "[[HH:]MM:]ss[.uuuuuu] format."
 msgstr ""
-"El valor “%(value)s” tiene un formato no válido.Debe estar en [dd] [[HH:]"
-" MM:]ss[.uuuuuuu] formato."
+"El valor “%(value)s” tiene un formato no válido.Debe estar en [dd] [[HH:] "
+"MM:]ss[.uuuuuuu] formato."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1795
 msgid "Duration"
@@ -960,8 +962,8 @@ msgid ""
 "“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
 "invalid time."
 msgstr ""
-"El valor “%(value)s” tiene el formato correcto (HH: mm [: ss[.uuuuuuu]])"
-" pero es un tiempo inválido."
+"El valor “%(value)s” tiene el formato correcto (HH:mm[:ss[.uuuuuuu]]) pero "
+"es un tiempo inválido."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2458
 msgid "Time"
@@ -1184,8 +1186,8 @@ msgid ""
 "Please correct the duplicate data for %(field_name)s which must be unique "
 "for the %(lookup)s in %(date_field)s."
 msgstr ""
-"Corrija los datos duplicados para %(field_name)s que debe ser único para el"
-" %(lookup)s en %(date_field)s."
+"Corrija los datos duplicados para %(field_name)s que debe ser único para el "
+"%(lookup)s en %(date_field)s."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/models.py:907
 msgid "Please correct the duplicate values below."
@@ -1218,7 +1220,7 @@ msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:463
 msgid "Clear"
-msgstr ""
+msgstr "Limpiar"
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:464
 msgid "Currently"
