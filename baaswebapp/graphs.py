@@ -134,12 +134,14 @@ class WeatherGraph:
                     marker=dict(color='royalblue', opacity=0.3),
                     secondary_y=True)
 
-        self.applyDefaultLayout(fig,
-                                title=_('precipitation'))
-        fig.update_yaxes(title_text=_('precipitation') + _("hours"),
-                         secondary_y=False)
-        fig.update_yaxes(title_text=_('precipitation') + '(mm)',
-                         secondary_y=True)
+        self.applyDefaultLayout(
+            fig, title=_('precipitation'))
+        fig.update_yaxes(
+            title_text=_('precipitation') + ' ' + _("hours"),
+            secondary_y=False)
+        fig.update_yaxes(
+            title_text=_('precipitation') + ' ' + '(mm)',
+            secondary_y=True)
 
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -153,9 +155,9 @@ class WeatherGraph:
         self.addTrace(fig, self.mean_temps, 'Mean Temp', 'yellow')
         self.addTrace(fig, self.max_temps, 'Max Temp', 'firebrick')
 
-        self.applyDefaultLayout(fig,
-                                title=_('temperature'),
-                                title_yaxes=_('temperature') + '(°C)')
+        self.applyDefaultLayout(
+            fig, title=_('temperature'),
+            title_yaxes=_('temperature') + ' ' + '(°C)')
 
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -174,9 +176,9 @@ class WeatherGraph:
         self.addTrace(fig, self.soil_temps_4,
                       '100-255cm', '#558d55', non_recent=True)
 
-        self.applyDefaultLayout(fig,
-                                title=_('soil temperature'),
-                                title_yaxes=_('soil temperature') + '(°C)')
+        self.applyDefaultLayout(
+            fig, title=_('soil temperature'),
+            title_yaxes=_('soil temperature') + ' ' + '(°C)')
 
         if len(fig.data) > 0:
             plotly_plot_obj = plot({'data': fig}, output_type='div')
@@ -198,9 +200,9 @@ class WeatherGraph:
         self.addTrace(fig, self.soil_moist_4, '100-255cm',
                       '#558d55', non_recent=True)
 
-        self.applyDefaultLayout(fig,
-                                title=_('soil moisture'),
-                                title_yaxes="soil moisture (m³/m³)")
+        self.applyDefaultLayout(
+            fig, title=_('soil moisture'),
+            title_yaxes=_('soil moisture') + ' ' + '(m³/m³)')
 
         if len(fig.data) > 0:
             plotly_plot_obj = plot({'data': fig}, output_type='div')
@@ -215,9 +217,9 @@ class WeatherGraph:
 
         self.addTrace(fig, self.rel_humid, 'relative humidity',
                       COLOR_bs_purple, non_recent=True)
-        self.applyDefaultLayout(fig,
-                                title=_('relative humidity'),
-                                title_yaxes=_('relative humidity') + "(%)")
+        self.applyDefaultLayout(
+            fig, title=_('relative humidity'),
+            title_yaxes=_('relative humidity') + ' ' + "(%)")
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
@@ -228,9 +230,9 @@ class WeatherGraph:
 
         self.addTrace(fig, self.dew_point, 'dew point', COLOR_bs_blue,
                       non_recent=True)
-        self.applyDefaultLayout(fig,
-                                title=_('dew point'),
-                                title_yaxes=_('dew point') + "(°C)")
+        self.applyDefaultLayout(
+            fig, title=_('dew point'),
+            title_yaxes=_('dew point') + ' ' + "(°C)")
 
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
