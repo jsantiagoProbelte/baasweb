@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-23 01:03+0200\n"
+"POT-Creation-Date: 2023-08-23 01:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,45 +28,45 @@ msgid "weather"
 msgstr "clima"
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
-#: baaswebapp/graphs.py:139 baaswebapp/graphs.py:141
+#: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143
 #: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "precipitation"
 msgstr "Precipitación"
 
-#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:139
+#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:140
 msgid "hours"
 msgstr "horas"
 
-#: baaswebapp/graphs.py:157 baaswebapp/graphs.py:158
+#: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160
 #: trialapp/templates/trialapp/trial_conclusions.html:73
 msgid "temperature"
 msgstr "temperatura"
 
-#: baaswebapp/graphs.py:178 baaswebapp/graphs.py:179
+#: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181
 msgid "soil temperature"
 msgstr "temperatura suelo"
 
-#: baaswebapp/graphs.py:185
+#: baaswebapp/graphs.py:187
 msgid "No data for soil temperature"
 msgstr "No hay datos para la temperatura del suelo"
 
-#: baaswebapp/graphs.py:202
+#: baaswebapp/graphs.py:204 baaswebapp/graphs.py:205
 msgid "soil moisture"
 msgstr "humedad suelo"
 
-#: baaswebapp/graphs.py:209
+#: baaswebapp/graphs.py:211
 msgid "No data for soil moisture"
 msgstr "No hay datos para la humedad del suelo"
 
-#: baaswebapp/graphs.py:219 baaswebapp/graphs.py:220
+#: baaswebapp/graphs.py:221 baaswebapp/graphs.py:222
 msgid "relative humidity"
 msgstr "humedad relativa"
 
-#: baaswebapp/graphs.py:232 baaswebapp/graphs.py:233
+#: baaswebapp/graphs.py:234 baaswebapp/graphs.py:235
 msgid "dew point"
 msgstr "punto de rocío"
 
-#: baaswebapp/graphs.py:542
+#: baaswebapp/graphs.py:544
 #: trialapp/templates/trialapp/trial_conclusions.html:44
 #: trialapp/templates/trialapp/trial_show.html:21
 msgid "efficacy"
