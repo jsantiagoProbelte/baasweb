@@ -444,6 +444,9 @@ class DataGraphFactory():
         else:
             self._graph = GraphTrial.NO_DATA_AVAILABLE
 
+    def getTitle(self):
+        return self._graph._title
+
     def dataPointValue(self, dataPoint):
         if self._level in [GraphTrial.L_DOSIS, GraphTrial.L_DAF]:
             return dataPoint.value
