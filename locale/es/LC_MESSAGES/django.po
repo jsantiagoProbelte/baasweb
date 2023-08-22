@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 00:44+0200\n"
+"POT-Creation-Date: 2023-08-22 12:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,79 +39,82 @@ msgid "Search i.e. product, code, crop, responsible"
 msgstr "Buscar, es decir, producto, código, cosecha, responsable"
 
 #: baaswebapp/templates/baaswebapp/baas_view_filter_top.html:20
-#, fuzzy
-#| msgid "Lab Trial"
 msgid "Search Trials"
-msgstr "Prueba de Laboratorio"
+msgstr "Buscar ensayos"
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:31
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:21
 msgid "products"
 msgstr "productos"
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:32
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:23
 msgid "trials"
-msgstr "juicio"
+msgstr "ensayos"
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:35
 msgid "Trials by product type"
-msgstr "Pruebas por tipo de producto"
+msgstr "Ensayos por tipo de producto"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:16
 msgid "Browse list"
-msgstr "Lista de navegación"
-
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:21
-msgid "Product"
-msgstr "Producto"
+msgstr "Explorar elementos"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:22
-msgid "Crops"
-msgstr "Cultivos"
-
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:23
-#: catalogue/templates/catalogue/product_show.html:22
-#, fuzzy
-#| msgid "Lab Trial"
-msgid "Trials"
-msgstr "Prueba de Laboratorio"
+msgid "crops"
+msgstr "cultivos"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:24
-#, fuzzy
-#| msgid "Lab Trial"
 msgid "Lab Trials"
 msgstr "Prueba de Laboratorio"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:30
 msgid "Add items"
-msgstr "Agregar elementos"
+msgstr "Añadir elementos"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:35
-#, fuzzy
-#| msgid "Field Trial"
 msgid "new trial"
-msgstr "Ensayo de Campo"
+msgstr "nuevo ensayo"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:36
 msgid "new product"
 msgstr "nuevo producto"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:37
-#, fuzzy
-#| msgid "Lab Trial"
 msgid "new lab trial"
-msgstr "Prueba de Laboratorio"
+msgstr "nuevo ensayo de Laboratorio"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:43
 msgid "Config"
+msgstr "Configuración"
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:48
+msgid "Stats"
+msgstr "Estadísticas"
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:49
+msgid "Correct thesis"
+msgstr "Corregir Tesis"
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:50
+msgid "Configuration"
 msgstr "Configuración"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:56
 msgid "name, code, responsible"
 msgstr "Nombre, código, responsable"
 
-#: baaswebapp/templates/baaswebapp/layout.html:52
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:57
+msgid "Search"
+msgstr "Buscar"
+
+#: baaswebapp/templates/baaswebapp/layout.html:51
 msgid "Hello"
-msgstr "Hola "
+msgstr "Hola"
+
+#: baaswebapp/templates/baaswebapp/layout.html:75
+msgid "Welcome, please login"
+msgstr "Bienvenido, por favor inicie sesión"
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
 #: catalogue/tests/tests_views_catalogue.py:137
@@ -159,84 +162,109 @@ msgstr "Nutricional"
 msgid "Control"
 msgstr "Control"
 
-#: catalogue/templates/catalogue/product_show.html:11
-#: catalogue/templates/catalogue/product_show.html:50
-msgid "Efficacy Range"
-msgstr "Rango de eficacia"
+#: catalogue/templates/catalogue/product_list.html:5
+#: trialapp/templates/trialapp/trials_list.html:6
+msgid "product"
+msgstr "producto"
 
-#: catalogue/templates/catalogue/product_show.html:18
+#: catalogue/templates/catalogue/product_list.html:6
+#: trialapp/templates/trialapp/trials_list.html:7
+msgid "product type"
+msgstr "tipo producto"
+
+#: catalogue/templates/catalogue/product_list.html:7
+#: catalogue/templates/catalogue/product_show.html:61
+#: trialapp/templates/trialapp/trials_list.html:8
+msgid "active substance"
+msgstr "substancia activa"
+
+#: catalogue/templates/catalogue/product_list.html:8
+#: catalogue/templates/catalogue/product_show.html:12
+#: catalogue/templates/catalogue/product_show.html:51
+#: trialapp/templates/trialapp/trials_list.html:9
+msgid "efficacy range"
+msgstr "rango eficacia"
+
+#: catalogue/templates/catalogue/product_list.html:9
+#: trialapp/templates/trialapp/trials_list.html:10
+msgid "trials date"
+msgstr "fecha ensayo"
+
+#: catalogue/templates/catalogue/product_show.html:19
 msgid "Product Recommendations"
 msgstr "Recomendaciones de productos"
 
-#: catalogue/templates/catalogue/product_show.html:25
+#: catalogue/templates/catalogue/product_show.html:23
+#, fuzzy
+#| msgid "Lab Trials"
+msgid "Trials"
+msgstr "Prueba de Laboratorio"
+
+#: catalogue/templates/catalogue/product_show.html:26
 msgid "Download Product Info"
 msgstr "Descargar información del producto"
 
-#: catalogue/templates/catalogue/product_show.html:34
+#: catalogue/templates/catalogue/product_show.html:35
 msgid "product variants"
 msgstr "Formulaciones del producto"
 
-#: catalogue/templates/catalogue/product_show.html:51
+#: catalogue/templates/catalogue/product_show.html:52
 msgid "*All products trials efficacy range"
 msgstr "*Rango de eficacia de los ensayos de todos los productos"
 
-#: catalogue/templates/catalogue/product_show.html:60
-msgid "active substance"
-msgstr "Substancia activa"
+#: catalogue/templates/catalogue/product_show.html:68
+#: catalogue/templates/catalogue/product_show.html:130
+msgid "pests / disease"
+msgstr "plagas / enfermedades"
 
-#: catalogue/templates/catalogue/product_show.html:67
-#: catalogue/templates/catalogue/product_show.html:129
-msgid "Pests / Sickness"
-msgstr "Plagas / enfermedades"
-
-#: catalogue/templates/catalogue/product_show.html:75
+#: catalogue/templates/catalogue/product_show.html:76
 msgid "Product Basics"
-msgstr "Conceptos básicos de productos"
+msgstr "Propiedades básicas"
 
-#: catalogue/templates/catalogue/product_show.html:79
+#: catalogue/templates/catalogue/product_show.html:80
 msgid "concentration"
 msgstr "concentración"
 
-#: catalogue/templates/catalogue/product_show.html:89
+#: catalogue/templates/catalogue/product_show.html:90
 msgid "presentation"
 msgstr "presentación"
 
-#: catalogue/templates/catalogue/product_show.html:97
-#: catalogue/templates/catalogue/product_show.html:101
+#: catalogue/templates/catalogue/product_show.html:98
+#: catalogue/templates/catalogue/product_show.html:102
 msgid "Application"
 msgstr "Aplicación"
 
-#: catalogue/templates/catalogue/product_show.html:106
+#: catalogue/templates/catalogue/product_show.html:107
 msgid "weather"
 msgstr "clima"
 
-#: catalogue/templates/catalogue/product_show.html:113
+#: catalogue/templates/catalogue/product_show.html:114
 msgid "Security period"
 msgstr "Período de seguridad"
 
-#: catalogue/templates/catalogue/product_show.html:117
+#: catalogue/templates/catalogue/product_show.html:118
 msgid "Mixes"
 msgstr "Mezclas"
 
-#: catalogue/templates/catalogue/product_show.html:128
-msgid "Crop"
-msgstr "Cultivo"
-
-#: catalogue/templates/catalogue/product_show.html:130
-msgid "Dosis"
-msgstr "Dosis"
+#: catalogue/templates/catalogue/product_show.html:129
+msgid "crop"
+msgstr "cultivo"
 
 #: catalogue/templates/catalogue/product_show.html:131
-msgid "Solution Volume"
-msgstr "Volumen de Caldo"
+msgid "dosis"
+msgstr "dosis"
 
 #: catalogue/templates/catalogue/product_show.html:132
-msgid "Number Applications"
-msgstr "Numérico de Aplicaciones"
+msgid "solution volume"
+msgstr "volumen de caldo"
 
 #: catalogue/templates/catalogue/product_show.html:133
-msgid "DAY INTERVALS"
-msgstr "Interval de Dias"
+msgid "number applications"
+msgstr "Numéro aplicaciones"
+
+#: catalogue/templates/catalogue/product_show.html:134
+msgid "day intervals"
+msgstr "intervalo dias"
 
 #: labapp/tests/tests_labtrial_views.py:59
 #: trialapp/tests/tests_views_field_trial.py:70
@@ -253,6 +281,14 @@ msgstr "Ensayo de Campo"
 #: trialapp/models.py:65
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
+
+#: trialapp/templates/trialapp/trials_list.html:5
+msgid "trial"
+msgstr "ensayo"
+
+#: trialapp/templates/trialapp/trials_list.html:5
+msgid "code"
+msgstr "código"
 
 #: venv_baas/lib/python3.9/site-packages/_pytest/config/argparsing.py:474
 #, python-format

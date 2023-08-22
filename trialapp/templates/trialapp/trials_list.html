@@ -1,7 +1,13 @@
+{% load i18n %}
 <table class="table">
     <thead>
-        <tr class="txt-open-semibold-11"><th class="col-md-2">TRIAL</th><th>TRIAL ID</th><th>PRODUCT</th><th>PRODUCT TYPE</th>
-            <th class="col-md-2">ACTIVE SUBSTANCE</th><th>EFFICACY RANGE</th><th>TRIALS DATE</th><th></th></tr>
+        <tr class="txt-open-semibold-11 txt-uppercase">
+            <th class="col-md-2">{% trans "trial" %}</th><th>{% trans "code" %}</th>
+            <th>{% trans "product" %}</th>
+            <th>product</th><th>{% trans "product type"%}</th>
+            <th class="col-md-2">{% trans "active substance" %}</th>
+            <th>{% trans "efficacy range" %}</th>
+            <th>{% trans "trials date" %}</th><th></th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
