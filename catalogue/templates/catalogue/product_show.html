@@ -8,7 +8,8 @@
 <div class="vertical-line-right vertical-line-left center-items-vertical w-25">
     <a class="navbar-brand txt-brand h1 ms-4 fs-2" href="{% url 'product_api' product.id %}">{{ product.name }}</a>
     <span class="badge badge-pill custom-badge-type center-items-vertical">{{ category }}</span>
-    <div class="badge badge-pill custom-badge-efficacy center-items-vertical"><span>{% trans "Efficacy Range"%}</span><h6 style="display: inline-block;"><b>94-97%</b></h6></div>
+    <div class="badge badge-pill custom-badge-efficacy center-items-vertical">
+      <span class="capitalize-first">{% trans "efficacy range"%}</span><h6 style="display: inline-block;"><b>94-97%</b></h6></div>
 </div>
 {% endblock %}
 
@@ -47,7 +48,7 @@
         <!--EFFICACY RANGE-->
         <div id="efficacy-range" class="card-baas-alt col-3">
           <div class="labels">
-            <p>{% trans "Efficacy Range"%}</p>
+            <p class="capitalize-first">{% trans "efficacy range"%}</p>
             <small>{% trans "*All products trials efficacy range"%}</small>
           </div>
           <div class="range">
@@ -64,7 +65,7 @@
         <!--PLAGUES-->
         <div id="plagues" class="card-baas-alt col-3">
           <div class="labels">
-            <small class="txt-uppercase">{% trans "Pests / Sickness" %}</small>
+            <small class="txt-uppercase">{% trans "pests / disease" %}</small>
           </div>
           <p><b>Lorem ipsum</b></p>
         </div>
@@ -124,13 +125,13 @@
       <!-- CROPS TABLE -->
       <div id="crops-table" class="rounded-box row">
         <div class="container">
-          <div id="header" class="row flex-nowrap">
-            <div class="col-2"><small class="txt-uppercase">{% trans "Crop"%}</small></div>
-            <div class="col-2"><small class="txt-uppercase">{% trans "Pests / Sickness" %}</small></div>
-            <div class="col-2"><small class="txt-uppercase">{% trans "Dosis" %}</small></div>
-            <div class="col-2"><small class="txt-uppercase">{% trans "Solution Volume" %}</small></div>
-            <div class="col-2"><small class="txt-uppercase">{% trans "Number Applications"%}</small></div>
-            <div class="col-1"><small style="white-space: nowrap" class="txt-uppercase">{% trans "DAY INTERVALS"%}</small></div>
+          <div id="header" class="row flex-nowrap txt-uppercase">
+            <div class="col-2"><small>{% trans "crop"%}</small></div>
+            <div class="col-2"><small>{% trans "pests / disease" %}</small></div>
+            <div class="col-2"><small>{% trans "dosis" %}</small></div>
+            <div class="col-2"><small>{% trans "solution volume" %}</small></div>
+            <div class="col-2"><small>{% trans "number applications"%}</small></div>
+            <div class="col-1"><small style="white-space: nowrap">{% trans "day intervals"%}</small></div>
             <div class="col-1"></div>
           </div>
           {% for crop in crops %}

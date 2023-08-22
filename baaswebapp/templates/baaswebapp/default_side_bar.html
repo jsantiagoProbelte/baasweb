@@ -18,10 +18,10 @@
   
           <div class="collapse" id="browse-collapse">
             <ul class="list-unstyled fw-normal pb-1 small">    
-              <li><a class="d-inline-flex align-items-center nav-link sidebar-item" href="{% url 'product-list' %}">{% trans "Product"%}</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'crop-list' %}">{% trans "Crops"%}</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'trial-list' %}">{% trans "Trials"%}</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'labtrial-list' %}">{% trans "Lab Trials"%}</a></li>
+              <li><a class="d-inline-flex align-items-center nav-link sidebar-item capitalize-first" href="{% url 'product-list' %}">{% trans "products"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item capitalize-first" href="{% url 'crop-list' %}">{% trans "crops"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item capitalize-first" href="{% url 'trial-list' %}">{% trans "trials"%}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item capitalize-first" href="{% url 'labtrial-list' %}">{% trans "Lab Trials"%}</a></li>
             </ul>
           </div>
         </li>
@@ -45,16 +45,16 @@
   
           <div class="collapse" id="customize-collapse">
             <ul class="list-unstyled fw-normal pb-1 small">    
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'statsdata' %}">{% trans "Stats"}</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'thesis_quality_panel' %}">{% trans "Correct thesis"}</a></li>
-              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'admin:index' %}">{% trans "Configuration"}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'statsdata' %}">{% trans "Stats" %}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'thesis_quality_panel' %}">{% trans "Correct thesis" %}</a></li>
+              <li><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'admin:index' %}">{% trans "Configuration" %}</a></li>
             </ul>
           </div>
         </li>
         <li class="mb-1">
           <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
             <input class="form-control me-sm-2" type="text" placeholder="{% trans 'name, code, responsible'%}" name="name">
-            <button class="btn btn-baas" type="submit">{% trans "Search"}</button>
+            <button class="btn btn-baas" type="submit">{% trans "Search" %}</button>
           </form>
         </li>
       </ul>

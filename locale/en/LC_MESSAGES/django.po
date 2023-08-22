@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 00:39+0200\n"
+"POT-Creation-Date: 2023-08-22 13:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,10 +43,13 @@ msgid "Search Trials"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:31
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:21
+#: trialapp/templates/trialapp/crop_list.html:6
 msgid "products"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:32
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:23
 msgid "trials"
 msgstr ""
 
@@ -58,17 +61,8 @@ msgstr ""
 msgid "Browse list"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:21
-msgid "Product"
-msgstr ""
-
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:22
-msgid "Crops"
-msgstr ""
-
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:23
-#: catalogue/templates/catalogue/product_show.html:22
-msgid "Trials"
+msgid "crops"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:24
@@ -95,12 +89,32 @@ msgstr ""
 msgid "Config"
 msgstr ""
 
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:48
+msgid "Stats"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:49
+msgid "Correct thesis"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:50
+msgid "Configuration"
+msgstr ""
+
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:56
 msgid "name, code, responsible"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/layout.html:52
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:57
+msgid "Search"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/layout.html:51
 msgid "Hello"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/layout.html:75
+msgid "Welcome, please login"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
@@ -149,83 +163,109 @@ msgstr ""
 msgid "Control"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:11
-#: catalogue/templates/catalogue/product_show.html:50
-msgid "Efficacy Range"
+#: catalogue/templates/catalogue/product_list.html:5
+#: trialapp/templates/trialapp/trials_list.html:6
+msgid "product"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:18
-msgid "Product Recommendations"
+#: catalogue/templates/catalogue/product_list.html:6
+#: trialapp/templates/trialapp/trials_list.html:7
+msgid "product type"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:25
-msgid "Download Product Info"
-msgstr ""
-
-#: catalogue/templates/catalogue/product_show.html:34
-msgid "product variants"
-msgstr ""
-
-#: catalogue/templates/catalogue/product_show.html:51
-msgid "*All products trials efficacy range"
-msgstr ""
-
-#: catalogue/templates/catalogue/product_show.html:60
+#: catalogue/templates/catalogue/product_list.html:7
+#: catalogue/templates/catalogue/product_show.html:61
+#: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:67
-#: catalogue/templates/catalogue/product_show.html:129
-msgid "Pests / Sickness"
+#: catalogue/templates/catalogue/product_list.html:8
+#: catalogue/templates/catalogue/product_show.html:12
+#: catalogue/templates/catalogue/product_show.html:51
+#: trialapp/templates/trialapp/crop_list.html:7
+#: trialapp/templates/trialapp/trials_list.html:9
+msgid "efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:75
+#: catalogue/templates/catalogue/product_list.html:9
+#: trialapp/templates/trialapp/crop_list.html:8
+#: trialapp/templates/trialapp/trials_list.html:10
+msgid "trials date"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:19
+msgid "Product Recommendations"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:23
+msgid "Trials"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:26
+msgid "Download Product Info"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:35
+msgid "product variants"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:52
+msgid "*All products trials efficacy range"
+msgstr ""
+
+
+#: catalogue/templates/catalogue/product_show.html:76
 msgid "Product Basics"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:79
+#: catalogue/templates/catalogue/product_show.html:80
 msgid "concentration"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:89
+#: catalogue/templates/catalogue/product_show.html:90
 msgid "presentation"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:97
-#: catalogue/templates/catalogue/product_show.html:101
+#: catalogue/templates/catalogue/product_show.html:98
+#: catalogue/templates/catalogue/product_show.html:102
 msgid "Application"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:106
+#: catalogue/templates/catalogue/product_show.html:107
 msgid "weather"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:113
+#: catalogue/templates/catalogue/product_show.html:114
 msgid "Security period"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:117
+#: catalogue/templates/catalogue/product_show.html:118
 msgid "Mixes"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:128
-msgid "Crop"
+#: catalogue/templates/catalogue/product_show.html:129
+#: trialapp/templates/trialapp/crop_list.html:5
+msgid "crop"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:130
-msgid "Dosis"
+msgid "pests / disease"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:131
-msgid "Solution Volume"
+msgid "dosis"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:132
-msgid "Number Applications"
+msgid "solution volume"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:133
-msgid "DAY INTERVALS"
+msgid "number applications"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:134
+msgid "day intervals"
 msgstr ""
 
 #: labapp/tests/tests_labtrial_views.py:59
@@ -242,6 +282,14 @@ msgstr ""
 
 #: trialapp/models.py:65
 msgid "Lab Trial"
+msgstr ""
+
+#: trialapp/templates/trialapp/trials_list.html:5
+msgid "trial"
+msgstr ""
+
+#: trialapp/templates/trialapp/trials_list.html:5
+msgid "code"
 msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/_pytest/config/argparsing.py:474

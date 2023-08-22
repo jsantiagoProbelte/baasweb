@@ -152,6 +152,10 @@
   text-transform: uppercase;
 }
 
+.capitalize-first {
+  text-transform: capitalize !important; 
+}
+
 .txt-brand{
   color: var(--custom-brand-color) !important;
 }
