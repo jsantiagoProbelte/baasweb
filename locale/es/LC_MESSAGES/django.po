@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 14:29+0200\n"
+"POT-Creation-Date: 2023-08-22 14:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,12 @@ msgstr ""
 #: baaswebapp/forms.py:21
 msgid "Password"
 msgstr "Clave"
+
+#: baaswebapp/graphs.py:545
+#: trialapp/templates/trialapp/trial_conclusions.html:44
+#: trialapp/templates/trialapp/trial_show.html:21
+msgid "efficacy"
+msgstr "eficacia"
 
 #: baaswebapp/settings.py:128
 msgid "English"
@@ -178,6 +184,7 @@ msgstr "tipo producto"
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:61
+#: trialapp/templates/trialapp/trial_conclusions.html:106
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr "substancia activa"
@@ -224,6 +231,7 @@ msgstr "*Rango de eficacia de los ensayos de todos los productos"
 #: catalogue/templates/catalogue/product_show.html:130
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
+#: trialapp/templates/trialapp/trial_conclusions.html:52
 msgid "pest / disease"
 msgstr "plaga / enfermedad"
 
@@ -258,22 +266,27 @@ msgstr "Mezclas"
 
 #: catalogue/templates/catalogue/product_show.html:129
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
+#: trialapp/templates/trialapp/trial_conclusions.html:54
 msgid "crop"
 msgstr "cultivo"
 
 #: catalogue/templates/catalogue/product_show.html:131
+#: trialapp/templates/trialapp/trial_conclusions.html:7
 msgid "dosis"
 msgstr "dosis"
 
 #: catalogue/templates/catalogue/product_show.html:132
+#: trialapp/templates/trialapp/trial_conclusions.html:13
 msgid "solution volume"
-msgstr "volumen de caldo"
+msgstr "volumen caldo"
 
 #: catalogue/templates/catalogue/product_show.html:133
+#: trialapp/templates/trialapp/trial_conclusions.html:20
 msgid "number applications"
-msgstr "Numéro aplicaciones"
+msgstr "Número aplicaciones"
 
 #: catalogue/templates/catalogue/product_show.html:134
+#: trialapp/templates/trialapp/trial_conclusions.html:26
 msgid "day intervals"
 msgstr "intervalo dias"
 
@@ -287,7 +300,7 @@ msgstr "Este campo es obligatorio."
 
 #: trialapp/filter_helpers.py:235
 msgid "Ungrouped"
-msgstr ""
+msgstr "No agrupar"
 
 #: trialapp/models.py:64
 msgid "Field Trial"
@@ -298,10 +311,64 @@ msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
 
 #: trialapp/templates/trialapp/btn_trials.html:6
-#, fuzzy
-#| msgid "trials"
 msgid "no trials"
-msgstr "ensayos"
+msgstr "no ensayos"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:32
+msgid "recommendations"
+msgstr "Recomendaciones"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:36
+msgid "infestation"
+msgstr "Infección"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:45
+msgid "* in the moment of Maximum infestation"
+msgstr "* En el momento de la máxima infestación"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:56
+msgid "date"
+msgstr "fecha"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:60
+msgid "location"
+msgstr "Localización"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:69
+msgid "weather conditions"
+msgstr "condiciones climáticas"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:73
+msgid "temperature"
+msgstr "temperatura"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:77
+msgid "humidity"
+msgstr "humedad"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:81
+msgid "precipitation"
+msgstr "Precipitación"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:87
+msgid "cultivation"
+msgstr "Cultivo"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:91
+msgid "cultivation mode"
+msgstr "modo de cultivo"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:95
+msgid "irrigation"
+msgstr "Irrigación"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:99
+msgid "texture"
+msgstr "textura"
+
+#: trialapp/templates/trialapp/trial_conclusions.html:108
+msgid "benefit"
+msgstr "beneficio"
 
 #: trialapp/templates/trialapp/trials_list.html:5
 msgid "trial"

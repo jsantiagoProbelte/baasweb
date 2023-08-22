@@ -1,6 +1,7 @@
 from plotly.offline import plot
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+from django.utils.translation import gettext_lazy as _
 
 # from plotly.validators.scatter.marker import SymbolValidator
 
@@ -541,7 +542,7 @@ class GraphStat():
 class EfficacyGraph:
     @staticmethod
     def draw(numNameDict, numValueDict,
-             title_text='Efficacy (%)', showLegend=False,
+             title_text=_('efficacy') + '(%)', showLegend=False,
              yaxis_title='Abbott (%)', xaxis_title='thesis',
              barmode='group'):
 
