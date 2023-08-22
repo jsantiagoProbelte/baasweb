@@ -11,6 +11,7 @@ from trialapp.assessment_views import\
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.trial_views import trialContentApi
 
+
 class AssessmentViewsTest(TestCase):
 
     _apiFactory = None
