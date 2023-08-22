@@ -62,6 +62,8 @@ ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
 
 
 class WeatherGraph:
+    DEFAULT_HEIGHT = 175
+
     def __init__(self, dates, non_recent_dates, mean_temps, min_temps,
                  max_temps, precip, precip_hrs,
                  soil_moist_1, soil_moist_2, soil_moist_3, soil_moist_4,
@@ -95,26 +97,49 @@ class WeatherGraph:
                 name=name,
                 line=dict(color=color, width=width)))
 
-    def draw_precip(self):
-        if not self.dates:
-            return False
-        fig = make_subplots(specs=[[{"secondary_y": True}]])
-        self.addTrace(fig, self.precip_hrs, 'Precipitation Hours', 'lightblue')
-        fig.add_bar(x=self.dates, y=self.precip,
-                    name='Precipitation (mm)', marker=dict(
-                        color='royalblue', opacity=0.3), secondary_y=True)
-
+    def applyDefaultLayout(self, fig,
+                           title=_('weather'),
+                           title_yaxes=None):
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards_weather,
             title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards_weather,
             font_color=COLOR_TEXT,
-            showlegend=False,
+            showlegend=True,
+            legend=dict(orientation="v", yanchor="middle", y=0.5,
+                        xanchor="left", x=-0.5),
+            margin=dict(
+                t=40,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
+            title_text=title.upper(),
+            height=WeatherGraph.DEFAULT_HEIGHT,
             autosize=True)
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         fig.update_xaxes(title_text="Date")
-        fig.update_yaxes(title_text="Precipitation Hours", secondary_y=False)
-        fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=True)
+        if title_yaxes:
+            fig.update_yaxes(title_text=title_yaxes)
+
+    def draw_precip(self):
+        if not self.dates:
+            return False
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        self.addTrace(fig, self.precip_hrs,
+                      _('precipitation') + _("hours"),
+                      'lightblue')
+        fig.add_bar(x=self.dates, y=self.precip,
+                    name=_('precipitation') + '(mm)',
+                    marker=dict(color='royalblue', opacity=0.3),
+                    secondary_y=True)
+
+        self.applyDefaultLayout(fig,
+                                title=_('precipitation'))
+        fig.update_yaxes(title_text=_('precipitation') + _("hours"),
+                         secondary_y=False)
+        fig.update_yaxes(title_text=_('precipitation') + '(mm)',
+                         secondary_y=True)
 
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -128,17 +153,9 @@ class WeatherGraph:
         self.addTrace(fig, self.mean_temps, 'Mean Temp', 'yellow')
         self.addTrace(fig, self.max_temps, 'Max Temp', 'firebrick')
 
-        fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards_weather,
-            title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards_weather,
-            font_color=COLOR_TEXT,
-            showlegend=False,
-            autosize=True
-        )
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_xaxes(title_text="Date")
-        fig.update_yaxes(title_text="Temperatures (°C)")
+        self.applyDefaultLayout(fig,
+                                title=_('temperature'),
+                                title_yaxes=_('temperature') + '(°C)')
 
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -157,22 +174,15 @@ class WeatherGraph:
         self.addTrace(fig, self.soil_temps_4,
                       '100-255cm', '#558d55', non_recent=True)
 
-        fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards_weather,
-            title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards_weather,
-            font_color=COLOR_TEXT,
-            autosize=True
-        )
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_xaxes(title_text="Date")
-        fig.update_yaxes(title_text="Soil Temperatures (°C)")
+        self.applyDefaultLayout(fig,
+                                title=_('soil temperature'),
+                                title_yaxes=_('soil temperature') + '(°C)')
 
         if len(fig.data) > 0:
             plotly_plot_obj = plot({'data': fig}, output_type='div')
             return plotly_plot_obj
         else:
-            return 'No data for soil temperature'
+            return _('No data for soil temperature')
 
     def draw_soil_moist(self):
         if not self.non_recent_dates:
@@ -188,40 +198,26 @@ class WeatherGraph:
         self.addTrace(fig, self.soil_moist_4, '100-255cm',
                       '#558d55', non_recent=True)
 
-        fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards_weather,
-            title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards_weather,
-            font_color=COLOR_TEXT,
-            autosize=True
-        )
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_xaxes(title_text="Date")
-        fig.update_yaxes(title_text="Soil Moisture (m³/m³)")
+        self.applyDefaultLayout(fig,
+                                title=_('soil moisture'),
+                                title_yaxes="soil moisture (m³/m³)")
 
         if len(fig.data) > 0:
             plotly_plot_obj = plot({'data': fig}, output_type='div')
             return plotly_plot_obj
         else:
-            return 'No data for soil moisture'
+            return _('No data for soil moisture')
 
     def draw_humid(self):
         if not self.non_recent_dates:
             return False
         fig = make_subplots()
 
-        self.addTrace(fig, self.rel_humid, 'Relative Humidity',
+        self.addTrace(fig, self.rel_humid, 'relative humidity',
                       COLOR_bs_purple, non_recent=True)
-        fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards_weather,
-            title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards_weather,
-            font_color=COLOR_TEXT,
-            autosize=True
-        )
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_yaxes(title_text="Relative Humidity (%)")
-        fig.update_xaxes(title_text="Date")
+        self.applyDefaultLayout(fig,
+                                title=_('relative humidity'),
+                                title_yaxes=_('relative humidity') + "(%)")
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
@@ -230,18 +226,12 @@ class WeatherGraph:
             return False
         fig = make_subplots()
 
-        self.addTrace(fig, self.dew_point, 'Dew Point', COLOR_bs_blue,
+        self.addTrace(fig, self.dew_point, 'dew point', COLOR_bs_blue,
                       non_recent=True)
-        fig.update_layout(
-            paper_bgcolor=COLOR_bg_color_cards_weather,
-            title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards_weather,
-            font_color=COLOR_TEXT,
-            autosize=True
-        )
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_yaxes(title_text="Dew Point (°C)")
-        fig.update_xaxes(title_text="Date")
+        self.applyDefaultLayout(fig,
+                                title=_('dew point'),
+                                title_yaxes=_('dew point') + "(°C)")
+
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
@@ -274,6 +264,7 @@ class GraphTrial:
     BAR = 'bar'
     VIOLIN = 'violin'
     LINE = 'line'
+    DEFAULT_HEIGHT = 275
 
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
@@ -282,6 +273,7 @@ class GraphTrial:
     L_DAF = 'daf'
     L_DOSIS = 'dosis'
     LEVELS = [L_THESIS, L_REPLICA, L_SAMPLE]
+    _title = None
 
     NO_DATA_AVAILABLE = 'No data available yet'
 
@@ -306,8 +298,9 @@ class GraphTrial:
         self._level = level
         self._showTitle = showTitle
         self._xAxis = xAxis
+        self._title = self.getTitle(rateType, ratedPart)
         self._graphData = {
-                'title': self.getTitle(rateType, ratedPart),
+                'title': self._title,
                 'x_axis': xAxis,
                 'y_axis': rateType.unit,
                 'traces': traces}
@@ -347,12 +340,14 @@ class GraphTrial:
             font_color=COLOR_TEXT,
             title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=-1,
-                xanchor="left",
-                x=0),
+            legend=dict(orientation="v", yanchor="middle", y=0.5,
+                        xanchor="left", x=-0.5),
+            margin=dict(
+                t=40,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
@@ -413,6 +408,8 @@ class GraphTrial:
 
         if typeFigure == GraphTrial.VIOLIN:
             fig.update_layout(violinmode='group')
+
+        fig.update_layout(height=GraphTrial.DEFAULT_HEIGHT)
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
