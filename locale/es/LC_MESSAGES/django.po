@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 12:40+0200\n"
+"POT-Creation-Date: 2023-08-22 13:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,6 +44,7 @@ msgstr "Buscar ensayos"
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:31
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
+#: trialapp/templates/trialapp/crop_list.html:6
 msgid "products"
 msgstr "productos"
 
@@ -181,11 +182,13 @@ msgstr "substancia activa"
 #: catalogue/templates/catalogue/product_list.html:8
 #: catalogue/templates/catalogue/product_show.html:12
 #: catalogue/templates/catalogue/product_show.html:51
+#: trialapp/templates/trialapp/crop_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
 msgid "efficacy range"
 msgstr "rango eficacia"
 
 #: catalogue/templates/catalogue/product_list.html:9
+#: trialapp/templates/trialapp/crop_list.html:8
 #: trialapp/templates/trialapp/trials_list.html:10
 msgid "trials date"
 msgstr "fecha ensayo"
@@ -247,6 +250,7 @@ msgid "Mixes"
 msgstr "Mezclas"
 
 #: catalogue/templates/catalogue/product_show.html:129
+#: trialapp/templates/trialapp/crop_list.html:5
 msgid "crop"
 msgstr "cultivo"
 
