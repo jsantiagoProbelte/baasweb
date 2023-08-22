@@ -215,7 +215,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:68
 #: catalogue/templates/catalogue/product_show.html:130
-msgid "pests / disease"
+msgid "pest / disease"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:76

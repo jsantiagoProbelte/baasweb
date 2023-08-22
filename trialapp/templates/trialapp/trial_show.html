@@ -23,7 +23,7 @@
 </ul>
 <ul class="navbar-nav ms-4 vertical-line-left">
     <li class="nav-item  ms-3">
-        <a class="btn btn-outline-brand ms-3" href="{% url 'fieldtrial-list'%}?product={{item.product.id}}">{{other_trials}} {{trial.product}} trials &#10132;</a>
+        {% include 'trialapp/btn_trials.html' with count_trials=other_trials tag='product' tagId=trial.product.id extraInfo=trial.product extra_params=''%}
     </li>
 
 {% endblock %}

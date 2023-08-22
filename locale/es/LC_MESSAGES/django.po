@@ -217,8 +217,8 @@ msgstr "*Rango de eficacia de los ensayos de todos los productos"
 
 #: catalogue/templates/catalogue/product_show.html:68
 #: catalogue/templates/catalogue/product_show.html:130
-msgid "pests / disease"
-msgstr "plagas / enfermedades"
+msgid "pest / disease"
+msgstr "plaga / enfermedad"
 
 #: catalogue/templates/catalogue/product_show.html:76
 msgid "Product Basics"
