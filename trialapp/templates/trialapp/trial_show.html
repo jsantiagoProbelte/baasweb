@@ -34,29 +34,29 @@
     <div class="col-md-10 offset-md-1">
     <ul class="nav nav-tabs-baas" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active txt-open-semibold-15" id="conclusions-tab" data-bs-toggle="tab" data-bs-target="#nav-conclusions" type="button" role="tab" aria-controls="nav-conclusions" aria-selected="true">Conclusions</button>
+            <button class="nav-link active txt-open-semibold-15 capitalize-first" id="conclusions-tab" data-bs-toggle="tab" data-bs-target="#nav-conclusions" type="button" role="tab" aria-controls="nav-conclusions" aria-selected="true">{% trans "conclusions" %}</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link txt-open-semibold-15" id="design-trial-tab" data-bs-toggle="tab" data-bs-target="#nav-design-trial" type="button" role="tab" aria-controls="nav-design-trial" aria-selected="true">Trial Design</button>
+            <button class="nav-link txt-open-semibold-15 capitalize-first" id="design-trial-tab" data-bs-toggle="tab" data-bs-target="#nav-design-trial" type="button" role="tab" aria-controls="nav-design-trial" aria-selected="true">{% trans "trial Design" %}</button>
         </li>
         <li class="nav-item">
-        <button class="nav-link txt-open-semibold-15" id="result-summary-tab" data-bs-toggle="tab" data-bs-target="#nav-result-summary" type="button" role="tab" aria-controls="nav-result-summary" aria-selected="true">Result Summary</button>
+        <button class="nav-link txt-open-semibold-15 capitalize-first" id="result-summary-tab" data-bs-toggle="tab" data-bs-target="#nav-result-summary" type="button" role="tab" aria-controls="nav-result-summary" aria-selected="true">{% trans "result summary" %}</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link txt-open-semibold-15" id="trends-tab" data-bs-toggle="tab" data-bs-target="#nav-trends" type="button" role="tab" aria-controls="nav-trends" aria-selected="true">Trends</button>
+            <button class="nav-link txt-open-semibold-15 capitalize-first" id="trends-tab" data-bs-toggle="tab" data-bs-target="#nav-trends" type="button" role="tab" aria-controls="nav-trends" aria-selected="true">{% trans "trends" %}</button>
         </li>
         <li class="nav-item">
-        <button class="nav-link txt-open-semibold-15" id="data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="true">Data</button>
+        <button class="nav-link txt-open-semibold-15 capitalize-first" id="data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="true">{% trans "data" %}</button>
         </li>
         <li class="nav-item">
-        <button class="nav-link txt-open-semibold-15" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#nav-assessment" type="button" role="tab" aria-controls="nav-assessment" aria-selected="true">Assessments</button>
+        <button class="nav-link txt-open-semibold-15 capitalize-first" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#nav-assessment" type="button" role="tab" aria-controls="nav-assessment" aria-selected="true">{% trans "assessments" %}</button>
         </li>
         <li class="nav-item">
-        <button class="nav-link txt-open-semibold-15" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
+        <button class="nav-link txt-open-semibold-15 capitalize-first" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
         </li>
         <li class="nav-item">
-            <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15"
-                data-toggle="tooltip" data-placement="top" title='Download trial'>Download trial &dHar;</a>
+            <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15 capitalize-first"
+                data-toggle="tooltip" data-placement="top" title='Download trial'>{% trans "download trial" %} &dHar;</a>
         </li>
     </ul>
     <div class="tab-content" id="nav-trial">

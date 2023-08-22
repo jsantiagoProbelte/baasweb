@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 14:54+0200\n"
+"POT-Creation-Date: 2023-08-22 15:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -369,6 +369,34 @@ msgstr "textura"
 #: trialapp/templates/trialapp/trial_conclusions.html:108
 msgid "benefit"
 msgstr "beneficio"
+
+#: trialapp/templates/trialapp/trial_show.html:37
+msgid "conclusions"
+msgstr "conclusiones"
+
+#: trialapp/templates/trialapp/trial_show.html:40
+msgid "trial Design"
+msgstr "Diseño ensayo"
+
+#: trialapp/templates/trialapp/trial_show.html:43
+msgid "result summary"
+msgstr "resumen resultados"
+
+#: trialapp/templates/trialapp/trial_show.html:46
+msgid "trends"
+msgstr "tendencias"
+
+#: trialapp/templates/trialapp/trial_show.html:49
+msgid "data"
+msgstr "datos"
+
+#: trialapp/templates/trialapp/trial_show.html:52
+msgid "assessments"
+msgstr "evaluaciones"
+
+#: trialapp/templates/trialapp/trial_show.html:59
+msgid "download trial"
+msgstr "Descargar ensayo"
 
 #: trialapp/templates/trialapp/trials_list.html:5
 msgid "trial"
