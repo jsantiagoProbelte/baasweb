@@ -8,6 +8,7 @@ from baaswebapp.graphs import ProductCategoryGraph, COLOR_control, \
     COLOR_estimulant, COLOR_nutritional, COLOR_unknown
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -245,10 +246,10 @@ class BaaSView(LoginRequiredMixin, View):
     PLAGUE = 'plague'
     TRIALS = 'trials'
     # value on select : (label on select , url )
-    GROUP_BY = {PRODUCT: ('Product', 'product-list'),
-                CROP: ('Crop', 'crop-list'),
-                PLAGUE: ('Plague', 'plagues-list'),
-                TRIALS: ('Ungrouped', 'trial-list')}
+    GROUP_BY = {PRODUCT: (_('product'), 'product-list'),
+                CROP: (_('crop'), 'crop-list'),
+                PLAGUE: (_('pest / disease'), 'plagues-list'),
+                TRIALS: (_('Ungrouped'), 'trial-list')}
 
     @staticmethod
     def groupByOptions():
