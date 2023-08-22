@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 13:31+0200\n"
+"POT-Creation-Date: 2023-08-22 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,11 +45,13 @@ msgstr ""
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:31
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
 #: trialapp/templates/trialapp/crop_list.html:6
+#: trialapp/templates/trialapp/plagues_list.html:6
 msgid "products"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:32
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:23
+#: trialapp/templates/trialapp/btn_trials.html:4
 msgid "trials"
 msgstr ""
 
@@ -164,6 +166,7 @@ msgid "Control"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:5
+#: trialapp/filter_helpers.py:232
 #: trialapp/templates/trialapp/trials_list.html:6
 msgid "product"
 msgstr ""
@@ -183,12 +186,14 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:12
 #: catalogue/templates/catalogue/product_show.html:51
 #: trialapp/templates/trialapp/crop_list.html:7
+#: trialapp/templates/trialapp/plagues_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
 msgid "efficacy range"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:9
 #: trialapp/templates/trialapp/crop_list.html:8
+#: trialapp/templates/trialapp/plagues_list.html:8
 #: trialapp/templates/trialapp/trials_list.html:10
 msgid "trials date"
 msgstr ""
@@ -215,6 +220,8 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:68
 #: catalogue/templates/catalogue/product_show.html:130
+#: trialapp/filter_helpers.py:234
+#: trialapp/templates/trialapp/plagues_list.html:5
 msgid "pest / disease"
 msgstr ""
 
@@ -248,7 +255,7 @@ msgid "Mixes"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:129
-#: trialapp/templates/trialapp/crop_list.html:5
+#: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
 msgid "crop"
 msgstr ""
 
@@ -276,12 +283,20 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
+#: trialapp/filter_helpers.py:235
+msgid "Ungrouped"
+msgstr ""
+
 #: trialapp/models.py:64
 msgid "Field Trial"
 msgstr ""
 
 #: trialapp/models.py:65
 msgid "Lab Trial"
+msgstr ""
+
+#: trialapp/templates/trialapp/btn_trials.html:6
+msgid "no trials"
 msgstr ""
 
 #: trialapp/templates/trialapp/trials_list.html:5

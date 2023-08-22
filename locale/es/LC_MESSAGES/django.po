@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-22 13:31+0200\n"
+"POT-Creation-Date: 2023-08-22 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,11 +45,13 @@ msgstr "Buscar ensayos"
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:31
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
 #: trialapp/templates/trialapp/crop_list.html:6
+#: trialapp/templates/trialapp/plagues_list.html:6
 msgid "products"
 msgstr "productos"
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:32
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:23
+#: trialapp/templates/trialapp/btn_trials.html:4
 msgid "trials"
 msgstr "ensayos"
 
@@ -164,6 +166,7 @@ msgid "Control"
 msgstr "Control"
 
 #: catalogue/templates/catalogue/product_list.html:5
+#: trialapp/filter_helpers.py:232
 #: trialapp/templates/trialapp/trials_list.html:6
 msgid "product"
 msgstr "producto"
@@ -183,12 +186,14 @@ msgstr "substancia activa"
 #: catalogue/templates/catalogue/product_show.html:12
 #: catalogue/templates/catalogue/product_show.html:51
 #: trialapp/templates/trialapp/crop_list.html:7
+#: trialapp/templates/trialapp/plagues_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
 msgid "efficacy range"
 msgstr "rango eficacia"
 
 #: catalogue/templates/catalogue/product_list.html:9
 #: trialapp/templates/trialapp/crop_list.html:8
+#: trialapp/templates/trialapp/plagues_list.html:8
 #: trialapp/templates/trialapp/trials_list.html:10
 msgid "trials date"
 msgstr "fecha ensayo"
@@ -217,6 +222,8 @@ msgstr "*Rango de eficacia de los ensayos de todos los productos"
 
 #: catalogue/templates/catalogue/product_show.html:68
 #: catalogue/templates/catalogue/product_show.html:130
+#: trialapp/filter_helpers.py:234
+#: trialapp/templates/trialapp/plagues_list.html:5
 msgid "pest / disease"
 msgstr "plaga / enfermedad"
 
@@ -250,7 +257,7 @@ msgid "Mixes"
 msgstr "Mezclas"
 
 #: catalogue/templates/catalogue/product_show.html:129
-#: trialapp/templates/trialapp/crop_list.html:5
+#: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
 msgid "crop"
 msgstr "cultivo"
 
@@ -278,6 +285,10 @@ msgstr "intervalo dias"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
+#: trialapp/filter_helpers.py:235
+msgid "Ungrouped"
+msgstr ""
+
 #: trialapp/models.py:64
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
@@ -285,6 +296,12 @@ msgstr "Ensayo de Campo"
 #: trialapp/models.py:65
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
+
+#: trialapp/templates/trialapp/btn_trials.html:6
+#, fuzzy
+#| msgid "trials"
+msgid "no trials"
+msgstr "ensayos"
 
 #: trialapp/templates/trialapp/trials_list.html:5
 msgid "trial"
