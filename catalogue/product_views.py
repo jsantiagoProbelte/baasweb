@@ -279,26 +279,35 @@ class ProductApi(APIView):
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
 
-                if 'fieldtrial__plague__name' in crop and crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(cropsTable[cropName]["agents"])
+                if 'fieldtrial__plague__name' in crop and\
+                   crop['fieldtrial__plague__name']:
+                    cropsTable[cropName]["agents"].add(
+                        crop['fieldtrial__plague__name'])
+                    cropsTable[cropName]["strAgents"] = ', '.join(
+                        cropsTable[cropName]["agents"])
 
-                cropsTable[cropName]["samples"] += crop["fieldtrial__samples_per_replica"]
+                cropsTable[cropName]["samples"] += crop[
+                    "fieldtrial__samples_per_replica"]
             else:
                 cropsTable[cropName] = {"trials": [], "trialsCount": 0,
-                                        "name": crop["name"], "id": crop["id"], "agents": set(),
+                                        "name": crop["name"],
+                                        "id": crop["id"], "agents": set(),
                                         "strAgents": "", "samples": 0}
                 cropsTable[cropName]["trials"].append(
                     {"name": crop["fieldtrial__name"],
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
-                cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                cropsTable[cropName]["samples"] += crop["fieldtrial__samples_per_replica"]
+                cropsTable[cropName]["agents"].add(
+                    crop['fieldtrial__plague__name'])
+                cropsTable[cropName]["samples"] += crop[
+                    "fieldtrial__samples_per_replica"]
 
-                if 'fieldtrial__plague__name' in crop and crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(cropsTable[cropName]["agents"])
-
+                if 'fieldtrial__plague__name' in crop and\
+                   crop['fieldtrial__plague__name']:
+                    cropsTable[cropName]["agents"].add(
+                        crop['fieldtrial__plague__name'])
+                    cropsTable[cropName]["strAgents"] = ', '.join(
+                        cropsTable[cropName]["agents"])
         return cropsTable.values()
 
     def get(self, request, *args, **kwargs):

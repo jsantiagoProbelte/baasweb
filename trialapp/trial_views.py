@@ -8,6 +8,8 @@ from baaswebapp.models import Weather
 from trialapp.data_models import ReplicaData, Assessment
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataGraphFactory
+from django.db.models import Min, Max
+from datetime import timedelta
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -67,6 +69,14 @@ class TrialContent():
         id = int(request.GET.get('id', 0))
         self._trial = get_object_or_404(FieldTrial, pk=id)
         self._content = request.GET.get('content_type')
+        assessments = Assessment.getObjects(self._trial)
+        oneweek = timedelta(days=7)
+        self._min_date = assessments.aggregate(
+            min_date=Min('assessment_date'))['min_date']
+        self._min_date -= oneweek
+        self._max_date = assessments.aggregate(
+            max_date=Max('assessment_date'))['max_date']
+        self._max_date += oneweek
 
     def getGraphData(self, level, rateSets, ratedParts):
         graphs = []
@@ -93,15 +103,13 @@ class TrialContent():
         return graphs
 
     def getWeatherData(self):
-        assessments = Assessment.getObjects(self._trial)
-        weather_data = []
-        for assessment in assessments:
-            weather = Weather.objects.filter(
-                date=assessment.assessment_date, latitude=self._trial.latitude,
-                longitude=self._trial.longitude)
-            if weather:
-                weather_data.append(weather.first())
-        return weather_data
+        Weather.enrich(self._min_date, self._max_date,
+                       self._trial.latitude,
+                       self._trial.longitude)
+        return Weather.objects.filter(
+            date__range=(self._min_date, self._max_date),
+            latitude=self._trial.latitude,
+            longitude=self._trial.longitude).order_by('date')
 
     def graphWeatherData(self, weather_data):
         dates = [o.date for o in weather_data]
@@ -136,7 +144,7 @@ class TrialContent():
                  'content': weatherGraphs[item]}
                 for item in weatherGraphs]
 
-    def fectchAssessments(self):
+    def fetchAssessmentsData(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
         new_list = Assessment.getObjects(self._trial)
         rateSets = Assessment.getRateSets(new_list)
@@ -152,7 +160,7 @@ class TrialContent():
 
     FETCH_FUNCTIONS = {
         WEATHER: fetchWeather,
-        ASSESSMENTS: fectchAssessments,
+        ASSESSMENTS: fetchAssessmentsData,
         EFFICACY: fetchDefault}
 
     def fetch(self):
