@@ -1,26 +1,29 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
-{% block content %}
+
 {% load i18n %}
 
 {% block topbaastitle %}
-<div class="vertical-line-right vertical-line-left center-items-vertical w-25">
-    <a class="navbar-brand txt-brand h1 ms-4 fs-2" href="{% url 'product_api' product.id %}">{{ product.name }}</a>
-    <span class="badge badge-pill custom-badge-type center-items-vertical">{{ category }}</span>
-    <div class="badge badge-pill custom-badge-efficacy center-items-vertical">
-      <span class="capitalize-first">{% trans "efficacy range"%}</span><h6 style="display: inline-block;"><b>94-97%</b></h6></div>
+<div class="vertical-line-right vertical-line-left center-items-vertical">
+    <a class="navbar-brand txt-brand txt-presicav-22 ms-3" href="{% url 'product_api' product.id %}">{{ product.name }}</a>
+    <span class="badge badge-pill custom-badge-type center-items-vertical txt-open-semibold-13">{{ category }}</span>
+    <div class="badge badge-pill custom-badge-efficacy center-items-vertical me-3">
+      <span class="txt-uppercase txt-regular-11">{% trans "efficacy range"%}</span>
+      <span class="txt-encode-16 ms-2">94-97%</span>
+    </div>
 </div>
 {% endblock %}
 
+{% block content %}
 <ul class="nav nav-tabs product-primary-tabs">
   <li class="nav-item product-recommendations-tab">
     <button id="product-tab" data-bs-toggle="tab" data-bs-target="#products" role="tab" aria-controls="products"
-      aria-selected="true" class="nav-link active product-recommendations-link">{% trans "Product Recommendations"%}</button>
+      aria-selected="true" class="nav-link active product-recommendations-link txt-open-semibold-15 capitalize-first">{% trans "product recommendations"%}</button>
   </li>
   <li class="nav-item product-trials-tab">
     <button id="trials-tab" data-bs-toggle="tab" data-bs-target="#trials" role="tab" aria-controls="trials"
-      class="nav-link product-recommendations-link">{% trans "Trials"%}</button>
+      class="nav-link product-recommendations-link txt-open-semibold-15 capitalize-first">{% trans "trial list"%}</button>
   </li>
   <li id="download-link">
     <a href="#" class="baas-link"><span class="boostrap-icon">&#xF30A;</span> {% trans "Download Product Info"%}</a>
