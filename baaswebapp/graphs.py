@@ -342,6 +342,7 @@ class GraphTrial:
             font_color=COLOR_TEXT,
             title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
+            autosize=True,
             legend=dict(orientation="v", yanchor="middle", y=0.5,
                         xanchor="left", x=-0.5),
             margin=dict(
@@ -412,6 +413,7 @@ class GraphTrial:
             fig.update_layout(violinmode='group')
 
         fig.update_layout(height=GraphTrial.DEFAULT_HEIGHT)
+        fig.update_yaxes(automargin=True)
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')

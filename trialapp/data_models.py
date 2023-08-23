@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 from baaswebapp.models import ModelHelpers, RateTypeUnit
 from trialapp.models import FieldTrial, Thesis, Sample, Replica
 
@@ -239,11 +240,25 @@ class ReplicaData(DataModel, models.Model):
     @classmethod
     def dataPointsAssess(cls, assIds):
         return cls.objects.values(
-            'reference__thesis__id', 'reference__name', 'value',
-            'reference__id', 'assessment__id',
-            'reference__thesis__number'
-            ).filter(assessment_id__in=assIds).order_by(
-            'reference__thesis__number', 'reference__number')
+                'reference__thesis__id', 'reference__name', 'value',
+                'reference__id', 'assessment__id',
+                'reference__thesis__number'
+            ).filter(
+                assessment_id__in=assIds
+            ).order_by(
+                'reference__thesis__number', 'reference__number')
+
+    @classmethod
+    def dataPointsAssessAvg(cls, assIds):
+        return cls.objects.values(
+                'reference__thesis__id', 'assessment__id',
+                'reference__thesis__number'
+            ).annotate(
+                value=Avg('value')
+            ).filter(
+                assessment_id__in=assIds
+            ).order_by(
+                'reference__thesis__number', 'assessment__assessment_date')
 
 
 class SampleData(DataModel, models.Model):
