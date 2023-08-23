@@ -15,9 +15,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
     template_name = 'trialapp/trial_show.html'
     context_object_name = 'trial'
 
-    def whatGraphToShow(self):
-        return ['weather', 'efficacy', 'evaluation']
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         trial = self.get_object()
@@ -41,7 +38,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'other_trials': other_trials,
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'numberAssessments': len(assessments),
-            'graphInfo': self.whatGraphToShow(),
+            'graphInfo': list(TrialContent.FETCH_FUNCTIONS.keys()),
             'numberThesis': len(allThesis)}
 
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
@@ -61,6 +58,10 @@ class TrialContent():
     _content = None
     _request = None
 
+    WEATHER = 'weather'
+    ASSESSMENTS = 'ass'
+    EFFICACY = 'eff'
+
     def __init__(self, request):
         self._request = request
         id = int(request.GET.get('id', 0))
@@ -78,15 +79,17 @@ class TrialContent():
                 assIds = [value.id for value in assmts]
 
                 if level == GraphTrial.L_REPLICA:
-                    dataPoints = ReplicaData.dataPointsAssess(assIds)
+                    # dataPoints = ReplicaData.dataPointsAssess(assIds)
+                    dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
                 else:
                     dataPoints = []
                 if len(dataPoints):
                     graphF = DataGraphFactory(level, assmts, dataPoints,
                                               references=self._thesis)
-                    graphs.append({'title': graphF.getTitle(),
-                                   'content': graphF.draw()})
-
+                    graphs.append(
+                        {'title': graphF.getTitle(),
+                         'content': graphF.draw(
+                            type_graph=DataGraphFactory.LINE)})
         return graphs
 
     def getWeatherData(self):
@@ -126,22 +129,36 @@ class TrialContent():
             soil_temps_1, soil_temps_2, soil_temps_3,
             soil_temps_4, rel_humid, dew_point)
 
+    def fetchWeather(self):
+        weatherData = self.getWeatherData()
+        weatherGraphs = self.graphWeatherData(weatherData)
+        return [{'title': item,
+                 'content': weatherGraphs[item]}
+                for item in weatherGraphs]
+
+    def fectchAssessments(self):
+        self._thesis = Thesis.getObjects(self._trial, as_dict=True)
+        new_list = Assessment.getObjects(self._trial)
+        rateSets = Assessment.getRateSets(new_list)
+        ratedParts = Assessment.getRatedParts(new_list)
+        return self.getGraphData(GraphTrial.L_REPLICA, rateSets, ratedParts)
+
+    def fetchEfficacy(self):
+        return self.fetchDefault()
+
+    def fetchDefault(self):
+        return [{'title': self._content,
+                 'content': f"<p>Content for {self._trial.name}</p>"}]
+
+    FETCH_FUNCTIONS = {
+        WEATHER: fetchWeather,
+        ASSESSMENTS: fectchAssessments,
+        EFFICACY: fetchDefault}
+
     def fetch(self):
-        content = [{'title': self._content,
-                    'content': f"<p>Content for {self._trial.name}</p>"}]
-        if self._content == 'weather':
-            weatherData = self.getWeatherData()
-            weatherGraphs = self.graphWeatherData(weatherData)
-            content = [{'title': item,
-                        'content': weatherGraphs[item]}
-                       for item in weatherGraphs]
-        elif self._content == 'evaluation':
-            self._thesis = Thesis.getObjects(self._trial, as_dict=True)
-            new_list = Assessment.getObjects(self._trial)
-            rateSets = Assessment.getRateSets(new_list)
-            ratedParts = Assessment.getRatedParts(new_list)
-            content = self.getGraphData(
-                GraphTrial.L_REPLICA, rateSets, ratedParts)
+        theFetch = TrialContent.FETCH_FUNCTIONS.get(self._content,
+                                                    TrialContent.fetchDefault)
+        content = theFetch(self)
         return render(self._request,
                       'trialapp/trial_content.html',
                       {'dataContent': content})

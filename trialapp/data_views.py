@@ -428,6 +428,11 @@ class DataGraphFactory():
     _references = {}
     _colors = {}
 
+    BAR = 'bar'
+    LINE = 'line'
+    SCATTER = 'scatter'
+    VIOLIN = 'violin'
+
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
                  showTitle=True, references=None):
@@ -539,10 +544,17 @@ class DataGraphFactory():
         if xAxis == GraphTrial.L_DOSIS:
             return dataPoint.dosis.rate
 
-    def draw(self):
-        if self._level == GraphTrial.L_DOSIS:
-            return self._graph.line()
-        elif self._level == GraphTrial.L_THESIS:
-            return self._graph.bar()
+    DRAW_TYPE = {LINE: GraphTrial.line,
+                 BAR: GraphTrial.bar,
+                 SCATTER: GraphTrial.scatter,
+                 VIOLIN: GraphTrial.violin}
+    DRAW_LEVEL = {GraphTrial.L_DOSIS: GraphTrial.line,
+                  GraphTrial.L_THESIS: GraphTrial.bar}
+
+    def draw(self, type_graph=None):
+        if type_graph:
+            method = DataGraphFactory.DRAW_TYPE.get(type_graph)
         else:
-            return self._graph.violin()
+            method = DataGraphFactory.DRAW_TYPE.get(type_graph,
+                                                    GraphTrial.violin)
+        return method(self._graph)
