@@ -432,6 +432,7 @@ class DataGraphFactory():
     LINE = 'line'
     SCATTER = 'scatter'
     VIOLIN = 'violin'
+    COLUMN = 'column'
 
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
@@ -547,7 +548,8 @@ class DataGraphFactory():
     DRAW_TYPE = {LINE: GraphTrial.line,
                  BAR: GraphTrial.bar,
                  SCATTER: GraphTrial.scatter,
-                 VIOLIN: GraphTrial.violin}
+                 VIOLIN: GraphTrial.violin,
+                 COLUMN: GraphTrial.column}
     DRAW_LEVEL = {GraphTrial.L_DOSIS: GraphTrial.line,
                   GraphTrial.L_THESIS: GraphTrial.bar}
 

@@ -264,6 +264,7 @@ class GraphTrial:
     _xAxis = None
     SCATTER = 'scatter'
     BAR = 'bar'
+    COLUMN = 'column'
     VIOLIN = 'violin'
     LINE = 'line'
     DEFAULT_HEIGHT = 275
@@ -314,6 +315,9 @@ class GraphTrial:
     def bar(self):
         return self.preparePlots(typeFigure=GraphTrial.BAR, orientation='h')
 
+    def column(self):
+        return self.preparePlots(typeFigure=GraphTrial.BAR, orientation='v')
+
     def scatter(self):
         return self.preparePlots(typeFigure=GraphTrial.SCATTER)
 
@@ -351,6 +355,7 @@ class GraphTrial:
                 b=20,  # Bottom margin
                 l=20   # Left margin
             ),
+            height=GraphTrial.DEFAULT_HEIGHT,
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
@@ -359,6 +364,21 @@ class GraphTrial:
                 fig.update_layout(xaxis=dict(tickformat='%d-%m-%Y'))
             else:
                 fig.update_layout(yaxis=dict(tickformat='%d-%m-%Y'))
+
+    def applyBar(self, x, y, orientation, name, color):
+        if orientation == 'h':
+            xValues = [round(v, 2) for v in x]
+            yValues = y
+            text = xValues
+        else:
+            yValues = [round(v, 2) for v in y]
+            text = yValues
+            xValues = x
+        data = go.Bar(orientation=orientation,
+                      name=name, marker={'color': color},
+                      text=text,
+                      x=xValues, y=yValues)
+        return data
 
     def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
@@ -379,11 +399,7 @@ class GraphTrial:
                 y = trace['x']
 
             if typeFigure == GraphTrial.BAR:
-                showLegend = False
-                data = go.Bar(orientation=orientation,
-                              name=name, marker={'color': color},
-                              text=x,
-                              x=x, y=y)
+                data = self.applyBar(x, y, orientation, name, color)
             elif typeFigure == GraphTrial.LINE:
                 markerMode = 'lines+markers'
                 data = go.Scatter(name=name, x=x, y=y,
@@ -411,8 +427,6 @@ class GraphTrial:
 
         if typeFigure == GraphTrial.VIOLIN:
             fig.update_layout(violinmode='group')
-
-        fig.update_layout(height=GraphTrial.DEFAULT_HEIGHT)
         fig.update_yaxes(automargin=True)
 
         # Turn graph object into local plotly graph
