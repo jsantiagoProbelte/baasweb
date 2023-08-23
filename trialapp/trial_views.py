@@ -96,10 +96,11 @@ class TrialContent():
                 if len(dataPoints):
                     graphF = DataGraphFactory(level, assmts, dataPoints,
                                               references=self._thesis)
+                    type_graph = DataGraphFactory.LINE if len(assmts) > 1\
+                        else DataGraphFactory.COLUMN
                     graphs.append(
                         {'title': graphF.getTitle(),
-                         'content': graphF.draw(
-                            type_graph=DataGraphFactory.LINE)})
+                         'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
     def getWeatherData(self):
