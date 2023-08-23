@@ -311,19 +311,20 @@ class ProductApi(APIView):
                                                                  request.GET)
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
 
-        return render(request, template_name,
-                      {'product': product,
-                       'deleteProductForm': ProductDeleteView(),
-                       'fieldtrials': numTrials,
-                       'filterData': filterData,
-                       'titleGraph': titleGraph,
-                       'graphs': graphs,
-                       'variants': self.getProductTree(product),
-                       'errors': errorgraphs,
-                       'classGraphCol': classGraphCol,
-                       'titleView': product.getName(),
-                       'crops': self.get_crop_table_data(product_id),
-                       'category': product.getCategory(product.type_product)})
+        return render(
+            request, template_name, {
+                'product': product,
+                'deleteProductForm': ProductDeleteView(),
+                'fieldtrials': numTrials,
+                'filterData': filterData,
+                'titleGraph': titleGraph,
+                'graphs': graphs,
+                'variants': self.getProductTree(product),
+                'errors': errorgraphs,
+                'classGraphCol': classGraphCol,
+                'titleView': product.getName(),
+                'crops': self.get_crop_table_data(product_id),
+                'category': product.getCategory(product.type_product).label})
 
 
 ##############################

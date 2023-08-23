@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-23 01:17+0200\n"
+"POT-Creation-Date: 2023-08-23 10:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:101 catalogue/templates/catalogue/product_show.html:107
+#: baaswebapp/graphs.py:101 catalogue/templates/catalogue/product_show.html:110
 msgid "weather"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:544
 #: trialapp/templates/trialapp/trial_conclusions.html:44
-#: trialapp/templates/trialapp/trial_show.html:21
+#: trialapp/templates/trialapp/trial_show.html:23
 msgid "efficacy"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgid "product type"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
-#: catalogue/templates/catalogue/product_show.html:61
+#: catalogue/templates/catalogue/product_show.html:64
 #: trialapp/templates/trialapp/trial_conclusions.html:106
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
@@ -234,7 +234,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:8
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:51
+#: catalogue/templates/catalogue/product_show.html:54
 #: trialapp/templates/trialapp/crop_list.html:7
 #: trialapp/templates/trialapp/plagues_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
@@ -248,81 +248,81 @@ msgstr ""
 msgid "trials date"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:19
-msgid "Product Recommendations"
-msgstr ""
-
-#: catalogue/templates/catalogue/product_show.html:23
-msgid "Trials"
+#: catalogue/templates/catalogue/product_show.html:22
+msgid "product recommendations"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:26
+msgid "trial list"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:29
 msgid "Download Product Info"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:35
+#: catalogue/templates/catalogue/product_show.html:38
 msgid "product variants"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:52
+#: catalogue/templates/catalogue/product_show.html:55
 msgid "*All products trials efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:68
-#: catalogue/templates/catalogue/product_show.html:130
+#: catalogue/templates/catalogue/product_show.html:71
+#: catalogue/templates/catalogue/product_show.html:133
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:52
 msgid "pest / disease"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:76
+#: catalogue/templates/catalogue/product_show.html:79
 msgid "Product Basics"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:80
+#: catalogue/templates/catalogue/product_show.html:83
 msgid "concentration"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:90
+#: catalogue/templates/catalogue/product_show.html:93
 msgid "presentation"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:98
-#: catalogue/templates/catalogue/product_show.html:102
+#: catalogue/templates/catalogue/product_show.html:101
+#: catalogue/templates/catalogue/product_show.html:105
 msgid "Application"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:114
+#: catalogue/templates/catalogue/product_show.html:117
 msgid "Security period"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:118
+#: catalogue/templates/catalogue/product_show.html:121
 msgid "Mixes"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:129
+#: catalogue/templates/catalogue/product_show.html:132
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:54
 msgid "crop"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:131
+#: catalogue/templates/catalogue/product_show.html:134
 #: trialapp/templates/trialapp/trial_conclusions.html:7
 msgid "dosis"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:132
+#: catalogue/templates/catalogue/product_show.html:135
 #: trialapp/templates/trialapp/trial_conclusions.html:13
 msgid "solution volume"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:133
+#: catalogue/templates/catalogue/product_show.html:136
 #: trialapp/templates/trialapp/trial_conclusions.html:20
 msgid "number applications"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:134
+#: catalogue/templates/catalogue/product_show.html:137
 #: trialapp/templates/trialapp/trial_conclusions.html:26
 msgid "day intervals"
 msgstr ""
@@ -404,31 +404,31 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:37
+#: trialapp/templates/trialapp/trial_show.html:39
 msgid "conclusions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:40
+#: trialapp/templates/trialapp/trial_show.html:42
 msgid "trial Design"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:43
+#: trialapp/templates/trialapp/trial_show.html:45
 msgid "result summary"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:46
+#: trialapp/templates/trialapp/trial_show.html:48
 msgid "trends"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:49
+#: trialapp/templates/trialapp/trial_show.html:51
 msgid "data"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:52
+#: trialapp/templates/trialapp/trial_show.html:54
 msgid "assessments"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:59
+#: trialapp/templates/trialapp/trial_show.html:61
 msgid "download trial"
 msgstr ""
 

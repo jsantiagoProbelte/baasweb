@@ -2,23 +2,25 @@
 {% load widget_tweaks %}
 
 {% block topbaastitle %}
-<div class="vertical-line-right vertical-line-left">
-    <a class="navbar-brand txt-brand h1 ms-4 fs-2" href="{% url 'product_api' trial.product.id %}">{{trial.product}}</a>
+<div class="nav-item vertical-line-right vertical-line-left">
+    <a class="nav-link txt-brand txt-presicav-22 ms-3" href="{% url 'product_api' trial.product.id %}">{{trial.product}}</a>
 </div>
 {% endblock %}
 {% load i18n %}
 {% block topbaasheader %}
     <li class="nav-item">
-        <a class="navbar-brand txt-brand h2 ms-3 fs-2" href="{% url 'trial_api' trial.id %}">{{description}}</a>
+        <a class="nav-link txt-brand txt-presicav-18" href="{% url 'trial_api' trial.id %}">
+            <span class="material-symbols-outlined small-icon">assessment</span>
+            {{description}}</a>
     </li>
     <li class="nav-item">
-        <p class="navbar-brand txt-baas h4 ms-3" >{{location}}, {{period}}</p>
+        <p class="navbar-text txt-baas txt-encode-18" >{{location}}, {{period}}</p>
     </li>
     <li class="nav-item">
         <a class="btn btn-outline-baas-alt ms-3" href="{% url 'fieldtrial_api' trial.id %}">{{trial.code}}</a>
     </li>
     <li class="nav-item">
-        <div class="btn btn-baas-alt ms-3 capitalize-first">{% trans "efficacy"%}<span class='strong ms-2'>{{efficacy}}%</span></div>
+        <div class="btn btn-baas-alt ms-2 capitalize-first">{% trans "efficacy"%}<span class='strong ms-2'>{{efficacy}}%</span></div>
     </li>
 </ul>
 <ul class="navbar-nav ms-4 vertical-line-left">
