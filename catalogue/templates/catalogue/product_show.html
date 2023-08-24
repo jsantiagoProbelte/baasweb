@@ -166,7 +166,7 @@
   </div>
   <!-- TRIALS -->
   <div class="tab-pane fade" id="trials" role="tabpanel" aria-labelledby="trials-tab">
-    {% include 'trialapp/trials_list.html' %}
+    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter object_list=object_list %}
   </div>
 </div>
 {% endblock %}
