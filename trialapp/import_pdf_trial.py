@@ -12,7 +12,7 @@ from trialapp.models import FieldTrial, Crop, Objective, Plague, \
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant, \
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
-from trialapp.trial_helper import TrialHelper, PdfTrial  # noqa: E402
+from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
 import glob  # noqa: E402
 import csv  # noqa: E402
 
@@ -902,8 +902,8 @@ class ImportPdfTrial:
             self._importedTable,
             len(self._evals)))
         if self._importedTable > 0:
-            TrialHelper().uploadTrialFile(self._trial,
-                                          self._filepath)
+            TrialFile().uploadTrialFile(self._trial,
+                                        self._filepath)
             return True
         else:
             self._trial.delete()
@@ -1146,7 +1146,7 @@ def testArchive():
 
 
 def createTeams():
-    helper = TrialHelper()
+    helper = TrialFile()
     reference = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/'\
                 'Data/estudios/imported/'
 

@@ -8,6 +8,7 @@ UNTREATED = 'Untreated'
 
 class Vendor(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
+    key_vendor = models.BooleanField(default=False)
 
 
 class RateUnit(ModelHelpers, models.Model):
@@ -116,6 +117,9 @@ class Batch(ModelHelpers, models.Model):
             product_variant=variant, rate=0,
             rate_unit=RateUnit.getDefault(),
             name=name)
+
+    def getName(self):
+        return self.name
 
 
 class Treatment(ModelHelpers, models.Model):

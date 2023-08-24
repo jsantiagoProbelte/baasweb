@@ -11,6 +11,7 @@ from trialapp.data_views import DataGraphFactory
 from django.db.models import Min, Max
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
+from trialapp.trial_helper import TrialHelper
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -110,6 +111,39 @@ class TrialContent():
                          'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
+    def getKeyGraphData(self, keyRateTypeUnit,
+                        keyPartRated,
+                        keyThesis,
+                        untreatedThesis):
+        dataPoints = []
+
+        if keyRateTypeUnit and keyPartRated and\
+           keyThesis and untreatedThesis:
+            dataPoints = ReplicaData.dataPointsKeyAssessAvg(
+                keyRateTypeUnit, keyPartRated,
+                keyThesis, untreatedThesis)
+
+        if len(dataPoints):
+            assmts = Assessment.objects.filter(
+                rate_type_id=keyRateTypeUnit.id,
+                part_rated=keyPartRated)
+            thesis = {
+                keyThesis: Thesis.objects.get(id=keyThesis),
+                untreatedThesis: Thesis.objects.get(id=untreatedThesis)}
+            graphF = DataGraphFactory(
+                GraphTrial.L_REPLICA, assmts, dataPoints,
+                references=thesis)
+            content = graphF.draw(type_graph=DataGraphFactory.LINE)
+        else:
+            content = _(
+                "Efficacy cannot be determined yet."
+                "Data is not available,"
+                "key thesis or untreated thesis are not well identified,"
+                "key rate type unit is not well identified.")
+
+        title = _("efficacy") + ' ' + self._trial.product.nameType()
+        return [{'title': title.upper(), 'content': content}]
+
     def getWeatherData(self):
         Weather.enrich(self._min_date, self._max_date,
                        self._trial.latitude,
@@ -157,64 +191,26 @@ class TrialContent():
                 {'title': _("weather conditions"),
                  'content': _("Weather conditions cannot be determined "
                               "because location or assessments info are"
-                              " missing")}]
+                              "missing")}]
 
     def fetchAssessmentsData(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
         ass_list = Assessment.getObjects(self._trial)
-        rateSetsCounts = Assessment.getRateSets(ass_list)
-        rateSets = list(rateSetsCounts.keys())
-        ratedPartCounts = Assessment.getRatedParts(ass_list)
-        ratedParts = list(ratedPartCounts.keys())
+        rateSets = Assessment.getRateSets(ass_list)
+        ratedParts = Assessment.getRatedParts(ass_list)
         return self.getGraphData(GraphTrial.L_REPLICA, rateSets, ratedParts)
 
-    def mostPopular(self, counters):
-        if counters and len(counters) > 0:
-            if len(counters) == 1:
-                return list(counters.keys())[0]
-            counts = list(counters.values())
-            maxCount = max(counts)
-            # We assume , the biggest amount of assessment is the key info
-            # This works when there is none or one
-            # If there are multiple ones, then the first is winning
-            for aKey in counters:
-                if maxCount == counters[aKey]:
-                    return aKey
-        return None
-
-    def whatIsKeyRateSet(self):
-        # Trial should have designated a key rate_set
-        # TODO: Use one designated by the admin
-        keyrateset = None
-        if not keyrateset:
-            # if key rateset is not designated yet, we nomine one
-            ass_list = Assessment.getObjects(self._trial)
-            if ass_list:
-                rateSetsCounts = Assessment.getRateSets(ass_list)
-                keyrateset = self.mostPopular(rateSetsCounts)
-        return keyrateset
-
-    def whatIsKeyPartRated(self):
-        # Trial should have designated a key part rated
-        # TODO: Use one designated by the admin
-        keypartrated = None
-        if not keypartrated:
-            # if key rateset is not designated yet, we nomine one
-            ass_list = Assessment.getObjects(self._trial)
-            if ass_list:
-                partRatedCounts = Assessment.getRatedParts(ass_list)
-                keypartrated = self.mostPopular(partRatedCounts)
-        return keypartrated
-
     def fetchKeyAssessData(self):
-        self._thesis = Thesis.getObjects(self._trial, as_dict=True)
-        keyRateSet = self.whatIsKeyRateSet()
-        keypartrated = self.whatIsKeyPartRated()
+        tHelper = TrialHelper(self._trial)
+        keyRateTypeUnit, keyPartRated = tHelper.whatIsKeyRates()
+        keyThesis = tHelper.whatIsKeyThesis()
+        untreatedThesis = tHelper.whatIsUntreatedThesis()
 
         # Choose the rate_unit with most data.
-        return self.getGraphData(GraphTrial.L_REPLICA,
-                                 [keyRateSet],
-                                 [keypartrated])
+        return self.getKeyGraphData(keyRateTypeUnit,
+                                    keyPartRated,
+                                    keyThesis,
+                                    untreatedThesis)
 
     def fetchEfficacy(self):
         return self.fetchDefault()
@@ -229,13 +225,22 @@ class TrialContent():
         ASSESSMENTS: fetchAssessmentsData,
         EFFICACY: fetchDefault}
 
+    TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
+    TEMPLATE_DIVS = 'trialapp/trial_content_divs.html'
+
+    FETCH_TEMPLATES = {
+        WEATHER: TEMPLATE_CARDS,
+        KEY_ASSESS: TEMPLATE_DIVS,
+        ASSESSMENTS: TEMPLATE_CARDS,
+        EFFICACY: TEMPLATE_CARDS}
+
     def fetch(self):
-        theFetch = TrialContent.FETCH_FUNCTIONS.get(self._content,
-                                                    TrialContent.fetchDefault)
+        theFetch = TrialContent.FETCH_FUNCTIONS.get(
+            self._content, TrialContent.fetchDefault)
         content = theFetch(self)
-        return render(self._request,
-                      'trialapp/trial_content.html',
-                      {'dataContent': content})
+        template = TrialContent.FETCH_TEMPLATES.get(
+            self._content, TrialContent.TEMPLATE_CARDS)
+        return render(self._request, template, {'dataContent': content})
 
 
 @login_required
