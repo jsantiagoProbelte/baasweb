@@ -144,6 +144,18 @@
   color: var(--bs-text-color) !important;
 }
 
+.txt-baas-baas{
+  color: var(--bs-custom-bio) !important;
+}
+
+.txt-uppercase{
+  text-transform: uppercase;
+}
+
+.capitalize-first {
+  text-transform: capitalize !important; 
+}
+
 .txt-brand{
   color: var(--custom-brand-color) !important;
 }
@@ -287,6 +299,7 @@
 .bg-custom-morado{
   background: var(--custom-morado );
 }
+
 .bg-custom-bio-morado{
   background: var(--custom-bio-morado );
 }
@@ -353,8 +366,8 @@
 }
 
 .navbar-nav .nav-link{
-  font-size: 1rem !important;
-  color: var(--bs-text-color) !important;
+  font-size: 1rem ;
+  color: var(--bs-text-color);
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
@@ -708,6 +721,13 @@ table.data-table-longer thead th {
   color: #dfd7ca;
 }
 
+.txt-regular-11 {
+  font-size: 11px;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0rem !important;
+}
+
+
 .txt-regular-12 {
   font-size: 12px;
   font-family: 'Open Sans', serif;
@@ -796,14 +816,15 @@ table.data-table-longer thead th {
   margin-bottom: 0rem !important;
 }
 
-.txt-encode-20 {
-  font-size: 20px;
-  font-family: 'Encode Sans', serif;
-  font-weight: bold;
-}
-
 .txt-encode-14 {
   font-size: 14px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
+}
+
+.txt-encode-16 {
+  font-size: 16px;
   font-family: 'Encode Sans', serif;
   font-weight: bold;
   margin-bottom: 0rem !important;
@@ -814,6 +835,20 @@ table.data-table-longer thead th {
   font-family: 'Encode Sans', serif;
   font-weight: bold;
   margin-bottom: 0rem !important;
+}
+
+.txt-encode-20 {
+  font-size: 20px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
+}
+
+
+.txt-encode-25-700 {
+  font-weight: 700;
+  font-size: 49px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
 }
 
 .txt-presicav-14 {
@@ -828,6 +863,12 @@ table.data-table-longer thead th {
   margin-bottom: 0rem !important;
 }
 
+
+.txt-presicav-22 {
+  font-size: 22px !important;
+  font-family: 'Presicav';
+  margin-bottom: 0rem !important;
+}
 
 
 .sidebar-item {
@@ -854,3 +895,20 @@ table.data-table-longer thead th {
   /* color: var(--custom-baas);    Adjust the color as needed */
 }
 
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.graph-container {
+  width: 100%;
+}

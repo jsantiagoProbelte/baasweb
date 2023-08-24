@@ -33,6 +33,7 @@ urlpatterns = [
     path("logout", views.logout_request, name="logout"),
     path("login", views.login_request, name="login"),
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 

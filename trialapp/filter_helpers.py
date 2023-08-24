@@ -8,6 +8,7 @@ from baaswebapp.graphs import ProductCategoryGraph, COLOR_control, \
     COLOR_estimulant, COLOR_nutritional, COLOR_unknown
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -228,10 +229,10 @@ class BaaSView(LoginRequiredMixin, View):
     PLAGUE = 'plague'
     TRIALS = 'trials'
     # value on select : (label on select , url )
-    GROUP_BY = {PRODUCT: ('Product', 'product-list'),
-                CROP: ('Crop', 'crop-list'),
-                PLAGUE: ('Plague', 'plagues-list'),
-                TRIALS: ('Ungrouped', 'trial-list')}
+    GROUP_BY = {PRODUCT: (_('product'), 'product-list'),
+                CROP: (_('crop'), 'crop-list'),
+                PLAGUE: (_('pest / disease'), 'plagues-list'),
+                TRIALS: (_('Ungrouped'), 'trial-list')}
 
     @staticmethod
     def groupByOptions():
@@ -303,16 +304,20 @@ class PlaguesListView(BaaSView):
         totalProducts = fHelper.countProducts()
         print("TRACE | filterHelper | PlaguesListView | plagues")
         for plague in plagues:
-            print(plague)
-            minYear = str(plague['min_date'].year) if plague['min_date'] is not None else ''
-            maxYear = str(plague['max_date'].year) if plague['max_date'] is not None else ''
+            minYear = ''
+            if plague['min_date'] is not None:
+                minYear = str(plague['min_date'].year)
+            maxYear = ''
+            if plague['max_date'] is not None:
+                str(plague['max_date'].year)
+            progress = (plague['product_count'] * 100) / totalProducts
             plagues_list.append(
                 {
                     'name': plague['name'],
                     'product_count': plague['product_count'],
                     'trial_count': plague['trial_count'],
                     'id': plague['id'],
-                    'progress': (plague['product_count'] * 100) / totalProducts,
+                    'progress': progress,
                     'date_range': f"{minYear} - {maxYear}"
                 }
             )

@@ -130,6 +130,35 @@ class Weather(ModelHelpers, models.Model):
         decimal_places=5, max_digits=100)
     max_wind_speed = models.DecimalField(decimal_places=5, max_digits=100)
 
+    @classmethod
+    def needEnrich(cls, firstDate, lastDate, latitude, longitude):
+        count = cls.objects.filter(date__range=(firstDate, lastDate),
+                                   longitude=longitude,
+                                   latitude=latitude).count()
+        days = (lastDate-firstDate).days
+        if count < days:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def enrich(cls, firstDate, lastDate, latitude, longitude):
+        if cls.needEnrich(firstDate, lastDate, latitude, longitude):
+            one_day = timedelta(days=1)
+            thisDay = firstDate
+            while thisDay != lastDate:
+                isWeather = cls.objects.filter(
+                    date=thisDay, longitude=longitude,
+                    latitude=latitude).exists()
+                if not isWeather:
+                    weather = Weather(
+                        date=thisDay,
+                        longitude=longitude,
+                        latitude=latitude)
+                    weather.fetchWeather()
+                    weather.save()
+                thisDay += one_day
+
     def fetchWeather(self):
         url = ('https://archive-api.open-meteo.com/v1/archive?daily=' +
                'temperature_2m_max,temperature_2m_min,precipitation_sum,' +

@@ -1,15 +1,15 @@
 {% extends "baaswebapp/layout.html" %}
 
 {% load crispy_forms_tags %}
-
+{% load i18n %}
 {% block content %}
     <div class="card card-body bg-warning col-md-6 mt-4 mb-4 offset-md-3">
       <form method="post">{% csrf_token %}
-        <h5>Are you sure to delete {{item.name}} ?</h5>
+        <h5>{% trans "Are you sure to delete" %} {{item.name}} ?</h5>
         <div class="text-sm-end">
           <input type="submit" class="btn btn-warning" value="Delete">
           <a href="{% url item_url item.id %}" class="btn btn-secondary"
-             title='Go to product list'>Cancel</a>
+             title='Go to product list'>{% trans "Cancel"%}</a>
         </div>
       </form>
     </div>

@@ -1,10 +1,11 @@
 {% extends "baaswebapp/layout.html" %}
 {% load widget_tweaks %}
+{% load i18n %}
 
 {% block topbaastitle %}
 <div class="vertical-line-right txt-presicav-18 vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
 {% endblock %}
-
+{% load i18n %}
 {% block topbaasheader %}
 {% include "baaswebapp/baas_view_filter_top.html" with trialfilter=trialfilter %}
 {% endblock %}
@@ -27,9 +28,11 @@
         </div>
     </div>
     <div class="col-md-3 col-sm-12">
-        {% include "baaswebapp/two_boxes.html" with left_text='products' right_text='trials' left_number=num_products right_rumber=num_trials %}
+        {% translate "products" as products_txt %}
+        {% translate "trials" as trials_txt %}
+        {% include "baaswebapp/two_boxes.html" with left_text=products_txt right_text=trials_txt left_number=num_products right_rumber=num_trials %}
         <div class="card card-body-baas mt-3">
-            <p class="card-title txt-encode-18">Trials by product type</p>
+            <p class="card-title txt-encode-18">{% trans "Trials by product type"%}</p>
             {{graphCategories|safe}}
         </div>
     </div>

@@ -49,11 +49,13 @@ class Product(ModelHelpers, models.Model):
         return f"/product/{self.id}/"
 
     def nameType(self):
-        name = 'Bio' if self.biological else ''
+        bio = 'Bio' if self.biological else ''
+
         if not self.type_product:
-            return name + Product.PType.UNKNOWN
+            name = Product.PType.UNKNOWN
         else:
-            return name + self.get_type_product_display()
+            name = self.get_type_product_display()
+        return bio + _(name)
 
     @staticmethod
     def getCategory(type_product):

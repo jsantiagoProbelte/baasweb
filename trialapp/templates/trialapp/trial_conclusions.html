@@ -1,38 +1,42 @@
+{% load i18n %}
 <div class="row ">
     <div class="col-md-8 mt-3">
         <div class="row row-cols-2 row-cols-md-4 g-4">
             <div class="col">
                 <div class="card card-body-baas">
-                    <p class="card-title txt-regular-14">Dosis</p>
+                    <p class="card-title txt-regular-14 capitalize-first">{% trans "dosis" %}</p>
                     <p class="txt-open-bold-22">Lorem</p>
                 </div>
             </div>
             <div class="col">
                 <div class="card card-body-baas">
-                    <p class="card-title txt-regular-14">Volume</p>
+                    <p class="card-title txt-regular-14 capitalize-first">{% trans "solution volume" %}</p>
                     <p> <span class="txt-open-bold-22">{{trial.application_volume}} </span>
                         <span class="txt-regular-14">{{trial.application_unit}}</span></p>
                 </div>
             </div>
             <div class="col">
                 <div class="card card-body-baas">
-                    <p class="card-title txt-regular-14">Num Applications</p>
+                    <p class="card-title txt-regular-14 capitalize-first">{% trans "number applications"%}</p>
                     <p class="txt-open-bold-22">Lorem</p>
                 </div>
             </div>
             <div class="col">
                 <div class="card card-body-baas">
-                    <p class="card-title txt-regular-14">Intervals (days)</p>
+                    <p class="card-title txt-regular-14 capitalize-first">{% trans "day intervals"%}</p>
                     <p class="txt-open-bold-22">Lorem</p>
                 </div>
             </div>
         </div>
         <div class="card card-body-baas mt-3">
-            <p class="card-title txt-encode-20">Recommendations</p>
+            <p class="card-title txt-encode-20 capitalize-first">{% trans "recommendations" %}</p>
             <p class="txt-regular-13">Lorem</p>
         </div>
         <div class="card card-body-baas mt-3">
-            <p class="card-title txt-encode-14">INFESTATION</p>
+            <p class="card-title txt-encode-14 txt-uppercase">{% trans "efficacy" %} {{type_product}}</p>
+            <div class="trial-dynamic-content mt-3" id="trial-{{trial.id}}-key_assess">
+                <div class="loading-spinner"></div>
+            </div>
         </div>
     </div>
     <div class="col-md-4 mt-3">
@@ -40,23 +44,23 @@
             <p class="card-text"></p>
             <div class="row">
                 <div class="col-md-8">
-                    <p class="card-title txt-encode-20">Efficacy</p>
-                    <p class="txt-regular-13">* in the moment of Maximum infestation</p>
+                    <p class="card-title txt-encode-20 capitalize-first">{% trans "efficacy" %}</p>
+                    <p class="txt-regular-13">{% trans "* in the moment of Maximum infestation" %}</p>
                 </div>
                 <div class="col-md-4">
                 </div>
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
-            <p class="txt-regular-12">Pest - Disease</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "pest / disease" %}</p>
             <p class="txt-encode-20">{{trial.plague}}</p>
-            <p class="txt-regular-12">Crop</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "crop" %}</p>
             <p class="txt-encode-20">{{trial.crop}}</p>
-            <p class="txt-regular-12">Date</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "date" %}</p>
             <p class="card-title txt-encode-20">{{period}}</p>
         </div>
         <div class="card card-baas-alt mt-2">
-            <p class="txt-regular-12">Location</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "location" %}</p>
             <p class="txt-encode-20">{{trial.location}}</p>
         </div>
         {% if trial.latitude %}
@@ -65,46 +69,46 @@
                 <small> You can now define the latitude and longitude of this trial. Please add it</small>
             {% endif %}
         <div class="card card-baas-alt mt-2">
-            <p class="card-title txt-encode-20">Weather Conditions</p>
+            <p class="card-title txt-encode-20 capitalize-first">{% trans "weather conditions" %}</p>
             <p class="card-title card-title txt-regular-12">{{period}}</p>
             <div class="row">
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Temperature</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "temperature" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Humidity</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "humidity" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Precipitation</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "precipitation" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
-            <h6 class="card-title txt-encode-20">Cultivation</h6>
+            <h6 class="card-title txt-encode-20 capitalize-first">{% trans "cultivation" %}</h6>
             <br>
             <div class="row">
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Cultivation Mode</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "cultivation mode" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Irrigation</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "irrigation" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4">
-                    <p class="txt-regular-12">Texture</p>
+                    <p class="txt-regular-12 capitalize-first">{% trans "texture" %}</p>
                     <p class="txt-open-semibold-14">Lorem</p>
                 </div>
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
             <h6 class="card-title txt-encode-20">{{trial.product}}</h6>
-            <p class="txt-regular-12">Active Sustance</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "active substance" %}</p>
             <p class="txt-open-semibold-14">{{trial.product.active_substance}}</p>
-            <p class="txt-regular-12">Benefit</p>
+            <p class="txt-regular-12 capitalize-first">{% trans "benefit" %}</p>
             <p class="txt-open-semibold-14">Lorem</p>
         </div>
         

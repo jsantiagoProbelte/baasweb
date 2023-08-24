@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 from baaswebapp.models import ModelHelpers, RateTypeUnit
 from trialapp.models import FieldTrial, Thesis, Sample, Replica
 
@@ -54,18 +55,22 @@ class Assessment(ModelHelpers, models.Model):
     @classmethod
     def getRateSets(cls, assessments):
         rateUnits = {}
+        countRates = {}
         for assessment in assessments:
             if assessment.rate_type.id not in rateUnits:
                 rateUnits[assessment.rate_type.id] = assessment.rate_type
-        return list(rateUnits.values())
+                countRates[assessment.rate_type] = 0
+            countRates[assessment.rate_type] += 1
+        return countRates
 
     @classmethod
     def getRatedParts(cls, assessments):
         ratedParts = {}
         for assessment in assessments:
             if assessment.part_rated not in ratedParts:
-                ratedParts[assessment.part_rated] = assessment.part_rated
-        return list(ratedParts.values())
+                ratedParts[assessment.part_rated] = 0
+            ratedParts[assessment.part_rated] += 1
+        return ratedParts
 
     def getPartRated(self):
         if self.part_rated == 'Undefined' or self.part_rated == 'None':
@@ -239,11 +244,25 @@ class ReplicaData(DataModel, models.Model):
     @classmethod
     def dataPointsAssess(cls, assIds):
         return cls.objects.values(
-            'reference__thesis__id', 'reference__name', 'value',
-            'reference__id', 'assessment__id',
-            'reference__thesis__number'
-            ).filter(assessment_id__in=assIds).order_by(
-            'reference__thesis__number', 'reference__number')
+                'reference__thesis__id', 'reference__name', 'value',
+                'reference__id', 'assessment__id',
+                'reference__thesis__number'
+            ).filter(
+                assessment_id__in=assIds
+            ).order_by(
+                'reference__thesis__number', 'reference__number')
+
+    @classmethod
+    def dataPointsAssessAvg(cls, assIds):
+        return cls.objects.values(
+                'reference__thesis__id', 'assessment__id',
+                'reference__thesis__number'
+            ).annotate(
+                value=Avg('value')
+            ).filter(
+                assessment_id__in=assIds
+            ).order_by(
+                'reference__thesis__number', 'assessment__assessment_date')
 
 
 class SampleData(DataModel, models.Model):

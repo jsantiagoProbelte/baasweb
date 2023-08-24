@@ -10,6 +10,7 @@ from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.trial_helper import TrialHelper, PdfTrial
 from baaswebapp.models import RateTypeUnit
 import os
+from django.utils.translation import gettext_lazy as _
 
 
 class FieldTrialViewsTest(TestCase):
@@ -66,7 +67,7 @@ class FieldTrialViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = FieldTrialCreateView.as_view()(request)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This field is required.')
+        self.assertContains(response, _('This field is required.'))
         # it is missing a code.
         fieldTrialData['code'] = '19701409'
         request = self._apiFactory.post(

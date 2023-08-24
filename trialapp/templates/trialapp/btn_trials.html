@@ -1,0 +1,7 @@
+{% load i18n %}
+{% if count_trials %}
+    <a href="{% url 'fieldtrial-list'%}?{{tag}}={{tagId}}{{extra_params}}" class='btn btn-outline-baas'>
+        {{count_trials}} {{extraInfo}} {% trans "trials" %} &#8594;</a>
+{% else %}
+    <p class="txt-baas-baas txt-regular-13">{% trans "no trials" %}</p>
+{% endif %}

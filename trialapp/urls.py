@@ -39,6 +39,10 @@ urlpatterns = [
         trial_views.TrialApi.as_view(),
         name='trial_api'),
     path(
+        'trial_content_api',
+        trial_views.trialContentApi,
+        name='trial-content-api'),
+    path(
         'fieldtrial/delete/<int:pk>/',
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),

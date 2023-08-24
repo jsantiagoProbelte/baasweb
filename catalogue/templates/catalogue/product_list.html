@@ -1,7 +1,12 @@
+{% load i18n %}
 <table class="table">
     <thead>
-        <tr class="txt-open-semibold-11"><th>PRODUCT</th><th>PRODUCT TYPE</th><th class="col-md-2">ACTIVE SUBSTANCE</th><th>EFFICACY RANGE</th>
-            <th>TRIALS DATE</th><th></th></tr>
+        <tr class="txt-open-semibold-11 txt-uppercase">
+            <th>{% trans "product" %}</th>
+            <th>{% trans "product type"%}</th>
+            <th class="col-md-2">{% trans "active substance" %}</th>
+            <th>{% trans "efficacy range" %}</th>
+            <th>{% trans "trials date" %}</th><th></th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
@@ -10,7 +15,8 @@
         {% include 'baaswebapp/product_display.html' %} 
         <td><p class="txt-open-bold-15">{{item.efficacies}}</p></td>
         <td><p class="txt-regular-13">{{item.date_range}}</p></td>
-        <td><a class="btn btn-outline-baas" href="{% url 'fieldtrial-list'%}?product={{item.id}}{{extra_params}}">{{item.trials}} trials &#10132;</a></td>
+        <td>{% include 'trialapp/btn_trials.html' with count_trials=item.trials tag='product' tagId=item.id extraInfo='' extra_params=extra_params%}
+        </td>
     </tr>
     </tbody>
     {% empty %}

@@ -279,26 +279,35 @@ class ProductApi(APIView):
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
 
-                if 'fieldtrial__plague__name' in crop and crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(cropsTable[cropName]["agents"])
+                if 'fieldtrial__plague__name' in crop and\
+                   crop['fieldtrial__plague__name']:
+                    cropsTable[cropName]["agents"].add(
+                        crop['fieldtrial__plague__name'])
+                    cropsTable[cropName]["strAgents"] = ', '.join(
+                        cropsTable[cropName]["agents"])
 
-                cropsTable[cropName]["samples"] += crop["fieldtrial__samples_per_replica"]
+                cropsTable[cropName]["samples"] += crop[
+                    "fieldtrial__samples_per_replica"]
             else:
                 cropsTable[cropName] = {"trials": [], "trialsCount": 0,
-                                        "name": crop["name"], "id": crop["id"], "agents": set(),
+                                        "name": crop["name"],
+                                        "id": crop["id"], "agents": set(),
                                         "strAgents": "", "samples": 0}
                 cropsTable[cropName]["trials"].append(
                     {"name": crop["fieldtrial__name"],
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
-                cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                cropsTable[cropName]["samples"] += crop["fieldtrial__samples_per_replica"]
+                cropsTable[cropName]["agents"].add(
+                    crop['fieldtrial__plague__name'])
+                cropsTable[cropName]["samples"] += crop[
+                    "fieldtrial__samples_per_replica"]
 
-                if 'fieldtrial__plague__name' in crop and crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(cropsTable[cropName]["agents"])
-
+                if 'fieldtrial__plague__name' in crop and\
+                   crop['fieldtrial__plague__name']:
+                    cropsTable[cropName]["agents"].add(
+                        crop['fieldtrial__plague__name'])
+                    cropsTable[cropName]["strAgents"] = ', '.join(
+                        cropsTable[cropName]["agents"])
         return cropsTable.values()
 
     def get(self, request, *args, **kwargs):
@@ -311,19 +320,20 @@ class ProductApi(APIView):
                                                                  request.GET)
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
 
-        return render(request, template_name,
-                      {'product': product,
-                       'deleteProductForm': ProductDeleteView(),
-                       'fieldtrials': numTrials,
-                       'filterData': filterData,
-                       'titleGraph': titleGraph,
-                       'graphs': graphs,
-                       'variants': self.getProductTree(product),
-                       'errors': errorgraphs,
-                       'classGraphCol': classGraphCol,
-                       'titleView': product.getName(),
-                       'crops': self.get_crop_table_data(product_id),
-                       'category': product.getCategory(product.type_product)})
+        return render(
+            request, template_name, {
+                'product': product,
+                'deleteProductForm': ProductDeleteView(),
+                'fieldtrials': numTrials,
+                'filterData': filterData,
+                'titleGraph': titleGraph,
+                'graphs': graphs,
+                'variants': self.getProductTree(product),
+                'errors': errorgraphs,
+                'classGraphCol': classGraphCol,
+                'titleView': product.getName(),
+                'crops': self.get_crop_table_data(product_id),
+                'category': product.getCategory(product.type_product).label})
 
 
 ##############################

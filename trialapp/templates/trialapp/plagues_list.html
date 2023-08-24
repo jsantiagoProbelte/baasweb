@@ -1,7 +1,11 @@
+{% load i18n %}
 <table class="table">
     <thead>
-        <tr class="txt-open-semibold-11"><th>PEST / DISEASE</th><th>PRODUCTS</th><th>EFFICACY RANGE</th>
-            <th>TRIALS DATE</th><th></th></tr>
+        <tr class="txt-open-semibold-11 txt-uppercase">
+            <th>{% trans "pest / disease" %}</th>
+            <th>{% trans "products" %}</th>
+            <th>{% trans "efficacy range" %}</th>
+            <th>{% trans "trials date" %}</th><th></th></tr>
     </thead>
     <tbody>
     {% for item in object_list %}
@@ -23,7 +27,7 @@
         </td>
         <td><p class="txt-open-bold-15">??</p></td>     
         <td><p class="txt-regular-13">{{item.date_range}}</p></td>
-        <td><a href="{% url 'fieldtrial-list'%}?plague={{item.id}}{{extra_params}}" class='btn  btn-outline-baas'>Trials {{item.trial_count}} &#8594;</a></td>
+        <td>{% include 'trialapp/btn_trials.html' with count_trials=item.trial_count tag='plague' tagId=item.id extraInfo='' extra_params=extra_params%}</td>
     </tr>
     </tbody>
     {% empty %}

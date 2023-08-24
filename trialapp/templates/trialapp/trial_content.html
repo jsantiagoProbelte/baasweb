@@ -1,0 +1,9 @@
+{% load i18n %}
+
+{% for item in dataContent %}
+    <div class="card card-body-baas graph-container mt-3">
+        {{item.content|safe}}
+    </div>
+{% empty %}
+    <p>{% trans "No data to display"%}</p>
+{% endfor %}
