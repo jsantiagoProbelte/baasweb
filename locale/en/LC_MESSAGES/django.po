@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-25 00:34+0200\n"
+"POT-Creation-Date: 2023-08-25 01:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143
-#: trialapp/templates/trialapp/trial_conclusions.html:82
+#: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160
-#: trialapp/templates/trialapp/trial_conclusions.html:74
+#: trialapp/templates/trialapp/trial_conclusions.html:76
 msgid "temperature"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:560
 #: trialapp/templates/trialapp/trial_conclusions.html:36
-#: trialapp/templates/trialapp/trial_conclusions.html:45
+#: trialapp/templates/trialapp/trial_conclusions.html:47
 #: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:144
 msgid "efficacy"
 msgstr ""
@@ -228,7 +228,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:61
-#: trialapp/templates/trialapp/trial_conclusions.html:107
+#: trialapp/templates/trialapp/trial_conclusions.html:109
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
@@ -273,7 +273,7 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:130
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:53
+#: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "pest / disease"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:129
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:55
+#: trialapp/templates/trialapp/trial_conclusions.html:57
 msgid "crop"
 msgstr ""
 
@@ -420,48 +420,49 @@ msgstr ""
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:46
+#: trialapp/templates/trialapp/trial_conclusions.html:48
 msgid "* in the moment of Maximum infestation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:57
+#: trialapp/templates/trialapp/trial_conclusions.html:59
 msgid "date"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:61
+#: trialapp/templates/trialapp/trial_conclusions.html:63
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:70
+#: trialapp/templates/trialapp/trial_conclusions.html:72
 #: trialapp/trial_views.py:191
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:78
+#: trialapp/templates/trialapp/trial_conclusions.html:80
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:88
+#: trialapp/templates/trialapp/trial_conclusions.html:90
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:92
+#: trialapp/templates/trialapp/trial_conclusions.html:94
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:96
+#: trialapp/templates/trialapp/trial_conclusions.html:98
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:100
+#: trialapp/templates/trialapp/trial_conclusions.html:102
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:109
+#: trialapp/templates/trialapp/trial_conclusions.html:111
 msgid "benefit"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_content.html:8
+#: trialapp/templates/trialapp/trial_content_cards.html:8
+#: trialapp/templates/trialapp/trial_content_divs.html:8
 #: trialapp/templates/trialapp/trial_trends.html:7
 msgid "No data to display"
 msgstr ""
