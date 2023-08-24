@@ -38,9 +38,10 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'period': trial.getPeriod(),
             'efficacy': '?',
             'other_trials': other_trials,
+            'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'numberAssessments': len(assessments),
-            'graphInfo': list(TrialContent.FETCH_FUNCTIONS.keys()),
+            'graphInfo': [TrialContent.WEATHER, TrialContent.ASSESSMENTS],
             'numberThesis': len(allThesis)}
 
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
@@ -63,6 +64,7 @@ class TrialContent():
     WEATHER = 'weather'
     ASSESSMENTS = 'ass'
     EFFICACY = 'eff'
+    KEY_ASSESS = 'key_assess'
 
     def __init__(self, request):
         self._request = request
@@ -147,10 +149,60 @@ class TrialContent():
 
     def fetchAssessmentsData(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
-        new_list = Assessment.getObjects(self._trial)
-        rateSets = Assessment.getRateSets(new_list)
-        ratedParts = Assessment.getRatedParts(new_list)
+        ass_list = Assessment.getObjects(self._trial)
+        rateSetsCounts = Assessment.getRateSets(ass_list)
+        rateSets = list(rateSetsCounts.keys())
+        ratedPartCounts = Assessment.getRatedParts(ass_list)
+        ratedParts = list(ratedPartCounts.keys())
         return self.getGraphData(GraphTrial.L_REPLICA, rateSets, ratedParts)
+
+    def mostPopular(self, counters):
+        if counters and len(counters) > 0:
+            if len(counters) == 1:
+                return list(counters.keys())[0]
+            counts = list(counters.values())
+            maxCount = max(counts)
+            # We assume , the biggest amount of assessment is the key info
+            # This works when there is none or one
+            # If there are multiple ones, then the first is winning
+            for aKey in counters:
+                if maxCount == counters[aKey]:
+                    return aKey
+        return None
+
+    def whatIsKeyRateSet(self):
+        # Trial should have designated a key rate_set
+        # TODO: Use one designated by the admin
+        keyrateset = None
+        if not keyrateset:
+            # if key rateset is not designated yet, we nomine one
+            ass_list = Assessment.getObjects(self._trial)
+            if ass_list:
+                rateSetsCounts = Assessment.getRateSets(ass_list)
+                keyrateset = self.mostPopular(rateSetsCounts)
+        return keyrateset
+
+    def whatIsKeyPartRated(self):
+        # Trial should have designated a key part rated
+        # TODO: Use one designated by the admin
+        keypartrated = None
+        if not keypartrated:
+            # if key rateset is not designated yet, we nomine one
+            ass_list = Assessment.getObjects(self._trial)
+            if ass_list:
+                partRatedCounts = Assessment.getRatedParts(ass_list)
+                keypartrated = self.mostPopular(partRatedCounts)
+        return keypartrated
+
+    def fetchKeyAssessData(self):
+        self._thesis = Thesis.getObjects(self._trial, as_dict=True)
+        keyRateSet = self.whatIsKeyRateSet()
+        keypartrated = self.whatIsKeyPartRated()
+
+        # Choose the rate_unit with most data.
+        return self.getGraphData(GraphTrial.L_REPLICA,
+                                 [keyRateSet],
+                                 [keypartrated])
 
     def fetchEfficacy(self):
         return self.fetchDefault()
@@ -161,6 +213,7 @@ class TrialContent():
 
     FETCH_FUNCTIONS = {
         WEATHER: fetchWeather,
+        KEY_ASSESS: fetchKeyAssessData,
         ASSESSMENTS: fetchAssessmentsData,
         EFFICACY: fetchDefault}
 

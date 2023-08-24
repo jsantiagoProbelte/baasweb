@@ -55,18 +55,22 @@ class Assessment(ModelHelpers, models.Model):
     @classmethod
     def getRateSets(cls, assessments):
         rateUnits = {}
+        countRates = {}
         for assessment in assessments:
             if assessment.rate_type.id not in rateUnits:
                 rateUnits[assessment.rate_type.id] = assessment.rate_type
-        return list(rateUnits.values())
+                countRates[assessment.rate_type] = 0
+            countRates[assessment.rate_type] += 1
+        return countRates
 
     @classmethod
     def getRatedParts(cls, assessments):
         ratedParts = {}
         for assessment in assessments:
             if assessment.part_rated not in ratedParts:
-                ratedParts[assessment.part_rated] = assessment.part_rated
-        return list(ratedParts.values())
+                ratedParts[assessment.part_rated] = 0
+            ratedParts[assessment.part_rated] += 1
+        return ratedParts
 
     def getPartRated(self):
         if self.part_rated == 'Undefined' or self.part_rated == 'None':

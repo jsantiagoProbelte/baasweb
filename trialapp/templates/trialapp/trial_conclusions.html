@@ -33,7 +33,10 @@
             <p class="txt-regular-13">Lorem</p>
         </div>
         <div class="card card-body-baas mt-3">
-            <p class="card-title txt-encode-14 txt-uppercase">{% trans "infestation" %}</p>
+            <p class="card-title txt-encode-14 txt-uppercase">{% trans "efficacy" %} {{type_product}}</p>
+            <div class="trial-dynamic-content mt-3" id="trial-{{trial.id}}-key_assess">
+                <div class="loading-spinner"></div>
+            </div>
         </div>
     </div>
     <div class="col-md-4 mt-3">

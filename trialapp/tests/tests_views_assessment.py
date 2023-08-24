@@ -9,7 +9,7 @@ from trialapp.assessment_views import\
     AssessmentApi, AssessmentListView, AssessmentDeleteView, \
     AssessmentView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.trial_views import trialContentApi
+from trialapp.trial_views import trialContentApi, TrialContent
 
 
 class AssessmentViewsTest(TestCase):
@@ -136,7 +136,7 @@ class AssessmentViewsTest(TestCase):
         self.assertContains(response, item.name)
 
         # Try with the trialContentApi
-        for content in ['weather', 'evaluations']:
+        for content in list(TrialContent.FETCH_FUNCTIONS.keys()):
             data = {'id': self._fieldTrial.id,
                     'content_type': content}
             getRequest = self._apiFactory.get('trial_content',
