@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 08:20+0200\n"
+"POT-Creation-Date: 2023-08-25 00:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,13 +23,13 @@ msgid "Password"
 msgstr "Clave"
 
 #: baaswebapp/graphs.py:101
-#: catalogue/templates/catalogue/product_show.html:110
+#: catalogue/templates/catalogue/product_show.html:107
 msgid "weather"
 msgstr "clima"
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143
-#: trialapp/templates/trialapp/trial_conclusions.html:84
+#: trialapp/templates/trialapp/trial_conclusions.html:82
 msgid "precipitation"
 msgstr "Precipitación"
 
@@ -38,7 +38,7 @@ msgid "hours"
 msgstr "horas"
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160
-#: trialapp/templates/trialapp/trial_conclusions.html:76
+#: trialapp/templates/trialapp/trial_conclusions.html:74
 msgid "temperature"
 msgstr "temperatura"
 
@@ -68,8 +68,8 @@ msgstr "punto de rocío"
 
 #: baaswebapp/graphs.py:560
 #: trialapp/templates/trialapp/trial_conclusions.html:36
-#: trialapp/templates/trialapp/trial_conclusions.html:47
-#: trialapp/templates/trialapp/trial_show.html:23
+#: trialapp/templates/trialapp/trial_conclusions.html:45
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:144
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -179,40 +179,40 @@ msgstr "¿Seguro que eliminará"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: catalogue/models.py:27 catalogue/models.py:39
+#: catalogue/models.py:28 catalogue/models.py:40
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:794
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: catalogue/models.py:28
+#: catalogue/models.py:29
 msgid "Fertilizer"
 msgstr "Fertilizante"
 
-#: catalogue/models.py:29 catalogue/models.py:37
+#: catalogue/models.py:30 catalogue/models.py:38
 msgid "Estimulant"
 msgstr "Estimulante"
 
-#: catalogue/models.py:30
+#: catalogue/models.py:31
 msgid "Insecticide"
 msgstr "Insecticida"
 
-#: catalogue/models.py:31
+#: catalogue/models.py:32
 msgid "Nematicide"
 msgstr "Nematicida"
 
-#: catalogue/models.py:32
+#: catalogue/models.py:33
 msgid "Fungicide"
 msgstr "Fungicida"
 
-#: catalogue/models.py:33
+#: catalogue/models.py:34
 msgid "Herbicide"
 msgstr "Herbicida"
 
-#: catalogue/models.py:36
+#: catalogue/models.py:37
 msgid "Nutritional"
 msgstr "Nutricional"
 
-#: catalogue/models.py:38
+#: catalogue/models.py:39
 msgid "Control"
 msgstr "Control"
 
@@ -228,15 +228,15 @@ msgid "product type"
 msgstr "tipo producto"
 
 #: catalogue/templates/catalogue/product_list.html:7
-#: catalogue/templates/catalogue/product_show.html:64
-#: trialapp/templates/trialapp/trial_conclusions.html:109
+#: catalogue/templates/catalogue/product_show.html:61
+#: trialapp/templates/trialapp/trial_conclusions.html:107
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr "substancia activa"
 
 #: catalogue/templates/catalogue/product_list.html:8
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:54
+#: catalogue/templates/catalogue/product_show.html:51
 #: trialapp/templates/trialapp/crop_list.html:7
 #: trialapp/templates/trialapp/plagues_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
@@ -266,65 +266,65 @@ msgstr "Descargar información del producto"
 msgid "product variants"
 msgstr "Formulaciones del producto"
 
-#: catalogue/templates/catalogue/product_show.html:55
+#: catalogue/templates/catalogue/product_show.html:52
 msgid "*All products trials efficacy range"
 msgstr "*Rango de eficacia de los ensayos de todos los productos"
 
-#: catalogue/templates/catalogue/product_show.html:71
-#: catalogue/templates/catalogue/product_show.html:133
+#: catalogue/templates/catalogue/product_show.html:68
+#: catalogue/templates/catalogue/product_show.html:130
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:55
+#: trialapp/templates/trialapp/trial_conclusions.html:53
 msgid "pest / disease"
 msgstr "plaga / enfermedad"
 
-#: catalogue/templates/catalogue/product_show.html:79
+#: catalogue/templates/catalogue/product_show.html:76
 msgid "Product Basics"
 msgstr "Propiedades básicas"
 
-#: catalogue/templates/catalogue/product_show.html:83
+#: catalogue/templates/catalogue/product_show.html:80
 msgid "concentration"
 msgstr "concentración"
 
-#: catalogue/templates/catalogue/product_show.html:93
+#: catalogue/templates/catalogue/product_show.html:90
 msgid "presentation"
 msgstr "presentación"
 
-#: catalogue/templates/catalogue/product_show.html:101
-#: catalogue/templates/catalogue/product_show.html:105
+#: catalogue/templates/catalogue/product_show.html:98
+#: catalogue/templates/catalogue/product_show.html:102
 msgid "Application"
 msgstr "Aplicación"
 
-#: catalogue/templates/catalogue/product_show.html:117
+#: catalogue/templates/catalogue/product_show.html:114
 msgid "Security period"
 msgstr "Período de seguridad"
 
-#: catalogue/templates/catalogue/product_show.html:121
+#: catalogue/templates/catalogue/product_show.html:118
 msgid "Mixes"
 msgstr "Mezclas"
 
-#: catalogue/templates/catalogue/product_show.html:132
+#: catalogue/templates/catalogue/product_show.html:129
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:57
+#: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "crop"
 msgstr "cultivo"
 
-#: catalogue/templates/catalogue/product_show.html:134
+#: catalogue/templates/catalogue/product_show.html:131
 #: trialapp/templates/trialapp/trial_conclusions.html:7
 msgid "dosis"
 msgstr "dosis"
 
-#: catalogue/templates/catalogue/product_show.html:135
+#: catalogue/templates/catalogue/product_show.html:132
 #: trialapp/templates/trialapp/trial_conclusions.html:13
 msgid "solution volume"
 msgstr "volumen caldo"
 
-#: catalogue/templates/catalogue/product_show.html:136
+#: catalogue/templates/catalogue/product_show.html:133
 #: trialapp/templates/trialapp/trial_conclusions.html:20
 msgid "number applications"
 msgstr "Número aplicaciones"
 
-#: catalogue/templates/catalogue/product_show.html:137
+#: catalogue/templates/catalogue/product_show.html:134
 #: trialapp/templates/trialapp/trial_conclusions.html:26
 msgid "day intervals"
 msgstr "intervalo dias"
@@ -341,13 +341,77 @@ msgstr "Este campo es obligatorio."
 msgid "Ungrouped"
 msgstr "No agrupar"
 
-#: trialapp/models.py:64
+#: trialapp/models.py:62 trialapp/models.py:86
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
 
-#: trialapp/models.py:65
+#: trialapp/models.py:63 trialapp/models.py:87
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
+
+#: trialapp/models.py:64
+msgid "BUNCH"
+msgstr "RACIMO"
+
+#: trialapp/models.py:65
+msgid "CLUSTR"
+msgstr "CLUSTR"
+
+#: trialapp/models.py:66
+msgid "FLOWER"
+msgstr "FLOR"
+
+#: trialapp/models.py:67
+msgid "FRUDAM"
+msgstr "FRUDAM"
+
+#: trialapp/models.py:68
+msgid "FRUIT"
+msgstr "FRUTA"
+
+#: trialapp/models.py:69
+msgid "FRUIT C"
+msgstr "FRUTA C"
+
+#: trialapp/models.py:70
+msgid "FRUIT P"
+msgstr "FRUTA P"
+
+#: trialapp/models.py:71
+msgid "FRUROT C"
+msgstr "FRUTA C"
+
+#: trialapp/models.py:72
+msgid "FRUSTO P"
+msgstr "FRUSTO P"
+
+#: trialapp/models.py:73
+msgid "LEAF"
+msgstr "HOJA"
+
+#: trialapp/models.py:74
+msgid "PLANT"
+msgstr "PLANTA"
+
+#: trialapp/models.py:75
+msgid "PLOT"
+msgstr "TRAMA"
+
+#: trialapp/models.py:76
+msgid "ROOT"
+msgstr "RAÍZ"
+
+#: trialapp/models.py:77
+msgid "SPOT"
+msgstr "LUGAR"
+
+#: trialapp/models.py:78
+msgid "STEMP"
+msgstr "PASO"
+
+#: trialapp/models.py:79
+msgid "UNDF"
+msgstr "FNUD"
 
 #: trialapp/templates/trialapp/btn_trials.html:6
 msgid "no trials"
@@ -357,43 +421,44 @@ msgstr "no ensayos"
 msgid "recommendations"
 msgstr "Recomendaciones"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:48
+#: trialapp/templates/trialapp/trial_conclusions.html:46
 msgid "* in the moment of Maximum infestation"
 msgstr "* En el momento de la máxima infestación"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:59
+#: trialapp/templates/trialapp/trial_conclusions.html:57
 msgid "date"
 msgstr "fecha"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:63
+#: trialapp/templates/trialapp/trial_conclusions.html:61
 msgid "location"
 msgstr "Localización"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:72
+#: trialapp/templates/trialapp/trial_conclusions.html:70
+#: trialapp/trial_views.py:191
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:80
+#: trialapp/templates/trialapp/trial_conclusions.html:78
 msgid "humidity"
 msgstr "humedad"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:90
+#: trialapp/templates/trialapp/trial_conclusions.html:88
 msgid "cultivation"
 msgstr "Cultivo"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:94
+#: trialapp/templates/trialapp/trial_conclusions.html:92
 msgid "cultivation mode"
 msgstr "modo de cultivo"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:98
+#: trialapp/templates/trialapp/trial_conclusions.html:96
 msgid "irrigation"
 msgstr "Irrigación"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:102
+#: trialapp/templates/trialapp/trial_conclusions.html:100
 msgid "texture"
 msgstr "textura"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:111
+#: trialapp/templates/trialapp/trial_conclusions.html:109
 msgid "benefit"
 msgstr "beneficio"
 
@@ -437,6 +502,24 @@ msgstr "ensayo"
 #: trialapp/templates/trialapp/trials_list.html:5
 msgid "code"
 msgstr "código"
+
+#: trialapp/trial_views.py:139
+msgid ""
+"Efficacy cannot be determined yet.Data is not available,key thesis or "
+"untreated thesis are not well identified,key rate type unit is not well "
+"identified."
+msgstr ""
+"La eficacia aún no se puede determinar. Los datos no están disponibles, la "
+"tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
+"tipo de tasa clave no está bien identificada."
+
+#: trialapp/trial_views.py:192
+msgid ""
+"Weather conditions cannot be determined because location or assessments info"
+" aremissing"
+msgstr ""
+"No se pueden determinar las condiciones climáticas porque falta información "
+"sobre la ubicación o las evaluaciones."
 
 #: venv_baas/lib/python3.9/site-packages/_pytest/config/argparsing.py:474
 #, python-format

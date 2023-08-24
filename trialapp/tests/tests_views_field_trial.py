@@ -7,7 +7,7 @@ from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi, \
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView, \
     DownloadTrial
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.trial_helper import TrialHelper, PdfTrial
+from trialapp.trial_helper import TrialFile, PdfTrial
 from baaswebapp.models import RateTypeUnit
 import os
 from django.utils.translation import gettext_lazy as _
@@ -173,7 +173,7 @@ class FieldTrialViewsTest(TestCase):
         )
 
         # Add filetrial
-        helper = TrialHelper(root_path='./baaswebapp/tests/fixtures/')
+        helper = TrialFile(root_path='./baaswebapp/tests/fixtures/')
         helper.uploadTrialFile(
             fieldTrial,
             './baaswebapp/tests/fixtures/input/dummy.txt')

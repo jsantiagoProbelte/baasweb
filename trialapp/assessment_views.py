@@ -106,10 +106,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         field_trial_id = self.kwargs['field_trial_id']
         self._trial = get_object_or_404(FieldTrial, pk=field_trial_id)
         new_list = Assessment.getObjects(self._trial)
-        rateSetsCounts = Assessment.getRateSets(new_list)
-        rateSets = list(rateSetsCounts.keys())
-        ratedPartCounts = Assessment.getRatedParts(new_list)
-        ratedParts = list(ratedPartCounts.keys())
+        rateSets = Assessment.getRateSets(new_list)
+        ratedParts = Assessment.getRatedParts(new_list)
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
 
         # Replica data

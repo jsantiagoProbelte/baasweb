@@ -17,6 +17,7 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from trialapp.data_views import DataGraphFactory
+from django.utils.translation import gettext_lazy as _
 
 
 class ProductFormLayout(FormHelper):
@@ -354,13 +355,11 @@ class BatchApi(APIView):
                   {'name': 'Serial Number', 'value': item.serial_number},
                   {'name': 'rate & unit',
                    'value': '{} {}'.format(item.rate, item.rate_unit)}]
-        return render(request, template_name,
-                      {'product': product,
-                       'values': values,
-                       'item': item,
-                       'subtitle': subtitle,
-                       'update_url': subtitle + '-update',
-                       'delete_url': subtitle + '-delete'})
+
+        return renderCatalogue(
+            request, product, item, values, subtitle,
+            Treatment, 'treatment', 'rate',
+            template_name)
 
 
 class BatchFormLayout(FormHelper):
@@ -410,7 +409,7 @@ class BatchCreateView(LoginRequiredMixin, CreateView):
             item.save()
 
             variant = ProductVariant.objects.get(id=item.product_variant_id)
-            return HttpResponseRedirect(variant.product.get_absolute_url())
+            return HttpResponseRedirect(variant.get_absolute_url())
 
 
 class BatchUpdateView(LoginRequiredMixin, UpdateView):
@@ -440,6 +439,30 @@ class BatchDeleteView(DeleteView):
         return super().form_valid(form)
 
 
+def prepareChildrenCatalogue(childKey, cls, filter, orderBy):
+    items = cls.objects.filter(**filter).order_by(orderBy)
+    children = [{'id': item.id, 'name': item.getName()} for item in items]
+    return {
+        'children': children,
+        'children_title': _(childKey),
+        'children_url': childKey + '-api',
+        'children_url_add': childKey + '-add'}
+
+
+def renderCatalogue(request, product, item, values, subtitle,
+                    childCls, childType, orderChild,
+                    template_name):
+    childrenInfo = prepareChildrenCatalogue(childType, childCls,
+                                            {subtitle: item},
+                                            orderChild)
+    context = {'product': product, 'item': item,
+               'values': values, 'subtitle': subtitle,
+               'update_url': subtitle + '-update',
+               'delete_url': subtitle + '-delete'}
+
+    return render(request, template_name, {**context, **childrenInfo})
+
+
 ##############################
 # ProductVariant
 class ProductVariantApi(APIView):
@@ -455,13 +478,11 @@ class ProductVariantApi(APIView):
         subtitle = 'product_variant'
         values = [{'name': 'name', 'value': item.name},
                   {'name': 'description', 'value': item.description}]
-        return render(request, template_name,
-                      {'product': product,
-                       'item': item,
-                       'values': values,
-                       'subtitle': subtitle,
-                       'update_url': subtitle + '-update',
-                       'delete_url': subtitle + '-delete'})
+
+        return renderCatalogue(
+            request, product, item, values, subtitle,
+            Batch, 'batch', 'name',
+            template_name)
 
 
 class ProductVariantFormLayout(FormHelper):
@@ -628,7 +649,7 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item.save()
             batch = Batch.objects.get(id=item.batch_id)
             return HttpResponseRedirect(
-                batch.product_variant.product.get_absolute_url())
+                batch.get_absolute_url())
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)
