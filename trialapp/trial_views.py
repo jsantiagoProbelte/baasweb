@@ -10,6 +10,7 @@ from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataGraphFactory
 from django.db.models import Min, Max
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -72,13 +73,17 @@ class TrialContent():
         self._trial = get_object_or_404(FieldTrial, pk=id)
         self._content = request.GET.get('content_type')
         assessments = Assessment.getObjects(self._trial)
-        oneweek = timedelta(days=7)
-        self._min_date = assessments.aggregate(
-            min_date=Min('assessment_date'))['min_date']
-        self._min_date -= oneweek
-        self._max_date = assessments.aggregate(
-            max_date=Max('assessment_date'))['max_date']
-        self._max_date += oneweek
+        if assessments:
+            oneweek = timedelta(days=7)
+            self._min_date = assessments.aggregate(
+                min_date=Min('assessment_date'))['min_date']
+            self._min_date -= oneweek
+            self._max_date = assessments.aggregate(
+                max_date=Max('assessment_date'))['max_date']
+            self._max_date += oneweek
+        else:
+            self._min_date = None
+            self._max_date = None
 
     def getGraphData(self, level, rateSets, ratedParts):
         graphs = []
@@ -142,10 +147,17 @@ class TrialContent():
 
     def fetchWeather(self):
         weatherData = self.getWeatherData()
-        weatherGraphs = self.graphWeatherData(weatherData)
-        return [{'title': item,
-                 'content': weatherGraphs[item]}
-                for item in weatherGraphs]
+        if weatherData:
+            weatherGraphs = self.graphWeatherData(weatherData)
+            return [{'title': item,
+                    'content': weatherGraphs[item]}
+                    for item in weatherGraphs]
+        else:
+            return [
+                {'title': _("weather conditions"),
+                 'content': _("Weather conditions cannot be determined "
+                              "because location or assessments info are"
+                              " missing")}]
 
     def fetchAssessmentsData(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
