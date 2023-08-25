@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-25 01:00+0200\n"
+"POT-Creation-Date: 2023-08-25 16:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,49 +26,49 @@ msgstr ""
 msgid "weather"
 msgstr ""
 
-#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
-#: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143
+#: baaswebapp/graphs.py:129 baaswebapp/graphs.py:132 baaswebapp/graphs.py:137
+#: baaswebapp/graphs.py:139 baaswebapp/graphs.py:142 baaswebapp/graphs.py:265
 #: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "precipitation"
 msgstr ""
 
-#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:140
+#: baaswebapp/graphs.py:129 baaswebapp/graphs.py:139
 msgid "hours"
 msgstr ""
 
-#: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160
+#: baaswebapp/graphs.py:158 baaswebapp/graphs.py:159 baaswebapp/graphs.py:263
 #: trialapp/templates/trialapp/trial_conclusions.html:76
 msgid "temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181
+#: baaswebapp/graphs.py:179 baaswebapp/graphs.py:180 baaswebapp/graphs.py:267
 msgid "soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:187
+#: baaswebapp/graphs.py:186
 msgid "No data for soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:204 baaswebapp/graphs.py:205
+#: baaswebapp/graphs.py:203 baaswebapp/graphs.py:204 baaswebapp/graphs.py:269
 msgid "soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:211
+#: baaswebapp/graphs.py:210
 msgid "No data for soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:221 baaswebapp/graphs.py:222
+#: baaswebapp/graphs.py:220 baaswebapp/graphs.py:221 baaswebapp/graphs.py:271
 msgid "relative humidity"
 msgstr ""
 
-#: baaswebapp/graphs.py:234 baaswebapp/graphs.py:235
+#: baaswebapp/graphs.py:233 baaswebapp/graphs.py:234 baaswebapp/graphs.py:273
 msgid "dew point"
 msgstr ""
 
-#: baaswebapp/graphs.py:560
+#: baaswebapp/graphs.py:577
 #: trialapp/templates/trialapp/trial_conclusions.html:36
 #: trialapp/templates/trialapp/trial_conclusions.html:47
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:144
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:145
 msgid "efficacy"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/trial_views.py:191
+#: trialapp/trial_views.py:189
 msgid "weather conditions"
 msgstr ""
 
@@ -461,7 +461,7 @@ msgstr ""
 msgid "benefit"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_content_cards.html:8
+#: trialapp/templates/trialapp/trial_content_cards.html:13
 #: trialapp/templates/trialapp/trial_content_divs.html:8
 #: trialapp/templates/trialapp/trial_trends.html:7
 msgid "No data to display"
@@ -503,14 +503,14 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:139
+#: trialapp/trial_views.py:140
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:192
+#: trialapp/trial_views.py:190
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
