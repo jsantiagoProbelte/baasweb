@@ -114,11 +114,10 @@ class WeatherGraph:
                 b=20,  # Bottom margin
                 l=20   # Left margin
             ),
-            title_text=title.upper(),
+            title_text='',  # title.upper(),
             height=WeatherGraph.DEFAULT_HEIGHT,
             autosize=True)
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_xaxes(title_text="Date")
         if title_yaxes:
             fig.update_yaxes(title_text=title_yaxes)
 
@@ -239,6 +238,15 @@ class WeatherGraph:
 
 
 class WeatherGraphFactory:
+
+    @classmethod
+    def formatData(cls, id, graph, title, show,
+                   backgroundClass='bg-weather-cards'):
+        return {'id': id.lower().replace(" ", ""),
+                'title': title, 'content': graph,
+                'collapse': '' if show else 'collapse',
+                'backgroundClass': backgroundClass}
+
     @classmethod
     def build(cls, dates, non_recent_dates, mean_temps, min_temps,
               max_temps, precip, precip_hrs, soil_moist_1,
@@ -250,12 +258,19 @@ class WeatherGraphFactory:
                              soil_moist_2, soil_moist_3, soil_moist_4,
                              soil_temps_1, soil_temps_2, soil_temps_3,
                              soil_temps_4, rel_humid, dew_point)
-        return {'tempGraph': graph.draw_temp(),
-                'precipGraph': graph.draw_precip(),
-                'soilTempGraph': graph.draw_soil_temp(),
-                'soilMoistGraph': graph.draw_soil_moist(),
-                'humidGraph': graph.draw_humid(),
-                'dewPointGraph': graph.draw_dew()}
+        return [
+            cls.formatData('tempGraph', graph.draw_temp(),
+                           _('temperature'), True),
+            cls.formatData('precipGraph', graph.draw_precip(),
+                           _('precipitation'), True),
+            cls.formatData('soilTempGraph', graph.draw_soil_temp(),
+                           _('soil temperature'), False),
+            cls.formatData('soilMoistGraph', graph.draw_soil_moist(),
+                           _('soil moisture'), False),
+            cls.formatData('humidGraph', graph.draw_humid(),
+                           _('relative humidity'), True),
+            cls.formatData('dewPointGraph', graph.draw_dew(),
+                           _('dew point'), True)]
 
 
 class GraphTrial:
@@ -297,7 +312,7 @@ class GraphTrial:
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,
-                 showTitle=True):
+                 showTitle=False):
         self._level = level
         self._showTitle = showTitle
         self._xAxis = xAxis
@@ -356,14 +371,10 @@ class GraphTrial:
                 l=20   # Left margin
             ),
             height=GraphTrial.DEFAULT_HEIGHT,
-            xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
-        if self._xAxis == GraphTrial.L_DATE:
-            if orientation == 'v':
-                fig.update_layout(xaxis=dict(tickformat='%d-%m-%Y'))
-            else:
-                fig.update_layout(yaxis=dict(tickformat='%d-%m-%Y'))
+        if self._xAxis != GraphTrial.L_DATE:
+            fig.update_layout(xaxis_title=xaxis_title)
 
     def applyBar(self, x, y, orientation, name, color):
         if orientation == 'h':
@@ -424,6 +435,12 @@ class GraphTrial:
                 fig.update_traces(textfont_size=20)
 
         self.formatFigure(fig, thisGraph, showLegend, orientation)
+
+        if len(x) == 1 and self._xAxis == GraphTrial.L_DATE:
+            if orientation == 'v':
+                fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
+            else:
+                fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
 
         if typeFigure == GraphTrial.VIOLIN:
             fig.update_layout(violinmode='group')

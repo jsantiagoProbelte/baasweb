@@ -132,6 +132,10 @@
   background: var(--custom-bg-color-cards);
 }
 
+.bg-weather-cards{
+  background: #F5FFFF !important;
+}
+
 .bg-custom-main{
   background: var(--custom-brand-color);
 }
