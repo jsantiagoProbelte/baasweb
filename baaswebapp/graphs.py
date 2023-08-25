@@ -343,7 +343,7 @@ class GraphTrial:
         return self.preparePlots(typeFigure=GraphTrial.LINE)
 
     def formatFigure(self, fig, thisGraph, showLegend,
-                     orientation):
+                     orientation, typeFigure, num_x):
         # Update layout for graph object Figure
         if orientation == 'v':
             xaxis_title = thisGraph['x_axis']
@@ -375,6 +375,19 @@ class GraphTrial:
 
         if self._xAxis != GraphTrial.L_DATE:
             fig.update_layout(xaxis_title=xaxis_title)
+
+        if typeFigure == GraphTrial.BAR:
+            fig.update_traces(textfont_size=20)
+
+        if num_x == 1 and self._xAxis == GraphTrial.L_DATE:
+            if orientation == 'v':
+                fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
+            else:
+                fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
+
+        if typeFigure == GraphTrial.VIOLIN:
+            fig.update_layout(violinmode='group')
+        fig.update_yaxes(automargin=True)
 
     def applyBar(self, x, y, orientation, name, color):
         if orientation == 'h':
@@ -431,20 +444,8 @@ class GraphTrial:
                                  line_color=color)
             fig.add_trace(data)
 
-            if typeFigure == GraphTrial.BAR:
-                fig.update_traces(textfont_size=20)
-
-        self.formatFigure(fig, thisGraph, showLegend, orientation)
-
-        if len(x) == 1 and self._xAxis == GraphTrial.L_DATE:
-            if orientation == 'v':
-                fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
-            else:
-                fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
-
-        if typeFigure == GraphTrial.VIOLIN:
-            fig.update_layout(violinmode='group')
-        fig.update_yaxes(automargin=True)
+        self.formatFigure(fig, thisGraph, showLegend, orientation,
+                          typeFigure, len(x))
 
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
