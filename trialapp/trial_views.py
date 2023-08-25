@@ -103,6 +103,7 @@ class TrialContent():
                     dataPoints = []
                 if len(dataPoints):
                     graphF = DataGraphFactory(level, assmts, dataPoints,
+                                              showTitle=False,
                                               references=self._thesis)
                     type_graph = DataGraphFactory.LINE if len(assmts) > 1\
                         else DataGraphFactory.COLUMN
@@ -182,10 +183,7 @@ class TrialContent():
     def fetchWeather(self):
         weatherData = self.getWeatherData()
         if weatherData:
-            weatherGraphs = self.graphWeatherData(weatherData)
-            return [{'title': item,
-                    'content': weatherGraphs[item]}
-                    for item in weatherGraphs]
+            return self.graphWeatherData(weatherData)
         else:
             return [
                 {'title': _("weather conditions"),
