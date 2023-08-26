@@ -162,6 +162,8 @@ class FieldTrial(ModelHelpers, models.Model):
         max_length=10,
         choices=PartRated.choices,
         default=PartRated.UNDF)
+    best_efficacy = models.DecimalField(max_digits=10, decimal_places=2,
+                                        null=True)
 
     @classmethod
     def formatCode(cls, year, month, counts):
@@ -362,6 +364,15 @@ class Thesis(ModelHelpers, models.Model):
                     'treatments': treatments
                 })
         return allThesis, thesisDisplay
+
+    def getKeyProduct(self):
+        ttreatements = TreatmentThesis.objects.filter(thesis=self)
+
+        for ttreatement in ttreatements:
+            product = ttreatement.treatment.batch.product_variant.product
+            if product.vendor and product.vendor.key_vendor:
+                return product.name
+        return None
 
 
 class Application(ModelHelpers, models.Model):

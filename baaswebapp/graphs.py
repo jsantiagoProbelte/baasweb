@@ -17,6 +17,7 @@ COLOR_grey = '#F0EEEB'
 COLOR_unknown = '#F0EEEB'
 COLOR_black = '#333333'
 COLOR_bio_morado = '#aa4ae4'
+COLOR_UNTREATED = '#B1C23F'
 COLOR_morado = '#a500a5'
 COLOR_violeta = '#cfc9ff'
 COLOR_bs_blue = '#325d88'
@@ -109,7 +110,7 @@ class WeatherGraph:
             legend=dict(orientation="v", yanchor="middle", y=0.5,
                         xanchor="left", x=-0.5),
             margin=dict(
-                t=40,  # Adjust this value to reduce the top margin
+                t=0,  # Adjust this value to reduce the top margin
                 r=20,  # Right margin
                 b=20,  # Bottom margin
                 l=20   # Left margin
@@ -282,6 +283,7 @@ class GraphTrial:
     COLUMN = 'column'
     VIOLIN = 'violin'
     LINE = 'line'
+
     DEFAULT_HEIGHT = 275
 
     L_THESIS = 'thesis'
@@ -303,6 +305,8 @@ class GraphTrial:
                    'diamond-tall', 'diamond-wide', 'square-cross',
                    'circle-cross', 'circle-x', 'asterisk', 'hash']
 
+    COLOR_CONCLUSION_GRAPH = [COLOR_UNTREATED, COLOR_bio_morado]
+
     COLOR_LIST = [COLOR_bg_color, COLOR_morado, COLOR_bio_morado,
                   COLOR_violeta,
                   COLOR_red, COLOR_yellow, COLOR_green, COLOR_blue,
@@ -323,9 +327,25 @@ class GraphTrial:
                 'y_axis': rateType.unit,
                 'traces': traces}
 
+    def addColorLinesToTraces(self, colorDict):
+        for thesisNumber in colorDict:
+            self._graphData['traces'][thesisNumber]['trace_color'] = colorDict[thesisNumber]  # noqa E501
+
+    def addTrace(self, line, name, color='#C3C3C3', shape='dot'):
+        trace = {'x': line['x'], 'y': line['y'],
+                 'name': name,
+                 'trace_color': color, 'dash': shape}
+        self._graphData['traces'][0] = trace
+
     def preparePlots(self, typeFigure='scatter', orientation='v'):
-        return self.figure(self._graphData, typeFigure=typeFigure,
-                           orientation=orientation)
+        fig = self.figure(self._graphData, typeFigure=typeFigure,
+                          orientation=orientation)
+        return self.plot(fig)
+
+    def drawConclussionGraph(self):
+        fig = self.figure(self._graphData, typeFigure=GraphTrial.LINE,
+                          showLegend=False)
+        return self.plot(fig)
 
     def bar(self):
         return self.preparePlots(typeFigure=GraphTrial.BAR, orientation='h')
@@ -342,6 +362,14 @@ class GraphTrial:
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
 
+    DRAW_TYPE = {LINE: line,
+                 BAR: bar,
+                 SCATTER: scatter,
+                 VIOLIN: violin,
+                 COLUMN: column}
+    DRAW_LEVEL = {L_DOSIS: line,
+                  L_THESIS: bar}
+
     def formatFigure(self, fig, thisGraph, showLegend,
                      orientation, typeFigure, num_x):
         # Update layout for graph object Figure
@@ -354,6 +382,9 @@ class GraphTrial:
             yaxis_title = thisGraph['x_axis']
             fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
 
+        legend = dict(orientation="v", yanchor="middle", y=0.5,
+                      xanchor="left", x=-0.5)
+
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color=COLOR_TEXT,
@@ -362,10 +393,9 @@ class GraphTrial:
             title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
             autosize=True,
-            legend=dict(orientation="v", yanchor="middle", y=0.5,
-                        xanchor="left", x=-0.5),
+            legend=legend,
             margin=dict(
-                t=40,  # Adjust this value to reduce the top margin
+                t=0,  # Adjust this value to reduce the top margin
                 r=20,  # Right margin
                 b=20,  # Bottom margin
                 l=20   # Left margin
@@ -404,17 +434,15 @@ class GraphTrial:
                       x=xValues, y=yValues)
         return data
 
-    def figure(self, thisGraph,
+    def figure(self, thisGraph, showLegend=True,
                typeFigure=SCATTER, orientation='v'):
-        showLegend = True
         data = None
         fig = go.Figure()
 
         for traceKey in thisGraph['traces']:
             trace = thisGraph['traces'][traceKey]
             name = trace['name']
-            color = trace['marker_color']
-            symbol = trace['marker_symbol']
+            color = trace['trace_color']
             if orientation == 'v':
                 x = trace['x']
                 y = trace['y']
@@ -425,11 +453,14 @@ class GraphTrial:
             if typeFigure == GraphTrial.BAR:
                 data = self.applyBar(x, y, orientation, name, color)
             elif typeFigure == GraphTrial.LINE:
-                markerMode = 'lines+markers'
+                line = {'color': color, 'width': 3}
+                if 'dash' in trace:
+                    line['dash'] = trace['dash']
+                markerMode = 'lines'
                 data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
-                                  mode=markerMode, marker_size=5)
+                                  line=line, mode=markerMode)
             elif typeFigure == GraphTrial.SCATTER:
+                symbol = trace['marker_symbol']
                 if self._xAxis == GraphTrial.L_DATE:
                     markerMode = 'lines+markers'
                 else:
@@ -446,7 +477,9 @@ class GraphTrial:
 
         self.formatFigure(fig, thisGraph, showLegend, orientation,
                           typeFigure, len(x))
+        return fig
 
+    def plot(self, fig):
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -510,7 +543,7 @@ class GraphStat():
             'y': [self._rawDataDict[datasetKey][label]
                   for label in self._labels],
             'x': [label for label in self._labels],
-            'marker_color': statColors if colorPerLabel
+            'trace_color': statColors if colorPerLabel
             else statColors[datasetKey]
         } for datasetKey in self._rawDataDict]
         self._graphData = {"title": self._title, 'traces': theDataTraces,
@@ -523,7 +556,7 @@ class GraphStat():
 
         for trace in self._graphData['traces']:
             name = trace['name']
-            color = trace['marker_color']
+            color = trace['trace_color']
             if self._orientation == 'v':
                 x = trace['x']
                 y = trace['y']

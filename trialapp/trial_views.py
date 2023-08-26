@@ -12,6 +12,7 @@ from django.db.models import Min, Max
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_helper import TrialHelper
+from trialapp.trial_analytics import Abbott
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -38,7 +39,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'description': trial.getDescription(),
             'location': trial.getLocation(),
             'period': trial.getPeriod(),
-            'efficacy': '?',
+            'efficacy': trial.best_efficacy if trial.best_efficacy else '?',
             'other_trials': other_trials,
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
@@ -97,7 +98,6 @@ class TrialContent():
                 assIds = [value.id for value in assmts]
 
                 if level == GraphTrial.L_REPLICA:
-                    # dataPoints = ReplicaData.dataPointsAssess(assIds)
                     dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
                 else:
                     dataPoints = []
@@ -105,45 +105,90 @@ class TrialContent():
                     graphF = DataGraphFactory(level, assmts, dataPoints,
                                               showTitle=False,
                                               references=self._thesis)
-                    type_graph = DataGraphFactory.LINE if len(assmts) > 1\
-                        else DataGraphFactory.COLUMN
+                    type_graph = GraphTrial.LINE if len(assmts) > 1\
+                        else GraphTrial.COLUMN
                     graphs.append(
                         {'title': graphF.getTitle(),
                          'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
+    def calculateBestEfficacy(self, dataPoints, assmts,
+                              keyThesisId, untreatedThesisId):
+        bestEfficacy = None
+        dateMaxDistance = None
+        pointU = None
+        pointK = None
+        initialDif = -100000000
+        values = {}
+        assmtsDates = {assm.id: assm.assessment_date for assm in assmts}
+        for point in dataPoints:
+            ddate = assmtsDates[point['assessment__id']]
+            thesisId = point['reference__thesis__id']
+            if ddate not in values:
+                values[ddate] = {}
+            if thesisId == keyThesisId:
+                values[ddate]['k'] = point['value']
+            if thesisId == untreatedThesisId:
+                values[ddate]['u'] = point['value']
+        maxDif = initialDif
+        for ddate in values:
+            value = values[ddate]
+            if 'k' not in value or 'u' not in value:
+                continue
+            dif = value['u'] - value['k']
+            if dif > maxDif:
+                maxDif = dif
+                dateMaxDistance = ddate
+                pointU = value['u']
+                pointK = value['k']
+
+        if maxDif > initialDif:
+            bestEfficacy = abs(Abbott.do(pointK, pointU))
+            lines = {'y': [pointU, pointK],
+                     'x': [dateMaxDistance, dateMaxDistance]}
+            return bestEfficacy, lines
+        else:
+            return None, None
+
     def getKeyGraphData(self, keyRateTypeUnit,
                         keyPartRated,
-                        keyThesis,
-                        untreatedThesis):
+                        keyThesisId,
+                        untreatedThesisId):
         dataPoints = []
 
         if keyRateTypeUnit and keyPartRated and\
-           keyThesis and untreatedThesis:
+           keyThesisId and untreatedThesisId:
             dataPoints = ReplicaData.dataPointsKeyAssessAvg(
                 keyRateTypeUnit, keyPartRated,
-                keyThesis, untreatedThesis)
+                keyThesisId, untreatedThesisId)
 
         if len(dataPoints):
             assmts = Assessment.objects.filter(
                 rate_type_id=keyRateTypeUnit.id,
                 part_rated=keyPartRated)
+            keyThesis = Thesis.objects.get(id=keyThesisId)
+            untreatedThesis = Thesis.objects.get(id=untreatedThesisId)
+            bestEfficacy, line = self.calculateBestEfficacy(
+                dataPoints, assmts, keyThesisId, untreatedThesisId)
             thesis = {
-                keyThesis: Thesis.objects.get(id=keyThesis),
-                untreatedThesis: Thesis.objects.get(id=untreatedThesis)}
+                keyThesisId: keyThesis,
+                untreatedThesisId: untreatedThesis}
             graphF = DataGraphFactory(
                 GraphTrial.L_REPLICA, assmts, dataPoints,
-                references=thesis)
-            content = graphF.draw(type_graph=DataGraphFactory.LINE)
+                references=thesis, showTitle=False)
+            graphF.addLineColorsToTraces(keyThesis.number,
+                                         untreatedThesis.number)
+            graphF.addTrace(line, "best efficacy")
+            content = graphF.drawConclusionGraph()
+            return {'conclusion_graph': content,
+                    'key_treatment_product': keyThesis.getKeyProduct(),
+                    'bestEfficacy': bestEfficacy}
         else:
-            content = _(
-                "Efficacy cannot be determined yet."
-                "Data is not available,"
-                "key thesis or untreated thesis are not well identified,"
-                "key rate type unit is not well identified.")
-
-        title = _("efficacy") + ' ' + self._trial.product.nameType()
-        return [{'title': title.upper(), 'content': content}]
+            error = _("Efficacy cannot be determined yet."
+                      "Data is not available,"
+                      "key thesis or untreated thesis are not well identified,"
+                      "key rate type unit is not well identified.")
+            return {'error': error}
 
     def getWeatherData(self):
         Weather.enrich(self._min_date, self._max_date,
@@ -205,10 +250,13 @@ class TrialContent():
         untreatedThesis = tHelper.whatIsUntreatedThesis()
 
         # Choose the rate_unit with most data.
-        return self.getKeyGraphData(keyRateTypeUnit,
-                                    keyPartRated,
-                                    keyThesis,
-                                    untreatedThesis)
+        keyData = self.getKeyGraphData(keyRateTypeUnit,
+                                       keyPartRated,
+                                       keyThesis,
+                                       untreatedThesis)
+        if 'bestEfficacy' in keyData:
+            tHelper.whatIsBestEfficacy(keyData['bestEfficacy'])
+        return keyData
 
     def fetchEfficacy(self):
         return self.fetchDefault()
@@ -225,10 +273,11 @@ class TrialContent():
 
     TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
     TEMPLATE_DIVS = 'trialapp/trial_content_divs.html'
+    TEMPLATE_CONCLUSION_GRAPH = 'trialapp/trial_conclusion_graph.html'
 
     FETCH_TEMPLATES = {
         WEATHER: TEMPLATE_CARDS,
-        KEY_ASSESS: TEMPLATE_DIVS,
+        KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
         ASSESSMENTS: TEMPLATE_CARDS,
         EFFICACY: TEMPLATE_CARDS}
 
