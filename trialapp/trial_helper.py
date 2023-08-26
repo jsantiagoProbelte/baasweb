@@ -660,3 +660,8 @@ class TrialHelper:
                         self._trial.save()
                         break
         return self._trial.untreated_thesis
+
+    def whatIsBestEfficacy(self, bestEfficacy):
+        if self._trial.best_efficacy != bestEfficacy:
+            self._trial.best_efficacy = bestEfficacy
+            self._trial.save()

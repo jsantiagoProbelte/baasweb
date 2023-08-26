@@ -31,6 +31,7 @@
   --custom-black: #333333;
   --custom-bio-morado: #aa4ae4;
   --custom-bio: #aa4ae4;
+  --custom-untreated: #B1C23F;
   --custom-morado: #a500a5;
   --custom-violeta: #cfc9ff;
   --baas-gray: #666;
@@ -269,6 +270,20 @@
 .dot-bio {
   width: 20px;
   height: 20px;
+  background-color: var(--custom-bio); /* Change color as desired */
+  border-radius: 50%;
+}
+
+.dot-untreated {
+  width: 10px;
+  height: 10px;
+  background-color: var(--custom-untreated); /* Change color as desired */
+  border-radius: 50%;
+}
+
+.dot-best {
+  width: 10px;
+  height: 10px;
   background-color: var(--custom-bio); /* Change color as desired */
   border-radius: 50%;
 }
@@ -762,6 +777,12 @@ table.data-table-longer thead th {
   font-weight: bold;
 }
 
+.txt-open-semibold-15 {
+  font-size: 15px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
+
 .txt-open-bold-13 {
   font-size: 13px;
   font-family: 'Open Sans', serif;
@@ -776,6 +797,12 @@ table.data-table-longer thead th {
 
 .txt-open-bold-16 {
   font-size: 16px;
+  font-family: 'Open Sans', serif;
+  font-weight: bolder;
+}
+
+.txt-open-bold-18 {
+  font-size: 18px;
   font-family: 'Open Sans', serif;
   font-weight: bolder;
 }

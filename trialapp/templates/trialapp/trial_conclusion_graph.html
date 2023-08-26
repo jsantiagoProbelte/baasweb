@@ -1,0 +1,29 @@
+{% load i18n %}
+{% if dataContent.error %}
+    {{dataContent.error|safe}}
+{% else %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="graph-container mt-3">
+            {{dataContent.conclusion_graph|safe}}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <br><br><br><br>
+        <div class="row ">
+            <div class="col-md-6">
+                <p class="card-title txt-regular-11 txt-uppercase">{% trans "treatments" %}</p>
+                <table class="mt-3">
+                    <tr><td><div class='dot-untreated me-2'></div></td>
+                        <td class="txt-regular-13 capitalize-first">{% trans 'untreated' %}</td></tr>
+                    <tr><td><div class='dot-best me-2'></div></td>
+                        <td class="txt-regular-13">{{dataContent.key_treatment_product}}</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <p class="card-title txt-regular-11 txt-uppercase">{% trans "best efficacy" %}</p>
+                <p class="txt-open-semibold-15 mt-3">{{dataContent.bestEfficacy}} %</p>
+            </div>
+    </div>
+</div>
+{% endif %}

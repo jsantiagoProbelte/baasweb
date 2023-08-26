@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-25 16:48+0200\n"
+"POT-Creation-Date: 2023-08-26 03:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,53 +22,53 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:101 catalogue/templates/catalogue/product_show.html:107
+#: baaswebapp/graphs.py:102 catalogue/templates/catalogue/product_show.html:107
 msgid "weather"
 msgstr ""
 
-#: baaswebapp/graphs.py:129 baaswebapp/graphs.py:132 baaswebapp/graphs.py:137
-#: baaswebapp/graphs.py:139 baaswebapp/graphs.py:142 baaswebapp/graphs.py:265
-#: trialapp/templates/trialapp/trial_conclusions.html:84
+#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
+#: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
+#: trialapp/templates/trialapp/trial_conclusions.html:85
 msgid "precipitation"
 msgstr ""
 
-#: baaswebapp/graphs.py:129 baaswebapp/graphs.py:139
+#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:140
 msgid "hours"
 msgstr ""
 
-#: baaswebapp/graphs.py:158 baaswebapp/graphs.py:159 baaswebapp/graphs.py:263
-#: trialapp/templates/trialapp/trial_conclusions.html:76
+#: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
+#: trialapp/templates/trialapp/trial_conclusions.html:77
 msgid "temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:179 baaswebapp/graphs.py:180 baaswebapp/graphs.py:267
+#: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181 baaswebapp/graphs.py:268
 msgid "soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:186
+#: baaswebapp/graphs.py:187
 msgid "No data for soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:203 baaswebapp/graphs.py:204 baaswebapp/graphs.py:269
+#: baaswebapp/graphs.py:204 baaswebapp/graphs.py:205 baaswebapp/graphs.py:270
 msgid "soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:210
+#: baaswebapp/graphs.py:211
 msgid "No data for soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:220 baaswebapp/graphs.py:221 baaswebapp/graphs.py:271
+#: baaswebapp/graphs.py:221 baaswebapp/graphs.py:222 baaswebapp/graphs.py:272
 msgid "relative humidity"
 msgstr ""
 
-#: baaswebapp/graphs.py:233 baaswebapp/graphs.py:234 baaswebapp/graphs.py:273
+#: baaswebapp/graphs.py:234 baaswebapp/graphs.py:235 baaswebapp/graphs.py:274
 msgid "dew point"
 msgstr ""
 
-#: baaswebapp/graphs.py:577
+#: baaswebapp/graphs.py:611
 #: trialapp/templates/trialapp/trial_conclusions.html:36
 #: trialapp/templates/trialapp/trial_conclusions.html:47
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:145
+#: trialapp/templates/trialapp/trial_show.html:23
 msgid "efficacy"
 msgstr ""
 
@@ -228,7 +228,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:61
-#: trialapp/templates/trialapp/trial_conclusions.html:109
+#: trialapp/templates/trialapp/trial_conclusions.html:110
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
@@ -273,7 +273,7 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:130
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:55
+#: trialapp/templates/trialapp/trial_conclusions.html:56
 msgid "pest / disease"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:129
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:57
+#: trialapp/templates/trialapp/trial_conclusions.html:58
 msgid "crop"
 msgstr ""
 
@@ -416,6 +416,18 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:15
+msgid "treatments"
+msgstr ""
+
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:18
+msgid "untreated"
+msgstr ""
+
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:24
+msgid "best efficacy"
+msgstr ""
+
 #: trialapp/templates/trialapp/trial_conclusions.html:32
 msgid "recommendations"
 msgstr ""
@@ -424,40 +436,40 @@ msgstr ""
 msgid "* in the moment of Maximum infestation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:59
+#: trialapp/templates/trialapp/trial_conclusions.html:60
 msgid "date"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:63
+#: trialapp/templates/trialapp/trial_conclusions.html:64
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/trial_views.py:189
+#: trialapp/templates/trialapp/trial_conclusions.html:73
+#: trialapp/trial_views.py:234
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:80
+#: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:90
+#: trialapp/templates/trialapp/trial_conclusions.html:91
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:94
+#: trialapp/templates/trialapp/trial_conclusions.html:95
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:98
+#: trialapp/templates/trialapp/trial_conclusions.html:99
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:102
+#: trialapp/templates/trialapp/trial_conclusions.html:103
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:111
+#: trialapp/templates/trialapp/trial_conclusions.html:112
 msgid "benefit"
 msgstr ""
 
@@ -503,14 +515,14 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:140
+#: trialapp/trial_views.py:187
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:190
+#: trialapp/trial_views.py:235
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
