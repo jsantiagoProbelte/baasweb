@@ -6,6 +6,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from baaswebapp.forms import BootstrapAuthenticationForm
 from baaswebapp.data_loaders import TrialStats
 from sesame.utils import get_query_string

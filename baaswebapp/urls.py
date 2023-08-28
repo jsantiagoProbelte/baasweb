@@ -21,11 +21,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from sesame.views import LoginView
 from trialapp import filter_helpers
+from sesame.views import LoginView
+
 admin.autodiscover()
 
 urlpatterns = [
     path('', filter_helpers.ProductListView.as_view(), name='home'),
     path('hidden_home', views.home, name='hidden-home'),
+    path("sesame/login/", LoginView.as_view(), name="sesame-login"),
     path('', views.home, name='home'),
     re_path(r'^passkeys/', include('passkeys.urls')),
     path('baaswebapp_index', views.baaswebapp_index, name='baaswebapp_index'),
@@ -38,6 +41,9 @@ urlpatterns = [
     path('', include('labapp.urls')),
     path("logout", views.logout_request, name="logout"),
     path("login", views.login_request_passkey, name="login"),
+    path("login_email", views.login_email, name="login_email"),
+    path('', include('drfpasswordless.urls')),
+
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
