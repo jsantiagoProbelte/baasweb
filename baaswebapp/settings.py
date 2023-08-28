@@ -18,6 +18,7 @@ import os
 import logging.config
 from django.utils.translation import gettext_lazy as _
 import passkeys
+import django_extensions
 from keymanager import KeyManager
 # Load local .env environment variables
 load_dotenv()

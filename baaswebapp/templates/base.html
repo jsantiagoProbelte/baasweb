@@ -20,7 +20,6 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    
 
     <title>BaasWeb Passkey Manager</title>
   </head>
@@ -152,16 +151,15 @@
       </div>
     </nav>
 
-    <div class="container-fluid ">
+    <div class="container-fluid">
       {% block content %}{% endblock %}
       <footer class="fixed-bottom bg-custom-main text-white text-center">
         <p class="pt-3">&copy; {{ year }} - Baas is a Probelte application</p>
       </footer>
     </div>
 
-    {% load bootstrap5 %} 
-    {% bootstrap_css %}
-    {%bootstrap_javascript %} {% bootstrap_messages %}
+    {% load bootstrap5 %} {% bootstrap_css %} {%bootstrap_javascript %} {%
+    bootstrap_messages %}
 
     <!-- Core plugin JavaScript-->
     <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
