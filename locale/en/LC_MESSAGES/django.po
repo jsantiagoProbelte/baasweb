@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-26 03:07+0200\n"
+"POT-Creation-Date: 2023-08-28 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
-#: trialapp/templates/trialapp/trial_conclusions.html:85
+#: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
-#: trialapp/templates/trialapp/trial_conclusions.html:77
+#: trialapp/templates/trialapp/trial_conclusions.html:76
 msgid "temperature"
 msgstr ""
 
@@ -228,7 +228,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:61
-#: trialapp/templates/trialapp/trial_conclusions.html:110
+#: trialapp/templates/trialapp/trial_conclusions.html:109
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
@@ -273,7 +273,7 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:130
 #: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:56
+#: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "pest / disease"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:129
 #: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:58
+#: trialapp/templates/trialapp/trial_conclusions.html:57
 msgid "crop"
 msgstr ""
 
@@ -416,15 +416,15 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:15
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:16
 msgid "treatments"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:18
-msgid "untreated"
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:20
+msgid "control"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:24
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:27
 msgid "best efficacy"
 msgstr ""
 
@@ -432,44 +432,40 @@ msgstr ""
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:48
-msgid "* in the moment of Maximum infestation"
-msgstr ""
-
-#: trialapp/templates/trialapp/trial_conclusions.html:60
+#: trialapp/templates/trialapp/trial_conclusions.html:59
 msgid "date"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:64
+#: trialapp/templates/trialapp/trial_conclusions.html:63
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:73
-#: trialapp/trial_views.py:234
+#: trialapp/templates/trialapp/trial_conclusions.html:72
+#: trialapp/trial_views.py:249
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:81
+#: trialapp/templates/trialapp/trial_conclusions.html:80
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:91
+#: trialapp/templates/trialapp/trial_conclusions.html:90
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:95
+#: trialapp/templates/trialapp/trial_conclusions.html:94
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:99
+#: trialapp/templates/trialapp/trial_conclusions.html:98
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:103
+#: trialapp/templates/trialapp/trial_conclusions.html:102
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:112
+#: trialapp/templates/trialapp/trial_conclusions.html:111
 msgid "benefit"
 msgstr ""
 
@@ -515,14 +511,22 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:187
+#: trialapp/trial_views.py:154
+msgid "* in the moment of maximum difference at "
+msgstr ""
+
+#: trialapp/trial_views.py:157
+msgid " in "
+msgstr ""
+
+#: trialapp/trial_views.py:202
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:235
+#: trialapp/trial_views.py:250
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"

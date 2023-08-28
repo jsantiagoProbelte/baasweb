@@ -648,7 +648,7 @@ class TrialHelper:
                             self._trial.save()
         return self._trial.key_thesis
 
-    def whatIsUntreatedThesis(self):
+    def whatIsControlThesis(self):
         if not self._trial.untreated_thesis:
             # if untreated_thesis is not designated yet, we nomine one
             # simple idea, use the first treatment pointed to the untreated

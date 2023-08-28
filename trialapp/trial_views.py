@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
-from trialapp.models import FieldTrial, Thesis, Application
+from trialapp.models import FieldTrial, Thesis, Application, PartRated
 from trialapp.trial_helper import LayoutTrial, TrialModel, TrialPermission
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
@@ -150,6 +150,14 @@ class TrialContent():
         else:
             return None, None
 
+    def bestEfficiencyExplanation(self, keyRateTypeUnit, keyPartRated):
+        explanation = _('* in the moment of maximum difference at ')
+        explanation += keyRateTypeUnit.getName()
+        if keyPartRated is not None and keyPartRated != 'Undefined':
+            explanation += _(" in ")
+            explanation += PartRated.UNDF.label
+        return explanation
+
     def getKeyGraphData(self, keyRateTypeUnit,
                         keyPartRated,
                         keyThesisId,
@@ -180,8 +188,15 @@ class TrialContent():
                                          untreatedThesis.number)
             graphF.addTrace(line, "best efficacy")
             content = graphF.drawConclusionGraph()
+            explanation = self.bestEfficiencyExplanation(
+                keyRateTypeUnit, keyPartRated)
             return {'conclusion_graph': content,
                     'key_treatment_product': keyThesis.getKeyProduct(),
+                    'unit_name': keyRateTypeUnit.name,
+                    'bestEfficiencyExplanation': explanation,
+                    # see return on calculateBestEfficacy
+                    'control_value': line['y'][0],
+                    'best_keytesis_value': line['y'][1],
                     'bestEfficacy': bestEfficacy}
         else:
             error = _("Efficacy cannot be determined yet."
@@ -247,7 +262,7 @@ class TrialContent():
         tHelper = TrialHelper(self._trial)
         keyRateTypeUnit, keyPartRated = tHelper.whatIsKeyRates()
         keyThesis = tHelper.whatIsKeyThesis()
-        untreatedThesis = tHelper.whatIsUntreatedThesis()
+        untreatedThesis = tHelper.whatIsControlThesis()
 
         # Choose the rate_unit with most data.
         keyData = self.getKeyGraphData(keyRateTypeUnit,
