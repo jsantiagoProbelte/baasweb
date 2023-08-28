@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-28 17:14+0200\n"
+"POT-Creation-Date: 2023-08-28 22:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgstr ""
 msgid "dew point"
 msgstr ""
 
-#: baaswebapp/graphs.py:611
+#: baaswebapp/graphs.py:618
 #: trialapp/templates/trialapp/trial_conclusions.html:36
 #: trialapp/templates/trialapp/trial_conclusions.html:47
 #: trialapp/templates/trialapp/trial_show.html:23
@@ -216,7 +216,7 @@ msgid "Control"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:5
-#: trialapp/filter_helpers.py:232
+#: trialapp/filter_helpers.py:234
 #: trialapp/templates/trialapp/trials_list.html:6
 msgid "product"
 msgstr ""
@@ -271,7 +271,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:68
 #: catalogue/templates/catalogue/product_show.html:130
-#: trialapp/filter_helpers.py:234
+#: trialapp/filter_helpers.py:20 trialapp/filter_helpers.py:236
 #: trialapp/templates/trialapp/plagues_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "pest / disease"
@@ -303,7 +303,8 @@ msgid "Mixes"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:129
-#: trialapp/filter_helpers.py:233 trialapp/templates/trialapp/crop_list.html:5
+#: trialapp/filter_helpers.py:17 trialapp/filter_helpers.py:235
+#: trialapp/templates/trialapp/crop_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:57
 msgid "crop"
 msgstr ""
@@ -336,7 +337,7 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/filter_helpers.py:235
+#: trialapp/filter_helpers.py:237
 msgid "Ungrouped"
 msgstr ""
 

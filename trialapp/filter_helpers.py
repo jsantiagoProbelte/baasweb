@@ -1,5 +1,6 @@
 from django.db.models import Q, Count, Min, Max
 import django_filters
+from baaswebapp.models import Category, PType
 from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,9 +14,16 @@ from django.utils.translation import gettext_lazy as _
 
 class TrialFilter(django_filters.FilterSet):
     crop = django_filters.ModelChoiceFilter(
-        queryset=Crop.objects.all().order_by('name'))
+        queryset=Crop.objects.all().order_by('name'),
+        empty_label=_('crop').capitalize())
     plague = django_filters.ModelChoiceFilter(
-        queryset=Plague.objects.all().order_by('name'))
+        queryset=Plague.objects.all().order_by('name'),
+        empty_label=_('pest / disease').capitalize())
+    product__type_product = django_filters.ChoiceFilter(
+        choices=PType.choices,
+        field_name='product__type_product',
+        label='product type',
+        empty_label=_('product type').capitalize())
 
     class Meta:
         model = FieldTrial
@@ -32,10 +40,10 @@ class TrialFilterHelper:
                    Plague: 'plague_id'}
 
     COLOR_CATEGORY = {
-        Product.Category.NUTRITIONAL: 'bg-nutritional',
-        Product.Category.ESTIMULANT: 'bg-estimulant',
-        Product.Category.CONTROL: 'bg-control',
-        Product.Category.UNKNOWN: 'bg-unknown'}
+        Category.NUTRITIONAL: 'bg-nutritional',
+        Category.ESTIMULANT: 'bg-estimulant',
+        Category.CONTROL: 'bg-control',
+        Category.UNKNOWN: 'bg-unknown'}
     COLOR_CODE = {
         'bg-nutritional': COLOR_nutritional,
         'bg-estimulant': COLOR_estimulant,

@@ -1,4 +1,5 @@
 from django.test import TestCase
+from baaswebapp.models import Category
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
@@ -66,7 +67,7 @@ class TrialFilterTest(TestCase):
             counts, countProductIds = fHelper.countProductCategoriesAndCrop()
             self.assertEqual(countProductIds, totalProducts)
             self.assertEqual(len(counts), totalCrops)
-            self.assertEqual(counts[1][Product.Category.UNKNOWN],
+            self.assertEqual(counts[1][Category.UNKNOWN],
                              totalProducts)
 
     def test_cropfilter(self):
@@ -105,7 +106,7 @@ class TrialFilterTest(TestCase):
             counts, countProductIds = fHelper.countProductCategoriesAndCrop()
             self.assertEqual(countProductIds, expectedProducts)
             self.assertEqual(len(counts), 1)
-            self.assertEqual(counts[cropId][Product.Category.UNKNOWN],
+            self.assertEqual(counts[cropId][Category.UNKNOWN],
                              expectedProducts)
 
     def test_namefilter(self):

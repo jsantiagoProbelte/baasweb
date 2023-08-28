@@ -1,5 +1,5 @@
 from django.db import models
-from baaswebapp.models import ModelHelpers
+from baaswebapp.models import ModelHelpers, PType, Category
 from django.utils.translation import gettext_lazy as _
 
 DEFAULT = 'default'
@@ -24,21 +24,6 @@ class Product(ModelHelpers, models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
     active_substance = models.CharField(max_length=100, null=True)
 
-    class PType(models.TextChoices):
-        UNKNOWN = 'UNK', _('Unknown')
-        FERTILIZER = 'FRT', _('Fertilizer')
-        ESTIMULANT = 'EST', _('Estimulant')
-        INSECTICIDE = 'INS', _('Insecticide')
-        NEMATICIDE = 'NMC', _('Nematicide')
-        FUNGICIDE = 'FGC', _('Fungicide')
-        HERBICIDE = 'HRB', _('Herbicide')
-
-    class Category(models.TextChoices):
-        NUTRITIONAL = 'NUT', _('Nutritional')
-        ESTIMULANT = 'EST', _('Estimulant')
-        CONTROL = 'CTL', _('Control')
-        UNKNOWN = 'UNK', _('Unknown')
-
     type_product = models.CharField(
         max_length=3,
         choices=PType.choices,
@@ -53,7 +38,7 @@ class Product(ModelHelpers, models.Model):
         bio = 'Bio' if self.biological else ''
 
         if not self.type_product:
-            name = Product.PType.UNKNOWN
+            name = PType.UNKNOWN
         else:
             name = self.get_type_product_display()
         return bio + _(name)
@@ -61,17 +46,17 @@ class Product(ModelHelpers, models.Model):
     @staticmethod
     def getCategory(type_product):
         if not type_product:
-            return Product.Category.UNKNOWN
-        if type_product in [Product.PType.FERTILIZER]:
-            return Product.Category.NUTRITIONAL
+            return Category.UNKNOWN
+        if type_product in [PType.FERTILIZER]:
+            return Category.NUTRITIONAL
         elif type_product in [
-                Product.PType.HERBICIDE, Product.PType.INSECTICIDE,
-                Product.PType.NEMATICIDE, Product.PType.FUNGICIDE]:
-            return Product.Category.CONTROL
-        elif type_product == Product.PType.ESTIMULANT:
-            return Product.Category.ESTIMULANT
+                PType.HERBICIDE, PType.INSECTICIDE,
+                PType.NEMATICIDE, PType.FUNGICIDE]:
+            return Category.CONTROL
+        elif type_product == PType.ESTIMULANT:
+            return Category.ESTIMULANT
         else:
-            return Product.Category.UNKNOWN
+            return Category.UNKNOWN
 
 
 class ProductVariant(ModelHelpers, models.Model):
