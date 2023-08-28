@@ -2,6 +2,24 @@ from django.db import models
 from datetime import datetime, timedelta
 import urllib.parse
 import requests
+from django.utils.translation import gettext_lazy as _
+
+
+class PType(models.TextChoices):
+    UNKNOWN = 'UNK', _('Unknown')
+    FERTILIZER = 'FRT', _('Fertilizer')
+    ESTIMULANT = 'EST', _('Estimulant')
+    INSECTICIDE = 'INS', _('Insecticide')
+    NEMATICIDE = 'NMC', _('Nematicide')
+    FUNGICIDE = 'FGC', _('Fungicide')
+    HERBICIDE = 'HRB', _('Herbicide')
+
+
+class Category(models.TextChoices):
+    NUTRITIONAL = 'NUT', _('Nutritional')
+    ESTIMULANT = 'EST', _('Estimulant')
+    CONTROL = 'CTL', _('Control')
+    UNKNOWN = 'UNK', _('Unknown')
 
 
 class ModelHelpers:

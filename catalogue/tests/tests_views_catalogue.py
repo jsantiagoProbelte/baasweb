@@ -1,5 +1,5 @@
 from django.test import TestCase
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, PType
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit, \
     Batch, Treatment, DEFAULT
@@ -204,7 +204,7 @@ class ProductViewsTest(TestCase):
     def test_editProduct(self):
         data = {'name': 'New Product', 'vendor': 1,
                 'biological': True,
-                'type_product': Product.PType.FUNGICIDE}
+                'type_product': PType.FUNGICIDE}
         request = self._apiFactory.post(
             'product-add',
             data=data)

@@ -529,12 +529,14 @@ class DataGraphFactory():
                 self._colors[traceId] = number + 1
 
     def prepareTrace(self, pointRef):
-        return {
+        trace = {
             'name': self.getTraceName(pointRef),
             'trace_color': self.getTraceColor(pointRef),
-            'marker_symbol': self.getTraceSymbol(pointRef),
             'x': [],
             'y': []}
+        if self._level == GraphTrial.L_SAMPLE:
+            trace['marker_symbol'] = self.getTraceSymbol(pointRef)
+        return trace
 
     def getX(self, dataPoint, xAxis, pointRef):
         if xAxis == GraphTrial.L_THESIS:

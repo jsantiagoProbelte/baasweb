@@ -331,10 +331,14 @@ class GraphTrial:
         for thesisNumber in colorDict:
             self._graphData['traces'][thesisNumber]['trace_color'] = colorDict[thesisNumber]  # noqa E501
 
-    def addTrace(self, line, name, color='#C3C3C3', shape='dot'):
+    def addTrace(self, line, name, color='#C3C3C3', 
+                 shape='dot', marker_symbol='cicle'):
         trace = {'x': line['x'], 'y': line['y'],
                  'name': name,
                  'trace_color': color, 'dash': shape}
+        if marker_symbol:
+            trace['marker_symbol'] = marker_symbol
+            trace['marker_size'] = 20
         self._graphData['traces'][0] = trace
 
     def preparePlots(self, typeFigure='scatter', orientation='v'):
@@ -456,7 +460,10 @@ class GraphTrial:
                 line = {'color': color, 'width': 3}
                 if 'dash' in trace:
                     line['dash'] = trace['dash']
-                markerMode = 'lines'
+                if 'marker_symbol' in trace:
+                    markerMode = 'lines+markers'
+                else:
+                    markerMode = 'lines'
                 data = go.Scatter(name=name, x=x, y=y,
                                   line=line, mode=markerMode)
             elif typeFigure == GraphTrial.SCATTER:

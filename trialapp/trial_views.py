@@ -4,7 +4,7 @@ from trialapp.models import FieldTrial, Thesis, Application, PartRated
 from trialapp.trial_helper import LayoutTrial, TrialModel, TrialPermission
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
-from baaswebapp.models import Weather
+from baaswebapp.models import Weather, Category
 from trialapp.data_models import ReplicaData, Assessment
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataGraphFactory
@@ -63,6 +63,7 @@ class TrialContent():
     _trial = None
     _content = None
     _request = None
+    _type_product = None
 
     WEATHER = 'weather'
     ASSESSMENTS = 'ass'
@@ -74,6 +75,7 @@ class TrialContent():
         id = int(request.GET.get('id', 0))
         self._trial = get_object_or_404(FieldTrial, pk=id)
         self._content = request.GET.get('content_type')
+        self._type_product = self._trial.product.type_product
         assessments = Assessment.getObjects(self._trial)
         if assessments:
             oneweek = timedelta(days=7)
@@ -112,13 +114,19 @@ class TrialContent():
                          'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
+    def calculateEfficacy(self, controlValue, keyThesisValue):
+        if self._type_product == Category.CONTROL:
+            return abs(Abbott.do(keyThesisValue, controlValue))
+        else:
+            eff = (keyThesisValue - controlValue) / controlValue
+            return round((eff*100)+100, 2)
+
     def calculateBestEfficacy(self, dataPoints, assmts,
                               keyThesisId, untreatedThesisId):
-        bestEfficacy = None
+        bestEfficacy = 0
         dateMaxDistance = None
         pointU = None
         pointK = None
-        initialDif = -100000000
         values = {}
         assmtsDates = {assm.id: assm.assessment_date for assm in assmts}
         for point in dataPoints:
@@ -130,21 +138,19 @@ class TrialContent():
                 values[ddate]['k'] = point['value']
             if thesisId == untreatedThesisId:
                 values[ddate]['u'] = point['value']
-        maxDif = initialDif
         for ddate in values:
             value = values[ddate]
             if 'k' not in value or 'u' not in value:
                 continue
-            dif = value['u'] - value['k']
-            if dif > maxDif:
-                maxDif = dif
+            thisEfficacy = self.calculateEfficacy(value['u'], value['k'])
+            if thisEfficacy > bestEfficacy:
+                bestEfficacy = thisEfficacy
                 dateMaxDistance = ddate
                 pointU = value['u']
                 pointK = value['k']
 
-        if maxDif > initialDif:
-            bestEfficacy = abs(Abbott.do(pointK, pointU))
-            lines = {'y': [pointU, pointK],
+        if bestEfficacy > 0:
+            lines = {'y': [round(pointU, 2), round(pointK, 2)],
                      'x': [dateMaxDistance, dateMaxDistance]}
             return bestEfficacy, lines
         else:
@@ -155,7 +161,7 @@ class TrialContent():
         explanation += keyRateTypeUnit.getName()
         if keyPartRated is not None and keyPartRated != 'Undefined':
             explanation += _(" in ")
-            explanation += PartRated.UNDF.label
+            explanation += keyPartRated
         return explanation
 
     def getKeyGraphData(self, keyRateTypeUnit,

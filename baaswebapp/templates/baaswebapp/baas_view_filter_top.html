@@ -1,23 +1,19 @@
 {% load widget_tweaks %}
 {% load i18n %}
-<li class="nav-item">
+<li class="nav-item mt-4">
     <form method="get" class="">
         <div class="row mb-3">
-            
             <div class="form-group col-md-3 ">
-                {{ trialfilter.form.crop.label_tag }}
                 {% render_field trialfilter.form.crop class="form-select rounded-pill baas-box-shadow" %}
             </div>
             <div class="form-group col-md-3 ">
-                {{ trialfilter.form.product__type_product.label_tag }}
                 {% render_field trialfilter.form.product__type_product class="form-select rounded-pill baas-box-shadow" %}
             </div>
             <div class="form-group col-md-3 ">
-                {{ trialfilter.form.plague.label_tag }}
                 {% render_field trialfilter.form.plague class="form-select rounded-pill baas-box-shadow" %}
             </div>
             <div class="form-group col-sm-1 col-md-3">
-                <button type="submit" class="btn btn-baas mt-4 ">{% trans "Search Trials" %}</button>
+                <button type="submit" class="btn btn-baas">{% trans "Search Trials" %}</button>
             </div>
         </div>
     </form>
