@@ -331,7 +331,7 @@ class GraphTrial:
         for thesisNumber in colorDict:
             self._graphData['traces'][thesisNumber]['trace_color'] = colorDict[thesisNumber]  # noqa E501
 
-    def addTrace(self, line, name, color='#C3C3C3', 
+    def addTrace(self, line, name, color='#C3C3C3',
                  shape='dot', marker_symbol='cicle'):
         trace = {'x': line['x'], 'y': line['y'],
                  'name': name,
@@ -346,9 +346,10 @@ class GraphTrial:
                           orientation=orientation)
         return self.plot(fig)
 
-    def drawConclussionGraph(self):
-        fig = self.figure(self._graphData, typeFigure=GraphTrial.LINE,
-                          showLegend=False)
+    def drawConclussionGraph(self, typeFigure=LINE,
+                             orientation='v'):
+        fig = self.figure(self._graphData, typeFigure=typeFigure,
+                          showLegend=False, orientation=orientation)
         return self.plot(fig)
 
     def bar(self):
@@ -447,6 +448,10 @@ class GraphTrial:
             trace = thisGraph['traces'][traceKey]
             name = trace['name']
             color = trace['trace_color']
+            marker_symbol = trace.get('marker_symbol', 'circle')
+            marker_size = trace.get('marker_size', 10)
+            marker = {'color': color, 'symbol': marker_symbol,
+                      'size': marker_size}
             if orientation == 'v':
                 x = trace['x']
                 y = trace['y']
@@ -457,23 +462,25 @@ class GraphTrial:
             if typeFigure == GraphTrial.BAR:
                 data = self.applyBar(x, y, orientation, name, color)
             elif typeFigure == GraphTrial.LINE:
+                marker = {}
                 line = {'color': color, 'width': 3}
                 if 'dash' in trace:
                     line['dash'] = trace['dash']
-                if 'marker_symbol' in trace:
+                if 'marker' in trace:
                     markerMode = 'lines+markers'
+                    marker = marker
                 else:
                     markerMode = 'lines'
                 data = go.Scatter(name=name, x=x, y=y,
-                                  line=line, mode=markerMode)
+                                  line=line, mode=markerMode,
+                                  marker=marker)
             elif typeFigure == GraphTrial.SCATTER:
-                symbol = trace['marker_symbol']
                 if self._xAxis == GraphTrial.L_DATE:
                     markerMode = 'lines+markers'
                 else:
                     markerMode = 'markers'
                 data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
+                                  marker=marker,
                                   mode=markerMode, marker_size=15)
             elif typeFigure == GraphTrial.VIOLIN:
                 data = go.Violin(name=name, x=x, y=y,
