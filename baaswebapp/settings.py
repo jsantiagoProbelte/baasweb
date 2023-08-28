@@ -16,6 +16,7 @@ from pathlib import Path
 import os
 import logging.config
 import passkeys
+import django_extensions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -55,7 +56,8 @@ EXTENDED_APPS = [
     'rest_framework',
     'widget_tweaks',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
-    'passkeys'
+    'passkeys',
+    'django_extensions'
 ]
 
 CUSTOM_APPS = [

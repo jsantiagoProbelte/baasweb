@@ -17,6 +17,21 @@
             "justMyCode": true
         },
         {
+            "name": "BaasWebApp Debug SSL",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "runserver_plus",
+                "--cert-file",
+                "cert.pem",
+                "--key-file",
+                "key.pem"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
             "name": "BaasWebApp Remote Production",
             "type": "python",
             "request": "launch",
