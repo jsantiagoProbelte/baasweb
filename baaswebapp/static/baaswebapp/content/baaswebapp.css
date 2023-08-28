@@ -943,7 +943,3 @@ table.data-table-longer thead th {
 .graph-container {
   width: 100%;
 }
-
-.no-border-table {
-border-color: var(--custom-bg-color-cards)  !important; /*inherit;*/
-}

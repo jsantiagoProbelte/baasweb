@@ -192,7 +192,7 @@ class TrialContent():
                 keyRateTypeUnit, keyPartRated)
             return {'conclusion_graph': content,
                     'key_treatment_product': keyThesis.getKeyProduct(),
-                    'unit_name': keyRateTypeUnit.name,
+                    'unit_name': keyRateTypeUnit.getName(),
                     'bestEfficiencyExplanation': explanation,
                     # see return on calculateBestEfficacy
                     'control_value': line['y'][0],
