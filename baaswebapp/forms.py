@@ -39,5 +39,5 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                         'submit',
                         'Login',
                         css_class="btn btn-primary float-end"))
-                )
             )
+        )

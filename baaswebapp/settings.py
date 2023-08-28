@@ -16,7 +16,6 @@ from pathlib import Path
 import os
 import logging.config
 import passkeys
-import django_extensions
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,13 +30,24 @@ SECRET_KEY = 'django-insecure-t78nwv1+tehfr27dg2jq!$!(!1k3bt2@vw98r37$2r=c3!9+)7
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-AUTHENTICATION_BACKENDS = ['passkeys.backend.PasskeyModelBackend']
-KEY_ATTACHMENT = passkeys.Attachment.CROSS_PLATFORM
+AUTHENTICATION_BACKENDS = [
+    'sesame.backends.ModelBackend', 'passkeys.backend.PasskeyModelBackend']
+KEY_ATTACHMENT = passkeys.Attachment.PLATFORM
 # Server rp id for FIDO2, it the full domain of your project
 FIDO_SERVER_ID = "localhost"
 FIDO_SERVER_NAME = "BaasWebApp"
 
 ALLOWED_HOSTS = ['*']
+
+
+# EMAIL settings
+EMAIL_HOST = "smtp.sendgrid.net"
+EMAIL_PORT = "465"
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = "apikey"
+EMAIL_HOST_PASSWORD = "SG.Jw1g4TSmRL63QF0iWw-tzw." +\
+    "4uviNHnqSvmOWi1X9rFcF8iGaoKkkv-iklUtuK1kaDA"
+
 
 # Application definition
 BASE_APPS = [
@@ -57,7 +67,9 @@ EXTENDED_APPS = [
     'widget_tweaks',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'passkeys',
-    'django_extensions'
+    'django_extensions',
+    'rest_framework.authtoken',
+    'drfpasswordless',
 ]
 
 CUSTOM_APPS = [
@@ -191,6 +203,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [
+        'rest_framework.authentication.TokenAuthentication',
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }

@@ -3,6 +3,10 @@
 {% load static %}
 {% block content %}
 <br/><br/>
+<div id="pk" class="alert alert-info" style="display: none">
+  Your device supports passkeys,
+  <a href="{%url 'passkeys:enroll'%}">Enroll</a>
+</div>
 <div class="row g-10 text-center">
     <h1 class=" fw-bold mt-5 mb-3">BaaS Dashboard</h1>
     <h3 class=" text-muted mt-4 mb-5">A place to manage your products & field trials <strong>data</strong>.</h3>
@@ -49,5 +53,13 @@
     </div>
     
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script type="application/javascript">
+  function register_pk()
+  {
+      $('#pk').show();
+  }
+  {% include 'check_passkeys.js'%}
+  $(document).ready(check_passkey(true,register_pk))
+</script>
 {% endblock %}

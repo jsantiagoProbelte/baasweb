@@ -5,8 +5,15 @@ from django.conf import settings
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from baaswebapp.forms import BootstrapAuthenticationForm
 from baaswebapp.data_loaders import TrialStats
+from sesame.utils import get_query_string
+import sendgrid
+from sendgrid.helpers.mail import Email, To, Content, Mail
+
+sg = sendgrid.SendGridAPIClient(
+    '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')
 
 
 def home(request):
@@ -47,13 +54,35 @@ def login_request_passkey(request):
             login(request, user)
             return redirect('/')
         else:
-            messages.error(request, "Invalidpasskey")
+            messages.error(request, "Invalid passkey")
 
     formLogin = BootstrapAuthenticationForm()
     return render(
         request=request,
         template_name="baaswebapp/login.html",
         context={"formLogin": formLogin})
+
+
+def login_email(request):
+    if request.method != 'POST':
+        return redirect('/login')
+    user = User.objects.get(username=request.POST["username"])
+    print(user)
+    LOGIN_URL = "https://localhost:8000/sesame/login/"
+    LOGIN_URL += get_query_string(user)
+    print(LOGIN_URL)
+    from_email = Email("alex@arentz.cc")
+    to_email = To("aleksanderarentz@gmail.com")
+    subject = "Your Login Request to BaasWeb"
+    content = Content(
+        "text/plain", "Press the following link to sign in: " + LOGIN_URL)
+    mail = Mail(from_email, to_email, subject, content)
+    mail_response = sg.client.mail.send.post(request_body=mail.get())
+    print(mail_response.status_code)
+    print(mail_response.body)
+    print(mail_response.headers)
+
+    return redirect('/')
 
 
 def login_request(request):
