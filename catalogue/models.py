@@ -43,6 +43,9 @@ class Product(ModelHelpers, models.Model):
             name = self.get_type_product_display()
         return bio + _(name)
 
+    def category(self):
+        return Product.getCategory(self.type_product)
+
     @staticmethod
     def getCategory(type_product):
         if not type_product:

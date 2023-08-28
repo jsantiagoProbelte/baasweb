@@ -517,7 +517,7 @@ msgstr "código"
 
 #: trialapp/trial_views.py:154
 msgid "* in the moment of maximum difference at "
-msgstr "* En el momento de la máxima infestación"
+msgstr "* en el momento de mayor diferencia "
 
 #: trialapp/trial_views.py:157
 msgid " in "

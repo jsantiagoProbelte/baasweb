@@ -558,5 +558,6 @@ class DataGraphFactory():
                                               GraphTrial.violin)
         return method(self._graph)
 
-    def drawConclusionGraph(self):
-        return self._graph.drawConclussionGraph()
+    def drawConclusionGraph(self, num_assmts):
+        typeFigure = GraphTrial.LINE if num_assmts > 1 else GraphTrial.BAR
+        return self._graph.drawConclussionGraph(typeFigure=typeFigure)

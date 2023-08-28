@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
-from trialapp.models import FieldTrial, Thesis, Application, PartRated
+from trialapp.models import FieldTrial, Thesis, Application
 from trialapp.trial_helper import LayoutTrial, TrialModel, TrialPermission
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
@@ -35,12 +35,16 @@ class TrialApi(LoginRequiredMixin, DetailView):
                 {'value': item.getContext(), 'name': item.assessment_date,
                  'link': 'assessment', 'id': item.id})
         other_trials = FieldTrial.objects.filter(product=trial.product).count()
+        control_product = False
+        if trial.product.category() == Category.CONTROL:
+            control_product = True
         showData = {
             'description': trial.getDescription(),
             'location': trial.getLocation(),
             'period': trial.getPeriod(),
             'efficacy': trial.best_efficacy if trial.best_efficacy else '?',
             'other_trials': other_trials,
+            'control_product': control_product,
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'numberAssessments': len(assessments),
@@ -63,7 +67,7 @@ class TrialContent():
     _trial = None
     _content = None
     _request = None
-    _type_product = None
+    _category = None
 
     WEATHER = 'weather'
     ASSESSMENTS = 'ass'
@@ -75,7 +79,7 @@ class TrialContent():
         id = int(request.GET.get('id', 0))
         self._trial = get_object_or_404(FieldTrial, pk=id)
         self._content = request.GET.get('content_type')
-        self._type_product = self._trial.product.type_product
+        self._category = self._trial.product.category()
         assessments = Assessment.getObjects(self._trial)
         if assessments:
             oneweek = timedelta(days=7)
@@ -115,7 +119,7 @@ class TrialContent():
         return graphs
 
     def calculateEfficacy(self, controlValue, keyThesisValue):
-        if self._type_product == Category.CONTROL:
+        if self._category == Category.CONTROL:
             return abs(Abbott.do(keyThesisValue, controlValue))
         else:
             eff = (keyThesisValue - controlValue) / controlValue
@@ -190,10 +194,12 @@ class TrialContent():
             graphF = DataGraphFactory(
                 GraphTrial.L_REPLICA, assmts, dataPoints,
                 references=thesis, showTitle=False)
+            num_assmts = len(assmts)
             graphF.addLineColorsToTraces(keyThesis.number,
                                          untreatedThesis.number)
-            graphF.addTrace(line, "best efficacy")
-            content = graphF.drawConclusionGraph()
+            if num_assmts > 1:
+                graphF.addTrace(line, "best efficacy")
+            content = graphF.drawConclusionGraph(num_assmts)
             explanation = self.bestEfficiencyExplanation(
                 keyRateTypeUnit, keyPartRated)
             return {'conclusion_graph': content,

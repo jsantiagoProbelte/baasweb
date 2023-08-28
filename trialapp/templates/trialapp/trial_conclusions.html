@@ -47,13 +47,15 @@
                     <p class="card-title txt-encode-20 capitalize-first">{% trans "efficacy" %}</p>
                 </div>
                 <div class="col-md-4">
-                    <p class="card-title txt-baas-baas txt-open-bold-18">{{efficacy}} %</p>
+                    <p class="txt-baas-baas txt-open-bold-18">{{efficacy}} %</p>
                 </div>
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
-            <p class="txt-regular-12 capitalize-first">{% trans "pest / disease" %}</p>
-            <p class="txt-encode-20">{{trial.plague}}</p>
+            {% if control_product %}
+                <p class="txt-regular-12 capitalize-first">{% trans "pest / disease" %}</p>
+                <p class="txt-encode-20">{{trial.plague}}</p>
+            {% endif %}
             <p class="txt-regular-12 capitalize-first">{% trans "crop" %}</p>
             <p class="txt-encode-20">{{trial.crop}}</p>
             <p class="txt-regular-12 capitalize-first">{% trans "date" %}</p>
