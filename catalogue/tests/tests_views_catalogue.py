@@ -120,7 +120,7 @@ class ProductViewsTest(TestCase):
         self._apiFactory.setUser(request)
         apiView = ProductApi()
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, product.name)
 
@@ -172,7 +172,7 @@ class ProductViewsTest(TestCase):
 
         apiView = ProductApi()
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'No data found')
 
@@ -184,7 +184,7 @@ class ProductViewsTest(TestCase):
                   'dimensions': self._units[0].id})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         # self.assertContains(response, 'Please select crop')
 
@@ -197,7 +197,7 @@ class ProductViewsTest(TestCase):
                   levelId: levelId})
         self._apiFactory.setUser(request)
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Please select dimensions')
 
@@ -238,7 +238,7 @@ class ProductViewsTest(TestCase):
 
         apiView = ProductApi()
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No data found', count=0)
         self.assertEqual(ReplicaData.objects.count(), 0)
@@ -255,7 +255,7 @@ class ProductViewsTest(TestCase):
                         reference=replica)
                     value += 500.10
         response = apiView.get(request,
-                               **{'product_id': productid})
+                               **{'pk': productid})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No data found', count=0)
 

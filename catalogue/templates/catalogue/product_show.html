@@ -18,12 +18,24 @@
 {% block content %}
 <ul class="nav nav-tabs product-primary-tabs">
   <li class="nav-item product-recommendations-tab">
+    {% if activeTab == '1' %}
     <button id="product-tab" data-bs-toggle="tab" data-bs-target="#products" role="tab" aria-controls="products"
-      aria-selected="true" class="nav-link active product-recommendations-link txt-open-semibold-15 capitalize-first">{% trans "product recommendations"%}</button>
+      aria-selected="true" class="nav-link active product-recommendations-link txt-open-semibold-15 capitalize-first">
+    {% else %}
+    <button id="product-tab" data-bs-toggle="tab" data-bs-target="#products" role="tab" aria-controls="products"
+      aria-selected="false" class="nav-link product-recommendations-link txt-open-semibold-15 capitalize-first">
+    {% endif %}
+    {% trans "product recommendations"%}</button>
   </li>
   <li class="nav-item product-trials-tab">
-    <button id="trials-tab" data-bs-toggle="tab" data-bs-target="#trials" role="tab" aria-controls="trials"
-      class="nav-link product-recommendations-link txt-open-semibold-15 capitalize-first">{% trans "trial list"%}</button>
+    {% if activeTab == '2' %}
+    <button id="trials-tab" data-bs-toggle="tab" data-bs-target="#trials" role="tab" aria-selected="true" aria-controls="trials"
+      class="nav-link product-recommendations-link active txt-open-semibold-15 capitalize-first">
+    {% else %}
+    <button id="trials-tab" data-bs-toggle="tab" data-bs-target="#trials" role="tab" aria-controls="trials" aria-selected="false"
+      class="nav-link product-recommendations-link txt-open-semibold-15 capitalize-first">
+    {% endif %}
+    {% trans "trial list"%}</button>
   </li>
   <li id="download-link">
     <a href="#" class="baas-link"><span class="boostrap-icon">&#xF30A;</span> {% trans "Download Product Info"%}</a>
@@ -32,7 +44,11 @@
 
 <div class="tab-content">
   <!-- PRODUCT RECOMMENDATIONS -->
+  {% if activeTab == '1' %}
   <div class="tab-pane fade active show" id="products" role="tabpanel" aria-labelledby="product-tab">
+  {% else %}
+  <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="product-tab">
+  {% endif %}
     <div class="row ms-4 product-variant-tabs">
       <ul class="nav flex-column">
         <p class="title txt-uppercase">{% trans "product variants"%}</p>
@@ -170,8 +186,21 @@
     </div>
   </div>
   <!-- TRIALS -->
+  {% if activeTab == '2' %}
+  <div class="tab-pane fade active show" id="trials" role="tabpanel" aria-labelledby="trials-tab">
+  {% else %}
   <div class="tab-pane fade" id="trials" role="tabpanel" aria-labelledby="trials-tab">
-    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter object_list=object_list %}
+  {% endif %}
+    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter object_list=trials %}
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var latitude= 38.034670;
+    var longitude= -1.189287;
+</script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+<script src='/static/baaswebapp/scripts/mapbaas.js'></script>
 {% endblock %}
