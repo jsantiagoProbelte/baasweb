@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Application
-from trialapp.tests.tests_helpers import TrialAppModelData
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.application_views import\
     ApplicationCreateView, ApplicationUpdateView, ApplicationApi, \
     ApplicationDeleteView, ApplicationListView
@@ -11,33 +11,32 @@ from baaswebapp.tests.test_views import ApiRequestHelperTest
 class ApplicationViewsTest(TestCase):
 
     _apiFactory = None
-    _fieldTrial = None
+    _trial = None
 
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
+        self._trial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
 
     def test_editapplication(self):
         request = self._apiFactory.get(
             'application-add',
-            data={'field_trial_id': self._fieldTrial.id})
+            data={'field_trial_id': self._trial.id})
         self._apiFactory.setUser(request)
 
         response = ApplicationCreateView.as_view()(
             request,
-            field_trial_id=self._fieldTrial.id)
+            field_trial_id=self._trial.id)
         self.assertContains(response, 'New')
         self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        applicationData = TrialAppModelData.APPLICATION[0].copy()
+        applicationData = TrialTestData.APPLICATION[0].copy()
         request = self._apiFactory.post('application-add', applicationData)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         application = Application.objects.get(
             app_date=applicationData['app_date'])
@@ -70,11 +69,11 @@ class ApplicationViewsTest(TestCase):
 
     def test_application_api(self):
         # Creating application , but not with all attributres
-        applicationData = TrialAppModelData.APPLICATION[0]
+        applicationData = TrialTestData.APPLICATION[0]
         request = self._apiFactory.post('application-add', applicationData)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item = Application.objects.get(app_date=applicationData['app_date'])
 
@@ -85,11 +84,11 @@ class ApplicationViewsTest(TestCase):
         self.assertContains(response, item.comment)
 
         # Let's create another one
-        applicationData2 = TrialAppModelData.APPLICATION[1]
+        applicationData2 = TrialTestData.APPLICATION[1]
         request = self._apiFactory.post('application-add', applicationData2)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item2 = Application.objects.get(app_date=applicationData2['app_date'])
         daa = (item2.app_date - item.app_date).days
@@ -98,11 +97,11 @@ class ApplicationViewsTest(TestCase):
         self.assertTrue(item2.daf, daa)
 
         # Let's create a new one in between the previous ones
-        applicationData3 = TrialAppModelData.APPLICATION[2]
+        applicationData3 = TrialTestData.APPLICATION[2]
         request = self._apiFactory.post('application-add', applicationData3)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item3 = Application.objects.get(app_date=applicationData3['app_date'])
         daa = (item3.app_date - item.app_date).days
@@ -120,7 +119,7 @@ class ApplicationViewsTest(TestCase):
         getRequest = self._apiFactory.get('application-list')
         self._apiFactory.setUser(getRequest)
         response = ApplicationListView.as_view()(
-            getRequest, **{'field_trial_id': self._fieldTrial.id})
+            getRequest, **{'field_trial_id': self._trial.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.comment)
         self.assertContains(response, item.getName())

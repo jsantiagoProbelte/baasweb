@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
-from trialapp.models import FieldTrial, Thesis, Application
+from trialapp.models import FieldTrial, Thesis, Application, TreatmentThesis
 from trialapp.trial_helper import LayoutTrial, TrialModel, TrialPermission
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
@@ -11,8 +11,8 @@ from trialapp.data_views import DataGraphFactory
 from django.db.models import Min, Max
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
-from trialapp.trial_helper import TrialHelper
 from trialapp.trial_analytics import Abbott
+from catalogue.models import UNTREATED
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -68,17 +68,17 @@ class TrialContent():
     _content = None
     _request = None
     _category = None
+    _assmts = None
+    _thesis = None
 
     WEATHER = 'weather'
     ASSESSMENTS = 'ass'
     EFFICACY = 'eff'
     KEY_ASSESS = 'key_assess'
 
-    def __init__(self, request):
-        self._request = request
-        id = int(request.GET.get('id', 0))
-        self._trial = get_object_or_404(FieldTrial, pk=id)
-        self._content = request.GET.get('content_type')
+    def __init__(self, trialId, content):
+        self._trial = get_object_or_404(FieldTrial, pk=trialId)
+        self._content = content
         self._category = self._trial.product.category()
         assessments = Assessment.getObjects(self._trial)
         if assessments:
@@ -117,105 +117,6 @@ class TrialContent():
                         {'title': graphF.getTitle(),
                          'content': graphF.draw(type_graph=type_graph)})
         return graphs
-
-    def calculateEfficacy(self, controlValue, keyThesisValue):
-        if self._category == Category.CONTROL:
-            return abs(Abbott.do(keyThesisValue, controlValue))
-        else:
-            eff = (keyThesisValue - controlValue) / controlValue
-            return round((eff*100)+100, 2)
-
-    def calculateBestEfficacy(self, dataPoints, assmts,
-                              keyThesisId, untreatedThesisId):
-        bestEfficacy = 0
-        dateMaxDistance = None
-        pointU = None
-        pointK = None
-        values = {}
-        assmtsDates = {assm.id: assm.assessment_date for assm in assmts}
-        for point in dataPoints:
-            ddate = assmtsDates[point['assessment__id']]
-            thesisId = point['reference__thesis__id']
-            if ddate not in values:
-                values[ddate] = {}
-            if thesisId == keyThesisId:
-                values[ddate]['k'] = point['value']
-            if thesisId == untreatedThesisId:
-                values[ddate]['u'] = point['value']
-        for ddate in values:
-            value = values[ddate]
-            if 'k' not in value or 'u' not in value:
-                continue
-            thisEfficacy = self.calculateEfficacy(value['u'], value['k'])
-            if thisEfficacy > bestEfficacy:
-                bestEfficacy = thisEfficacy
-                dateMaxDistance = ddate
-                pointU = value['u']
-                pointK = value['k']
-
-        if bestEfficacy > 0:
-            lines = {'y': [round(pointU, 2), round(pointK, 2)],
-                     'x': [dateMaxDistance, dateMaxDistance]}
-            return bestEfficacy, lines
-        else:
-            return None, None
-
-    def bestEfficiencyExplanation(self, keyRateTypeUnit, keyPartRated):
-        explanation = _('* in the moment of maximum difference at ')
-        explanation += keyRateTypeUnit.getName()
-        if keyPartRated is not None and keyPartRated != 'Undefined':
-            explanation += _(" in ")
-            explanation += keyPartRated
-        return explanation
-
-    def getKeyGraphData(self, keyRateTypeUnit,
-                        keyPartRated,
-                        keyThesisId,
-                        untreatedThesisId):
-        dataPoints = []
-
-        if keyRateTypeUnit and keyPartRated and\
-           keyThesisId and untreatedThesisId:
-            dataPoints = ReplicaData.dataPointsKeyAssessAvg(
-                keyRateTypeUnit, keyPartRated,
-                keyThesisId, untreatedThesisId)
-
-        if len(dataPoints):
-            assmts = Assessment.objects.filter(
-                rate_type_id=keyRateTypeUnit.id,
-                part_rated=keyPartRated)
-            keyThesis = Thesis.objects.get(id=keyThesisId)
-            untreatedThesis = Thesis.objects.get(id=untreatedThesisId)
-            bestEfficacy, line = self.calculateBestEfficacy(
-                dataPoints, assmts, keyThesisId, untreatedThesisId)
-            thesis = {
-                keyThesisId: keyThesis,
-                untreatedThesisId: untreatedThesis}
-            graphF = DataGraphFactory(
-                GraphTrial.L_REPLICA, assmts, dataPoints,
-                references=thesis, showTitle=False)
-            num_assmts = len(assmts)
-            graphF.addLineColorsToTraces(keyThesis.number,
-                                         untreatedThesis.number)
-            if num_assmts > 1:
-                graphF.addTrace(line, "best efficacy")
-            content = graphF.drawConclusionGraph(num_assmts)
-            explanation = self.bestEfficiencyExplanation(
-                keyRateTypeUnit, keyPartRated)
-            return {'conclusion_graph': content,
-                    'key_treatment_product': keyThesis.getKeyProduct(),
-                    'unit_name': keyRateTypeUnit.getName(),
-                    'bestEfficiencyExplanation': explanation,
-                    # see return on calculateBestEfficacy
-                    'control_value': line['y'][0],
-                    'best_keytesis_value': line['y'][1],
-                    'bestEfficacy': bestEfficacy}
-        else:
-            error = _("Efficacy cannot be determined yet."
-                      "Data is not available,"
-                      "key thesis or untreated thesis are not well identified,"
-                      "key rate type unit is not well identified.")
-            return {'error': error}
 
     def getWeatherData(self):
         Weather.enrich(self._min_date, self._max_date,
@@ -271,19 +172,16 @@ class TrialContent():
         return self.getGraphData(GraphTrial.L_REPLICA, rateSets, ratedParts)
 
     def fetchKeyAssessData(self):
-        tHelper = TrialHelper(self._trial)
-        keyRateTypeUnit, keyPartRated = tHelper.whatIsKeyRates()
-        keyThesis = tHelper.whatIsKeyThesis()
-        untreatedThesis = tHelper.whatIsControlThesis()
+        content = self.getKeyGraphData()
 
-        # Choose the rate_unit with most data.
-        keyData = self.getKeyGraphData(keyRateTypeUnit,
-                                       keyPartRated,
-                                       keyThesis,
-                                       untreatedThesis)
-        if 'bestEfficacy' in keyData:
-            tHelper.whatIsBestEfficacy(keyData['bestEfficacy'])
-        return keyData
+        if content:
+            return content
+        else:
+            error = _("Efficacy cannot be determined yet."
+                      "Data is not available,"
+                      "key thesis or untreated thesis are not well identified,"
+                      "key rate type unit is not well identified.")
+            return {'error': error}
 
     def fetchEfficacy(self):
         return self.fetchDefault()
@@ -308,6 +206,191 @@ class TrialContent():
         ASSESSMENTS: TEMPLATE_CARDS,
         EFFICACY: TEMPLATE_CARDS}
 
+    def getAssmts(self, force=False):
+        if self._assmts is None or force:
+            self._assmts = Assessment.getObjects(self._trial)
+        return self._assmts
+
+    def getThesis(self):
+        if self._thesis is None:
+            self._thesis = Thesis.getObjects(self._trial)
+        return self._thesis
+
+    def whatIsKeyRates(self, force=False):
+        # Trial should have designated a key part rated
+        if not self._trial.key_ratedpart or \
+           not self._trial.key_ratetypeunit or \
+           force:
+            # if key rateset is not designated yet, we nomine one
+            counts = {}
+            for ass in self.getAssmts():
+                combo = f"{ass.rate_type.id} - {ass.part_rated}"
+
+                if combo not in counts:
+                    counts[combo] = {'part': ass.part_rated,
+                                     'type': ass.rate_type,
+                                     'count': 0}
+                counts[combo]['count'] += 1
+            cmax = 0
+            best = None
+            for combo in counts:
+                if cmax < counts[combo]['count']:
+                    cmax = counts[combo]['count']
+                    best = combo
+
+            if best:
+                self._trial.key_ratedpart = counts[best]['part']
+                self._trial.key_ratetypeunit = counts[best]['type']
+                self._trial.save()
+        return self._trial.key_ratetypeunit, self._trial.key_ratedpart
+
+    def whatIsKeyThesis(self, force=False):
+        # Trial should have designated a key thesis
+        if not self._trial.key_thesis or force:
+            # if key_thesis is not designated yet, we nomine one
+            # simple idea, pick the first thesis from product key with
+            # biggest dosis
+            max_rate = 0
+            for thesis in self.getThesis():
+                treatments = TreatmentThesis.getObjects(thesis)
+                for ttreatment in treatments:
+                    if ttreatment.treatment.rate > max_rate:
+                        product = ttreatment.treatment.batch.product_variant.product  # noqa E501
+                        if product.vendor and product.vendor.key_vendor:
+                            self._trial.key_thesis = ttreatment.thesis.id
+                            self._trial.save()
+        return self._trial.key_thesis
+
+    def whatIsControlThesis(self, force=False):
+        if not self._trial.untreated_thesis or force:
+            # if untreated_thesis is not designated yet, we nomine one
+            # simple idea, use the first treatment pointed to the untreated
+            for thesis in self.getThesis():
+                treatments = TreatmentThesis.getObjects(thesis)
+                for ttreatment in treatments:
+                    if ttreatment.treatment.batch.product_variant.product.name == UNTREATED: # noqa E501
+                        self._trial.untreated_thesis = ttreatment.thesis.id
+                        self._trial.save()
+                        break
+        return self._trial.untreated_thesis
+
+    def whatIsBestEfficacy(self, bestEfficacy, force=False):
+        if self._trial.best_efficacy != bestEfficacy and force:
+            self._trial.best_efficacy = bestEfficacy
+            self._trial.save()
+        return self._trial.best_efficacy
+
+    def getKeyAssData(self, keyRateTypeUnit, keyPartRated,
+                      keyThesisId, untreatedThesisId):
+        if not keyRateTypeUnit or not keyPartRated or\
+           not keyThesisId or not untreatedThesisId:
+            return None
+
+        dataPoints = ReplicaData.dataPointsKeyAssessAvg(
+            keyRateTypeUnit, keyPartRated,
+            keyThesisId, untreatedThesisId)
+
+        if len(dataPoints) > 1:
+            return dataPoints
+        else:
+            return None
+
+    def getKeyAssmts(self, keyRateTypeUnit, keyPartRated):
+        return Assessment.objects.filter(
+            rate_type_id=keyRateTypeUnit.id,
+            part_rated=keyPartRated)
+
+    def getKeyGraphData(self):
+        keyRateTypeUnit, keyPartRated = self.whatIsKeyRates()
+        keyThesisId = self.whatIsKeyThesis()
+        untreatedThesisId = self.whatIsControlThesis()
+        dataPoints = self.getKeyAssData(
+            keyRateTypeUnit, keyPartRated, keyThesisId, untreatedThesisId)
+
+        if not dataPoints:
+            return None
+
+        assmts = self.getKeyAssmts(keyRateTypeUnit, keyPartRated)
+        keyThesis = Thesis.objects.get(id=keyThesisId)
+        untreatedThesis = Thesis.objects.get(id=untreatedThesisId)
+        bestEfficacy, line = self.calculateBestEfficacy(
+            dataPoints, assmts, keyThesisId, untreatedThesisId)
+        thesiss = {
+            keyThesisId: keyThesis,
+            untreatedThesisId: untreatedThesis}
+        graphF = DataGraphFactory(
+            GraphTrial.L_REPLICA, assmts, dataPoints,
+            references=thesiss, showTitle=False)
+        num_assmts = len(assmts)
+        graphF.addLineColorsToTraces(keyThesis.number,
+                                     untreatedThesis.number)
+        if num_assmts > 1:
+            graphF.addTrace(line, "best efficacy")
+        content = graphF.drawConclusionGraph(num_assmts)
+        explanation = self.bestEfficiencyExplanation(
+            keyRateTypeUnit, keyPartRated)
+
+        if bestEfficacy:
+            self.whatIsBestEfficacy(bestEfficacy, force=True)
+        return {'conclusion_graph': content,
+                'key_treatment_product': keyThesis.getKeyProduct(),
+                'unit_name': keyRateTypeUnit.getName(),
+                'bestEfficiencyExplanation': explanation,
+                # see return on calculateBestEfficacy
+                'control_value': line['y'][0],
+                'best_keytesis_value': line['y'][1],
+                'bestEfficacy': bestEfficacy}
+
+    def calculateEfficacy(self, controlValue, keyThesisValue):
+        if self._category == Category.CONTROL:
+            return abs(Abbott.do(keyThesisValue, controlValue))
+        else:
+            eff = (keyThesisValue - controlValue) / controlValue
+            return round((eff*100)+100, 2)
+
+    def calculateBestEfficacy(self, dataPoints, assmts,
+                              keyThesisId, untreatedThesisId):
+        bestEfficacy = 0
+        dateMaxDistance = None
+        pointU = None
+        pointK = None
+        values = {}
+        assmtsDates = {assm.id: assm.assessment_date for assm in assmts}
+        for point in dataPoints:
+            ddate = assmtsDates[point['assessment__id']]
+            thesisId = point['reference__thesis__id']
+            if ddate not in values:
+                values[ddate] = {}
+            if thesisId == keyThesisId:
+                values[ddate]['k'] = point['value']
+            if thesisId == untreatedThesisId:
+                values[ddate]['u'] = point['value']
+        for ddate in values:
+            value = values[ddate]
+            if 'k' not in value or 'u' not in value:
+                continue
+            thisEfficacy = self.calculateEfficacy(value['u'], value['k'])
+            if thisEfficacy > bestEfficacy:
+                bestEfficacy = thisEfficacy
+                dateMaxDistance = ddate
+                pointU = value['u']
+                pointK = value['k']
+
+        if bestEfficacy > 0:
+            lines = {'y': [round(pointU, 2), round(pointK, 2)],
+                     'x': [dateMaxDistance, dateMaxDistance]}
+            return bestEfficacy, lines
+        else:
+            return None, None
+
+    def bestEfficiencyExplanation(self, keyRateTypeUnit, keyPartRated):
+        explanation = _('* in the moment of maximum difference at ')
+        explanation += keyRateTypeUnit.getName()
+        if keyPartRated is not None and keyPartRated != 'Undefined':
+            explanation += _(" in ")
+            explanation += keyPartRated
+        return explanation
+
     def fetch(self):
         theFetch = TrialContent.FETCH_FUNCTIONS.get(
             self._content, TrialContent.fetchDefault)
@@ -319,4 +402,6 @@ class TrialContent():
 
 @login_required
 def trialContentApi(request):
-    return TrialContent(request).fetch()
+    trialId = int(request.GET.get('id', 0))
+    content = request.GET.get('content_type')
+    return TrialContent(trialId, content).fetch()

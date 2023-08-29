@@ -7,9 +7,9 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
     FieldTrial, Thesis, Objective, Replica, \
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety, \
-    Plague, CultivationMethod, Irrigation, Application, TreatmentThesis
+    Plague, CultivationMethod, Irrigation, Application
 from trialapp.data_models import ReplicaData
-from catalogue.models import RateUnit, UNTREATED
+from catalogue.models import RateUnit
 from django import forms
 from io import BytesIO
 
@@ -582,86 +582,3 @@ class TrialPermission:
 
     def getPermisions(self):
         return self._permissions
-
-
-class TrialHelper:
-    _trial = None
-    _assmts = None
-    _thesis = None
-
-    def __init__(self, trial):
-        self._trial = trial
-        self._assmts = None
-        self._thesis = None
-
-    def getAssmts(self):
-        if self._assmts is None:
-            self._assmts = Assessment.getObjects(self._trial)
-        return self._assmts
-
-    def getThesis(self):
-        if self._thesis is None:
-            self._thesis = Thesis.getObjects(self._trial)
-        return self._thesis
-
-    def whatIsKeyRates(self):
-        # Trial should have designated a key part rated
-        if not self._trial.key_ratedpart or \
-           not self._trial.key_ratetypeunit:
-            # if key rateset is not designated yet, we nomine one
-            counts = {}
-            for ass in self.getAssmts():
-                combo = f"{ass.rate_type.id} - {ass.part_rated}"
-
-                if combo not in counts:
-                    counts[combo] = {'part': ass.part_rated,
-                                     'type': ass.rate_type,
-                                     'count': 0}
-                counts[combo]['count'] += 1
-            cmax = 0
-            best = None
-            for combo in counts:
-                if cmax < counts[combo]['count']:
-                    cmax = counts[combo]['count']
-                    best = combo
-
-            if best:
-                self._trial.key_ratedpart = counts[best]['part']
-                self._trial.key_ratetypeunit = counts[best]['type']
-                self._trial.save()
-        return self._trial.key_ratetypeunit, self._trial.key_ratedpart
-
-    def whatIsKeyThesis(self):
-        # Trial should have designated a key thesis
-        if not self._trial.key_thesis:
-            # if key_thesis is not designated yet, we nomine one
-            # simple idea, pick the first thesis from product key with
-            # biggest dosis
-            max_rate = 0
-            for thesis in self.getThesis():
-                treatments = TreatmentThesis.getObjects(thesis)
-                for ttreatment in treatments:
-                    if ttreatment.treatment.rate > max_rate:
-                        product = ttreatment.treatment.batch.product_variant.product  # noqa E501
-                        if product.vendor and product.vendor.key_vendor:
-                            self._trial.key_thesis = ttreatment.thesis.id
-                            self._trial.save()
-        return self._trial.key_thesis
-
-    def whatIsControlThesis(self):
-        if not self._trial.untreated_thesis:
-            # if untreated_thesis is not designated yet, we nomine one
-            # simple idea, use the first treatment pointed to the untreated
-            for thesis in self.getThesis():
-                treatments = TreatmentThesis.getObjects(thesis)
-                for ttreatment in treatments:
-                    if ttreatment.treatment.batch.product_variant.product.name == UNTREATED: # noqa E501
-                        self._trial.untreated_thesis = ttreatment.thesis.id
-                        self._trial.save()
-                        break
-        return self._trial.untreated_thesis
-
-    def whatIsBestEfficacy(self, bestEfficacy):
-        if self._trial.best_efficacy != bestEfficacy:
-            self._trial.best_efficacy = bestEfficacy
-            self._trial.save()

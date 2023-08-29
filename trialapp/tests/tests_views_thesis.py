@@ -4,7 +4,7 @@ from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit, UNTREATED
 from trialapp.models import FieldTrial, Thesis, Replica, \
                             ApplicationMode, TreatmentThesis
-from trialapp.tests.tests_helpers import TrialAppModelData
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.thesis_views import\
     ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView, \
     ThesisListView, TreatmentThesisSetView, TreatmentThesisDeleteView
@@ -14,36 +14,35 @@ from baaswebapp.tests.test_views import ApiRequestHelperTest
 class ThesisViewsTest(TestCase):
 
     _apiFactory = None
-    _fieldTrial = None
+    _trial = None
 
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
+        self._trial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
         self._untreated = Treatment.objects.get(name=UNTREATED)
 
     def test_editfieldtrial(self):
         request = self._apiFactory.get(
             'thesis-add',
-            data={'field_trial_id': self._fieldTrial.id})
+            data={'field_trial_id': self._trial.id})
         self._apiFactory.setUser(request)
 
         response = ThesisCreateView.as_view()(
             request,
-            field_trial_id=self._fieldTrial.id)
+            field_trial_id=self._trial.id)
         self.assertContains(response, 'New')
         self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        thesisData = TrialAppModelData.THESIS[0].copy()
+        thesisData = TrialTestData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
         response = ThesisCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         thesis = Thesis.objects.get(name=thesisData['name'])
         self.assertEqual(thesis.name, thesisData['name'])
@@ -74,13 +73,13 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_addTreatmentThesis(self):
-        thesisData = TrialAppModelData.THESIS[0].copy()
+        thesisData = TrialTestData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
         response = ThesisCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         thesis = Thesis.objects.get(name=thesisData['name'])
 
@@ -144,18 +143,18 @@ class ThesisViewsTest(TestCase):
 
     def test_thesis_api(self):
         # Creating thesis , but not with all attributres
-        thesisData = TrialAppModelData.THESIS[0].copy()
+        thesisData = TrialTestData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
         response = ThesisCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item = Thesis.objects.get(name=thesisData['name'])
 
         # when thesis is created, it is expected that its replicas are
         # also created
-        expectedReplicas = self._fieldTrial.replicas_per_thesis
+        expectedReplicas = self._trial.replicas_per_thesis
         self.assertEqual(Replica.objects.count(),
                          expectedReplicas)
 
@@ -170,7 +169,7 @@ class ThesisViewsTest(TestCase):
         getRequest = self._apiFactory.get('thesis-list')
         self._apiFactory.setUser(getRequest)
         response = ThesisListView.as_view()(
-            getRequest, **{'field_trial_id': self._fieldTrial.id})
+            getRequest, **{'field_trial_id': self._trial.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.name)
 
@@ -185,12 +184,12 @@ class ThesisViewsTest(TestCase):
     def test_ThesisVolume(self):
         theThesis = None
         theThesisId = None
-        for thesis in TrialAppModelData.THESIS:
+        for thesis in TrialTestData.THESIS:
             copiedData = thesis.copy()
             copiedData['mode'] = ApplicationMode.objects.get(pk=1)
-            theThesis = Thesis.create_Thesis(**copiedData)
+            theThesis = Thesis.createThesis(**copiedData)
             theThesisId = theThesis.id
-        # numberThesis = Thesis.getObjects(self._fieldTrial).count()
+        # numberThesis = Thesis.getObjects(self._trial).count()
         api = ThesisApi()
         # We do not care which one to use
         api._thesis = Thesis.objects.get(id=theThesisId)
@@ -198,20 +197,20 @@ class ThesisViewsTest(TestCase):
         thesisVolume = api.getThesisVolume()
         self.assertTrue('Missing Data: Volume' in thesisVolume['value'])
         appVolume = 100
-        self._fieldTrial.application_volume = appVolume
-        self._fieldTrial.save()
+        self._trial.application_volume = appVolume
+        self._trial.save()
 
         api._thesis = Thesis.objects.get(id=theThesisId)
         thesisVolume = api.getThesisVolume()
         self.assertTrue('Missing Data: Gross area' in thesisVolume['value'])
         grossArea = 100
-        self._fieldTrial.gross_surface = grossArea
-        self._fieldTrial.save()
+        self._trial.gross_surface = grossArea
+        self._trial.save()
 
         api._thesis = Thesis.objects.get(id=theThesisId)
         thesisVolume = api.getThesisVolume()
-        # litres = grossArea * appVolume * self._fieldTrial.replicas_per_thesis
-        # surfacePerThesis = (numberThesis * self._fieldTrial.blocks * 10000)
+        # litres = grossArea * appVolume * self._trial.replicas_per_thesis
+        # surfacePerThesis = (numberThesis * self._trial.blocks * 10000)
         # thesisVolumeV = litres / surfacePerThesis
         # unit = 'L'
         # rounding = 2
