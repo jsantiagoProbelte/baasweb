@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29 00:54+0200\n"
+"POT-Creation-Date: 2023-08-30 00:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:102 catalogue/templates/catalogue/product_show.html:107
+#: baaswebapp/graphs.py:102 catalogue/templates/catalogue/product_show.html:123
 msgid "weather"
 msgstr ""
 
@@ -207,12 +207,32 @@ msgid "Welcome, please login"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
-#: catalogue/tests/tests_views_catalogue.py:137
+#: catalogue/tests/tests_views_catalogue.py:136
 msgid "Are you sure to delete"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:12
 msgid "Cancel"
+msgstr ""
+
+#: catalogue/product_views.py:49
+msgid "Status"
+msgstr ""
+
+#: catalogue/product_views.py:51
+msgid "Type"
+msgstr ""
+
+#: catalogue/product_views.py:53
+msgid "Objective"
+msgstr ""
+
+#: catalogue/product_views.py:55
+msgid "Crop"
+msgstr ""
+
+#: catalogue/product_views.py:57
+msgid "Plague"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:5
@@ -227,7 +247,7 @@ msgid "product type"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
-#: catalogue/templates/catalogue/product_show.html:61
+#: catalogue/templates/catalogue/product_show.html:77
 #: trialapp/templates/trialapp/trial_conclusions.html:111
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
@@ -235,7 +255,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:8
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:51
+#: catalogue/templates/catalogue/product_show.html:67
 #: trialapp/templates/trialapp/crop_list.html:7
 #: trialapp/templates/trialapp/plagues_list.html:7
 #: trialapp/templates/trialapp/trials_list.html:9
@@ -249,88 +269,88 @@ msgstr ""
 msgid "trials date"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:22
+#: catalogue/templates/catalogue/product_show.html:28
 msgid "product recommendations"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:26
+#: catalogue/templates/catalogue/product_show.html:38
 msgid "trial list"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:29
+#: catalogue/templates/catalogue/product_show.html:41
 msgid "Download Product Info"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:38
+#: catalogue/templates/catalogue/product_show.html:54
 msgid "product variants"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:52
+#: catalogue/templates/catalogue/product_show.html:68
 msgid "*All products trials efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:68
-#: catalogue/templates/catalogue/product_show.html:130
+#: catalogue/templates/catalogue/product_show.html:84
+#: catalogue/templates/catalogue/product_show.html:146
 #: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:242
 #: trialapp/templates/trialapp/plagues_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:56
 msgid "pest / disease"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:76
+#: catalogue/templates/catalogue/product_show.html:92
 msgid "Product Basics"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:80
+#: catalogue/templates/catalogue/product_show.html:96
 msgid "concentration"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:90
+#: catalogue/templates/catalogue/product_show.html:106
 msgid "presentation"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:98
-#: catalogue/templates/catalogue/product_show.html:102
+#: catalogue/templates/catalogue/product_show.html:114
+#: catalogue/templates/catalogue/product_show.html:118
 msgid "Application"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:114
+#: catalogue/templates/catalogue/product_show.html:130
 msgid "Security period"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:118
+#: catalogue/templates/catalogue/product_show.html:134
 msgid "Mixes"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:129
+#: catalogue/templates/catalogue/product_show.html:145
 #: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:241
 #: trialapp/templates/trialapp/crop_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:59
 msgid "crop"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:131
+#: catalogue/templates/catalogue/product_show.html:147
 #: trialapp/templates/trialapp/trial_conclusions.html:7
 msgid "dosis"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:132
+#: catalogue/templates/catalogue/product_show.html:148
 #: trialapp/templates/trialapp/trial_conclusions.html:13
 msgid "solution volume"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:133
+#: catalogue/templates/catalogue/product_show.html:149
 #: trialapp/templates/trialapp/trial_conclusions.html:20
 msgid "number applications"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:134
+#: catalogue/templates/catalogue/product_show.html:150
 #: trialapp/templates/trialapp/trial_conclusions.html:26
 msgid "day intervals"
 msgstr ""
 
-#: labapp/tests/tests_labtrial_views.py:59
-#: trialapp/tests/tests_views_field_trial.py:70
+#: labapp/tests/tests_labtrial_views.py:58
+#: trialapp/tests/tests_views_field_trial.py:67
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
 #: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
@@ -442,7 +462,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:74
-#: trialapp/trial_views.py:261
+#: trialapp/trial_views.py:162
 msgid "weather conditions"
 msgstr ""
 
@@ -512,25 +532,25 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:164
-msgid "* in the moment of maximum difference at "
+#: trialapp/trial_views.py:163
+msgid ""
+"Weather conditions cannot be determined because location or assessments info "
+"aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:167
-msgid " in "
-msgstr ""
-
-#: trialapp/trial_views.py:214
+#: trialapp/trial_views.py:180
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:262
-msgid ""
-"Weather conditions cannot be determined because location or assessments info "
-"aremissing"
+#: trialapp/trial_views.py:387
+msgid "* in the moment of maximum difference at "
+msgstr ""
+
+#: trialapp/trial_views.py:390
+msgid " in "
 msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/_pytest/config/argparsing.py:474
