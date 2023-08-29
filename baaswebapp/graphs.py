@@ -17,6 +17,7 @@ COLOR_grey = '#F0EEEB'
 COLOR_unknown = '#F0EEEB'
 COLOR_black = '#333333'
 COLOR_bio_morado = '#aa4ae4'
+COLOR_UNTREATED = '#B1C23F'
 COLOR_morado = '#a500a5'
 COLOR_violeta = '#cfc9ff'
 COLOR_bs_blue = '#325d88'
@@ -109,16 +110,15 @@ class WeatherGraph:
             legend=dict(orientation="v", yanchor="middle", y=0.5,
                         xanchor="left", x=-0.5),
             margin=dict(
-                t=40,  # Adjust this value to reduce the top margin
+                t=0,  # Adjust this value to reduce the top margin
                 r=20,  # Right margin
                 b=20,  # Bottom margin
                 l=20   # Left margin
             ),
-            title_text=title.upper(),
+            title_text='',  # title.upper(),
             height=WeatherGraph.DEFAULT_HEIGHT,
             autosize=True)
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
-        fig.update_xaxes(title_text="Date")
         if title_yaxes:
             fig.update_yaxes(title_text=title_yaxes)
 
@@ -239,6 +239,15 @@ class WeatherGraph:
 
 
 class WeatherGraphFactory:
+
+    @classmethod
+    def formatData(cls, id, graph, title, show,
+                   backgroundClass='bg-weather-cards'):
+        return {'id': id.lower().replace(" ", ""),
+                'title': title, 'content': graph,
+                'collapse': '' if show else 'collapse',
+                'backgroundClass': backgroundClass}
+
     @classmethod
     def build(cls, dates, non_recent_dates, mean_temps, min_temps,
               max_temps, precip, precip_hrs, soil_moist_1,
@@ -250,12 +259,19 @@ class WeatherGraphFactory:
                              soil_moist_2, soil_moist_3, soil_moist_4,
                              soil_temps_1, soil_temps_2, soil_temps_3,
                              soil_temps_4, rel_humid, dew_point)
-        return {'tempGraph': graph.draw_temp(),
-                'precipGraph': graph.draw_precip(),
-                'soilTempGraph': graph.draw_soil_temp(),
-                'soilMoistGraph': graph.draw_soil_moist(),
-                'humidGraph': graph.draw_humid(),
-                'dewPointGraph': graph.draw_dew()}
+        return [
+            cls.formatData('tempGraph', graph.draw_temp(),
+                           _('temperature'), True),
+            cls.formatData('precipGraph', graph.draw_precip(),
+                           _('precipitation'), True),
+            cls.formatData('soilTempGraph', graph.draw_soil_temp(),
+                           _('soil temperature'), False),
+            cls.formatData('soilMoistGraph', graph.draw_soil_moist(),
+                           _('soil moisture'), False),
+            cls.formatData('humidGraph', graph.draw_humid(),
+                           _('relative humidity'), True),
+            cls.formatData('dewPointGraph', graph.draw_dew(),
+                           _('dew point'), True)]
 
 
 class GraphTrial:
@@ -267,6 +283,7 @@ class GraphTrial:
     COLUMN = 'column'
     VIOLIN = 'violin'
     LINE = 'line'
+
     DEFAULT_HEIGHT = 275
 
     L_THESIS = 'thesis'
@@ -288,6 +305,8 @@ class GraphTrial:
                    'diamond-tall', 'diamond-wide', 'square-cross',
                    'circle-cross', 'circle-x', 'asterisk', 'hash']
 
+    COLOR_CONCLUSION_GRAPH = [COLOR_UNTREATED, COLOR_bio_morado]
+
     COLOR_LIST = [COLOR_bg_color, COLOR_morado, COLOR_bio_morado,
                   COLOR_violeta,
                   COLOR_red, COLOR_yellow, COLOR_green, COLOR_blue,
@@ -297,7 +316,7 @@ class GraphTrial:
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,
-                 showTitle=True):
+                 showTitle=False):
         self._level = level
         self._showTitle = showTitle
         self._xAxis = xAxis
@@ -308,9 +327,30 @@ class GraphTrial:
                 'y_axis': rateType.unit,
                 'traces': traces}
 
+    def addColorLinesToTraces(self, colorDict):
+        for thesisNumber in colorDict:
+            self._graphData['traces'][thesisNumber]['trace_color'] = colorDict[thesisNumber]  # noqa E501
+
+    def addTrace(self, line, name, color='#C3C3C3',
+                 shape='dot', marker_symbol='cicle'):
+        trace = {'x': line['x'], 'y': line['y'],
+                 'name': name,
+                 'trace_color': color, 'dash': shape}
+        if marker_symbol:
+            trace['marker_symbol'] = marker_symbol
+            trace['marker_size'] = 20
+        self._graphData['traces'][0] = trace
+
     def preparePlots(self, typeFigure='scatter', orientation='v'):
-        return self.figure(self._graphData, typeFigure=typeFigure,
-                           orientation=orientation)
+        fig = self.figure(self._graphData, typeFigure=typeFigure,
+                          orientation=orientation)
+        return self.plot(fig)
+
+    def drawConclussionGraph(self, typeFigure=LINE,
+                             orientation='v'):
+        fig = self.figure(self._graphData, typeFigure=typeFigure,
+                          showLegend=False, orientation=orientation)
+        return self.plot(fig)
 
     def bar(self):
         return self.preparePlots(typeFigure=GraphTrial.BAR, orientation='h')
@@ -327,8 +367,16 @@ class GraphTrial:
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
 
+    DRAW_TYPE = {LINE: line,
+                 BAR: bar,
+                 SCATTER: scatter,
+                 VIOLIN: violin,
+                 COLUMN: column}
+    DRAW_LEVEL = {L_DOSIS: line,
+                  L_THESIS: bar}
+
     def formatFigure(self, fig, thisGraph, showLegend,
-                     orientation):
+                     orientation, typeFigure, num_x):
         # Update layout for graph object Figure
         if orientation == 'v':
             xaxis_title = thisGraph['x_axis']
@@ -339,6 +387,9 @@ class GraphTrial:
             yaxis_title = thisGraph['x_axis']
             fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
 
+        legend = dict(orientation="v", yanchor="middle", y=0.5,
+                      xanchor="left", x=-0.5)
+
         fig.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color=COLOR_TEXT,
@@ -347,23 +398,31 @@ class GraphTrial:
             title_text=thisGraph['title'] if self._showTitle else '',
             showlegend=showLegend,
             autosize=True,
-            legend=dict(orientation="v", yanchor="middle", y=0.5,
-                        xanchor="left", x=-0.5),
+            legend=legend,
             margin=dict(
-                t=40,  # Adjust this value to reduce the top margin
+                t=0,  # Adjust this value to reduce the top margin
                 r=20,  # Right margin
                 b=20,  # Bottom margin
                 l=20   # Left margin
             ),
             height=GraphTrial.DEFAULT_HEIGHT,
-            xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
 
-        if self._xAxis == GraphTrial.L_DATE:
+        if self._xAxis != GraphTrial.L_DATE:
+            fig.update_layout(xaxis_title=xaxis_title)
+
+        if typeFigure == GraphTrial.BAR:
+            fig.update_traces(textfont_size=20)
+
+        if num_x == 1 and self._xAxis == GraphTrial.L_DATE:
             if orientation == 'v':
-                fig.update_layout(xaxis=dict(tickformat='%d-%m-%Y'))
+                fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
             else:
-                fig.update_layout(yaxis=dict(tickformat='%d-%m-%Y'))
+                fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
+
+        if typeFigure == GraphTrial.VIOLIN:
+            fig.update_layout(violinmode='group')
+        fig.update_yaxes(automargin=True)
 
     def applyBar(self, x, y, orientation, name, color):
         if orientation == 'h':
@@ -380,17 +439,19 @@ class GraphTrial:
                       x=xValues, y=yValues)
         return data
 
-    def figure(self, thisGraph,
+    def figure(self, thisGraph, showLegend=True,
                typeFigure=SCATTER, orientation='v'):
-        showLegend = True
         data = None
         fig = go.Figure()
 
         for traceKey in thisGraph['traces']:
             trace = thisGraph['traces'][traceKey]
             name = trace['name']
-            color = trace['marker_color']
-            symbol = trace['marker_symbol']
+            color = trace['trace_color']
+            marker_symbol = trace.get('marker_symbol', 'circle')
+            marker_size = trace.get('marker_size', 10)
+            marker = {'color': color, 'symbol': marker_symbol,
+                      'size': marker_size}
             if orientation == 'v':
                 x = trace['x']
                 y = trace['y']
@@ -401,17 +462,25 @@ class GraphTrial:
             if typeFigure == GraphTrial.BAR:
                 data = self.applyBar(x, y, orientation, name, color)
             elif typeFigure == GraphTrial.LINE:
-                markerMode = 'lines+markers'
+                marker = {}
+                line = {'color': color, 'width': 3}
+                if 'dash' in trace:
+                    line['dash'] = trace['dash']
+                if 'marker' in trace:
+                    markerMode = 'lines+markers'
+                    marker = marker
+                else:
+                    markerMode = 'lines'
                 data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
-                                  mode=markerMode, marker_size=5)
+                                  line=line, mode=markerMode,
+                                  marker=marker)
             elif typeFigure == GraphTrial.SCATTER:
                 if self._xAxis == GraphTrial.L_DATE:
                     markerMode = 'lines+markers'
                 else:
                     markerMode = 'markers'
                 data = go.Scatter(name=name, x=x, y=y,
-                                  marker={'color': color, 'symbol': symbol},
+                                  marker=marker,
                                   mode=markerMode, marker_size=15)
             elif typeFigure == GraphTrial.VIOLIN:
                 data = go.Violin(name=name, x=x, y=y,
@@ -420,15 +489,11 @@ class GraphTrial:
                                  line_color=color)
             fig.add_trace(data)
 
-            if typeFigure == GraphTrial.BAR:
-                fig.update_traces(textfont_size=20)
+        self.formatFigure(fig, thisGraph, showLegend, orientation,
+                          typeFigure, len(x))
+        return fig
 
-        self.formatFigure(fig, thisGraph, showLegend, orientation)
-
-        if typeFigure == GraphTrial.VIOLIN:
-            fig.update_layout(violinmode='group')
-        fig.update_yaxes(automargin=True)
-
+    def plot(self, fig):
         # Turn graph object into local plotly graph
         plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
@@ -492,7 +557,7 @@ class GraphStat():
             'y': [self._rawDataDict[datasetKey][label]
                   for label in self._labels],
             'x': [label for label in self._labels],
-            'marker_color': statColors if colorPerLabel
+            'trace_color': statColors if colorPerLabel
             else statColors[datasetKey]
         } for datasetKey in self._rawDataDict]
         self._graphData = {"title": self._title, 'traces': theDataTraces,
@@ -505,7 +570,7 @@ class GraphStat():
 
         for trace in self._graphData['traces']:
             name = trace['name']
-            color = trace['marker_color']
+            color = trace['trace_color']
             if self._orientation == 'v':
                 x = trace['x']
                 y = trace['y']

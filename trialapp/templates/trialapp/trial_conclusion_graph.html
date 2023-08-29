@@ -1,0 +1,34 @@
+{% load i18n %}
+{% if dataContent.error %}
+    {{dataContent.error|safe}}
+{% else %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="graph-container mt-3">
+            {{dataContent.conclusion_graph|safe}}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <br><br><br><br>
+        <table class="table table-borderless mt-3">
+            <tbody>
+            <tr><td></td>
+                <td class="txt-regular-11 txt-uppercase ms-2">{% trans "treatments" %}</td>
+                <td class="txt-regular-11 txt-uppercase float-end">{{dataContent.unit_name}}</td>
+            </tr>
+            <tr><td><div class='dot-untreated me-2'></div></td>
+                <td class="txt-regular-13 capitalize-first">{% trans 'control' %}</td>
+                <td class="txt-open-semibold-15 float-end ms-2">{{dataContent.control_value}}</td>
+            </tr>
+            <tr><td><div class='dot-best me-2'></div></td>
+                <td class="txt-regular-13">{{dataContent.key_treatment_product}}</td>
+                <td class="txt-open-semibold-15 float-end">{{dataContent.best_keytesis_value}}</td>
+            </tr>
+            <tr><td></td><td class="txt-regular-11 txt-uppercase">{% trans "best efficacy" %}</td>
+                <td class="txt-open-semibold-15 float-end">{{dataContent.bestEfficacy}} %</td>
+            </tr></tbody>
+        </table>
+        <p class="txt-regular-13 mt-3">{{dataContent.bestEfficiencyExplanation}}</p>
+    </div>
+</div>
+{% endif %}

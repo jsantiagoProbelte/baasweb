@@ -4,6 +4,7 @@ import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
 from catalogue.models import Product, Treatment, RateUnit
+from baaswebapp.models import RateTypeUnit
 from django.utils.translation import gettext_lazy as _
 
 
@@ -55,6 +56,27 @@ class TrialStatus(ModelHelpers, models.Model):
     FINISHED = 'Finished'
     OPEN = 'Open'
     IMPORTED = 'Imported'
+
+
+class PartRated(models.TextChoices):
+    FIELD_TRIAL = 'FT', _('Field Trial')
+    LAB_TRIAL = 'LT', _('Lab Trial')
+    BUNCH = 'BUNCH', _('BUNCH')
+    CLUSTR = 'CLUSTR', _('CLUSTR')
+    FLOWER = 'FLOWER', _('FLOWER')
+    FRUDAM = 'FRUDAM', _('FRUDAM')
+    FRUIT = 'FRUIT', _('FRUIT')
+    FRUIT_C = 'FRUIT C', _('FRUIT C')
+    FRUIT_P = 'FRUIT P', _('FRUIT P')
+    FRUROT_C = 'FRUROT C', _('FRUROT C')
+    FRUSTO_P = 'FRUSTO P', _('FRUSTO P')
+    LEAF = 'LEAF', _('LEAF')
+    PLANT = 'PLANT', _('PLANT')
+    PLOT = 'PLOT', _('PLOT')
+    ROOT = 'ROOT', _('ROOT')
+    SPOT = 'SPOT', _('SPOT')
+    STEMP = 'STEMP', _('STEMP')
+    UNDF = 'UNDF', _('UNDF')
 
 
 class FieldTrial(ModelHelpers, models.Model):
@@ -129,6 +151,19 @@ class FieldTrial(ModelHelpers, models.Model):
         RateUnit, on_delete=models.CASCADE, null=True)
     mode = models.ForeignKey(ApplicationMode,
                              on_delete=models.CASCADE, null=True)
+
+    public = models.BooleanField(default=False)
+    # key properties of the trial after evaluation
+    key_thesis = models.IntegerField(null=True)
+    untreated_thesis = models.IntegerField(null=True)
+    key_ratetypeunit = models.ForeignKey(RateTypeUnit,
+                                         on_delete=models.SET_NULL, null=True)
+    key_ratedpart = models.CharField(
+        max_length=10,
+        choices=PartRated.choices,
+        default=PartRated.UNDF)
+    best_efficacy = models.DecimalField(max_digits=10, decimal_places=2,
+                                        null=True)
 
     @classmethod
     def formatCode(cls, year, month, counts):
@@ -329,6 +364,15 @@ class Thesis(ModelHelpers, models.Model):
                     'treatments': treatments
                 })
         return allThesis, thesisDisplay
+
+    def getKeyProduct(self):
+        ttreatements = TreatmentThesis.objects.filter(thesis=self)
+
+        for ttreatement in ttreatements:
+            product = ttreatement.treatment.batch.product_variant.product
+            if product.vendor and product.vendor.key_vendor:
+                return product.name
+        return None
 
 
 class Application(ModelHelpers, models.Model):

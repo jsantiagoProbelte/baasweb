@@ -2,6 +2,24 @@ from django.db import models
 from datetime import datetime, timedelta
 import urllib.parse
 import requests
+from django.utils.translation import gettext_lazy as _
+
+
+class PType(models.TextChoices):
+    UNKNOWN = 'UNK', _('Unknown')
+    FERTILIZER = 'FRT', _('Fertilizer')
+    ESTIMULANT = 'EST', _('Estimulant')
+    INSECTICIDE = 'INS', _('Insecticide')
+    NEMATICIDE = 'NMC', _('Nematicide')
+    FUNGICIDE = 'FGC', _('Fungicide')
+    HERBICIDE = 'HRB', _('Herbicide')
+
+
+class Category(models.TextChoices):
+    NUTRITIONAL = 'NUT', _('Nutritional')
+    ESTIMULANT = 'EST', _('Estimulant')
+    CONTROL = 'CTL', _('Control')
+    UNKNOWN = 'UNK', _('Unknown')
 
 
 class ModelHelpers:
@@ -143,21 +161,22 @@ class Weather(ModelHelpers, models.Model):
 
     @classmethod
     def enrich(cls, firstDate, lastDate, latitude, longitude):
-        if cls.needEnrich(firstDate, lastDate, latitude, longitude):
-            one_day = timedelta(days=1)
-            thisDay = firstDate
-            while thisDay != lastDate:
-                isWeather = cls.objects.filter(
-                    date=thisDay, longitude=longitude,
-                    latitude=latitude).exists()
-                if not isWeather:
-                    weather = Weather(
-                        date=thisDay,
-                        longitude=longitude,
-                        latitude=latitude)
-                    weather.fetchWeather()
-                    weather.save()
-                thisDay += one_day
+        if firstDate and lastDate and latitude and longitude:
+            if cls.needEnrich(firstDate, lastDate, latitude, longitude):
+                one_day = timedelta(days=1)
+                thisDay = firstDate
+                while thisDay != lastDate:
+                    isWeather = cls.objects.filter(
+                        date=thisDay, longitude=longitude,
+                        latitude=latitude).exists()
+                    if not isWeather:
+                        weather = Weather(
+                            date=thisDay,
+                            longitude=longitude,
+                            latitude=latitude)
+                        weather.fetchWeather()
+                        weather.save()
+                    thisDay += one_day
 
     def fetchWeather(self):
         url = ('https://archive-api.open-meteo.com/v1/archive?daily=' +

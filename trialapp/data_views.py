@@ -9,7 +9,8 @@ from django.views.generic import DetailView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from catalogue.models import UNTREATED
-from baaswebapp.graphs import GraphTrial, EfficacyGraph
+from baaswebapp.graphs import GraphTrial, EfficacyGraph, \
+    COLOR_bio_morado, COLOR_UNTREATED
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
 
@@ -428,12 +429,6 @@ class DataGraphFactory():
     _references = {}
     _colors = {}
 
-    BAR = 'bar'
-    LINE = 'line'
-    SCATTER = 'scatter'
-    VIOLIN = 'violin'
-    COLUMN = 'column'
-
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
                  showTitle=True, references=None):
@@ -449,6 +444,14 @@ class DataGraphFactory():
                                      showTitle=showTitle)
         else:
             self._graph = GraphTrial.NO_DATA_AVAILABLE
+
+    def addLineColorsToTraces(self, keyThesisNumber, untreatedNumber):
+        colorsDict = {keyThesisNumber: COLOR_bio_morado,
+                      untreatedNumber: COLOR_UNTREATED}
+        self._graph.addColorLinesToTraces(colorsDict)
+
+    def addTrace(self, line, name):
+        self._graph.addTrace(line, name)
 
     def getTitle(self):
         return self._graph._title
@@ -526,12 +529,14 @@ class DataGraphFactory():
                 self._colors[traceId] = number + 1
 
     def prepareTrace(self, pointRef):
-        return {
+        trace = {
             'name': self.getTraceName(pointRef),
-            'marker_color': self.getTraceColor(pointRef),
-            'marker_symbol': self.getTraceSymbol(pointRef),
+            'trace_color': self.getTraceColor(pointRef),
             'x': [],
             'y': []}
+        if self._level == GraphTrial.L_SAMPLE:
+            trace['marker_symbol'] = self.getTraceSymbol(pointRef)
+        return trace
 
     def getX(self, dataPoint, xAxis, pointRef):
         if xAxis == GraphTrial.L_THESIS:
@@ -545,18 +550,14 @@ class DataGraphFactory():
         if xAxis == GraphTrial.L_DOSIS:
             return dataPoint.dosis.rate
 
-    DRAW_TYPE = {LINE: GraphTrial.line,
-                 BAR: GraphTrial.bar,
-                 SCATTER: GraphTrial.scatter,
-                 VIOLIN: GraphTrial.violin,
-                 COLUMN: GraphTrial.column}
-    DRAW_LEVEL = {GraphTrial.L_DOSIS: GraphTrial.line,
-                  GraphTrial.L_THESIS: GraphTrial.bar}
-
     def draw(self, type_graph=None):
         if type_graph:
-            method = DataGraphFactory.DRAW_TYPE.get(type_graph)
+            method = GraphTrial.DRAW_TYPE.get(type_graph)
         else:
-            method = DataGraphFactory.DRAW_TYPE.get(type_graph,
-                                                    GraphTrial.violin)
+            method = GraphTrial.DRAW_TYPE.get(type_graph,
+                                              GraphTrial.violin)
         return method(self._graph)
+
+    def drawConclusionGraph(self, num_assmts):
+        typeFigure = GraphTrial.LINE if num_assmts > 1 else GraphTrial.BAR
+        return self._graph.drawConclussionGraph(typeFigure=typeFigure)

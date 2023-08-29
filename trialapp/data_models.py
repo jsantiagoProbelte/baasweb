@@ -1,13 +1,16 @@
 from django.db import models
 from django.db.models import Avg
 from baaswebapp.models import ModelHelpers, RateTypeUnit
-from trialapp.models import FieldTrial, Thesis, Sample, Replica
+from trialapp.models import FieldTrial, Thesis, Sample, Replica, PartRated
 
 
 class Assessment(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     assessment_date = models.DateField()
-    part_rated = models.CharField(max_length=100, null=True)
+    part_rated = models.CharField(
+        max_length=10,
+        choices=PartRated.choices,
+        default=PartRated.UNDF)
     field_trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
     crop_stage_majority = models.CharField(max_length=25)
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
@@ -54,23 +57,19 @@ class Assessment(ModelHelpers, models.Model):
 
     @classmethod
     def getRateSets(cls, assessments):
-        rateUnits = {}
-        countRates = {}
+        rateTypeUnits = {}
         for assessment in assessments:
-            if assessment.rate_type.id not in rateUnits:
-                rateUnits[assessment.rate_type.id] = assessment.rate_type
-                countRates[assessment.rate_type] = 0
-            countRates[assessment.rate_type] += 1
-        return countRates
+            if assessment.rate_type.id not in rateTypeUnits:
+                rateTypeUnits[assessment.rate_type.id] = assessment.rate_type
+        return list(rateTypeUnits.values())
 
     @classmethod
     def getRatedParts(cls, assessments):
         ratedParts = {}
         for assessment in assessments:
             if assessment.part_rated not in ratedParts:
-                ratedParts[assessment.part_rated] = 0
-            ratedParts[assessment.part_rated] += 1
-        return ratedParts
+                ratedParts[assessment.part_rated] = assessment.part_rated
+        return list(ratedParts.keys())
 
     def getPartRated(self):
         if self.part_rated == 'Undefined' or self.part_rated == 'None':
@@ -261,6 +260,21 @@ class ReplicaData(DataModel, models.Model):
                 value=Avg('value')
             ).filter(
                 assessment_id__in=assIds
+            ).order_by(
+                'reference__thesis__number', 'assessment__assessment_date')
+
+    @classmethod
+    def dataPointsKeyAssessAvg(cls, keyRateTypeUnit, keyPartRated,
+                               keyThesis, untreatedThesis):
+        return cls.objects.values(
+                'reference__thesis__id', 'assessment__id',
+                'reference__thesis__number'
+            ).annotate(
+                value=Avg('value')
+            ).filter(
+                reference__thesis__id__in=[untreatedThesis, keyThesis],
+                assessment__part_rated=keyPartRated,
+                assessment__rate_type=keyRateTypeUnit
             ).order_by(
                 'reference__thesis__number', 'assessment__assessment_date')
 

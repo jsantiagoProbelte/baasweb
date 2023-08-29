@@ -52,12 +52,9 @@
     <div class="row ms-4 product-variant-tabs">
       <ul class="nav flex-column">
         <p class="title txt-uppercase">{% trans "product variants"%}</p>
-        <li class="nav-item">
-          <button class="nav-link product-variant-link active">{{product.name}}</button>
-        </li>
         {% for variant in variants %}
         <li class="nav-item">
-          <button class="nav-link product-variant-link">{{variant.name}}</button>
+          <a class="nav-link product-variant-link" href="{% url 'product_variant-api' variant.id %}">{{variant.name}}</a>
         </li>
         {% endfor %}
       </ul>

@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% for item in dataContent %}
+    <div class="card card-body-baas graph-container {{item.backgroundClass}} mt-3">
+        <p class="card-title txt-encode-14 capitalize-first">
+            <span><button class="btn btn-outline-light btn-sm dropdown-toggle ms-3" type="button" data-toggle="collapse" data-target="#card-{{item.id}}" aria-expanded="false" aria-controls="card-{{item.id}}"></button>
+        </span>{{item.title}}</p>
+        <div class="{{item.collapse}}" id="card-{{item.id}}">
+            {{item.content|safe}}
+        </div>
+    </div>
+{% empty %}
+    <p>{% trans "No data to display"%}</p>
+{% endfor %}

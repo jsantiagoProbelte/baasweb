@@ -14,7 +14,7 @@ from crispy_forms.bootstrap import FormActions
 from trialapp.models import FieldTrial, Thesis, Objective, \
     Product, TrialStatus, TrialType, Crop, Plague, Application
 from trialapp.data_models import Assessment
-from trialapp.trial_helper import LayoutTrial, TrialHelper, TrialModel, \
+from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 
 
@@ -319,7 +319,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
-            TrialHelper().createTrialFolder(fieldTrial.code)
+            TrialFile().createTrialFolder(fieldTrial.code)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
 
 
