@@ -22,6 +22,7 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from trialapp.data_views import DataGraphFactory
+from django.urls import reverse
 from django.core.paginator import Paginator
 
 
@@ -49,13 +50,16 @@ class TrialProductFilter(django_filters.FilterSet):
         queryset=TrialStatus.objects.all().order_by('name'),
         empty_label=_("Status"))
     trial_type = django_filters.ModelChoiceFilter(
-        queryset=TrialType.objects.all().order_by('name'), empty_label=_("Type"))
+        queryset=TrialType.objects.all().order_by('name'),
+        empty_label=_("Type"))
     objective = django_filters.ModelChoiceFilter(
-        queryset=Objective.objects.all().order_by('name'), empty_label=_("Objective"))
+        queryset=Objective.objects.all().order_by('name'),
+        empty_label=_("Objective"))
     crop = django_filters.ModelChoiceFilter(
         queryset=Crop.objects.all().order_by('name'), empty_label=_("Crop"))
     plague = django_filters.ModelChoiceFilter(
-        queryset=Plague.objects.all().order_by('name'), empty_label=_("Plague"))
+        queryset=Plague.objects.all().order_by('name'),
+        empty_label=_("Plague"))
 
     class Meta:
         model = FieldTrial
@@ -87,17 +91,21 @@ class TrialProductFilterHelper:
         new_list = []
         trialsFiltered = []
         if not self._trialsByProduct:
-            self._trialsByProduct = FieldTrial.objects.filter(product_id=self._productId)
+            self._trialsByProduct = FieldTrial.objects.filter(
+                product_id=self._productId)
 
         trialsFiltered = self._trialsByProduct
         if attributes.get('crop'):
             trialsFiltered = trialsFiltered.filter(crop=attributes.get('crop'))
         if attributes.get('plague'):
-            trialsFiltered = trialsFiltered.filter(plague=attributes.get('plague'))
+            trialsFiltered = trialsFiltered.filter(
+                plague=attributes.get('plague'))
         if attributes.get('trial_status'):
-            trialsFiltered = trialsFiltered.filter(trial_status=attributes.get('trial_status'))
+            trialsFiltered = trialsFiltered.filter(
+                trial_status=attributes.get('trial_status'))
         if attributes.get('name'):
-            trialsFiltered = trialsFiltered.filter(name__icontains=attributes.get('name'))
+            trialsFiltered = trialsFiltered.filter(
+                name__icontains=attributes.get('name'))
 
         trialsFiltered = trialsFiltered.annotate(
             assessments=Count('assessment')).order_by('-code', 'name')
@@ -310,7 +318,7 @@ class ProductApi(LoginRequiredMixin, View):
                 batchItem = {'name': batch.name,
                              'id': batch.id, 'treatments': []}
                 for treatment in Treatment.objects.filter(
-                                 batch=batch).order_by('name', 'rate'):
+                        batch=batch).order_by('name', 'rate'):
                     batchItem['treatments'].append(
                         {'name': treatment.getName(), 'id': treatment.id})
                 variantItem['batches'].append(batchItem)
@@ -394,10 +402,10 @@ class ProductApi(LoginRequiredMixin, View):
         return cropsTable.values()
 
     def get(self, request, *args, **kwargs):
-        itemsPerPage = 5
-        activeTab = request.GET.get('activeTab') if request.GET.get('activeTab') else "1"
-        page = request.GET.get('page') if request.GET.get('page') else 1
-
+        if request.GET.get('activeTab'):
+            activeTab = request.GET.get('activeTab')
+        else:
+            activeTab = "1"
         product_id = None
         product_id = kwargs['pk']
         template_name = 'catalogue/product_show.html'
@@ -408,7 +416,8 @@ class ProductApi(LoginRequiredMixin, View):
         tpFilter = TrialProductFilterHelper(request.GET, product_id)
         filterTrials = tpFilter.getFieldTrialsByFilter(request.GET)
         paginator = Paginator(filterTrials, itemsPerPage)
-        print(f"TRACE | ProductView | get | paginator -> {paginator.num_pages}")
+        print(
+            f"TRACE | ProductView | get | paginator -> {paginator.num_pages}")
 
         currentPage = paginator.get_page(page)
 
@@ -525,17 +534,20 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
 class BatchDeleteView(DeleteView):
     model = Batch
     template_name = 'catalogue/batch_delete.html'
-    _product = None
+    _parent = None
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self._parent = self.object.product_variant
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._product is None:
-            return '/products/'
+        if self._parent:
+            return reverse('product_variant-api',
+                           kwargs={'pk': self._parent.id})
         else:
-            return self._product.get_absolute_url()
-
-    def form_valid(self, form):
-        self._product = self.object.product_variant.product
-        return super().form_valid(form)
+            return reverse('product-list')
 
 
 def prepareChildrenCatalogue(childKey, cls, filter, orderBy):
@@ -644,17 +656,20 @@ class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
 class ProductVariantDeleteView(DeleteView):
     model = ProductVariant
     template_name = 'catalogue/product_variant_delete.html'
-    _product = None
+    _parent = None
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self._parent = self.object.product
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._product is None:
-            return '/products/'
+        if self._parent:
+            return reverse('product-api',
+                           kwargs={'pk': self._parent.id})
         else:
-            return self._product.get_absolute_url()
-
-    def form_valid(self, form):
-        self._product = self.object.product
-        return super().form_valid(form)
+            return reverse('product-list')
 
 
 ##############################
@@ -770,14 +785,17 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
 class TreatmentDeleteView(DeleteView):
     model = Treatment
     template_name = 'catalogue/treatment_delete.html'
-    _product = None
+    _parent = None
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self._parent = self.object.batch
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._product is None:
-            return '/products/'
+        if self._parent:
+            return reverse('batch-api',
+                           kwargs={'pk': self._parent.id})
         else:
-            return self._product.get_absolute_url()
-
-    def form_valid(self, form):
-        self._product = self.object.batch.product_variant.product
-        return super().form_valid(form)
+            return reverse('product-list')
