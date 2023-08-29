@@ -102,4 +102,3 @@ class MapApiTestCase(TestCase):
         self.assertIn('coordinates', response_data)
         self.assertEqual(len(response_data['coordinates']), 2)
         self.assertEqual(response_data['coordinates'], [['-0.7914', '38.2796'], ['2.1098', '41.5432']])
-

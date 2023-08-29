@@ -22,7 +22,6 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from trialapp.data_views import DataGraphFactory
-from django.utils.translation import gettext_lazy as _
 
 
 class ProductFormLayout(FormHelper):
