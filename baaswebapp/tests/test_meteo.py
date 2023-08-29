@@ -4,7 +4,7 @@ from baaswebapp.meteo_api import MeteoApi
 from datetime import datetime
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.models import FieldTrial
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 
 
 class TestAssessment():
@@ -57,7 +57,7 @@ class MeteoApiTest(TestCase):
         self._apiFactory.setUser(request)
         meteo_api = MeteoApi()
         fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
         response = meteo_api.get(request,
                                  field_trial_id=fieldTrial.id)
 

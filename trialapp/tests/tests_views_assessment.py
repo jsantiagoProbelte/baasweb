@@ -3,7 +3,7 @@ from baaswebapp.models import RateTypeUnit, Weather
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import Assessment, ThesisData, ReplicaData
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.assessment_views import\
     AssessmentUpdateView, AssessmentCreateView, \
     AssessmentApi, AssessmentListView, AssessmentDeleteView, \
@@ -20,11 +20,11 @@ class AssessmentViewsTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
         self._fieldTrial.latitude = '1.0'
         self._fieldTrial.longitude = '1.0'
         self._fieldTrial.save()
-        for thesis in TrialAppModelTest.THESIS:
+        for thesis in TrialAppModelData.THESIS:
             Thesis.create_Thesis(**thesis)
         self._unit = RateTypeUnit.objects.get(id=1)
 
@@ -71,7 +71,7 @@ class AssessmentViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one assessment
-        assessmentData = TrialAppModelTest.ASSESSMENT[0]
+        assessmentData = TrialAppModelData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add',
                                         data=assessmentData)
         self._apiFactory.setUser(request)
@@ -109,7 +109,7 @@ class AssessmentViewsTest(TestCase):
 
     def test_AssessmentApi(self):
         # Creating thesis , but not with all attributres
-        itemData = TrialAppModelTest.ASSESSMENT[0]
+        itemData = TrialAppModelData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add', itemData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
@@ -155,7 +155,7 @@ class AssessmentViewsTest(TestCase):
         self.assertFalse(Assessment.objects.filter(pk=deletedId).exists())
 
     def test_AssessmentApiGetData(self):
-        assessmentData = TrialAppModelTest.ASSESSMENT[0]
+        assessmentData = TrialAppModelData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add',
                                         data=assessmentData)
         self._apiFactory.setUser(request)
@@ -203,7 +203,7 @@ class AssessmentViewsTest(TestCase):
         self.assertNotContains(response, 'No assessments yet.')
 
     def test_AssessmentApiPostData(self):
-        assessmentData = TrialAppModelTest.ASSESSMENT[0].copy()
+        assessmentData = TrialAppModelData.ASSESSMENT[0].copy()
         assessmentData['rate_type'] = RateTypeUnit.objects.get(
             id=assessmentData['rate_type'])
         ass = Assessment.objects.create(**assessmentData)

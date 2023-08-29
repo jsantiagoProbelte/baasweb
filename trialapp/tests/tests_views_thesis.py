@@ -4,7 +4,7 @@ from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit, UNTREATED
 from trialapp.models import FieldTrial, Thesis, Replica, \
                             ApplicationMode, TreatmentThesis
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.thesis_views import\
     ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView, \
     ThesisListView, TreatmentThesisSetView, TreatmentThesisDeleteView
@@ -20,7 +20,7 @@ class ThesisViewsTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
         self._untreated = Treatment.objects.get(name=UNTREATED)
 
     def test_editfieldtrial(self):
@@ -37,7 +37,7 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData = TrialAppModelData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
@@ -74,7 +74,7 @@ class ThesisViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_addTreatmentThesis(self):
-        thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData = TrialAppModelData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         thesisData['mode'] = '1'  # not mode_id , so it match the select form
         request = self._apiFactory.post('thesis-add', thesisData)
@@ -144,7 +144,7 @@ class ThesisViewsTest(TestCase):
 
     def test_thesis_api(self):
         # Creating thesis , but not with all attributres
-        thesisData = TrialAppModelTest.THESIS[0].copy()
+        thesisData = TrialAppModelData.THESIS[0].copy()
         thesisData['treatment'] = self._untreated.id
         request = self._apiFactory.post('thesis-add', thesisData)
         self._apiFactory.setUser(request)
@@ -185,7 +185,7 @@ class ThesisViewsTest(TestCase):
     def test_ThesisVolume(self):
         theThesis = None
         theThesisId = None
-        for thesis in TrialAppModelTest.THESIS:
+        for thesis in TrialAppModelData.THESIS:
             copiedData = thesis.copy()
             copiedData['mode'] = ApplicationMode.objects.get(pk=1)
             theThesis = Thesis.create_Thesis(**copiedData)
