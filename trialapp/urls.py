@@ -1,10 +1,13 @@
 from django.urls import path
 from . import assessment_views, fieldtrial_views, thesis_views, data_views, \
-    application_views, filter_helpers, trial_views
+    application_views, filter_helpers, trial_views, map_utils
 import baaswebapp.meteo_api as meteo_api
 
 urlpatterns = [
     # Field Trials urls
+    path('get_coordinates',
+         map_utils.MapApi.as_view(),
+         name="coordinates"),
     path(
         'trials',
         filter_helpers.TrialListView.as_view(),

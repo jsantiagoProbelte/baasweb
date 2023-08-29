@@ -338,6 +338,12 @@
   background: var(--custom-blue);
 }
 
+div.bg-custom-transparent{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 .bg-custom-0{
   background-color: var(--custom-bg-color) !important;
 }
@@ -465,7 +471,6 @@
   border-top-right-radius:10px !important;
   background: #8e8c84;
   /* border-bottom: 1px solid rgba(223, 215, 202, 0.75); */
-  
 }
 
 .card-body-baas {
@@ -618,6 +623,18 @@ input[type='checkbox'], input[type="radio"] {
   table-layout:auto;
 }
 
+.baas-data-table th, .baas-data-table td{
+  padding: 10px;
+}
+
+.baas-data-table td{
+  vertical-align: middle;
+}
+
+.baas-data-table tr:not(:last-child), .baas-data-table thead{
+  border-bottom: 1px solid var(--custom-grey);
+}
+
 table.data-table-longer tbody td {
   width: 20rem;
 }
@@ -627,6 +644,33 @@ table.data-table-longer thead th {
   background-color: var(--custom-bg-color-cards);
 }
 
+div.flex-inline-form{
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bs-text-color-white);
+}
+
+div.flex-inline-form:has(input:focus){
+  box-shadow: 0px 0px 4px 0px #aa4ae4;
+}
+
+div.flex-inline-form span{
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+div.flex-inline-form input{
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+}
+
+div.flex-inline-form input:focus{
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
 
 /* SCROLLTABLE */
 .form-control-baas {
@@ -894,7 +938,6 @@ table.data-table-longer thead th {
   margin-bottom: 0rem !important;
 }
 
-
 .txt-presicav-22 {
   font-size: 22px !important;
   font-family: 'Presicav';
@@ -909,6 +952,17 @@ table.data-table-longer thead th {
   color: var(--bs-text-color);
   text-decoration: none;
   padding: 0.25rem 1rem;
+}
+
+.table-link{
+  text-decoration: none;
+  color: var(--custom-baas);
+  font-weight: 600;
+}
+
+.table-link:hover{
+  text-decoration: none;
+  color: var(--custom-brand-color)
 }
 
 .sidebar-item:hover {
@@ -933,6 +987,12 @@ table.data-table-longer thead th {
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+}
+
+.custom-badge-light-violet{
+  background-color: var(--custom-baas-alt);
+  color: black;
+  font-weight: 400;
 }
 
 @keyframes spin {

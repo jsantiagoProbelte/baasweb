@@ -38,15 +38,15 @@
         {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn2'%}
     </div>
   </div>
-  
+
   <div class="col-md-4">
-    
+
     <div class="card no-border mb-3" >
       <div class="card-header-baas h4">
         <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">
           Thesis<span class='badge bg-light ms-2'>{{numberThesis}}</span></a>
       </div>
-      
+
       <div class="card-body-baas">
         {% include 'trialapp/thesis_list_table.html' with show_description=False %}
       </div>

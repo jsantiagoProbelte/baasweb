@@ -1,8 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+import django_filters
 from baaswebapp.models import RateTypeUnit
+from django.db.models import Count
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, Plague, TreatmentThesis
+from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
+    FieldTrial, TrialStatus, TrialType
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
@@ -10,6 +14,7 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
@@ -17,7 +22,6 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from trialapp.data_views import DataGraphFactory
-from django.utils.translation import gettext_lazy as _
 
 
 class ProductFormLayout(FormHelper):
@@ -36,6 +40,86 @@ class ProductFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")))
+
+
+class TrialProductFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    trial_status = django_filters.ModelChoiceFilter(
+        queryset=TrialStatus.objects.all().order_by('name'),
+        empty_label=_("Status"))
+    trial_type = django_filters.ModelChoiceFilter(
+        queryset=TrialType.objects.all().order_by('name'), empty_label=_("Type"))
+    objective = django_filters.ModelChoiceFilter(
+        queryset=Objective.objects.all().order_by('name'), empty_label=_("Objective"))
+    crop = django_filters.ModelChoiceFilter(
+        queryset=Crop.objects.all().order_by('name'), empty_label=_("Crop"))
+    plague = django_filters.ModelChoiceFilter(
+        queryset=Plague.objects.all().order_by('name'), empty_label=_("Plague"))
+
+    class Meta:
+        model = FieldTrial
+        fields = ['trial_status', 'trial_type', 'objective',
+                  'crop', 'plague']
+
+
+class TrialProductFilterHelper:
+    _attributes = None
+    _trialsByProduct = None
+    _currentFilter = None
+    _productId = None
+
+    def __init__(self, attributes, productId):
+        self.putInitVariables(productId=productId)
+        self.readAttributes(attributes)
+
+    def putInitVariables(self, **kwargs):
+        self._productId = kwargs["productId"]
+        self._attributes = {}
+
+    def readAttributes(self, attributes):
+        for key in attributes:
+            value = attributes.get(key, None)
+            if value:
+                self._attributes[key] = value
+
+    def getFieldTrialsByFilter(self, attributes):
+        new_list = []
+        trialsFiltered = []
+        if not self._trialsByProduct:
+            self._trialsByProduct = FieldTrial.objects.filter(product_id=self._productId)
+
+        trialsFiltered = self._trialsByProduct
+        if attributes.get('crop'):
+            trialsFiltered = trialsFiltered.filter(crop=attributes.get('crop'))
+        if attributes.get('plague'):
+            trialsFiltered = trialsFiltered.filter(plague=attributes.get('plague'))
+        if attributes.get('trial_status'):
+            trialsFiltered = trialsFiltered.filter(trial_status=attributes.get('trial_status'))
+        if attributes.get('name'):
+            trialsFiltered = trialsFiltered.filter(name__icontains=attributes.get('name'))
+
+        trialsFiltered = trialsFiltered.annotate(
+            assessments=Count('assessment')).order_by('-code', 'name')
+        thesisCounts = trialsFiltered.annotate(
+            thesiss=Count('thesis'))
+        thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
+
+        for item in trialsFiltered:
+            new_list.append({
+                'code': item.code,
+                'name': item.name,
+                'crop': item.crop.name,
+                'product': item.product.name,
+                'trial_status': item.trial_status if item.trial_status else '',
+                'objective': item.objective.name,
+                'plague': item.plague.name if item.plague else '',
+                'latitude': item.latitude,
+                'longitude': item.longitude,
+                'id': item.id,
+                'assessments': item.assessments,
+                'initiation_date': item.initiation_date,
+                'thesis': thesisCountDict.get(item.id, 0)})
+        return new_list
 
 
 class ProductForm(forms.ModelForm):
@@ -89,10 +173,7 @@ class ProductDeleteView(DeleteView):
     template_name = 'catalogue/product_delete.html'
 
 
-class ProductApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
+class ProductApi(LoginRequiredMixin, View):
     TAG_DIMENSIONS = 'dimensions'
     TAG_CROPS = 'crops'
     TAG_PLAGUES = 'plagues'
@@ -312,14 +393,18 @@ class ProductApi(APIView):
         return cropsTable.values()
 
     def get(self, request, *args, **kwargs):
+        activeTab = request.GET.get('activeTab') if request.GET.get('activeTab') else "1"
+
         product_id = None
-        product_id = kwargs['product_id']
+        product_id = kwargs['pk']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
         filterData, titleGraph = self.filterData(request.GET, product)
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
+        tpFilter = TrialProductFilterHelper(request.GET, product_id)
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
+        filterTrial = TrialProductFilter(request.GET)
 
         return render(
             request, template_name, {
@@ -334,7 +419,10 @@ class ProductApi(APIView):
                 'classGraphCol': classGraphCol,
                 'titleView': product.getName(),
                 'crops': self.get_crop_table_data(product_id),
-                'category': product.getCategory(product.type_product).label})
+                'category': product.getCategory(product.type_product).label,
+                'trials': tpFilter.getFieldTrialsByFilter(request.GET),
+                'filter': filterTrial,
+                'activeTab': activeTab})
 
 
 ##############################

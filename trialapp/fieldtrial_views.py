@@ -21,17 +21,23 @@ from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
 class FieldTrialFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
     trial_status = django_filters.ModelChoiceFilter(
-        queryset=TrialStatus.objects.all().order_by('name'))
+        queryset=TrialStatus.objects.all().order_by('name'),
+        empty_label="Status")
     trial_type = django_filters.ModelChoiceFilter(
-        queryset=TrialType.objects.all().order_by('name'))
+        queryset=TrialType.objects.all().order_by('name'),
+        empty_label="Type")
     objective = django_filters.ModelChoiceFilter(
-        queryset=Objective.objects.all().order_by('name'))
+        queryset=Objective.objects.all().order_by('name'),
+        empty_label="Objective")
     crop = django_filters.ModelChoiceFilter(
-        queryset=Crop.objects.all().order_by('name'))
+        queryset=Crop.objects.all().order_by('name'),
+        empty_label="Crop")
     product = django_filters.ModelChoiceFilter(
-        queryset=Product.objects.all().order_by('name'))
+        queryset=Product.objects.all().order_by('name'),
+        empty_label="Product")
     plague = django_filters.ModelChoiceFilter(
-        queryset=Plague.objects.all().order_by('name'))
+        queryset=Plague.objects.all().order_by('name'),
+        empty_label="Plague")
 
     class Meta:
         model = FieldTrial
@@ -76,6 +82,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 'longitude': item.longitude,
                 'id': item.id,
                 'assessments': item.assessments,
+                'initiation_date': item.initiation_date,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 
