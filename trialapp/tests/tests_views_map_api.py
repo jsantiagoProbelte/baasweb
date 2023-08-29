@@ -6,13 +6,13 @@ from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.data_models import Assessment
 from trialapp.models import FieldTrial, Thesis
 from trialapp.map_utils import MapApi
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_models import TrialTestData
 
 
 class MapApiTestCase(TestCase):
     _apiFactory = None
 
-    FIELDTRIALS = [{
+    TRIALS = [{
         'name': 'fieldTrial 666',
         'trial_type': 1,
         'trial_status': 1,
@@ -71,14 +71,14 @@ class MapApiTestCase(TestCase):
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        for fieldTrialInfo in MapApiTestCase.FIELDTRIALS:
+        for fieldTrialInfo in MapApiTestCase.TRIALS:
             self._fieldTrials.append(
-                FieldTrial.create_fieldTrial(**fieldTrialInfo))
+                FieldTrial.createTrial(**fieldTrialInfo))
 
         # for fieldTrial in self._fieldTrials:
-        for thesis in TrialAppModelTest.THESIS:
+        for thesis in TrialTestData.THESIS:
             # thesis['field_trial_id'] = fieldTrial.id
-            self._theses.append(Thesis.create_Thesis(**thesis))
+            self._theses.append(Thesis.createThesis(**thesis))
 
         rateTypes = RateTypeUnit.objects.all()
         self._units = [rateTypes[i] for i in range(1, 4)]
@@ -92,7 +92,9 @@ class MapApiTestCase(TestCase):
 
     def test_map_api_post(self):
         data = [1, 2]
-        request = self._apiFactory.post('coordinates', data=json.dumps(data), content_type='application/json')
+        request = self._apiFactory.post(
+            'coordinates', data=json.dumps(data),
+            content_type='application/json')
         self._apiFactory.setUser(request)
         response = MapApi.as_view()(request)
 
@@ -101,4 +103,6 @@ class MapApiTestCase(TestCase):
         response_data = json.loads(response.content)
         self.assertIn('coordinates', response_data)
         self.assertEqual(len(response_data['coordinates']), 2)
-        self.assertEqual(response_data['coordinates'], [['-0.7914', '38.2796'], ['2.1098', '41.5432']])
+        self.assertEqual(
+            response_data['coordinates'],
+            [['-0.7914', '38.2796'], ['2.1098', '41.5432']])

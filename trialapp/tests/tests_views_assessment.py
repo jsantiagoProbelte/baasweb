@@ -1,15 +1,14 @@
 from django.test import TestCase
-from baaswebapp.models import RateTypeUnit, Weather
+from baaswebapp.models import RateTypeUnit
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import Assessment, ThesisData, ReplicaData
-from trialapp.tests.tests_helpers import TrialAppModelData
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.assessment_views import\
     AssessmentUpdateView, AssessmentCreateView, \
     AssessmentApi, AssessmentListView, AssessmentDeleteView, \
     AssessmentView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.trial_views import trialContentApi, TrialContent
 
 
 class AssessmentViewsTest(TestCase):
@@ -19,64 +18,40 @@ class AssessmentViewsTest(TestCase):
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
-        self._fieldTrial.latitude = '1.0'
-        self._fieldTrial.longitude = '1.0'
-        self._fieldTrial.save()
-        for thesis in TrialAppModelData.THESIS:
-            Thesis.create_Thesis(**thesis)
+        self._trial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
+        self._trial.latitude = '1.0'
+        self._trial.longitude = '1.0'
+        self._trial.save()
+        for thesis in TrialTestData.THESIS:
+            Thesis.createThesis(**thesis)
         self._unit = RateTypeUnit.objects.get(id=1)
-
-    def addWeatherData(self, ass):
-        Weather.objects.create(
-            date=ass.assessment_date,
-            recent=False,
-            latitude=float(ass.field_trial.latitude),
-            longitude=float(ass.field_trial.longitude),
-            max_temp=30.0,
-            min_temp=15.0,
-            mean_temp=20.0,
-            soil_temp_0_to_7cm=10.0,
-            soil_temp_7_to_28cm=10.0,
-            soil_temp_28_to_100cm=10.0,
-            soil_temp_100_to_255cm=10.0,
-            soil_moist_0_to_7cm=10.0,
-            soil_moist_7_to_28cm=10.0,
-            soil_moist_28_to_100cm=10.0,
-            soil_moist_100_to_255cm=10.0,
-            dew_point=10.0,
-            relative_humidity=10.0,
-            precipitation=10.0,
-            precipitation_hours=10.0,
-            max_wind_speed=10.0)
 
     def test_assessment_emply_list(self):
         request = self._apiFactory.get('assessment-list')
         self._apiFactory.setUser(request)
         response = AssessmentListView.as_view()(
-            request, **{'field_trial_id': self._fieldTrial.id})
+            request, **{'field_trial_id': self._trial.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'assessments')
-        self.assertContains(response, self._fieldTrial.name)
+        self.assertContains(response, self._trial.name)
         self.assertContains(response, 'No assessments yet.')
 
     def test_createAssessment(self):
         request = self._apiFactory.get('assessment-add')
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
-            request,  field_trial_id=self._fieldTrial.id)
+            request,  field_trial_id=self._trial.id)
         self.assertContains(response, 'New')
         self.assertNotContains(response, 'Edit')
         self.assertEqual(response.status_code, 200)
 
         # Create one assessment
-        assessmentData = TrialAppModelData.ASSESSMENT[0]
+        assessmentData = TrialTestData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add',
                                         data=assessmentData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         assessment = Assessment.objects.get(name=assessmentData['name'])
         self.assertEqual(assessment.name, assessmentData['name'])
         self.assertEqual(response.status_code, 302)
@@ -109,11 +84,11 @@ class AssessmentViewsTest(TestCase):
 
     def test_AssessmentApi(self):
         # Creating thesis , but not with all attributres
-        itemData = TrialAppModelData.ASSESSMENT[0]
+        itemData = TrialTestData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add', itemData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item = Assessment.objects.get(name=itemData['name'])
 
@@ -125,25 +100,15 @@ class AssessmentViewsTest(TestCase):
         self.assertContains(response, item.name)
 
         # add weather
-        self.addWeatherData(item)
+        TrialTestData.addWeatherData(item)
 
         # Let's call thesis list
         getRequest = self._apiFactory.get('assessment-list')
         self._apiFactory.setUser(getRequest)
         response = AssessmentListView.as_view()(
-            getRequest, **{'field_trial_id': self._fieldTrial.id})
+            getRequest, **{'field_trial_id': self._trial.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, item.name)
-
-        # Try with the trialContentApi
-        for content in list(TrialContent.FETCH_FUNCTIONS.keys()):
-            data = {'id': self._fieldTrial.id,
-                    'content_type': content}
-            getRequest = self._apiFactory.get('trial_content',
-                                              data=data)
-            self._apiFactory.setUser(getRequest)
-            response = trialContentApi(getRequest)
-            self.assertEqual(response.status_code, 200)
 
         # Delete
         deleteRequest = self._apiFactory.delete('assessment-delete')
@@ -155,12 +120,12 @@ class AssessmentViewsTest(TestCase):
         self.assertFalse(Assessment.objects.filter(pk=deletedId).exists())
 
     def test_AssessmentApiGetData(self):
-        assessmentData = TrialAppModelData.ASSESSMENT[0]
+        assessmentData = TrialTestData.ASSESSMENT[0]
         request = self._apiFactory.post('assessment-add',
                                         data=assessmentData)
         self._apiFactory.setUser(request)
         response = AssessmentCreateView.as_view()(
-            request, field_trial_id=self._fieldTrial.id)
+            request, field_trial_id=self._trial.id)
         self.assertEqual(response.status_code, 302)
         item = Assessment.objects.get(name=assessmentData['name'])
         self.assertEqual(item.getName(), '66-BBCH')
@@ -173,7 +138,7 @@ class AssessmentViewsTest(TestCase):
         # No data, it enables samples views
 
         # Lets add data on thesis
-        for thesis in Thesis.getObjects(self._fieldTrial):
+        for thesis in Thesis.getObjects(self._trial):
             ThesisData.objects.create(
                 value=66, reference=thesis, assessment=item)
 
@@ -199,11 +164,11 @@ class AssessmentViewsTest(TestCase):
         request = self._apiFactory.get('assessment-list')
         self._apiFactory.setUser(request)
         response = AssessmentListView.as_view()(
-            request, **{'field_trial_id': self._fieldTrial.id})
+            request, **{'field_trial_id': self._trial.id})
         self.assertNotContains(response, 'No assessments yet.')
 
     def test_AssessmentApiPostData(self):
-        assessmentData = TrialAppModelData.ASSESSMENT[0].copy()
+        assessmentData = TrialTestData.ASSESSMENT[0].copy()
         assessmentData['rate_type'] = RateTypeUnit.objects.get(
             id=assessmentData['rate_type'])
         ass = Assessment.objects.create(**assessmentData)

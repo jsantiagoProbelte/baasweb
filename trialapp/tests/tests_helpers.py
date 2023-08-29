@@ -1,5 +1,6 @@
 from django.test import Client
 from django.contrib import auth
+from baaswebapp.models import Weather
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import ReplicaData, Assessment, ThesisData
@@ -7,9 +8,9 @@ from rest_framework.test import APIRequestFactory
 
 
 # Create your tests here.
-class TrialAppModelData:
+class TrialTestData:
 
-    FIELDTRIALS = [{
+    TRIALS = [{
             'name': 'fieldTrial 666',
             'trial_type': 1,
             'trial_status': 1,
@@ -24,6 +25,8 @@ class TrialAppModelData:
             'replicas_per_thesis': 4,
             'report_filename': '',
             'blocks': 3,
+            'latitude': 38.2796,
+            'longitude': -0.7914,
             'type': 1,
             'status': 1}
     ]
@@ -90,6 +93,30 @@ class TrialAppModelData:
         'bbch': 67
     }]
 
+    @staticmethod
+    def addWeatherData(ass):
+        Weather.objects.create(
+            date=ass.assessment_date,
+            recent=False,
+            latitude=float(ass.field_trial.latitude),
+            longitude=float(ass.field_trial.longitude),
+            max_temp=30.0,
+            min_temp=15.0,
+            mean_temp=20.0,
+            soil_temp_0_to_7cm=10.0,
+            soil_temp_7_to_28cm=10.0,
+            soil_temp_28_to_100cm=10.0,
+            soil_temp_100_to_255cm=10.0,
+            soil_moist_0_to_7cm=10.0,
+            soil_moist_7_to_28cm=10.0,
+            soil_moist_28_to_100cm=10.0,
+            soil_moist_100_to_255cm=10.0,
+            dew_point=10.0,
+            relative_humidity=10.0,
+            precipitation=10.0,
+            precipitation_hours=10.0,
+            max_wind_speed=10.0)
+
 
 class DataGenerator:
     _fieldTrials = {}
@@ -129,9 +156,9 @@ class DataGenerator:
         for i in range(num_assessments):
             theses = {}
             replicas = {}
-            trialData = TrialAppModelData.FIELDTRIALS[0].copy()
+            trialData = TrialTestData.TRIALS[0].copy()
             trialData['name'] = f"trial{i}"
-            trial = FieldTrial.create_fieldTrial(**trialData)
+            trial = FieldTrial.createTrial(**trialData)
             self._fieldTrials[i] = trial
 
             if sampleGen:

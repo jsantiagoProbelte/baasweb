@@ -237,7 +237,7 @@ class FieldTrial(ModelHelpers, models.Model):
         return period
 
     @classmethod
-    def create_fieldTrial(cls, **kwargs):
+    def createTrial(cls, **kwargs):
         trial = cls.objects.create(
             name=kwargs['name'],
             trial_type=TrialType.objects.get(pk=kwargs['trial_type']),
@@ -307,7 +307,7 @@ class Thesis(ModelHelpers, models.Model):
             return objects
 
     @classmethod
-    def create_Thesis(cls, **kwargs):
+    def createThesis(cls, **kwargs):
         fieldTrial = FieldTrial.objects.get(pk=kwargs['field_trial_id'])
 
         thesis = cls.objects.create(
@@ -317,8 +317,7 @@ class Thesis(ModelHelpers, models.Model):
             description=kwargs['description'],
             number_applications=kwargs['number_applications'],
             interval=kwargs['interval'],
-            first_application=kwargs['first_application']
-        )
+            first_application=kwargs['first_application'])
         if 'mode' in kwargs:
             thesis.mode = kwargs['mode']
             thesis.save()

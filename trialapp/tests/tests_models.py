@@ -5,6 +5,8 @@ from trialapp.models import FieldTrial, Crop, Plague, \
                             Thesis, Sample, Replica, TrialType
 from trialapp.data_models import ThesisData, SampleData, Assessment
 import datetime
+from trialapp.tests.tests_helpers import TrialTestData
+
 
 class TrialAppModelTest(TestCase):
     def setUp(self):
@@ -62,15 +64,14 @@ class TrialAppModelTest(TestCase):
         self.assertTrue(theArray[0]['name'] in cropValues)
 
     def test_fixtures(self):
-        fieldTrial666 = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
-        self.assertEqual(fieldTrial666.name,
-                         TrialAppModelData.FIELDTRIALS[0]['name'])
+        trial666 = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
+        self.assertEqual(trial666.name,
+                         TrialTestData.TRIALS[0]['name'])
 
-        thesis666 = Thesis.create_Thesis(
-            **TrialAppModelData.THESIS[0])
+        thesis666 = Thesis.createThesis(
+            **TrialTestData.THESIS[0])
         self.assertEqual(thesis666.name,
-                         TrialAppModelData.THESIS[0]['name'])
+                         TrialTestData.THESIS[0]['name'])
 
     def test_names(self):
         for model in TrialDbInitialLoader.initialTrialModelValues():
@@ -79,9 +80,8 @@ class TrialAppModelTest(TestCase):
                              instance.__str__())
 
     def test_dataPoints(self):
-        fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
-        thesis = Thesis.create_Thesis(**TrialAppModelData.THESIS[0])
+        fieldTrial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
+        thesis = Thesis.createThesis(**TrialTestData.THESIS[0])
         assessment = Assessment.objects.create(
             name='eval1',
             assessment_date='2022-12-15',
@@ -140,8 +140,7 @@ class TrialAppModelTest(TestCase):
         self.assertEqual(len(sampleData), 1)
 
     def test_fieldTrial_planDensity(self):
-        fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
+        fieldTrial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
         dBp = 2.2
         dBr = 0.5
         self.assertEqual(fieldTrial.plantDensity(), None)
@@ -163,8 +162,8 @@ class TrialAppModelTest(TestCase):
         code = FieldTrial.getCode(hoy, False)
         expectedCode = FieldTrial.formatCode(year, month, counts)
         self.assertEqual(code, expectedCode)
-        fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
+        fieldTrial = FieldTrial.createTrial(
+            **TrialTestData.TRIALS[0])
         counts = FieldTrial.objects.count()
         self.assertEqual(counts, 1)
         expectedCode = FieldTrial.formatCode(year, month, counts)
@@ -173,16 +172,15 @@ class TrialAppModelTest(TestCase):
         fieldTrial.save()
 
     def test_thesis_extras(self):
-        fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelData.FIELDTRIALS[0])
+        fieldTrial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
         code = Thesis.computeNumber(fieldTrial, True)
         counts = Thesis.objects.count()
         self.assertEqual(counts, 0)
         self.assertEqual(code, counts + 1)
         code = Thesis.computeNumber(fieldTrial, False)
         self.assertEqual(code, 0)
-        thesis = Thesis.create_Thesis(
-            **TrialAppModelData.THESIS[0])
+        thesis = Thesis.createThesis(
+            **TrialTestData.THESIS[0])
         counts = Thesis.objects.count()
         self.assertEqual(counts, 1)
         self.assertEqual(thesis.number, counts)
