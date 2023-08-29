@@ -217,7 +217,9 @@ class FieldTrial(ModelHelpers, models.Model):
             contact=kwargs['contact'],
             location=kwargs['location'],
             replicas_per_thesis=kwargs['replicas_per_thesis'],
-            blocks=kwargs['blocks'])
+            blocks=kwargs['blocks'],
+            latitude=kwargs['latitude'] if 'latitude' in kwargs else None,
+            longitude=kwargs['longitude'] if 'longitude' in kwargs else None)
         if 'code' in kwargs:
             trial.code = kwargs['code']
             trial.save()

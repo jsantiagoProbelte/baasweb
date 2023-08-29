@@ -1,14 +1,19 @@
 var clickMarker;
-const latitudeInput = document.getElementById("latinput")
-const longitudeInput = document.getElementById("longinput")
+//Positioning the marker on Murcia, Spain.
+const latitudeInput = 37.9922
+const longitudeInput = -1.1307
 mapboxgl.accessToken = 'pk.eyJ1IjoianNhbnRpYWdvLXByb2JlbHRlIiwiYSI6ImNsZThrajZuMTBnOHgzb25ic3NjcjE2dWEifQ.m26LzPlEAYHiIyIKtXV6QQ';
 
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-streets-v11',
     center: [longitude, latitude],
-    zoom: 12
+    zoom: 4
 });
+
+const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+
 
 map.on('load', () => {
     map.addSource('wms-test-source', {
@@ -26,6 +31,24 @@ map.on('load', () => {
             'paint': {}
         }
     );
+    fetch("/get_coordinates", {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify([...document.querySelectorAll('.trial-tab-lines')].map(trial => parseInt(trial.getAttribute("key"))))
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        data.coordinates.forEach(coord => {
+          new mapboxgl.Marker()
+            .setLngLat(coord)
+            .addTo(map);
+        });
+      })
+    .catch(error => console.error("There was an issue while fetching coordinates", error))
 });
 
 /* Given a query in the form "lng, lat" or "lat, lng"

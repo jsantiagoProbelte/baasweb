@@ -3,7 +3,7 @@ from . import product_views
 
 urlpatterns = [
     # Field Trials urls
-    path('product/<int:product_id>/',
+    path('product/<int:pk>/',
          product_views.ProductApi.as_view(),
          name='product_api'),
     path('product/add/', product_views.ProductCreateView.as_view(),
