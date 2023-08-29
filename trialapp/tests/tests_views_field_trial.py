@@ -2,7 +2,7 @@ from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Application, Replica
 from trialapp.data_models import Assessment, ReplicaData
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi, \
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView, \
     DownloadTrial
@@ -29,7 +29,7 @@ class FieldTrialViewsTest(TestCase):
         self.assertContains(response, 'No Trials yet.')
 
         fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
 
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
@@ -37,7 +37,7 @@ class FieldTrialViewsTest(TestCase):
         self.assertNotContains(response, 'No Trials yet.')
         self.assertContains(response, fieldTrial.name)
 
-        thesis = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
+        thesis = Thesis.create_Thesis(**TrialAppModelData.THESIS[0])
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
@@ -59,7 +59,7 @@ class FieldTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        fieldTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
+        fieldTrialData = TrialAppModelData.FIELDTRIALS[0].copy()
         request = self._apiFactory.post(
             'fieldtrial-add', data=fieldTrialData)
         self._apiFactory.setUser(request)
@@ -110,7 +110,7 @@ class FieldTrialViewsTest(TestCase):
 
     def createDataTrial(self):
         trial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
         assessments = []
         for index in range(4):
             assessments.append(Assessment.objects.create(

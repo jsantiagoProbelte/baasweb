@@ -4,7 +4,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from panel.statsdata import StatsDataApi
 from panel.quality_panel import ThesisPanelApi
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit
 
@@ -26,9 +26,9 @@ class StatsDataTest(TestCase):
         cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
                  'batch_id': batch.id}
         treat = Treatment.objects.create(**cdata)
-        for trialData in TrialAppModelTest.FIELDTRIALS:
+        for trialData in TrialAppModelData.FIELDTRIALS:
             FieldTrial.create_fieldTrial(**trialData)
-            for thesis in TrialAppModelTest.THESIS:
+            for thesis in TrialAppModelData.THESIS:
                 thesis = Thesis.create_Thesis(**thesis)
                 if thesis.id > 1:
                     # Create some without treatment

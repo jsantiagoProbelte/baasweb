@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from labapp.labtrial_views import LabTrialView, DataLabHelper
 from labapp.models import LabDataPoint, LabAssessment, LabThesis
 from labapp.labtrial_views import LabTrialCreateView, \
@@ -28,7 +28,7 @@ class LabTrialViewsTest(TestCase):
         self.assertContains(response, 'No Trials yet.')
 
         labTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
         labTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
         labTrial.samples_per_replica = 20
         labTrial.save()
@@ -49,7 +49,7 @@ class LabTrialViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        labTrialData = TrialAppModelTest.FIELDTRIALS[0].copy()
+        labTrialData = TrialAppModelData.FIELDTRIALS[0].copy()
         labTrialData['samples_per_replica'] = 24
         request = self._apiFactory.post(
             'labtrial-add', data=labTrialData)

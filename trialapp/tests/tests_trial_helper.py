@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica, TrialStatus
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.thesis_views import SetReplicaPosition
@@ -28,9 +28,9 @@ class TrialHelperTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
-        self._thesis1 = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        self._thesis2 = Thesis.create_Thesis(**TrialAppModelTest.THESIS[1])
+            **TrialAppModelData.FIELDTRIALS[0])
+        self._thesis1 = Thesis.create_Thesis(**TrialAppModelData.THESIS[0])
+        self._thesis2 = Thesis.create_Thesis(**TrialAppModelData.THESIS[1])
         self._theses = Thesis.getObjects(self._fieldTrial)
 
         Replica.createReplicas(self._thesis1,

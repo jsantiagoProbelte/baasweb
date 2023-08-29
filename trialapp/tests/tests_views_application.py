@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Application
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.application_views import\
     ApplicationCreateView, ApplicationUpdateView, ApplicationApi, \
     ApplicationDeleteView, ApplicationListView
@@ -17,7 +17,7 @@ class ApplicationViewsTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
+            **TrialAppModelData.FIELDTRIALS[0])
 
     def test_editapplication(self):
         request = self._apiFactory.get(
@@ -33,7 +33,7 @@ class ApplicationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Create one field trial
-        applicationData = TrialAppModelTest.APPLICATION[0].copy()
+        applicationData = TrialAppModelData.APPLICATION[0].copy()
         request = self._apiFactory.post('application-add', applicationData)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
@@ -70,7 +70,7 @@ class ApplicationViewsTest(TestCase):
 
     def test_application_api(self):
         # Creating application , but not with all attributres
-        applicationData = TrialAppModelTest.APPLICATION[0]
+        applicationData = TrialAppModelData.APPLICATION[0]
         request = self._apiFactory.post('application-add', applicationData)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
@@ -85,7 +85,7 @@ class ApplicationViewsTest(TestCase):
         self.assertContains(response, item.comment)
 
         # Let's create another one
-        applicationData2 = TrialAppModelTest.APPLICATION[1]
+        applicationData2 = TrialAppModelData.APPLICATION[1]
         request = self._apiFactory.post('application-add', applicationData2)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(
@@ -98,7 +98,7 @@ class ApplicationViewsTest(TestCase):
         self.assertTrue(item2.daf, daa)
 
         # Let's create a new one in between the previous ones
-        applicationData3 = TrialAppModelTest.APPLICATION[2]
+        applicationData3 = TrialAppModelData.APPLICATION[2]
         request = self._apiFactory.post('application-add', applicationData3)
         self._apiFactory.setUser(request)
         response = ApplicationCreateView.as_view()(

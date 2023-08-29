@@ -13,7 +13,7 @@ from catalogue.product_views import ProductApi, \
     TreatmentDeleteView, TreatmentApi, BatchApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialAppModelData
 from trialapp.filter_helpers import ProductListView
 from django.utils.translation import gettext_lazy as _
 
@@ -82,7 +82,7 @@ class ProductViewsTest(TestCase):
                 FieldTrial.create_fieldTrial(**fieldTrialInfo))
 
         # for fieldTrial in self._fieldTrials:
-        for thesis in TrialAppModelTest.THESIS:
+        for thesis in TrialAppModelData.THESIS:
             # thesis['field_trial_id'] = fieldTrial.id
             self._theses.append(Thesis.create_Thesis(**thesis))
 
