@@ -153,19 +153,14 @@ class ThesisUpdateView(LoginRequiredMixin, UpdateView):
 class ThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = Thesis
     template_name = 'trialapp/thesis_delete.html'
-    _trial_id = None
 
-    def get_success_url(self):
-        if self._trial_id is None:
-            return '/fieldtrials/'
-        else:
-            return reverse(
-                'thesis-list',
-                kwargs={'field_trial_id': self._trial_id})
-
-    def form_valid(self, form):
-        self._trial_id = self.object.field_trial.id
-        return super().form_valid(form)
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        trial = self.object.field_trial
+        self.object.delete()
+        return HttpResponseRedirect(
+            reverse('thesis-list',
+                    kwargs={'field_trial_id': trial.id}))
 
 
 class ThesisApi(LoginRequiredMixin, DetailView):
@@ -283,17 +278,20 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
 class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = TreatmentThesis
     template_name = 'trialapp/treatment_thesis_delete.html'
-    _thesis = None
+    _parent = None
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self._parent = self.object.thesis
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._thesis is None:
-            return '/fieldtrials/'
+        if self._parent:
+            return reverse('thesis-api',
+                           kwargs={'pk': self._parent.id})
         else:
-            return self._thesis.get_absolute_url()
-
-    def form_valid(self, form):
-        self._thesis = self.object.thesis
-        return super().form_valid(form)
+            return reverse('trial-list')
 
 
 class SetReplicaPosition(APIView):

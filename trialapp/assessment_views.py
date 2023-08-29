@@ -207,21 +207,21 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
 class AssessmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Assessment
     template_name = 'trialapp/assessment_delete.html'
-    _trial = None
+    _parent = None
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self._parent = self.object.field_trial
+        self.object.delete()
+        Assessment.computeDDT(self._parent)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._trial is None:
-            return '/fieldtrials/'
+        if self._parent:
+            return reverse('assessment-list',
+                           kwargs={'field_trial_id': self._parent.id})
         else:
-            return reverse(
-                'assessment-list',
-                kwargs={'field_trial_id': self._trial.id})
-
-    def form_valid(self, form):
-        self._trial = self.object.field_trial
-        respose = super().form_valid(form)
-        Assessment.computeDDT(self._trial)
-        return respose
+            return reverse('trial-list')
 
 
 class AssessmentApi(LoginRequiredMixin, View):

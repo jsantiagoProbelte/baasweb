@@ -183,9 +183,6 @@ class TrialContent():
                       "key rate type unit is not well identified.")
             return {'error': error}
 
-    def fetchEfficacy(self):
-        return self.fetchDefault()
-
     def fetchDefault(self):
         return [{'title': self._content,
                  'content': f"<p>Content for {self._trial.name}</p>"}]

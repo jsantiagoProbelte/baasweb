@@ -3,7 +3,8 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from baaswebapp.models import PType, RateTypeUnit
 from catalogue.models import Product, Vendor, Batch, Treatment, \
     ProductVariant, UNTREATED
-from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit
+from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit, \
+    Application
 from trialapp.data_models import Assessment, ReplicaData, Replica
 from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_views import TrialApi, TrialContent, trialContentApi
@@ -26,6 +27,7 @@ class TrialViewsTest(TestCase):
         # efficacy is calculated
 
     def test_showFieldTrial(self):
+        self.createObjects()
         request = self._apiFactory.get('trial_api')
         self._apiFactory.setUser(request)
         response = TrialApi.as_view()(request, pk=self._trial.id)
@@ -106,6 +108,13 @@ class TrialViewsTest(TestCase):
             batch = Batch.createDefault(pv)
             self._treatments[prod.id] = Treatment.objects.create(
                 name=prod.name, rate=33, rate_unit=unit, batch=batch)
+
+    def createApplications(self):
+        for ass in self._assmts:
+            Application.objects.create(
+                app_date=ass.assessment_date,
+                field_trial=self._trial,
+                bbch=ass.crop_stage_majority)
 
     def createObjects(self):
         self.createCatalogue()
