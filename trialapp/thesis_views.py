@@ -288,7 +288,7 @@ class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         if self._parent:
-            return reverse('thesis-api',
+            return reverse('thesis_api',
                            kwargs={'pk': self._parent.id})
         else:
             return reverse('trial-list')

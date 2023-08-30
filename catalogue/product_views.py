@@ -656,7 +656,7 @@ class ProductVariantDeleteView(DeleteView):
 
     def get_success_url(self):
         if self._parent:
-            return reverse('product-api',
+            return reverse('product_api',
                            kwargs={'pk': self._parent.id})
         else:
             return reverse('product-list')

@@ -134,7 +134,7 @@ class ThesisViewsTest(TestCase):
         self.assertTrue(response.status_code, 200)
         self.assertTrue(theClass.objects.filter(treatment=treatment).exists())
 
-        deletePost = self._apiFactory.post(url_delete)
+        deletePost = self._apiFactory.delete(url_delete)
         self._apiFactory.setUser(deletePost)
         response = deleteView.as_view()(deletePost,
                                         pk=theItem.id)
