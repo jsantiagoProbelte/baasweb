@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 01:52+0200\n"
+"POT-Creation-Date: 2023-08-30 15:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,10 +66,10 @@ msgstr "humedad relativa"
 msgid "dew point"
 msgstr "punto de rocío"
 
-#: baaswebapp/graphs.py:625
+#: baaswebapp/graphs.py:627
 #: trialapp/templates/trialapp/trial_conclusions.html:36
 #: trialapp/templates/trialapp/trial_conclusions.html:47
-#: trialapp/templates/trialapp/trial_show.html:23
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:128
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -468,7 +468,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:74
-#: trialapp/trial_views.py:162
+#: trialapp/trial_views.py:173
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -496,9 +496,8 @@ msgstr "textura"
 msgid "benefit"
 msgstr "beneficio"
 
-#: trialapp/templates/trialapp/trial_content_cards.html:13
+#: trialapp/templates/trialapp/trial_content_cards.html:14
 #: trialapp/templates/trialapp/trial_content_divs.html:8
-#: trialapp/templates/trialapp/trial_trends.html:7
 msgid "No data to display"
 msgstr "no hay información para mostrar"
 
@@ -530,6 +529,10 @@ msgstr "evaluaciones"
 msgid "download trial"
 msgstr "Descargar ensayo"
 
+#: trialapp/templates/trialapp/trial_show.html:72
+msgid "average efficacy"
+msgstr "eficacia media"
+
 #: trialapp/templates/trialapp/trials_list.html:5
 msgid "trial"
 msgstr "ensayo"
@@ -538,7 +541,7 @@ msgstr "ensayo"
 msgid "code"
 msgstr "código"
 
-#: trialapp/trial_views.py:163
+#: trialapp/trial_views.py:174
 msgid ""
 "Weather conditions cannot be determined because location or assessments info"
 " aremissing"
@@ -546,7 +549,7 @@ msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:180
+#: trialapp/trial_views.py:203
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -556,11 +559,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:384
+#: trialapp/trial_views.py:443
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:387
+#: trialapp/trial_views.py:446
 msgid " in "
 msgstr " en "
 

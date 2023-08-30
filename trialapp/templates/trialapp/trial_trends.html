@@ -1,8 +1,0 @@
-{% load i18n %}
-{% for itemId in graphInfo %}
-    <div class="trial-dynamic-content mt-3" id="trial-{{trial.id}}-{{itemId}}">
-        <div class="loading-spinner"></div>
-    </div>
-{% empty %}
-    <p>{% trans "No data to display"%}</p>
-{% endfor %}
