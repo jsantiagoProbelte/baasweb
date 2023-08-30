@@ -6,6 +6,7 @@ from trialapp.models import FieldTrial, Crop, Plague, \
 from trialapp.data_models import ThesisData, SampleData, Assessment
 import datetime
 from trialapp.tests.tests_helpers import TrialTestData
+from django.utils.translation import gettext_lazy as _
 
 
 class TrialAppModelTest(TestCase):
@@ -205,3 +206,60 @@ class TrialAppModelTest(TestCase):
                                      scientific='Scientific')
         self.assertTrue(cropNew.id < cropNew2.id)
         self.assertEqual(cropNew2.scientific, 'Scientific')
+
+    def test_trialfunctions(self):
+        FieldTrial.createTrial(**TrialTestData.TRIALS[0])
+        trial = FieldTrial.objects.get(id=1)
+        sameYear = trial.initiation_date.year
+        sameYearStr = f'{sameYear}'
+        sameMonthStr = trial.initiation_date.strftime("%B")
+        sameMonth = trial.initiation_date.month
+        self.assertTrue(trial.completion_date is None)
+        self.assertTrue(trial.getPeriod()[:-5], '- ...')
+        trial.completion_date = datetime.date(sameYear, sameMonth, 14)
+        trial.save()
+        period = trial.getPeriod()
+        self.assertTrue('-' not in trial.getPeriod())
+        self.assertEqual(period.count(sameYearStr), 1)
+        self.assertEqual(period.count(sameMonthStr), 1)
+
+        trial.completion_date = datetime.date(sameYear, sameMonth + 1, 14)
+        trial.save()
+        period = trial.getPeriod()
+        self.assertEqual(period.count(sameYearStr), 1)
+        self.assertEqual(period.count(sameMonthStr), 1)
+        self.assertTrue(trial.completion_date.strftime("%B") in period)
+        self.assertTrue('-' in period)
+
+        trial.completion_date = datetime.date(sameYear+1, sameMonth + 1, 14)
+        trial.save()
+        period = trial.getPeriod()
+        self.assertEqual(period.count(sameYearStr), 1)
+        self.assertEqual(period.count(sameMonthStr), 1)
+        self.assertTrue(trial.completion_date.strftime("%B") in period)
+        self.assertTrue(f"{sameYear+1}" in period)
+        self.assertTrue('-' in period)
+
+        trial.initiation_date = None
+        trial.completion_date = None
+        trial.save()
+        self.assertEqual(trial.getPeriod(), _('Undefined period'))
+
+        self.assertNotEqual(trial.getLocation(), _('Undefined Location'))
+        trial.location = None
+        trial.save()
+        self.assertEqual(trial.getLocation(), _('Undefined Location'))
+
+        trial.plague = None
+        trial.save()
+        self.assertTrue(trial.getDescription(), trial.crop)
+        trial.plague_id = 3
+        trial.save()
+        desc = trial.getDescription()
+        self.assertTrue(trial.crop.name in desc)
+        self.assertTrue(trial.plague.name in desc)
+        trial.plague = Plague.objects.get(name=ModelHelpers.NOT_APPLICABLE)
+        trial.save()
+        desc = trial.getDescription()
+        self.assertTrue(trial.crop.name in desc)
+        self.assertTrue(trial.plague.name not in desc)

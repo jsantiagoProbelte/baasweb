@@ -78,6 +78,7 @@ class TrialDbInitialLoader:
                 'Unknown': {'crop_id': 1}},
             Plague: {
                 ModelHelpers.UNKNOWN: {'other': None},
+                ModelHelpers.NOT_APPLICABLE: {'other': None},
                 "Mites": {"other": "Acaros"},
                 "Aguado/Citric Bacteriosis":
                     {"other": "Aguado/Bacteriosis Citricos"},
@@ -85,10 +86,6 @@ class TrialDbInitialLoader:
                 "Anarsia/Grafolite": {"other": "Anarsia/Grafolita"},
                 "Antilimacos": {"other": "Antilimacos"},
                 "Anthracnosis": {"other": "Antracnosis"},
-                "Crazy oat (oats)": {"other": "Avena Loca (Avena)"},
-                "Bacteriosis": {"other": "Bacteriosis"},
-                "Barrenadores": {"other": "Barrenadores"},
-                "Biofertilization": {"other": "BioFertilizacion"},
                 "Botrytis": {"other": "Botrytis"},
                 "Bremia": {"other": "Bremia"},
                 "Bromine": {"other": "Bromo"},
@@ -115,11 +112,6 @@ class TrialDbInitialLoader:
                     {"other": "Hongos Invierno Prefloracion"},
                 "Ants": {"other": "Hormigas"},
                 "Soil insects": {"other": "Insectos De Suelo"},
-                "Insects in general": {"other": "Insectos En General"},
-                "Insects stored grains":
-                    {"other": "Insectos Granos Almacenados"},
-                "Winter insects prefloration":
-                    {"other": "Insectos Invierno Prefloracion"},
                 "Funeral (cyperus)": {"other": "Juncia (Cyperus)"},
                 "Locust": {"other": "Langosta"},
                 "Lava salts": {"other": "Lava Sales"},
@@ -140,21 +132,6 @@ class TrialDbInitialLoader:
                 "Mycosphaerella (in general)":
                     {"other": "Mycosphaerella (en general)"},
                 "Bold": {"other": "Negrilla"},
-                "Nematodes": {"other": "Nematodos"},
-                "Oidio": {"other": "Oidio"},
-                "Other deficiencies": {"other": "Otras Carencias"},
-                "Other wooden diseases":
-                    {"other": "Otras Enfermedades De La Madera"},
-                "Other gramineas weeds":
-                    {"other": "Otras Malas Hierbas Gramineas"},
-                "Paulilla/Paulillon": {"other": "Paulilla/Paulillon"},
-                "Phytophthora citrus": {"other": "Phytophthora Citricos"},
-                "Piral de la Vid": {"other": "Piral De La Vid"},
-                "Cluster moth": {"other": "Polilla Del Racimo"},
-                "Prays Citri": {"other": "Prays Citri"},
-                "Prays del Olivo": {"other": "Prays Del Olivo"},
-                "Psyla": {"other": "Psyla"},
-                "Aphids": {"other": "Pulgones"},
                 "Beet thumb": {"other": "Pulguilla De La Remolacha"},
                 "Pyricularia Oryzae": {"other": "Pyricularia Oryzae"},
                 "Olive repilement": {"other": "Repilo Del Olivo"},

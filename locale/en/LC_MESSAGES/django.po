@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 15:36+0200\n"
+"POT-Creation-Date: 2023-08-30 16:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -431,6 +431,15 @@ msgstr ""
 
 #: trialapp/models.py:79
 msgid "UNDF"
+msgstr ""
+
+#: trialapp/models.py:222 trialapp/tests/tests_models.py:248
+#: trialapp/tests/tests_models.py:251
+msgid "Undefined Location"
+msgstr ""
+
+#: trialapp/models.py:225 trialapp/tests/tests_models.py:246
+msgid "Undefined period"
 msgstr ""
 
 #: trialapp/templates/trialapp/btn_trials.html:6
