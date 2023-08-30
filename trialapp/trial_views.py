@@ -48,7 +48,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'numberAssessments': len(assessments),
-            'graphInfo': [TrialContent.WEATHER, TrialContent.ASSESSMENTS],
             'numberThesis': len(allThesis)}
 
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
@@ -71,9 +70,9 @@ class TrialContent():
     _assmts = None
     _thesis = None
 
-    WEATHER = 'weather'
-    ASSESSMENTS = 'ass'
-    EFFICACY = 'eff'
+    WEATHER = 'weather_graphs'
+    ASSESSMENTS = 'assess_graphs'
+    RESULT_SUMMARY = 'result_summary'
     KEY_ASSESS = 'key_assess'
 
     def __init__(self, trialId, content):
@@ -93,29 +92,41 @@ class TrialContent():
             self._min_date = None
             self._max_date = None
 
-    def getGraphData(self, level, rateSets, ratedParts):
+    def getAssGraphData(self, rateSets, ratedParts,
+                        type_graph, showEfficacy=False,
+                        xAxis=GraphTrial.L_DATE,
+                        level=GraphTrial.L_REPLICA):
         graphs = []
         for rateSet in rateSets:
             for ratedPart in ratedParts:
                 assmts = Assessment.objects.filter(
                     field_trial_id=self._trial.id,
                     part_rated=ratedPart,
-                    rate_type=rateSet)
+                    rate_type=rateSet).order_by(
+                        'assessment_date')
                 assIds = [value.id for value in assmts]
 
-                if level == GraphTrial.L_REPLICA:
-                    dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
-                else:
-                    dataPoints = []
-                if len(dataPoints):
-                    graphF = DataGraphFactory(level, assmts, dataPoints,
-                                              showTitle=False,
-                                              references=self._thesis)
-                    type_graph = GraphTrial.LINE if len(assmts) > 1\
-                        else GraphTrial.COLUMN
-                    graphs.append(
-                        {'title': graphF.getTitle(),
-                         'content': graphF.draw(type_graph=type_graph)})
+                if level != GraphTrial.L_REPLICA:
+                    continue
+                dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
+
+                if not dataPoints:
+                    continue
+
+                if showEfficacy:
+                    orderAssmts = self.getOrderAssmts(assmts)
+                    dataPoints = self.calculateDataPointsEfficacy(
+                        dataPoints, orderAssmts)
+
+                graphF = DataGraphFactory(
+                    level, assmts, dataPoints, showTitle=False,
+                    xAxis=xAxis, references=self._thesis)
+                if type_graph == GraphTrial.LINE and len(assmts) == 1:
+                    type_graph = GraphTrial.COLUMN
+                graphs.append(
+                    {'title': graphF.getTitle(),
+                     'extra_title': _('efficacy'),
+                     'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
     def getWeatherData(self):
@@ -164,12 +175,24 @@ class TrialContent():
                               "because location or assessments info are"
                               "missing")}]
 
-    def fetchAssessmentsData(self):
+    def getRateTupeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
         ass_list = Assessment.getObjects(self._trial)
         rateSets = Assessment.getRateSets(ass_list)
         ratedParts = Assessment.getRatedParts(ass_list)
-        return self.getGraphData(GraphTrial.L_REPLICA, rateSets, ratedParts)
+        return rateSets, ratedParts
+
+    def fetchAssessmentsData(self):
+        rateSets, ratedParts = self.getRateTupeUnitsAndParts()
+        return self.getAssGraphData(
+            rateSets, ratedParts, GraphTrial.LINE, showEfficacy=False,
+            xAxis=GraphTrial.L_DATE)
+
+    def fetchResultSummaryData(self):
+        rateSets, ratedParts = self.getRateTupeUnitsAndParts()
+        return self.getAssGraphData(
+            rateSets, ratedParts, GraphTrial.COLUMN, showEfficacy=True,
+            xAxis=GraphTrial.L_ASSMT)
 
     def fetchKeyAssessData(self):
         content = self.getKeyGraphData()
@@ -191,7 +214,7 @@ class TrialContent():
         WEATHER: fetchWeather,
         KEY_ASSESS: fetchKeyAssessData,
         ASSESSMENTS: fetchAssessmentsData,
-        EFFICACY: fetchDefault}
+        RESULT_SUMMARY: fetchResultSummaryData}
 
     TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
     TEMPLATE_DIVS = 'trialapp/trial_content_divs.html'
@@ -201,7 +224,7 @@ class TrialContent():
         WEATHER: TEMPLATE_CARDS,
         KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
         ASSESSMENTS: TEMPLATE_CARDS,
-        EFFICACY: TEMPLATE_CARDS}
+        RESULT_SUMMARY: TEMPLATE_CARDS}
 
     def getAssmts(self, force=False):
         if self._assmts is None or force:
@@ -379,6 +402,42 @@ class TrialContent():
             return bestEfficacy, lines
         else:
             return None, None
+
+    def getOrderAssmts(self, assmts):
+        # This assmts are retrieved in order by date
+        orderAss = {}
+        order = 1
+        for assmt in assmts:
+            orderAss[assmt.id] = order
+            order += 1
+        return orderAss
+
+    def calculateDataPointsEfficacy(self, dataPoints, orderAssmts):
+        controlThesisId = self.whatIsControlThesis()
+        if not controlThesisId:
+            return None
+        values = {}
+        for point in dataPoints:
+            assId = point['assessment__id']
+            if assId not in values:
+                values[assId] = {}
+            thesisId = point['reference__thesis__id']
+            values[assId][thesisId] = point['value']
+
+        efficacies = []
+        for assId in values:
+            assValues = values[assId]
+            controlValue = assValues[controlThesisId]
+            for thesisId in assValues:
+                if thesisId == controlThesisId:
+                    continue
+                efficacies.append({
+                    'assessment__id': assId,
+                    'assessment__number': orderAssmts[assId],
+                    'reference__thesis__id': thesisId,
+                    'value': self.calculateEfficacy(controlValue,
+                                                    assValues[thesisId])})
+        return efficacies
 
     def bestEfficiencyExplanation(self, keyRateTypeUnit, keyPartRated):
         explanation = _('* in the moment of maximum difference at ')

@@ -286,6 +286,7 @@ class GraphTrial:
 
     DEFAULT_HEIGHT = 275
 
+    L_ASSMT = 'assmt'
     L_THESIS = 'thesis'
     L_REPLICA = 'replica'
     L_SAMPLE = 'sample'
@@ -373,6 +374,7 @@ class GraphTrial:
                  VIOLIN: violin,
                  COLUMN: column}
     DRAW_LEVEL = {L_DOSIS: line,
+                  L_ASSMT: column,
                   L_THESIS: bar}
 
     def formatFigure(self, fig, thisGraph, showLegend,
