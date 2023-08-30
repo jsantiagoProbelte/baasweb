@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 00:41+0200\n"
+"POT-Creation-Date: 2023-08-30 01:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -215,23 +215,23 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: catalogue/product_views.py:49
+#: catalogue/product_views.py:50
 msgid "Status"
 msgstr ""
 
-#: catalogue/product_views.py:51
+#: catalogue/product_views.py:53
 msgid "Type"
 msgstr ""
 
-#: catalogue/product_views.py:53
+#: catalogue/product_views.py:56
 msgid "Objective"
 msgstr ""
 
-#: catalogue/product_views.py:55
+#: catalogue/product_views.py:58
 msgid "Crop"
 msgstr ""
 
-#: catalogue/product_views.py:57
+#: catalogue/product_views.py:61
 msgid "Plague"
 msgstr ""
 
@@ -545,11 +545,11 @@ msgid ""
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:387
+#: trialapp/trial_views.py:384
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:390
+#: trialapp/trial_views.py:387
 msgid " in "
 msgstr ""
 
