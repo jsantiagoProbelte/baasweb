@@ -211,17 +211,18 @@ class FieldTrial(ModelHelpers, models.Model):
     def getDescription(self):
         description = f'{self.crop}'
         if self.plague:
-            description += f' + {self.plague}'
+            if not ModelHelpers.isInUnknowns(self.plague.name):
+                description += f' + {self.plague}'
         return description
 
     def getLocation(self):
         if self.location:
             return self.location
         else:
-            return 'Undefined Location'
+            return _('Undefined Location')
 
     def getPeriod(self):
-        period = 'Undefined period'
+        period = _('Undefined period')
         if self.initiation_date:
             period = self.initiation_date.strftime("%B")
             if not self.completion_date:
