@@ -40,7 +40,8 @@
                     {{treatment.name}}
                     {%if edit_data %}
                     <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-3"
-                        data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a></span>
+                        data-toggle="tooltip" data-placement="top" title='Delete new item'>
+                        <span class="material-symbols-outlined" >delete</span></a></span>
                     {% endif %}
                 </li>
               

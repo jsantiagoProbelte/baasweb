@@ -151,7 +151,7 @@
 }
 
 .txt-baas-baas{
-  color: var(--bs-custom-bio) !important;
+  color: var(--custom-bio) !important;
 }
 
 .txt-uppercase{
@@ -1020,6 +1020,12 @@ div.flex-inline-form input:focus{
   /* color: var(--custom-baas);    Adjust the color as needed */
 }
 
+.small-icon-16 {
+  font-size: 16px; /* Adjust the size as needed */
+  vertical-align: middle;
+  /* color: var(--custom-baas);    Adjust the color as needed */
+}
+
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-top: 4px solid #000;
@@ -1042,4 +1048,8 @@ div.flex-inline-form input:focus{
 
 .graph-container {
   width: 100%;
+}
+
+.txt-center {
+  text-align: center;
 }

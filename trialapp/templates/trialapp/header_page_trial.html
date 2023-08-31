@@ -41,7 +41,8 @@
         {% endif %}
         {% if delete_url and add_data%}
         <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
-            data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a>
+            data-toggle="tooltip" data-placement="top" title='Delete new item'>
+            <span class="material-symbols-outlined" >delete</span></a>
         {% endif %}
     </div></span>
 </h2>
