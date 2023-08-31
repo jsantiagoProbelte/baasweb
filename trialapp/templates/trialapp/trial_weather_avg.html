@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-md-4  txt-center">
+        {% if dataContent.temp_avg %}
+            <p class="txt-open-semibold-14">{{dataContent.temp_avg}} &deg;C</p>
+        {% else %}
+            <div class="loading-spinner"></div>
+        {% endif %}
+    </div>
+    <div class="col-md-4  txt-center">
+        {% if dataContent.hum_avg %}
+            <p class="txt-open-semibold-14">{{dataContent.hum_avg}} %</p>
+        {% else %}
+            <div class="loading-spinner"></div>
+        {% endif %}
+    </div>
+    <div class="col-md-4  txt-center">
+        {% if dataContent.prep_avg %}
+            <p class="txt-open-semibold-14">{{dataContent.prep_avg}}</p>
+        {% else %}
+            <div class="loading-spinner"></div>
+        {% endif %}
+    </div>
+</div>
