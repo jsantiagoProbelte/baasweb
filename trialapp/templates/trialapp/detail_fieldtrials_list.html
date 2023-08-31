@@ -15,8 +15,12 @@
         [...document.querySelectorAll('.page-number-links a')].forEach(link => {
             pageNumber = link.dataset.pageNumber
             currentQueryParams = new URLSearchParams(window.location.search)
+            pageNumberRequested = currentQueryParams.get("page") ? currentQueryParams.get("page") : "1"
             currentQueryParams.set('page', pageNumber)
             currentQueryParams.set('activeTab', 2)
+            if(pageNumber == pageNumberRequested){
+                link.classList.add('current')
+            }
 
             link.href = `?${currentQueryParams}`
         });
