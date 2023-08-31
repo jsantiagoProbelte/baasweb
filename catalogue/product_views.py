@@ -22,6 +22,7 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from trialapp.data_views import DataGraphFactory
+from django.core.paginator import Paginator
 from django.urls import reverse
 
 
@@ -401,10 +402,10 @@ class ProductApi(LoginRequiredMixin, View):
         return cropsTable.values()
 
     def get(self, request, *args, **kwargs):
-        if request.GET.get('activeTab'):
-            activeTab = request.GET.get('activeTab')
-        else:
-            activeTab = "1"
+        itemsPerPage = 5
+        activeTab = request.GET.get('activeTab') if request.GET.get('activeTab') else "1"
+        page = request.GET.get('page') if request.GET.get('page') else 1
+
         product_id = None
         product_id = kwargs['pk']
         template_name = 'catalogue/product_show.html'
@@ -413,6 +414,12 @@ class ProductApi(LoginRequiredMixin, View):
         graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
                                                                  request.GET)
         tpFilter = TrialProductFilterHelper(request.GET, product_id)
+        filterTrials = tpFilter.getFieldTrialsByFilter(request.GET)
+        paginator = Paginator(filterTrials, itemsPerPage)
+        print(f"TRACE | ProductView | get | paginator -> {paginator.num_pages}")
+
+        currentPage = paginator.get_page(page)
+
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
         filterTrial = TrialProductFilter(request.GET)
 
@@ -430,9 +437,11 @@ class ProductApi(LoginRequiredMixin, View):
                 'titleView': product.getName(),
                 'crops': self.get_crop_table_data(product_id),
                 'category': product.getCategory(product.type_product).label,
-                'trials': tpFilter.getFieldTrialsByFilter(request.GET),
+                'trials': currentPage.object_list,
+                'paginator': paginator,
                 'filter': filterTrial,
-                'activeTab': activeTab})
+                'activeTab': activeTab,
+                'page': currentPage})
 
 
 ##############################

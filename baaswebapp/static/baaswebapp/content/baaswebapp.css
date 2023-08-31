@@ -37,6 +37,7 @@
   --baas-gray: #666;
   --border-radius-tabs: 0.15rem;
   --margins-show-pages: 20px;
+  --font-icons: 'bootstrap-icons'
 }
 
 .no-gutters{
@@ -634,6 +635,45 @@ input[type='checkbox'], input[type="radio"] {
 .baas-data-table tr:not(:last-child), .baas-data-table thead{
   border-bottom: 1px solid var(--custom-grey);
 }
+
+.baas-data-table tfoot{
+  border-top: 1px solid var(--custom-grey);
+  vertical-align: middle;
+}
+
+.baas-data-table .page-number-links{
+  vertical-align: middle;
+  text-align: right;
+}
+
+.baas-data-table tfoot a.current, .baas-data-table tfoot a:hover{
+  border-radius: 50%;
+  background-color: var(--custom-bio);
+  color: white !important;
+  text-decoration: none;
+}
+
+.chevron{
+  font-family: var(--font-icons);
+  color: var(--custom-baas);
+  font-weight: 900;
+  font-size: 0.8em;
+  width: 1.5em;
+}
+
+.baas-data-table tfoot a{
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.baas-data-table tfoot a:not(.chevron){
+  color: #000;
+  font-size: 1em;
+  width: 1.2em;
+  line-height: 1.2em;
+}
+
 
 table.data-table-longer tbody td {
   width: 20rem;
