@@ -18,6 +18,7 @@ from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
 
+
 class FieldTrialFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
     trial_status = django_filters.ModelChoiceFilter(
