@@ -16,7 +16,7 @@ from trialapp.models import FieldTrial, Thesis, Objective, \
 from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
-
+from django.core.paginator import Paginator
 
 class FieldTrialFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
@@ -87,6 +87,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return new_list
 
     def get_context_data(self, **kwargs):
+        resultPerPage = 5
+        page = self.request.GET.get('page') if self.request.GET.get('page') else 1
+
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
@@ -105,10 +108,14 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         filter = FieldTrialFilter(self.request.GET)
         new_list = self.getList(q_objects)
 
-        return {'object_list': new_list,
+        paginator = Paginator(new_list, resultPerPage)
+
+        return {'object_list': paginator.get_page(page).object_list,
                 'titleList': '({}) Field trials'.format(len(new_list)),
                 'add_url': 'fieldtrial-add',
-                'filter': filter}
+                'filter': filter,
+                'paginator': paginator,
+                'page': paginator.get_page(page)}
 
 
 class FieldTrialApi(LoginRequiredMixin, DetailView):

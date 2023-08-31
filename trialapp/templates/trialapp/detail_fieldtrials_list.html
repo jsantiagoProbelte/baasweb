@@ -1,12 +1,25 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
+{% load i18n %}
+{% load custom_filter_templates %}
 {% csrf_token %}
 <script>
     window.addEventListener('load', (event) => {
         [...document.querySelectorAll(".form-control option:first-child")].forEach(option => {
             option.disabled = true
             //option.hidden = true
-        })
+        });
+    })
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        [...document.querySelectorAll('.page-number-links a')].forEach(link => {
+            pageNumber = link.dataset.pageNumber
+            currentQueryParams = new URLSearchParams(window.location.search)
+            currentQueryParams.set('page', pageNumber)
+            currentQueryParams.set('activeTab', 2)
+
+            link.href = `?${currentQueryParams}`
+        });
     })
 </script>
 <div class='card-body-baas mt-3 mb-3 bg-custom-transparent'>
@@ -102,7 +115,25 @@
                 {% empty %}
                     <p>No Trials yet.</p>
                 {% endfor %}
-                </tbody>
+            </tbody>
+            {% if object_list %}
+            <tfoot colspan='100%'>
+                <tr>
+                    <td colspan='1'><span style="color:#666"><b>{{ paginator.count }}</b> {% trans 'results' %}</span></td>
+                    <td class="page-number-links" colspan="6">
+                        {% if page.has_previous %}
+                            <a class="pagination-number chevron" href="#" data-page-number="{{ page.previous_page_number }}">&#xF284;</a>
+                        {% endif %}
+                        {% for i in 1|range_to:paginator.num_pages %}
+                            <a class="pagination-number" href="#" data-page-number = "{{ i }}">{{ i }}</a>
+                        {% endfor %}
+                        {% if page.has_next %}
+                            <a class="pagination-number chevron" href="#" data-page-number="{{ page.next_page_number }}">&#xF285;</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tfoot>
+            {% endif %}
             </table>
         </div>
     </div>
