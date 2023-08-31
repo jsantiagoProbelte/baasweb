@@ -10,7 +10,8 @@
         <a href="{% url update_url item.id %}" class="btn btn-secondary btn-sm fs-3 "
                 data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
         <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
-            data-toggle="tooltip" data-placement="top" title='Delete new item'>&cross;</a>
+            data-toggle="tooltip" data-placement="top" title='Delete new item'>
+            <span class="material-symbols-outlined" >delete</span></a>
         <a href="{% url 'product-list' %}" class="btn btn-secondary btn-sm fs-3"
             data-toggle="tooltip" data-placement="top" title='Go to field trial list'>&#8679;</a>
         <a href="{% url 'product_api' product.id%}" class="btn btn-light fs-4"
