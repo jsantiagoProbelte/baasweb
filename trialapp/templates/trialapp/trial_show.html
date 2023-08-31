@@ -69,10 +69,12 @@
             Trial Design
         </div>
         <div class="tab-pane fade" id="nav-result-summary" role="tabpanel" aria-labelledby="result-summary-tab">
-            Result Summary
+            <p class="txt-encode-20 capitalize-first mt-3">{% trans 'average efficacy'%}</p>
+            {% include 'trialapp/trial_content_topic_div.html' with topic='result_summary'%}
         </div>
         <div class="tab-pane fade" id="nav-trends" role="tabpanel" aria-labelledby="trends-tab">
-            {% include 'trialapp/trial_trends.html' %}
+            {% include 'trialapp/trial_content_topic_div.html' with topic='weather_graphs'%}
+            {% include 'trialapp/trial_content_topic_div.html' with topic='assess_graphs'%}
         </div>
         <div class="tab-pane fade" id="nav-data" role="tabpanel" aria-labelledby="data-tab">
             data

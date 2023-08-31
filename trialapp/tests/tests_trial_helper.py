@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica, TrialStatus
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.thesis_views import SetReplicaPosition
@@ -17,7 +17,7 @@ class UserStub:
 
 
 class TrialHelperTest(TestCase):
-    _fieldTrial = None
+    _trial = None
     _thesis1 = None
     _thesis2 = None
     _replicas1 = None
@@ -27,22 +27,21 @@ class TrialHelperTest(TestCase):
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
-        self._fieldTrial = FieldTrial.create_fieldTrial(
-            **TrialAppModelTest.FIELDTRIALS[0])
-        self._thesis1 = Thesis.create_Thesis(**TrialAppModelTest.THESIS[0])
-        self._thesis2 = Thesis.create_Thesis(**TrialAppModelTest.THESIS[1])
-        self._theses = Thesis.getObjects(self._fieldTrial)
+        self._trial = FieldTrial.createTrial(**TrialTestData.TRIALS[0])
+        self._thesis1 = Thesis.createThesis(**TrialTestData.THESIS[0])
+        self._thesis2 = Thesis.createThesis(**TrialTestData.THESIS[1])
+        self._theses = Thesis.getObjects(self._trial)
 
         Replica.createReplicas(self._thesis1,
-                               self._fieldTrial.replicas_per_thesis)
+                               self._trial.replicas_per_thesis)
         Replica.createReplicas(self._thesis2,
-                               self._fieldTrial.replicas_per_thesis)
+                               self._trial.replicas_per_thesis)
         self._replicas1 = Replica.getObjects(self._thesis1)
         self._replicas2 = Replica.getObjects(self._thesis2)
 
     def test_distributeLayout(self):
         # let´s mess it and arrange it
-        deck = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, None, self._theses)
 
         replicaM = Replica.objects.get(pk=self._replicas1[0].id)
         self.assertEqual(replicaM.pos_x, 0)
@@ -52,7 +51,7 @@ class TrialHelperTest(TestCase):
         replicaM.save()
 
         deck = LayoutTrial.showLayout(
-            self._fieldTrial, None, self._theses)
+            self._trial, None, self._theses)
 
         for row in deck:
             for item in row:
@@ -61,7 +60,7 @@ class TrialHelperTest(TestCase):
                     replicaM.id)
 
         rows, columns = LayoutTrial.calculateLayoutDim(
-            self._fieldTrial, len(self._theses))
+            self._trial, len(self._theses))
 
         replicaZ = Replica.objects.get(pk=self._replicas1[1].id)
         self.assertNotEqual(replicaZ, rows+1)
@@ -70,7 +69,7 @@ class TrialHelperTest(TestCase):
         replicaZ.pos_y = columns+1
         replicaZ.save()
         deck = LayoutTrial.showLayout(
-            self._fieldTrial, None, self._theses)
+            self._trial, None, self._theses)
         for row in deck:
             for item in row:
                 self.assertNotEqual(
@@ -139,7 +138,7 @@ class TrialHelperTest(TestCase):
         theReplica2.pos_x = x1
         theReplica2.pos_y = y1
         theReplica2.save()
-        deck = LayoutTrial.showLayout(self._fieldTrial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, None, self._theses)
         replica2 = deck[theReplica2.pos_y-1][theReplica2.pos_x-1]
         self.assertEqual(theReplica2.id, replica2['replica_id'])
 
@@ -147,13 +146,13 @@ class TrialHelperTest(TestCase):
         self.assertEqual(theReplica1.id, replica1['replica_id'])
 
     def test_headerLayout(self):
-        headers = LayoutTrial.headerLayout(self._fieldTrial)
-        self.assertEqual(len(headers), self._fieldTrial.blocks)
+        headers = LayoutTrial.headerLayout(self._trial)
+        self.assertEqual(len(headers), self._trial.blocks)
         self.assertEqual(headers[0]['name'], 'A')
 
     def test_permisions(self):
-        trial = self._fieldTrial
-        owner = self._fieldTrial.responsible
+        trial = self._trial
+        owner = self._trial.responsible
 
         trialP = TrialPermission(trial, UserStub(owner, False)).getPermisions()
         self.assertTrue(trialP[TrialPermission.ADD_DATA])

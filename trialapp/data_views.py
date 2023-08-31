@@ -549,6 +549,8 @@ class DataGraphFactory():
             return self._assessments[assId].daf
         if xAxis == GraphTrial.L_DOSIS:
             return dataPoint.dosis.rate
+        if xAxis == GraphTrial.L_ASSMT:
+            return dataPoint['assessment__number']
 
     def draw(self, type_graph=None):
         if type_graph:

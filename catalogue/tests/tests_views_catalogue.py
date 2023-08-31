@@ -13,7 +13,7 @@ from catalogue.product_views import ProductApi, \
     TreatmentDeleteView, TreatmentApi, BatchApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import ProductListView
 from django.utils.translation import gettext_lazy as _
 
@@ -78,13 +78,12 @@ class ProductViewsTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         for fieldTrialInfo in ProductViewsTest.FIELDTRIALS:
-            self._fieldTrials.append(
-                FieldTrial.create_fieldTrial(**fieldTrialInfo))
+            self._fieldTrials.append(FieldTrial.createTrial(**fieldTrialInfo))
 
         # for fieldTrial in self._fieldTrials:
-        for thesis in TrialAppModelTest.THESIS:
+        for thesis in TrialTestData.THESIS:
             # thesis['field_trial_id'] = fieldTrial.id
-            self._theses.append(Thesis.create_Thesis(**thesis))
+            self._theses.append(Thesis.createThesis(**thesis))
 
         rateTypes = RateTypeUnit.objects.all()
         self._units = [rateTypes[i] for i in range(1, 4)]
@@ -329,7 +328,7 @@ class ProductViewsTest(TestCase):
         self.assertTrue(response.status_code, 200)
         self.assertTrue(theClass.objects.filter(id=theItem.id).exists())
 
-        deletePost = self._apiFactory.post(url_delete)
+        deletePost = self._apiFactory.delete(url_delete)
         self._apiFactory.setUser(deletePost)
         response = deleteView.as_view()(deletePost,
                                         pk=theItem.id)

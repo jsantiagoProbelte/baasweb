@@ -1,34 +1,8 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import auth
-from rest_framework.test import APIRequestFactory
-
-
-class ApiRequestHelperTest(APIRequestFactory):
-
-    PASSWORD = 'BaaSisAwesome'
-    USER = 'pepe'
-    _user = None
-
-    def __init__(self):
-        super().__init__()
-        self.createUser()
-
-    def login(self):
-        client = Client.login(
-            username=ApiRequestHelperTest.USER,
-            password=ApiRequestHelperTest.PASSWORD)
-        return auth.get_user(client)
-
-    def createUser(self):
-        User = auth.get_user_model()
-        self._user = User.objects.create_user(
-            ApiRequestHelperTest.USER, 'temporary@gmail.com',
-            ApiRequestHelperTest.PASSWORD)
-
-    def setUser(self, request):
-        request.user = self._user
+from trialapp.tests.tests_helpers import ApiRequestHelperTest
 
 
 class BaaSWebAppTest(TestCase):

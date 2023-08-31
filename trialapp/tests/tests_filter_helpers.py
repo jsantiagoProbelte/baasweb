@@ -3,7 +3,7 @@ from baaswebapp.models import Category
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
-from trialapp.tests.tests_models import TrialAppModelTest
+from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
     CropListView, PlaguesListView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
@@ -25,14 +25,14 @@ class TrialFilterTest(TestCase):
         for i in range(1, numP+1):
             for j in range(1, numC+1):
                 year = TrialFilterTest.FIRST_YEAR + j
-                trialData = TrialAppModelTest.FIELDTRIALS[0].copy()
+                trialData = TrialTestData.TRIALS[0].copy()
                 trialData['name'] = f"trial{i}-{j}"
                 trialData['product'] = i
                 trialData['crop'] = j
                 trialData['code'] = FieldTrial.formatCode(year, fakemonth,
                                                           code)
                 trialData['initiation_date'] = f'{year}-07-01'
-                FieldTrial.create_fieldTrial(**trialData)
+                FieldTrial.createTrial(**trialData)
                 code += 1
                 if code % 100 == 0:
                     code = 1

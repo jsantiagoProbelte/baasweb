@@ -26,6 +26,14 @@ class ModelHelpers:
     NULL_STRING = '------'
     UNKNOWN = ' Unknown'
     UNDEFINED = 'Undefined'
+    NOT_APPLICABLE = 'N/A'
+    THE_UNKNNOWNS = [UNKNOWN, NULL_STRING, NOT_APPLICABLE, UNDEFINED]
+
+    @classmethod
+    def isInUnknowns(self, str):
+        if str in ModelHelpers.THE_UNKNNOWNS:
+            return True
+        return False
 
     @classmethod
     def getUnknown(cls):
@@ -91,7 +99,7 @@ class ModelHelpers:
         for result in results:
             found = result[tag_id]
             name = result[tag_name]
-            if name in [ModelHelpers.UNKNOWN, 'N/A']:
+            if ModelHelpers.isInUnknowns(name):
                 continue
             if found not in values:
                 values[found] = name
