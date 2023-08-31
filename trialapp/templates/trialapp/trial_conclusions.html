@@ -85,18 +85,18 @@
                 <div class="col-md-4  txt-center">
                     <span class="material-symbols-outlined small-icon" >device_thermostat</span>
                     <p class="txt-regular-12 capitalize-first">{% trans "temperature" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4  txt-center">
                     <span class="material-symbols-outlined small-icon" >water_drop</span>
                     <p class="txt-regular-12 capitalize-first">{% trans "humidity" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
                 </div>
                 <div class="col-md-4  txt-center">
                     <span class="material-symbols-outlined small-icon" >grain</span>
                     <p class="txt-regular-12 capitalize-first">{% trans "precipitation" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
                 </div>
+            </div>
+            <div class="trial-dynamic-content mt-3" id="trial-{{trial.id}}-weather_avg">
+                {% include 'trialapp/trial_weather_avg.html'%}
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
@@ -121,7 +121,7 @@
             <h6 class="card-title txt-encode-20">{{trial.product}}</h6>
             <p class="txt-regular-12 capitalize-first">{% trans "active substance" %}</p>
             <p class="txt-open-semibold-14">{{trial.product.active_substance}}</p>
-            <p class="txt-regular-12 capitalize-first">{% trans "benefit" %}</p>
+            <p class="txt-regular-12 capitalize-first mt-2">{% trans "benefit" %}</p>
             <p class="txt-open-semibold-14">Lorem</p>
         </div>
         

@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from trialapp.models import FieldTrial, Thesis, Application, TreatmentThesis
@@ -71,6 +72,7 @@ class TrialContent():
     _thesis = None
 
     WEATHER = 'weather_graphs'
+    WEATHER_AVG = 'weather_avg'
     ASSESSMENTS = 'assess_graphs'
     RESULT_SUMMARY = 'result_summary'
     KEY_ASSESS = 'key_assess'
@@ -175,6 +177,24 @@ class TrialContent():
                               "because location or assessments info are"
                               "missing")}]
 
+    def fetchWeatherAvg(self):
+        temp_avg = '??'
+        hum_avg = '??'
+        prep_avg = '??'
+        avgData = Weather.objects.filter(
+            date__range=(self._min_date, self._max_date),
+            latitude=self._trial.latitude,
+            longitude=self._trial.longitude
+        ).aggregate(
+                temp_avg=Avg('mean_temp'),
+                prep_avg=Avg('precipitation'),
+                hum_avg=Avg('relative_humidity'))
+        if avgData['temp_avg']:
+            temp_avg = round(avgData['temp_avg'], 0)
+            prep_avg = round(avgData['prep_avg'], 0)
+            hum_avg = round(avgData['hum_avg'], 0)
+        return {'temp_avg': temp_avg, 'hum_avg': hum_avg, 'prep_avg': prep_avg}
+
     def getRateTupeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
         ass_list = Assessment.getObjects(self._trial)
@@ -209,22 +229,6 @@ class TrialContent():
     def fetchDefault(self):
         return [{'title': self._content,
                  'content': f"<p>Content for {self._trial.name}</p>"}]
-
-    FETCH_FUNCTIONS = {
-        WEATHER: fetchWeather,
-        KEY_ASSESS: fetchKeyAssessData,
-        ASSESSMENTS: fetchAssessmentsData,
-        RESULT_SUMMARY: fetchResultSummaryData}
-
-    TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
-    TEMPLATE_DIVS = 'trialapp/trial_content_divs.html'
-    TEMPLATE_CONCLUSION_GRAPH = 'trialapp/trial_conclusion_graph.html'
-
-    FETCH_TEMPLATES = {
-        WEATHER: TEMPLATE_CARDS,
-        KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
-        ASSESSMENTS: TEMPLATE_CARDS,
-        RESULT_SUMMARY: TEMPLATE_CARDS}
 
     def getAssmts(self, force=False):
         if self._assmts is None or force:
@@ -446,6 +450,24 @@ class TrialContent():
             explanation += _(" in ")
             explanation += keyPartRated
         return explanation
+
+    FETCH_FUNCTIONS = {
+        WEATHER: fetchWeather,
+        KEY_ASSESS: fetchKeyAssessData,
+        ASSESSMENTS: fetchAssessmentsData,
+        WEATHER_AVG: fetchWeatherAvg,
+        RESULT_SUMMARY: fetchResultSummaryData}
+
+    TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
+    TEMPLATE_DIVS = 'trialapp/trial_content_divs.html'
+    TEMPLATE_CONCLUSION_GRAPH = 'trialapp/trial_conclusion_graph.html'
+
+    FETCH_TEMPLATES = {
+        WEATHER: TEMPLATE_CARDS,
+        KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
+        ASSESSMENTS: TEMPLATE_CARDS,
+        WEATHER_AVG: 'trialapp/trial_weather_avg.html',
+        RESULT_SUMMARY: TEMPLATE_CARDS}
 
     def fetch(self):
         theFetch = TrialContent.FETCH_FUNCTIONS.get(
