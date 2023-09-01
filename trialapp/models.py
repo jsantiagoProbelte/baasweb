@@ -165,6 +165,12 @@ class FieldTrial(ModelHelpers, models.Model):
     best_efficacy = models.DecimalField(max_digits=10, decimal_places=2,
                                         null=True)
 
+    def keyThesis(self):
+        if self.key_thesis:
+            return Thesis.objects.get(id=self.key_thesis)
+        else:
+            return None
+
     @classmethod
     def formatCode(cls, year, month, counts):
         return '{}{}{}'.format(year,
@@ -439,6 +445,17 @@ class TreatmentThesis(ModelHelpers, models.Model):
 
     def getName(self):
         return self.treatment.getName()
+
+    @classmethod
+    def getTreatment(cls, thesis):
+        if thesis:
+            tt = cls.objects.get(thesis=thesis)
+            if tt:
+                return tt.treatment
+        return None
+
+    def getDosis(self):
+        return self.treatment.getDosis()
 
 
 class Replica(ModelHelpers, models.Model):

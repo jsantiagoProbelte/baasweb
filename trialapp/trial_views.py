@@ -22,34 +22,18 @@ class TrialApi(LoginRequiredMixin, DetailView):
     template_name = 'trialapp/trial_show.html'
     context_object_name = 'trial'
 
-    def getThesisByFieldTrialForDetail(self, fieldtrial):
-        bgClass = 'bg-custom-'
-
-        thesisList = Thesis.objects.filter(
-            field_trial__id=fieldtrial.id
-            ).select_related(
-                'field_trial',
-                'field_trial__product',
-                'field_trial__product__vendor'
-            ).values(
-                'name',
-                'id',
-                'field_trial__product__name',
-                'field_trial__product__active_substance',
-                'field_trial__product__vendor__name'
-            ).annotate(
-                product_name=F('field_trial__product__name'),
-                active_substance=F('field_trial__product__active_substance'),
-                vendor_name=F('field_trial__product__vendor__name')
-            )
-
-        counter = 1
-        thesisWithColor = []
-        for thesis in thesisList:
-            thesisWithColor.append({'idColor': f"{bgClass}{counter}", 'thesis': thesis})
-            counter += 1
-
-        return thesisWithColor
+    def getTrialKeyData(self, trial):
+        keyThesis = trial.keyThesis()
+        keyTreatment = TreatmentThesis.getTreatment(keyThesis)
+        dosis = keyTreatment.getDosis() if keyTreatment else None
+        return {
+            'key_thesis_id': keyThesis.id if keyThesis else None,
+            'key_treatment_id': keyTreatment.id if keyTreatment else None,
+            'key_dosis_rate': dosis['rate'] if dosis else None,
+            'key_dosis_unit': dosis['unit'] if dosis else None,
+            'key_interval': keyThesis.interval if keyThesis else None,
+            'key_number_apps': keyThesis.number_applications if keyThesis else
+            None}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,6 +53,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
         control_product = False
         if trial.product.category() == Category.CONTROL:
             control_product = True
+
         showData = {
             'description': trial.getDescription(),
             'location': trial.getLocation(),
@@ -82,6 +67,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'numberAssessments': len(assessments),
             'numberThesis': len(allThesis)}
 
+        keyTrialData = self.getTrialKeyData(trial)
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
             for item in Application.getObjects(trial):
                 dataTrial['Applications'].append(
@@ -91,7 +77,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(trial,
                                                               None,
                                                               allThesis)
-        return {**context, **showData, **trialPermision}
+        return {**context, **showData, **trialPermision, **keyTrialData}
 
 
 class TrialContent():
@@ -217,9 +203,9 @@ class TrialContent():
             latitude=self._trial.latitude,
             longitude=self._trial.longitude
         ).aggregate(
-                temp_avg=Avg('mean_temp'),
-                prep_avg=Avg('precipitation'),
-                hum_avg=Avg('relative_humidity'))
+            temp_avg=Avg('mean_temp'),
+            prep_avg=Avg('precipitation'),
+            hum_avg=Avg('relative_humidity'))
         if avgData['temp_avg']:
             temp_avg = round(avgData['temp_avg'], 0)
             prep_avg = round(avgData['prep_avg'], 0)
@@ -323,7 +309,7 @@ class TrialContent():
             for thesis in self.getThesis():
                 treatments = TreatmentThesis.getObjects(thesis)
                 for ttreatment in treatments:
-                    if ttreatment.treatment.batch.product_variant.product.name == UNTREATED: # noqa E501
+                    if ttreatment.treatment.batch.product_variant.product.name == UNTREATED:  # noqa E501
                         self._trial.untreated_thesis = ttreatment.thesis.id
                         self._trial.save()
                         break
