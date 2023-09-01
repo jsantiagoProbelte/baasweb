@@ -151,3 +151,6 @@ class Treatment(ModelHelpers, models.Model):
                    varianName,
                    batchName,
                    rateUnitName)
+
+    def getDosis(self):
+        return {'rate': self.rate, 'unit': self.rate_unit.name}
