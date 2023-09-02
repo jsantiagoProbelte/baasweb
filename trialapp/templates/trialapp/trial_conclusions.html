@@ -87,7 +87,9 @@
         </div>
         <div class="card card-baas-alt mt-2">
             <p class="txt-regular-12 capitalize-first">{% trans "location" %}</p>
-            <p class="txt-encode-20">{{trial.location}}</p>
+            <p class="txt-encode-20">
+                {% include 'baaswebapp/show_value.html' with value=trial.location url_fix=edit_trial%}
+                </p>
         </div>
         {% if trial.latitude %}
             <div id="map" width="100%" style='height:250px'></div><div id="show_marker"></div>
@@ -121,15 +123,16 @@
             <div class="row">
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "cultivation mode" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.cultivation url_fix=edit_trial%}
+                    </p>
                 </div>
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "irrigation" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.irrigation url_fix=edit_trial%}</p>
                 </div>
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "texture" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.texture url_fix=edit_trial%}</p>
                 </div>
             </div>
         </div>
