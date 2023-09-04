@@ -58,7 +58,9 @@
         </li>
         <li class="nav-item">
             <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15 capitalize-first"
-                data-toggle="tooltip" data-placement="top" title='Download trial'>{% trans "download trial" %} &dHar;</a>
+                data-toggle="tooltip" data-placement="top" title='Download trial'>{% trans "download trial" %}
+                <span class="material-icons-outlined"> file_download </span>
+            </a>
         </li>
     </ul>
     <div class="tab-content" id="nav-trial">
@@ -90,33 +92,10 @@
 {% endblock %}
 
 {% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
-
-
-    // Load all dynamic content like graphs
     $(document).ready(function() {
-    // Loop through each dynamic div
-        $('.trial-dynamic-content').each(function() {
-            var divId = $(this).attr('id'); // Get the ID of the current div
-            /* Id will be like trial-id-contentId */
-            var items = divId.split('-');
-            var contentType = items[2]
-            var trialId = items[1]
-            // Make an AJAX call to the Django server
-            $.ajax({
-                type: 'GET',
-                url: '/trial_content_api' ,  // Update with the actual URL
-                data: { content_type: contentType, id: trialId }, // Send the div ID to the server
-                success: function(response) {
-                    // Update the content of the div with the loaded content
-                    $('#' + divId).html(response);
-                },
-                error: function() {
-                    // Handle error if the AJAX call fails
-                    $('#' + divId).html('<p>Error loading content.</p>');
-                }
-            });
-        });
+        loadTrialContent();
     });
 
     // Create a default Marker and add it to the map.

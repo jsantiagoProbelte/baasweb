@@ -1,11 +1,20 @@
 {% load i18n %}
+
 {% if dataContent.error %}
-    {{dataContent.error|safe}}
+    {% url 'thesis-list' dataContent.trial.id as edit_thesis_list %}
+    
+    <a href="{{edit_thesis_list}}" class="btn txt-warning">
+        <span class="material-symbols-outlined me-3">report_problem</span>
+        {% trans 'You can select key and control thesis in this link' %}
+    </a>
+    <p class='txt-regular-12 txt-warning'>{{dataContent.error|safe}}</p>
+    
 {% else %}
 <div class="row">
     <div class="col-md-8">
         <div class="graph-container mt-3">
             {{dataContent.conclusion_graph|safe}}
+            
         </div>
     </div>
     <div class="col-md-4">
