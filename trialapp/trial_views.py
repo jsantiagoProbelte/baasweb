@@ -214,9 +214,9 @@ class TrialContent():
 
     def getRateTupeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
-        ass_list = Assessment.getObjects(self._trial)
-        rateSets = Assessment.getRateSets(ass_list)
-        ratedParts = Assessment.getRatedParts(ass_list)
+        self._assmts = Assessment.getObjects(self._trial)
+        rateSets = Assessment.getRateSets(self._assmts)
+        ratedParts = Assessment.getRatedParts(self._assmts)
         return rateSets, ratedParts
 
     def fetchAssessmentsData(self):
@@ -241,7 +241,7 @@ class TrialContent():
                       "Data is not available,"
                       "key thesis or untreated thesis are not well identified,"
                       "key rate type unit is not well identified.")
-            return {'error': error}
+            return {'error': error, 'trial': self._trial}
 
     def fetchDefault(self):
         return [{'title': self._content,

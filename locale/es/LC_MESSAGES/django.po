@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-01 15:32+0200\n"
+"POT-Creation-Date: 2023-09-02 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr "clima"
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
-#: trialapp/templates/trialapp/trial_conclusions.html:111
+#: trialapp/templates/trialapp/trial_conclusions.html:113
 msgid "precipitation"
 msgstr "Precipitación"
 
@@ -38,7 +38,7 @@ msgid "hours"
 msgstr "horas"
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
-#: trialapp/templates/trialapp/trial_conclusions.html:103
+#: trialapp/templates/trialapp/trial_conclusions.html:105
 msgid "temperature"
 msgstr "temperatura"
 
@@ -252,7 +252,7 @@ msgstr "tipo producto"
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:80
-#: trialapp/templates/trialapp/trial_conclusions.html:138
+#: trialapp/templates/trialapp/trial_conclusions.html:141
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr "substancia activa"
@@ -484,32 +484,32 @@ msgstr "fecha"
 msgid "location"
 msgstr "Localización"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:98
+#: trialapp/templates/trialapp/trial_conclusions.html:100
 #: trialapp/trial_views.py:190
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:107
+#: trialapp/templates/trialapp/trial_conclusions.html:109
 msgid "humidity"
 msgstr "humedad"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:119
+#: trialapp/templates/trialapp/trial_conclusions.html:121
 msgid "cultivation"
 msgstr "Cultivo"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:123
+#: trialapp/templates/trialapp/trial_conclusions.html:125
 msgid "cultivation mode"
 msgstr "modo de cultivo"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:127
+#: trialapp/templates/trialapp/trial_conclusions.html:130
 msgid "irrigation"
 msgstr "Irrigación"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:131
+#: trialapp/templates/trialapp/trial_conclusions.html:134
 msgid "texture"
 msgstr "textura"
 
-#: trialapp/templates/trialapp/trial_conclusions.html:140
+#: trialapp/templates/trialapp/trial_conclusions.html:143
 msgid "benefit"
 msgstr "beneficio"
 

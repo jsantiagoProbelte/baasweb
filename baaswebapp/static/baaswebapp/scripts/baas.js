@@ -47,6 +47,33 @@ function setDataPoint(element, url) {
 };
 
 
+function loadTrialContent(){
+{
+    // Loop through each dynamic div
+        $('.trial-dynamic-content').each(function() {
+            var divId = $(this).attr('id'); // Get the ID of the current div
+            /* Id will be like trial-id-contentId */
+            var items = divId.split('-');
+            var contentType = items[2]
+            var trialId = items[1]
+            // Make an AJAX call to the Django server
+            $.ajax({
+                type: 'GET',
+                url: '/trial_content_api' ,  // Update with the actual URL
+                data: { content_type: contentType, id: trialId }, // Send the div ID to the server
+                success: function(response) {
+                    // Update the content of the div with the loaded content
+                    $('#' + divId).html(response);
+                },
+                error: function() {
+                    // Handle error if the AJAX call fails
+                    $('#' + divId).html('<p>Error loading content.</p>');
+                }
+            });
+        });
+    }
+}
+
 
 // Delete product on click
 $("#table-items").on('click', 'a[id^=delete-item-]', function(){

@@ -6,6 +6,7 @@
     {% url 'thesis-update' key_thesis_id as edit_thesis %}
 {% endif %}
 {% url 'fieldtrial-update' trial.id as edit_trial %}
+{% url 'product-update' trial.product.id as edit_product %}
 
 <div class="row ">
     <div class="col-md-8 mt-3">
@@ -139,7 +140,9 @@
         <div class="card card-baas-alt mt-2">
             <h6 class="card-title txt-encode-20">{{trial.product}}</h6>
             <p class="txt-regular-12 capitalize-first">{% trans "active substance" %}</p>
-            <p class="txt-open-semibold-14">{{trial.product.active_substance}}</p>
+            <p class="txt-open-semibold-14">
+                {% include 'baaswebapp/show_value.html' with value=trial.product.active_substance url_fix=edit_product%}
+            </p>
             <p class="txt-regular-12 capitalize-first mt-2">{% trans "benefit" %}</p>
             <p class="txt-open-semibold-14">Lorem</p>
         </div>
