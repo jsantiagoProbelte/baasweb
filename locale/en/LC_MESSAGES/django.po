@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-04 23:49+0200\n"
+"POT-Creation-Date: 2023-09-05 20:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -361,11 +361,11 @@ msgstr ""
 msgid "Ungrouped"
 msgstr ""
 
-#: trialapp/models.py:62 trialapp/models.py:86
+#: trialapp/models.py:62 trialapp/models.py:100
 msgid "Field Trial"
 msgstr ""
 
-#: trialapp/models.py:63 trialapp/models.py:87
+#: trialapp/models.py:63 trialapp/models.py:101
 msgid "Lab Trial"
 msgstr ""
 
@@ -429,16 +429,56 @@ msgstr ""
 msgid "STEMP"
 msgstr ""
 
-#: trialapp/models.py:79
+#: trialapp/models.py:79 trialapp/models.py:83
 msgid "UNDF"
 msgstr ""
 
-#: trialapp/models.py:228 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:84
+msgid "Sandy Soil"
+msgstr ""
+
+#: trialapp/models.py:85
+msgid "Clay Soil"
+msgstr ""
+
+#: trialapp/models.py:86
+msgid "Loamy Soil"
+msgstr ""
+
+#: trialapp/models.py:87
+msgid "Organic Soil"
+msgstr ""
+
+#: trialapp/models.py:88
+msgid "Rocky Soil"
+msgstr ""
+
+#: trialapp/models.py:89
+msgid "Saline Soil"
+msgstr ""
+
+#: trialapp/models.py:90
+msgid "Alkaline Soil"
+msgstr ""
+
+#: trialapp/models.py:91
+msgid "Acidic Soil"
+msgstr ""
+
+#: trialapp/models.py:92
+msgid "Peat Soil"
+msgstr ""
+
+#: trialapp/models.py:93
+msgid "Lateritic Soil"
+msgstr ""
+
+#: trialapp/models.py:247 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:231 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:250 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -471,11 +511,11 @@ msgstr ""
 msgid "select key part rated"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:40
+#: trialapp/templates/trialapp/thesis_list.html:41
 msgid "select key assessment"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:46
+#: trialapp/templates/trialapp/thesis_list.html:48
 msgid "efficacy key values"
 msgstr ""
 
@@ -590,11 +630,11 @@ msgid ""
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:462
+#: trialapp/trial_views.py:504
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:465
+#: trialapp/trial_views.py:507
 msgid " in "
 msgstr ""
 

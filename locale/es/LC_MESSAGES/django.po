@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-04 23:49+0200\n"
+"POT-Creation-Date: 2023-09-05 20:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -365,11 +365,11 @@ msgstr "Este campo es obligatorio."
 msgid "Ungrouped"
 msgstr "No agrupar"
 
-#: trialapp/models.py:62 trialapp/models.py:86
+#: trialapp/models.py:62 trialapp/models.py:100
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
 
-#: trialapp/models.py:63 trialapp/models.py:87
+#: trialapp/models.py:63 trialapp/models.py:101
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
 
@@ -433,18 +433,58 @@ msgstr "LUGAR"
 msgid "STEMP"
 msgstr "tallo"
 
-#: trialapp/models.py:79
+#: trialapp/models.py:79 trialapp/models.py:83
 msgid "UNDF"
 msgstr "Indefinido"
 
-#: trialapp/models.py:228 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:84
+msgid "Sandy Soil"
+msgstr "Suelo arenoso"
+
+#: trialapp/models.py:85
+msgid "Clay Soil"
+msgstr "Suelo arcilloso"
+
+#: trialapp/models.py:86
+msgid "Loamy Soil"
+msgstr "Suelo arcilloso"
+
+#: trialapp/models.py:87
+msgid "Organic Soil"
+msgstr "Suelo orgánico"
+
+#: trialapp/models.py:88
+msgid "Rocky Soil"
+msgstr "Suelo rocoso"
+
+#: trialapp/models.py:89
+msgid "Saline Soil"
+msgstr "Suelo salino"
+
+#: trialapp/models.py:90
+msgid "Alkaline Soil"
+msgstr "Suelo alcalino"
+
+#: trialapp/models.py:91
+msgid "Acidic Soil"
+msgstr "Suelo ácido"
+
+#: trialapp/models.py:92
+msgid "Peat Soil"
+msgstr "Tierra de turba"
+
+#: trialapp/models.py:93
+msgid "Lateritic Soil"
+msgstr "Suelo laterítico"
+
+#: trialapp/models.py:247 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 #, fuzzy
 #| msgid "Syndication"
 msgid "Undefined Location"
 msgstr "Sindicación"
 
-#: trialapp/models.py:231 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:250 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr "Periodo no definido"
 
@@ -479,11 +519,11 @@ msgstr "Elija unidad de evaluación clave"
 msgid "select key part rated"
 msgstr "Elija parte evaluada clave"
 
-#: trialapp/templates/trialapp/thesis_list.html:40
+#: trialapp/templates/trialapp/thesis_list.html:41
 msgid "select key assessment"
 msgstr "Elegir evaluación clave"
 
-#: trialapp/templates/trialapp/thesis_list.html:46
+#: trialapp/templates/trialapp/thesis_list.html:48
 #, fuzzy
 #| msgid "efficacy range"
 msgid "efficacy key values"
@@ -607,11 +647,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:462
+#: trialapp/trial_views.py:504
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:465
+#: trialapp/trial_views.py:507
 msgid " in "
 msgstr " en "
 
