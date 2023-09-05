@@ -188,13 +188,13 @@ class TrialContent():
         self._trial = get_object_or_404(FieldTrial, pk=trialId)
         self._content = content
         self._category = self._trial.product.category()
-        assessments = Assessment.getObjects(self._trial)
-        if assessments:
+        self._assmts = Assessment.getObjects(self._trial)
+        if self._assmts:
             oneweek = timedelta(days=7)
-            self._min_date = assessments.aggregate(
+            self._min_date = self._assmts.aggregate(
                 min_date=Min('assessment_date'))['min_date']
             self._min_date -= oneweek
-            self._max_date = assessments.aggregate(
+            self._max_date = self._assmts.aggregate(
                 max_date=Max('assessment_date'))['max_date']
             self._max_date += oneweek
         else:
@@ -302,7 +302,7 @@ class TrialContent():
             hum_avg = round(avgData['hum_avg'], 0)
         return {'temp_avg': temp_avg, 'hum_avg': hum_avg, 'prep_avg': prep_avg}
 
-    def getRateTupeUnitsAndParts(self):
+    def getRateTypeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
         self._assmts = Assessment.getObjects(self._trial)
         rateSets = Assessment.getRateSets(self._assmts)
@@ -310,13 +310,13 @@ class TrialContent():
         return rateSets, ratedParts
 
     def fetchAssessmentsData(self):
-        rateSets, ratedParts = self.getRateTupeUnitsAndParts()
+        rateSets, ratedParts = self.getRateTypeUnitsAndParts()
         return self.getAssGraphData(
             rateSets, ratedParts, GraphTrial.LINE, showEfficacy=False,
             xAxis=GraphTrial.L_DATE)
 
     def fetchResultSummaryData(self):
-        rateSets, ratedParts = self.getRateTupeUnitsAndParts()
+        rateSets, ratedParts = self.getRateTypeUnitsAndParts()
         return self.getAssGraphData(
             rateSets, ratedParts, GraphTrial.COLUMN, showEfficacy=True,
             xAxis=GraphTrial.L_ASSMT)
@@ -393,79 +393,84 @@ class TrialContent():
         return self._trial.key_thesis
 
     def whatIsControlThesis(self, force=False):
-        if not self._trial.untreated_thesis or force:
-            # if untreated_thesis is not designated yet, we nomine one
+        if not self._trial.control_thesis or force:
+            # if control_thesis is not designated yet, we nomine one
             # simple idea, use the first treatment pointed to the untreated
             for thesis in self.getThesis():
                 treatments = TreatmentThesis.getObjects(thesis)
                 for ttreatment in treatments:
                     if ttreatment.treatment.batch.product_variant.product.name == UNTREATED:  # noqa E501
-                        self._trial.untreated_thesis = ttreatment.thesis.id
+                        self._trial.control_thesis = ttreatment.thesis.id
                         self._trial.save()
                         break
-        return self._trial.untreated_thesis
+        return self._trial.control_thesis
 
-    def whatIsBestEfficacy(self, bestEfficacy, force=False):
+    def whatIsBestEfficacy(self, bestEfficacy, keyAssessmentId, force=False):
         if self._trial.best_efficacy != bestEfficacy and force:
             self._trial.best_efficacy = bestEfficacy
+            self._trial.key_assessment = keyAssessmentId
             self._trial.save()
         return self._trial.best_efficacy
 
-    def getKeyAssData(self, keyRateTypeUnit, keyPartRated,
-                      keyThesisId, untreatedThesisId):
-        if not keyRateTypeUnit or not keyPartRated or\
-           not keyThesisId or not untreatedThesisId:
+    def getKeyAssData(self):
+        if not self._keyRateTypeUnit or not self._keyPartRated or\
+           not self._keyThesisId or not self._untreatedThesisId:
             return None
 
         dataPoints = ReplicaData.dataPointsKeyAssessAvg(
-            keyRateTypeUnit, keyPartRated,
-            keyThesisId, untreatedThesisId)
+            self._keyRateTypeUnit, self._keyPartRated,
+            self._keyThesisId, self._untreatedThesisId)
 
         if len(dataPoints) > 1:
             return dataPoints
         else:
             return None
 
-    def getKeyAssmts(self, keyRateTypeUnit, keyPartRated):
+    def getKeyAssmts(self):
         return Assessment.objects.filter(
-            rate_type_id=keyRateTypeUnit.id,
-            part_rated=keyPartRated)
+            rate_type_id=self._keyRateTypeUnit.id,
+            part_rated=self._keyPartRated)
 
-    def getKeyGraphData(self):
-        keyRateTypeUnit, keyPartRated = self.whatIsKeyRates()
-        keyThesisId = self.whatIsKeyThesis()
-        untreatedThesisId = self.whatIsControlThesis()
-        dataPoints = self.getKeyAssData(
-            keyRateTypeUnit, keyPartRated, keyThesisId, untreatedThesisId)
+    def getKeyEfficacyComponents(self):
+        self._keyRateTypeUnit, self._keyPartRated = self.whatIsKeyRates()
+        self._keyThesisId = self.whatIsKeyThesis()
+        self._untreatedThesisId = self.whatIsControlThesis()
+        dataPoints = self.getKeyAssData()
 
         if not dataPoints:
             return None
 
-        assmts = self.getKeyAssmts(keyRateTypeUnit, keyPartRated)
-        keyThesis = Thesis.objects.get(id=keyThesisId)
-        untreatedThesis = Thesis.objects.get(id=untreatedThesisId)
-        bestEfficacy, line = self.calculateBestEfficacy(
-            dataPoints, assmts, keyThesisId, untreatedThesisId)
+        self._assmts = self.getKeyAssmts()
+        return dataPoints
+
+    def getKeyGraphData(self):
+        dataPoints = self.getKeyEfficacyComponents()
+        if not dataPoints:
+            return None
+        bestEfficacy, line, kAssId = self.calculateBestEfficacy(
+            dataPoints)
+        keyThesis = Thesis.objects.get(id=self._keyThesisId)
+        untreatedThesis = Thesis.objects.get(id=self._untreatedThesisId)
         thesiss = {
-            keyThesisId: keyThesis,
-            untreatedThesisId: untreatedThesis}
+            self._keyThesisId: keyThesis,
+            self._untreatedThesisId: untreatedThesis}
         graphF = DataGraphFactory(
-            GraphTrial.L_REPLICA, assmts, dataPoints,
+            GraphTrial.L_REPLICA, self._assmts, dataPoints,
             references=thesiss, showTitle=False)
-        num_assmts = len(assmts)
+        num_assmts = len(self._assmts)
         graphF.addLineColorsToTraces(keyThesis.number,
                                      untreatedThesis.number)
         if num_assmts > 1:
             graphF.addTrace(line, "best efficacy")
         content = graphF.drawConclusionGraph(num_assmts)
         explanation = self.bestEfficiencyExplanation(
-            keyRateTypeUnit, keyPartRated)
+            self._keyRateTypeUnit, self._keyPartRated)
 
         if bestEfficacy:
-            self.whatIsBestEfficacy(bestEfficacy, force=True)
+            self.whatIsBestEfficacy(bestEfficacy, kAssId, force=True)
         return {'conclusion_graph': content,
                 'key_treatment_product': keyThesis.getKeyProduct(),
-                'unit_name': keyRateTypeUnit.getName(),
+                'unit_name': self._keyRateTypeUnit.getName(),
                 'bestEfficiencyExplanation': explanation,
                 # see return on calculateBestEfficacy
                 'control_value': line['y'][0],
@@ -479,40 +484,77 @@ class TrialContent():
             eff = (keyThesisValue - controlValue) / controlValue
             return round((eff*100)+100, 2)
 
-    def calculateBestEfficacy(self, dataPoints, assmts,
-                              keyThesisId, untreatedThesisId):
+    def computeOnKeyAssessment(self, dataPoints):
+        keyAssId = self._trial.key_assessment
+        valueK = None
+        valueC = None
+        ddate = None
+        for assm in self._assmts:
+            if assm.id == keyAssId:
+                ddate = assm.assessment_date
+                break
+
+        for point in dataPoints:
+            if point['assessment__id'] == keyAssId:
+                if point['reference__thesis__id'] == self._keyThesisId:
+                    valueK = point['value']
+                elif point['reference__thesis__id'] == self._untreatedThesisId:
+                    valueC = point['value']
+                if valueK and valueC:
+                    break
+
+        if valueK and valueC:
+            bestEfficacy = self.calculateEfficacy(valueC, valueK)
+            if self._trial.best_efficacy != bestEfficacy:
+                self._trial.best_efficacy = bestEfficacy
+                self._trial.save()
+            lines = {'y': [round(valueC, 2), round(valueK, 2)],
+                     'x': [ddate, ddate]}
+            return bestEfficacy, lines, keyAssId
+        return None, None, None
+
+    def calculateBestEfficacy(self, dataPoints, force=False):
+        if self._trial.key_assessment and not force:
+            return self.computeOnKeyAssessment(dataPoints)
+        else:
+            return self.computeBestEfficacy(dataPoints)
+
+    def computeBestEfficacy(self, dataPoints):
         bestEfficacy = 0
         dateMaxDistance = None
-        pointU = None
+        pointC = None
         pointK = None
         values = {}
-        assmtsDates = {assm.id: assm.assessment_date for assm in assmts}
+        assmtsDates = {assm.id: assm.assessment_date for assm in self._assmts}
+        keyAssmtId = None
         for point in dataPoints:
             ddate = assmtsDates[point['assessment__id']]
             thesisId = point['reference__thesis__id']
             if ddate not in values:
                 values[ddate] = {}
-            if thesisId == keyThesisId:
+            if thesisId == self._keyThesisId:
                 values[ddate]['k'] = point['value']
-            if thesisId == untreatedThesisId:
-                values[ddate]['u'] = point['value']
+            if thesisId == self._untreatedThesisId:
+                values[ddate]['c'] = point['value']
+            values[ddate]['assId'] = point['assessment__id']
         for ddate in values:
             value = values[ddate]
-            if 'k' not in value or 'u' not in value:
+            if 'k' not in value or 'c' not in value:
                 continue
-            thisEfficacy = self.calculateEfficacy(value['u'], value['k'])
+            thisEfficacy = self.calculateEfficacy(value['c'], value['k'])
             if thisEfficacy > bestEfficacy:
                 bestEfficacy = thisEfficacy
                 dateMaxDistance = ddate
-                pointU = value['u']
+                pointC = value['c']
                 pointK = value['k']
+                keyAssmtId = value['assId']
 
         if bestEfficacy > 0:
-            lines = {'y': [round(pointU, 2), round(pointK, 2)],
+            lines = {'y': [round(pointC, 2), round(pointK, 2)],
                      'x': [dateMaxDistance, dateMaxDistance]}
-            return bestEfficacy, lines
+            return bestEfficacy, lines, keyAssmtId
         else:
-            return None, None
+            return None, None, None
 
     def getOrderAssmts(self, assmts):
         # This assmts are retrieved in order by date

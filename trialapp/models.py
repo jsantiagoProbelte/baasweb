@@ -79,6 +79,20 @@ class PartRated(models.TextChoices):
     UNDF = 'UNDF', _('UNDF')
 
 
+class SoilType(models.TextChoices):
+    UNDF = 'UNDF', _('UNDF')
+    SANDY = 'Sandy', _('Sandy Soil')  # 'Suelo Arenoso'
+    CLAY = 'Clay', _('Clay Soil')  # 'Suelo Arcilloso'
+    LOAMY = 'Loamy', _('Loamy Soil')  # 'Suelo Limoso'
+    ORGANIC = 'Organic', _('Organic Soil')  # 'Suelo Orgánico'
+    ROCKY = 'Rocky', _('Rocky Soil')  # 'Suelo Pedregoso'
+    SALINE = 'Saline', _('Saline Soil')  # 'Suelo Salino'
+    ALKALINE = 'Alkaline', _('Alkaline Soil')  # 'Suelo Alcalino'
+    ACIDIC = 'Acidic', _('Acidic Soil')  # 'Suelo Ácido'
+    PEAT = 'Peat', _('Peat Soil')  # 'Suelo de Turba'
+    LATERITIC = 'Lateritic', _('Lateritic Soil')  # 'Suelo Laterítico'
+
+
 class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -126,6 +140,10 @@ class FieldTrial(ModelHelpers, models.Model):
     crop_age = models.IntegerField(null=True)
     seed_date = models.DateField(null=True)
     transplant_date = models.DateField(null=True)
+    soil = models.CharField(
+        max_length=10,
+        choices=SoilType.choices,
+        default=SoilType.UNDF)
 
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
@@ -155,9 +173,10 @@ class FieldTrial(ModelHelpers, models.Model):
     public = models.BooleanField(default=False)
     # key properties of the trial after evaluation
     key_thesis = models.IntegerField(null=True)
-    untreated_thesis = models.IntegerField(null=True)
+    control_thesis = models.IntegerField(null=True)
     key_ratetypeunit = models.ForeignKey(RateTypeUnit,
                                          on_delete=models.SET_NULL, null=True)
+    key_assessment = models.IntegerField(null=True)
     key_ratedpart = models.CharField(
         max_length=10,
         choices=PartRated.choices,
@@ -449,9 +468,9 @@ class TreatmentThesis(ModelHelpers, models.Model):
     @classmethod
     def getTreatment(cls, thesis):
         if thesis:
-            tt = cls.objects.get(thesis=thesis)
+            tt = cls.objects.filter(thesis=thesis)
             if tt:
-                return tt.treatment
+                return tt[0].treatment
         return None
 
     def getDosis(self):

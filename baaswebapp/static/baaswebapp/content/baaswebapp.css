@@ -257,6 +257,25 @@
   border-radius: 50rem !important;
 }
 
+.btn-box-baas {
+  color: var(--custom-baas);
+  border-color: var(--custom-baas);
+  border-radius: 0.75rem !important;
+  border-width: 3px;
+  font-size: 10 !important;
+  font-family: 'Open Sans', serif !important;
+  font-weight: bolder !important;
+}
+
+.btn-box-baas:hover {
+  color: var(--custom-baas);
+  border-color: var(--custom-baas);
+  background-color: var(--custom-bg-color);
+  border-radius: 50rem !important;
+}
+
+
+
 .btn-outline-baas-alt {
   color: var(--bs-text-color);
   border-color: var(--custom-baas-alt);
@@ -671,6 +690,7 @@ div[class*="bg-custom-"]{
   text-decoration: none;
   vertical-align:middle;
 }
+
 .card-bottom .btn-large{
   color:#fff;
   font-size:1.85rem;
@@ -678,8 +698,8 @@ div[class*="bg-custom-"]{
   text-transform: initial !important;
   text-decoration: none;
   vertical-align:middle;
-
 }
+
 .card-bottom .btn-sm{
   font-size:1.35rem;
   font-weight:normal;

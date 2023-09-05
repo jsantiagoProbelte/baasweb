@@ -1,5 +1,35 @@
 {% if subheader %}
-<h5 class="mt-4 ms-4 text-muted">{{subheader}}
+<div class="mt-1 txt-encode-14 card-title text-muted">{{subheader}}</div>
+{% endif %}
+<div class="txt-encode-20 card-title mt-1 mb-2">
+    {{title}}
+    <span class="text-muted">{{subtitle}}</span>
+    <span><div class="btn-group ms-2" role="group">
+        {% if edit_href and edit_data%}
+        <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
+                data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
+        {% endif %}
+        {% if new_href and add_data%}
+        <a href="{% url new_href %}" class="btn btn-info btn-sm fs-1"
+                data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
+        {% endif %}
+        
+        {% if new_href_id and add_data%}
+        <a href="{% url new_href_id refId %}" class="btn btn-box-baas btn-sm"
+            data-toggle="tooltip" data-placement="top" title='Create new item'>
+            <span class="material-symbols-outlined" >add</span></a>
+        {% endif %}
+        {% if download_url %}
+        <a href="{% url download_url item.id %}" class="btn btn-box-baas btn-sm fs-4"
+            data-toggle="tooltip" data-placement="top" title='Download new item'>
+            <span class="material-symbols-outlined" >file_download</span></a>
+        {% endif %}
+        {% if delete_url and add_data%}
+        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
+            data-toggle="tooltip" data-placement="top" title='Delete new item'>
+            <span class="material-symbols-outlined" >delete</span></a>
+        {% endif %}
+    </div></span>
     <span> <div class="btn-group float-end" role="group">
         <a href="{% url 'fieldtrial-list' %}" class="btn btn-secondary btn-sm fs-3"
             data-toggle="tooltip" data-placement="top" title='Go to field trial list'>
@@ -17,37 +47,7 @@
         <a href="https://probelte.sharepoint.com/sites/BaaSArchive/Documentos%20compartidos/trials/{{fieldTrial.code}}" class="btn btn-dark " target="_blank"
             data-toggle="tooltip" data-placement="top" title='Trial documents'>Files</a>
     </div></span>
-</h5>
-{% endif %}
-<h2 class="fw-bold mt-4 ms-4 mb-3">
-    {{title}}
-    <span class="text-muted ml-2">{{subtitle}}</span>
-    <span><div class="btn-group ms-2" role="group">
-        {% if edit_href and edit_data%}
-        <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
-                data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
-        {% endif %}
-        {% if new_href and add_data%}
-        <a href="{% url new_href %}" class="btn btn-info btn-sm fs-1"
-                data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
-        {% endif %}
-        
-        {% if new_href_id and add_data%}
-        <a href="{% url new_href_id refId %}" class="btn btn-outline-baas btn-sm fs-1"
-            data-toggle="tooltip" data-placement="top" title='Create new item'>
-            <span class="material-symbols-outlined" >add</span></a>
-        {% endif %}
-        {% if download_url %}
-        <a href="{% url download_url item.id %}" class="btn btn-secondary btn-sm fs-4"
-            data-toggle="tooltip" data-placement="top" title='Download new item'>&dHar;</a>
-        {% endif %}
-        {% if delete_url and add_data%}
-        <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
-            data-toggle="tooltip" data-placement="top" title='Delete new item'>
-            <span class="material-symbols-outlined" >delete</span></a>
-        {% endif %}
-    </div></span>
-</h2>
+</div>
 
 
 {% if errors %}
