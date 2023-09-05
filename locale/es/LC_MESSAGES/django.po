@@ -291,7 +291,7 @@ msgstr "Formulaciones del producto"
 
 #: catalogue/templates/catalogue/product_show.html:71
 msgid "*All products trials efficacy range"
-msgstr "*Rango de eficacia de los ensayos de todos los productos"
+msgstr "*Rango de eficacia de todos los ensayos del producto"
 
 #: catalogue/templates/catalogue/product_show.html:87
 #: catalogue/templates/catalogue/product_show.html:149
