@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select control, untreated thesis'%}</p>
-                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.untreated_thesis type_param='control_thesis'%}
+                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.control_thesis type_param='control_thesis'%}
                 </div>
                 <div class="col-md-6">
                     <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key thesis'%}</p>
@@ -37,8 +37,10 @@
                     {% include 'trialapp/select_key_param.html' with itemList=partList current_value_id=fieldTrial.key_ratedpart type_param='key_rated_part'%}
                 </div>
                 <div class="col-md-4">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key assessment'%}</p>
-                    {% include 'trialapp/select_key_param.html' with itemList=assmtList current_value_id=fieldTrial.key_assessment type_param='key_assessment'%}
+                    {% if assmtList %}
+                        <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key assessment'%}</p>
+                        {% include 'trialapp/select_key_param.html' with itemList=assmtList current_value_id=fieldTrial.key_assessment type_param='key_assessment'%}
+                    {% endif %}
                 </div>
             </div>
         </div>

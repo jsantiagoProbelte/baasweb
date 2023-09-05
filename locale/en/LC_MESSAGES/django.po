@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-02 16:01+0200\n"
+"POT-Creation-Date: 2023-09-04 23:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
-#: trialapp/templates/trialapp/trial_conclusions.html:113
+#: trialapp/templates/trialapp/trial_conclusions.html:114
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
-#: trialapp/templates/trialapp/trial_conclusions.html:105
+#: trialapp/templates/trialapp/trial_conclusions.html:106
 msgid "temperature"
 msgstr ""
 
@@ -66,8 +66,8 @@ msgid "dew point"
 msgstr ""
 
 #: baaswebapp/graphs.py:627
-#: trialapp/templates/trialapp/trial_conclusions.html:60
-#: trialapp/templates/trialapp/trial_conclusions.html:71
+#: trialapp/templates/trialapp/trial_conclusions.html:61
+#: trialapp/templates/trialapp/trial_conclusions.html:72
 #: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:145
 msgid "efficacy"
 msgstr ""
@@ -248,7 +248,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:80
-#: trialapp/templates/trialapp/trial_conclusions.html:141
+#: trialapp/templates/trialapp/trial_conclusions.html:142
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
@@ -293,7 +293,7 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:149
 #: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:242
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:80
+#: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "pest / disease"
 msgstr ""
 
@@ -325,27 +325,27 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:148
 #: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:241
 #: trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:83
+#: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "crop"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:150
-#: trialapp/templates/trialapp/trial_conclusions.html:16
+#: trialapp/templates/trialapp/trial_conclusions.html:17
 msgid "dosis"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:151
-#: trialapp/templates/trialapp/trial_conclusions.html:28
+#: trialapp/templates/trialapp/trial_conclusions.html:29
 msgid "solution volume"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:152
-#: trialapp/templates/trialapp/trial_conclusions.html:38
+#: trialapp/templates/trialapp/trial_conclusions.html:39
 msgid "number applications"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:153
-#: trialapp/templates/trialapp/trial_conclusions.html:46
+#: trialapp/templates/trialapp/trial_conclusions.html:47
 msgid "day intervals"
 msgstr ""
 
@@ -450,56 +450,89 @@ msgstr ""
 msgid "results"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:16
+#: trialapp/templates/trialapp/thesis_list.html:6
+#: trialapp/templates/trialapp/trial_show.html:42
+msgid "trial Design"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:14
+msgid "select control, untreated thesis"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:18
+msgid "select key thesis"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:32
+msgid "select key rate type unit"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:36
+msgid "select key part rated"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:40
+msgid "select key assessment"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:46
+msgid "efficacy key values"
+msgstr ""
+
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:8
+msgid "You can select key and control thesis in this link"
+msgstr ""
+
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:25
 msgid "treatments"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:20
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:29
 msgid "control"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:27
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:36
 msgid "best efficacy"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:54
+#: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:85
+#: trialapp/templates/trialapp/trial_conclusions.html:86
 msgid "date"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:89
+#: trialapp/templates/trialapp/trial_conclusions.html:90
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:100
+#: trialapp/templates/trialapp/trial_conclusions.html:101
 #: trialapp/trial_views.py:190
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:109
+#: trialapp/templates/trialapp/trial_conclusions.html:110
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:121
+#: trialapp/templates/trialapp/trial_conclusions.html:122
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:125
+#: trialapp/templates/trialapp/trial_conclusions.html:126
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:130
+#: trialapp/templates/trialapp/trial_conclusions.html:131
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:134
+#: trialapp/templates/trialapp/trial_conclusions.html:135
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:143
+#: trialapp/templates/trialapp/trial_conclusions.html:146
 msgid "benefit"
 msgstr ""
 
@@ -510,10 +543,6 @@ msgstr ""
 
 #: trialapp/templates/trialapp/trial_show.html:39
 msgid "conclusions"
-msgstr ""
-
-#: trialapp/templates/trialapp/trial_show.html:42
-msgid "trial Design"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_show.html:45
@@ -536,7 +565,7 @@ msgstr ""
 msgid "download trial"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:72
+#: trialapp/templates/trialapp/trial_show.html:74
 msgid "average efficacy"
 msgstr ""
 
