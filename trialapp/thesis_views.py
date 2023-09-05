@@ -19,6 +19,7 @@ from django import forms
 from trialapp.trial_helper import MyDateInput
 from catalogue.models import Treatment, Product
 from trialapp.trial_helper import TrialPermission
+from trialapp.trial_views import TrialContent
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -37,8 +38,19 @@ class ThesisListView(LoginRequiredMixin, ListView):
             for item in Replica.getFieldTrialObjects(fieldTrial)]
         permisions = TrialPermission(
             fieldTrial, self.request.user).getPermisions()
+        trialContent = TrialContent(fieldTrial.id, 'what')
+        units, parts = trialContent.getRateTupeUnitsAndParts()
+        assmts = trialContent.getAssmts()
+        assmtList = [{'id': item.id, 'name': item.assessment_date}
+                     for item in assmts]
+        unitList = [{'id': item.id, 'name': item.getName()} for item in units]
+        partList = [{'id': item, 'name': item} for item in parts]
         return {'thesisList': thesisDisplay,
                 'fieldTrial': fieldTrial,
+                'trial': fieldTrial,
+                'partList': partList,
+                'assmtList': assmtList,
+                'unitList': unitList,
                 'rowsReplicaHeader': headerRows,
                 'replicas': replicas,
                 **permisions,
@@ -329,3 +341,31 @@ class SetReplicaPosition(APIView):
             newReplica.pos_y = y
             newReplica.save()
         return redirect('thesis-list', field_trial_id=trialId)
+
+
+class SetTrialKeyValues(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    TAG_KEY_THESIS = 'key_thesis'
+    TAG_CONTROL = 'control_thesis'
+    TAG_RATE_TYPE = 'key_rate_type'
+    TAG_RATED_PART = 'key_rated_part'
+
+    # see generateDataPointId
+    def post(self, request, trial_id, type_param):
+        itemId = request.POST['item_id']
+        trial = get_object_or_404(FieldTrial, pk=trial_id)
+        if type_param == SetTrialKeyValues.TAG_KEY_THESIS:
+            trial.key_ratetypeunit = itemId
+        elif type_param == SetTrialKeyValues.TAG_CONTROL:
+            trial.untreated_thesis = itemId
+        elif type_param == SetTrialKeyValues.TAG_RATE_TYPE:
+            trial.key_ratetypeunit_id = itemId
+        elif type_param == SetTrialKeyValues.TAG_RATED_PART:
+            trial.key_ratedpart = itemId
+        trial.save()
+        # DO we need to FORCE TO COMPUTE EFFICACY???
+        # calculate best efficacy
+        return redirect('thesis-list', field_trial_id=trial_id)

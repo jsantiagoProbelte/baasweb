@@ -1,4 +1,13 @@
 {% load i18n %}
+{% if key_treatment_id %}
+    {% url 'treatment-update' key_treatment_id as edit_treatment %}
+{% endif %}
+{% if key_thesis_id %}
+    {% url 'thesis-update' key_thesis_id as edit_thesis %}
+{% endif %}
+{% url 'fieldtrial-update' trial.id as edit_trial %}
+{% url 'product-update' trial.product.id as edit_product %}
+
 <div class="row ">
     <div class="col-md-8 mt-3">
         <div class="row row-cols-2 row-cols-md-4 g-4">
@@ -8,15 +17,21 @@
                         {% trans "dosis" %}</p>
                     <p class="txt-open-bold-22">
                         <span class="small-icon-16 material-symbols-outlined txt-baas-baas">colorize</span>
-                        Lorem</p>
+                        {% include 'baaswebapp/show_value.html' with value=key_dosis_rate url_fix=edit_treatment%}
+                        {% if key_dosis_unit %}
+                            <span class="txt-regular-14">{{key_dosis_unit}}</span>
+                        {% endif %}
+                        </p>
                 </div>
             </div>
             <div class="col">
                 <div class="card card-body-baas">
                     <p class="card-title txt-regular-14 capitalize-first">{% trans "solution volume" %}</p>
                     <p> <span class="small-icon-16 material-symbols-outlined txt-baas-baas">science</span>
-                        <span class="txt-open-bold-22">{{trial.application_volume}} </span>
-                        <span class="txt-regular-14">{{trial.application_unit}}</span></p>
+                        <span class="txt-open-bold-22">
+                            {% include 'baaswebapp/show_value.html' with value=trial.application_volume url_fix=edit_trial%} </span>
+                        <span class="txt-regular-14">
+                            {% include 'baaswebapp/show_value.html' with value=trial.application_volume_unit url_fix=edit_trial%}</span></p>
                 </div>
             </div>
             <div class="col">
@@ -24,7 +39,7 @@
                     <p class="card-title txt-regular-14 capitalize-first">{% trans "number applications"%}</p>
                     <p class="txt-open-bold-22">
                         <span class="small-icon-16 material-symbols-outlined txt-baas-baas">restart_alt</span>
-                        Lorem</p>
+                        {% include 'baaswebapp/show_value.html' with value=key_number_apps url_fix=edit_thesis%}</p>
                 </div>
             </div>
             <div class="col">
@@ -32,13 +47,15 @@
                     <p class="card-title txt-regular-14 capitalize-first">{% trans "day intervals"%}</p>
                     <p class="txt-open-bold-22">
                         <span class="small-icon-16 material-symbols-outlined txt-baas-baas">calendar_month</span>
-                        Lorem</p>
+                        {% include 'baaswebapp/show_value.html' with value=key_interval url_fix=edit_thesis%}</p>
                 </div>
             </div>
         </div>
         <div class="card card-body-baas mt-3">
             <p class="card-title txt-encode-20 capitalize-first">{% trans "recommendations" %}</p>
-            <p class="txt-regular-13">Lorem</p>
+            <p class="txt-regular-13">
+                {% include 'baaswebapp/show_value.html' with value=trial.conclusion url_fix=edit_trial%}
+            </p>
         </div>
         <div class="card card-body-baas mt-3" >
             <p class="card-title txt-encode-14 txt-uppercase">{% trans "efficacy" %} {{type_product}}</p>
@@ -62,16 +79,18 @@
         <div class="card card-baas-alt mt-2">
             {% if control_product %}
                 <p class="txt-regular-12 capitalize-first">{% trans "pest / disease" %}</p>
-                <p class="txt-encode-20">{{trial.plague}}</p>
+                <i class="txt-encode-20 mb-2">{{trial.plague}}</i>
             {% endif %}
             <p class="txt-regular-12 capitalize-first">{% trans "crop" %}</p>
-            <p class="txt-encode-20">{{trial.crop}}</p>
+            <p class="txt-encode-20 mb-2">{{trial.crop}}</p>
             <p class="txt-regular-12 capitalize-first">{% trans "date" %}</p>
             <p class="card-title txt-encode-20">{{period}}</p>
         </div>
         <div class="card card-baas-alt mt-2">
             <p class="txt-regular-12 capitalize-first">{% trans "location" %}</p>
-            <p class="txt-encode-20">{{trial.location}}</p>
+            <p class="txt-encode-20">
+                {% include 'baaswebapp/show_value.html' with value=trial.location url_fix=edit_trial%}
+                </p>
         </div>
         {% if trial.latitude %}
             <div id="map" width="100%" style='height:250px'></div><div id="show_marker"></div>
@@ -105,22 +124,25 @@
             <div class="row">
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "cultivation mode" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.cultivation url_fix=edit_trial%}
+                    </p>
                 </div>
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "irrigation" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.irrigation url_fix=edit_trial%}</p>
                 </div>
                 <div class="col-md-4">
                     <p class="txt-regular-12 capitalize-first">{% trans "texture" %}</p>
-                    <p class="txt-open-semibold-14">Lorem</p>
+                    <p class="txt-open-semibold-14">{% include 'baaswebapp/show_value.html' with value=trial.texture url_fix=edit_trial%}</p>
                 </div>
             </div>
         </div>
         <div class="card card-baas-alt mt-2">
             <h6 class="card-title txt-encode-20">{{trial.product}}</h6>
             <p class="txt-regular-12 capitalize-first">{% trans "active substance" %}</p>
-            <p class="txt-open-semibold-14">{{trial.product.active_substance}}</p>
+            <p class="txt-open-semibold-14">
+                {% include 'baaswebapp/show_value.html' with value=trial.product.active_substance url_fix=edit_product%}
+            </p>
             <p class="txt-regular-12 capitalize-first mt-2">{% trans "benefit" %}</p>
             <p class="txt-open-semibold-14">Lorem</p>
         </div>

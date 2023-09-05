@@ -51,6 +51,19 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         return thesisWithColor
 
+    def getTrialKeyData(self, trial):
+        keyThesis = trial.keyThesis()
+        keyTreatment = TreatmentThesis.getTreatment(keyThesis)
+        dosis = keyTreatment.getDosis() if keyTreatment else None
+        return {
+            'key_thesis_id': keyThesis.id if keyThesis else None,
+            'key_treatment_id': keyTreatment.id if keyTreatment else None,
+            'key_dosis_rate': dosis['rate'] if dosis else None,
+            'key_dosis_unit': dosis['unit'] if dosis else None,
+            'key_interval': keyThesis.interval if keyThesis else None,
+            'key_number_apps': keyThesis.number_applications if keyThesis else
+            None}
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         trial = self.get_object()
@@ -69,6 +82,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
         control_product = False
         if trial.product.category() == Category.CONTROL:
             control_product = True
+
         showData = {
             'description': trial.getDescription(),
             'location': trial.getLocation(),
@@ -82,6 +96,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'numberAssessments': len(assessments),
             'numberThesis': len(allThesis)}
 
+        keyTrialData = self.getTrialKeyData(trial)
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
             for item in Application.getObjects(trial):
                 dataTrial['Applications'].append(
@@ -91,7 +106,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(trial,
                                                               None,
                                                               allThesis)
-        return {**context, **showData, **trialPermision}
+        return {**context, **showData, **trialPermision, **keyTrialData}
 
 
 class TrialContent():
@@ -228,9 +243,9 @@ class TrialContent():
 
     def getRateTupeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
-        ass_list = Assessment.getObjects(self._trial)
-        rateSets = Assessment.getRateSets(ass_list)
-        ratedParts = Assessment.getRatedParts(ass_list)
+        self._assmts = Assessment.getObjects(self._trial)
+        rateSets = Assessment.getRateSets(self._assmts)
+        ratedParts = Assessment.getRatedParts(self._assmts)
         return rateSets, ratedParts
 
     def fetchAssessmentsData(self):
@@ -255,7 +270,7 @@ class TrialContent():
                       "Data is not available,"
                       "key thesis or untreated thesis are not well identified,"
                       "key rate type unit is not well identified.")
-            return {'error': error}
+            return {'error': error, 'trial': self._trial}
 
     def fetchDefault(self):
         return [{'title': self._content,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-31 14:23+0200\n"
+"POT-Creation-Date: 2023-09-02 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
 #: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
-#: trialapp/templates/trialapp/trial_conclusions.html:97
+#: trialapp/templates/trialapp/trial_conclusions.html:113
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
-#: trialapp/templates/trialapp/trial_conclusions.html:87
+#: trialapp/templates/trialapp/trial_conclusions.html:105
 msgid "temperature"
 msgstr ""
 
@@ -66,9 +66,9 @@ msgid "dew point"
 msgstr ""
 
 #: baaswebapp/graphs.py:627
-#: trialapp/templates/trialapp/trial_conclusions.html:44
-#: trialapp/templates/trialapp/trial_conclusions.html:55
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:128
+#: trialapp/templates/trialapp/trial_conclusions.html:60
+#: trialapp/templates/trialapp/trial_conclusions.html:71
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:145
 msgid "efficacy"
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list.html:7
 #: catalogue/templates/catalogue/product_show.html:80
-#: trialapp/templates/trialapp/trial_conclusions.html:122
+#: trialapp/templates/trialapp/trial_conclusions.html:141
 #: trialapp/templates/trialapp/trials_list.html:8
 msgid "active substance"
 msgstr ""
@@ -293,7 +293,7 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:149
 #: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:242
 #: trialapp/templates/trialapp/plagues_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:64
+#: trialapp/templates/trialapp/trial_conclusions.html:80
 msgid "pest / disease"
 msgstr ""
 
@@ -325,27 +325,27 @@ msgstr ""
 #: catalogue/templates/catalogue/product_show.html:148
 #: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:241
 #: trialapp/templates/trialapp/crop_list.html:5
-#: trialapp/templates/trialapp/trial_conclusions.html:67
+#: trialapp/templates/trialapp/trial_conclusions.html:83
 msgid "crop"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:150
-#: trialapp/templates/trialapp/trial_conclusions.html:8
+#: trialapp/templates/trialapp/trial_conclusions.html:16
 msgid "dosis"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:151
-#: trialapp/templates/trialapp/trial_conclusions.html:16
+#: trialapp/templates/trialapp/trial_conclusions.html:28
 msgid "solution volume"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:152
-#: trialapp/templates/trialapp/trial_conclusions.html:24
+#: trialapp/templates/trialapp/trial_conclusions.html:38
 msgid "number applications"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:153
-#: trialapp/templates/trialapp/trial_conclusions.html:32
+#: trialapp/templates/trialapp/trial_conclusions.html:46
 msgid "day intervals"
 msgstr ""
 
@@ -433,12 +433,12 @@ msgstr ""
 msgid "UNDF"
 msgstr ""
 
-#: trialapp/models.py:222 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:228 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:225 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:231 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -446,7 +446,7 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:122
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:126
 msgid "results"
 msgstr ""
 
@@ -462,44 +462,44 @@ msgstr ""
 msgid "best efficacy"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:40
+#: trialapp/templates/trialapp/trial_conclusions.html:54
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:69
+#: trialapp/templates/trialapp/trial_conclusions.html:85
 msgid "date"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:73
+#: trialapp/templates/trialapp/trial_conclusions.html:89
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:82
-#: trialapp/trial_views.py:173
+#: trialapp/templates/trialapp/trial_conclusions.html:100
+#: trialapp/trial_views.py:190
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:92
+#: trialapp/templates/trialapp/trial_conclusions.html:109
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:103
+#: trialapp/templates/trialapp/trial_conclusions.html:121
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:107
+#: trialapp/templates/trialapp/trial_conclusions.html:125
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:111
+#: trialapp/templates/trialapp/trial_conclusions.html:130
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:115
+#: trialapp/templates/trialapp/trial_conclusions.html:134
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:124
+#: trialapp/templates/trialapp/trial_conclusions.html:143
 msgid "benefit"
 msgstr ""
 
@@ -548,24 +548,24 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:174
+#: trialapp/trial_views.py:191
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:203
+#: trialapp/trial_views.py:238
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:443
+#: trialapp/trial_views.py:462
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:446
+#: trialapp/trial_views.py:465
 msgid " in "
 msgstr ""
 

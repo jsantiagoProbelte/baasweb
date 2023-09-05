@@ -1,25 +1,66 @@
 {% extends "baaswebapp/layout.html" %}
 
 {% load crispy_forms_tags %}
-
+{% load i18n %}
 {% block content %}
-
-{% include "trialapp/header_page_trial.html" with title="Thesis list" subheader=fieldTrial.name  new_href_id='thesis-add' refId=fieldTrial.id%}
+{% trans "trial Design" as title %}
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name  new_href_id='thesis-add' refId=fieldTrial.id%}
 
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-body-baas">
+        <div class="card-body-baas mb-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select control, untreated thesis'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.untreated_thesis type_param='control_thesis'%}
+                </div>
+                <div class="col-md-6">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key thesis'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.key_thesis type_param='key_thesis'%}
+                </div>
+            </div>
+        </div>
+        <div class="card card-body-baas mb-3">
         {% include 'trialapp/thesis_list_table.html' with show_description=True %}
         </div>
+        {% include 'trialapp/thesis_map.html' %}
     </div>
     <div class="col-md-6">
-        {% include 'trialapp/thesis_map.html' %}
+        <div class="card-body-baas mb-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key rate type unit'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=unitList current_value_id=fieldTrial.key_ratetypeunit.id type_param='key_rate_type'%}
+                </div>
+                <div class="col-md-4">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key part rated'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=partList current_value_id=fieldTrial.key_ratedpart type_param='key_rated_part'%}
+                </div>
+                <div class="col-md-4">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key assessment'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=assmtList current_value_id=fieldTrial.key_assessment type_param='key_assessment'%}
+                </div>
+            </div>
+        </div>
+        <div class="card card-body-baas mt-3" >
+            <p class="card-title txt-encode-14 txt-uppercase">{% trans "efficacy key values" %}</p>
+            <div class="trial-dynamic-content" id="trial-{{trial.id}}-key_assess">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        {% include 'trialapp/trial_content_topic_div.html' with topic='assess_graphs'%}
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src='/static/baaswebapp/scripts/baas.js'></script>
 <script>
+$(document).ready(function() {
+    loadTrialContent();
+});
+
 $('.replica-position-selection').on('change', function() {
     var element=$(this);
     var formElement=element.parent();

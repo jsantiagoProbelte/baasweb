@@ -1,0 +1,22 @@
+
+    <form class="d-flex" action="{% url 'set-trial-key-values' fieldTrial.id type_param %}"  method="POST">
+        {% csrf_token %}
+        <div class="input-group me-3">
+            <select name='item_id' class="form-select baas-box-shadow txt-regular-13">
+                {% if current_value_id %}
+                    <option value >----</option>
+                {% else %}
+                    <option value selected>----</option>
+                {% endif %}
+                {% for item in itemList%}
+                    {% if item.id == current_value_id %}
+                        <option value="{{item.id}}" selected>{{item.name}}</option>
+                    {% else %}
+                        <option value="{{item.id}}">{{item.name}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-sm btn-outline-baas"><span class="material-symbols-outlined">save_alt</span>
+        </button>
+    </form>
