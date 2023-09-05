@@ -4,10 +4,11 @@ from baaswebapp.models import PType, RateTypeUnit
 from catalogue.models import Product, Vendor, Batch, Treatment, \
     ProductVariant, UNTREATED
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit, \
-    Application
+    Application, PartRated
 from trialapp.data_models import Assessment, ReplicaData, Replica
 from trialapp.tests.tests_helpers import TrialTestData
-from trialapp.trial_views import TrialApi, TrialContent, trialContentApi
+from trialapp.trial_views import TrialApi, TrialContent, trialContentApi, \
+    SetTrialKeyValues
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from datetime import timedelta, datetime
 
@@ -257,3 +258,42 @@ class TrialViewsTest(TestCase):
             self._apiFactory.setUser(getRequest)
             response = trialContentApi(getRequest)
             self.assertEqual(response.status_code, 200)
+
+    def callSetTrialKeyValues(self, item_id, type_param):
+        addData = {'item_id': item_id}
+        request = self._apiFactory.post(
+            'set-trial-key-values',
+            data=addData)
+        self._apiFactory.setUser(request)
+        apiView = SetTrialKeyValues()
+        response = apiView.post(request, self._trial.id, type_param)
+        self.assertEqual(response.status_code, 302)
+        return FieldTrial.objects.get(id=self._trial.id)
+
+    def test_setkeytrialvalues(self):
+        item_id = 6
+        self.assertTrue(self._trial.key_thesis is None)
+        self._trial = self.callSetTrialKeyValues(
+            item_id, SetTrialKeyValues.TAG_KEY_THESIS)
+        self.assertEqual(self._trial.key_thesis, item_id)
+
+        self.assertTrue(self._trial.control_thesis is None)
+        self._trial = self.callSetTrialKeyValues(
+            item_id, SetTrialKeyValues.TAG_CONTROL)
+        self.assertEqual(self._trial.control_thesis, item_id)
+
+        self.assertTrue(self._trial.key_ratetypeunit_id is None)
+        self._trial = self.callSetTrialKeyValues(
+            3, SetTrialKeyValues.TAG_RATE_TYPE)
+        self.assertEqual(self._trial.key_ratetypeunit_id, 3)
+
+        self.assertEqual(self._trial.key_ratedpart,
+                         PartRated.UNDF.value)
+        self._trial = self.callSetTrialKeyValues(
+            PartRated.BUNCH.value, SetTrialKeyValues.TAG_RATED_PART)
+        self.assertEqual(self._trial.key_ratedpart, PartRated.BUNCH.value)
+
+        self.assertTrue(self._trial.key_assessment is None)
+        self._trial = self.callSetTrialKeyValues(
+            item_id, SetTrialKeyValues.TAG_ASSESSMENT)
+        self.assertEqual(self._trial.key_assessment, item_id)
