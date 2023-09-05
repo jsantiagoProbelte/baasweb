@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 23:45+0200\n"
+"POT-Creation-Date: 2023-09-06 01:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr "punto de rocío"
 #: baaswebapp/graphs.py:627
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:177
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:178
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -567,28 +567,32 @@ msgstr "tratamientos"
 msgid "trial Design"
 msgstr "Diseño ensayo"
 
-#: trialapp/templates/trialapp/thesis_list.html:14
-msgid "select control, untreated thesis"
-msgstr "Seleccionar control, tesis no tratada"
+#: trialapp/templates/trialapp/thesis_list.html:21
+msgid "Select key params of efficacy:"
+msgstr "Seleccione los parámetros clave de eficacia:"
 
-#: trialapp/templates/trialapp/thesis_list.html:18
-msgid "select key thesis"
-msgstr "Elegir Tesis Clave"
+#: trialapp/templates/trialapp/thesis_list.html:22
+msgid "control, untreated thesis"
+msgstr "control, tesis no tratada"
 
-#: trialapp/templates/trialapp/thesis_list.html:32
-msgid "select key rate type unit"
-msgstr "Elija unidad de evaluación clave"
+#: trialapp/templates/trialapp/thesis_list.html:24
 
-#: trialapp/templates/trialapp/thesis_list.html:36
-msgid "select key part rated"
-msgstr "Elija parte evaluada clave"
+msgid "key thesis"
+msgstr "Tesis Clave"
 
-#: trialapp/templates/trialapp/thesis_list.html:41
-msgid "select key assessment"
-msgstr "Elegir evaluación clave"
+#: trialapp/templates/trialapp/thesis_list.html:28
+msgid "Key rate type unit"
+msgstr "unidad de evaluación clave"
 
-#: trialapp/templates/trialapp/thesis_list.html:48
+#: trialapp/templates/trialapp/thesis_list.html:30
+msgid "Key part rated"
+msgstr "parte evaluada clave"
 
+#: trialapp/templates/trialapp/thesis_list.html:33
+msgid "Key assessment"
+msgstr "evaluación clave"
+
+#: trialapp/templates/trialapp/thesis_list.html:40
 msgid "efficacy key values"
 msgstr "rango eficacia"
 
@@ -623,7 +627,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:222
+#: trialapp/trial_views.py:223
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -698,7 +702,7 @@ msgstr "código"
 msgid "Soil"
 msgstr "Suelo arcilloso"
 
-#: trialapp/trial_views.py:223
+#: trialapp/trial_views.py:224
 msgid ""
 "Weather conditions cannot be determined because location or assessments info"
 " aremissing"
@@ -706,7 +710,7 @@ msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:270
+#: trialapp/trial_views.py:271
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -716,11 +720,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:536
+#: trialapp/trial_views.py:537
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:539
+#: trialapp/trial_views.py:540
 msgid " in "
 msgstr " en "
 
@@ -2307,6 +2311,9 @@ msgstr "Encontrar aplicaciones"
 #, python-format
 msgid "Add %(name)s"
 msgstr "Agregar %(name)s"
+
+#~ msgid "select key assessment"
+#~ msgstr "Elegir evaluación clave"
 
 #~ msgid "untreated"
 #~ msgstr "sin tratar"
