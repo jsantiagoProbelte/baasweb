@@ -273,6 +273,7 @@ class FieldTrialFormLayout(FormHelper):
             Div(Div(Row(Div(Field('crop_variety', css_class='mb-2'),
                             Field('irrigation', css_class='mb-2'),
                             Field('seed_date', css_class='mb-2'),
+                            Field('soil', css_class='mb-2'),
                             css_class='col-md-6'),
                         Div(Field('cultivation', css_class='mb-2'),
                             Field('crop_age', css_class='mb-2'),
