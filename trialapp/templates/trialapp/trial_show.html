@@ -68,7 +68,7 @@
             {% include 'trialapp/trial_conclusions.html' %}
         </div>
         <div class="tab-pane fade" id="nav-design-trial" role="tabpanel" aria-labelledby="design-trial-tab">
-            Trial Design
+            {% include 'trialapp/fieldtrial_design.html' with thesis_list=thesisDetail %}
         </div>
         <div class="tab-pane fade" id="nav-result-summary" role="tabpanel" aria-labelledby="result-summary-tab">
             <p class="txt-encode-20 capitalize-first mt-3">{% trans 'average efficacy'%}</p>

@@ -14,12 +14,42 @@ from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_analytics import Abbott
 from catalogue.models import UNTREATED
+from django.db.models import F
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
     model = FieldTrial
     template_name = 'trialapp/trial_show.html'
     context_object_name = 'trial'
+
+    def getThesisByFieldTrialForDetail(self, fieldtrial):
+        bgClass = 'bg-custom-'
+
+        thesisList = Thesis.objects.filter(
+            field_trial__id=fieldtrial.id
+            ).select_related(
+                'field_trial',
+                'field_trial__product',
+                'field_trial__product__vendor'
+            ).values(
+                'name',
+                'id',
+                'field_trial__product__name',
+                'field_trial__product__active_substance',
+                'field_trial__product__vendor__name'
+            ).annotate(
+                product_name=F('field_trial__product__name'),
+                active_substance=F('field_trial__product__active_substance'),
+                vendor_name=F('field_trial__product__vendor__name')
+            )
+
+        counter = 1
+        thesisWithColor = []
+        for thesis in thesisList:
+            thesisWithColor.append({'idColor': f"{bgClass}{counter}", 'thesis': thesis})
+            counter += 1
+
+        return thesisWithColor
 
     def getTrialKeyData(self, trial):
         keyThesis = trial.keyThesis()
@@ -62,6 +92,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'control_product': control_product,
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
+            'thesisDetail': self.getThesisByFieldTrialForDetail(trial),
             'numberAssessments': len(assessments),
             'numberThesis': len(allThesis)}
 
