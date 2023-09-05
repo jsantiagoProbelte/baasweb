@@ -4,7 +4,7 @@ from django.views.generic import DetailView
 from trialapp.models import FieldTrial, Thesis, Application, TreatmentThesis
 from trialapp.trial_helper import LayoutTrial, TrialModel, TrialPermission
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from baaswebapp.models import Weather, Category
 from trialapp.data_models import ReplicaData, Assessment
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
@@ -14,6 +14,8 @@ from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_analytics import Abbott
 from catalogue.models import UNTREATED
+from django.db.models import F
+from rest_framework.views import APIView
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -632,3 +634,34 @@ def trialContentApi(request):
     trialId = int(request.GET.get('id', 0))
     content = request.GET.get('content_type')
     return TrialContent(trialId, content).fetch()
+
+
+class SetTrialKeyValues(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    TAG_KEY_THESIS = 'key_thesis'
+    TAG_CONTROL = 'control_thesis'
+    TAG_RATE_TYPE = 'key_rate_type'
+    TAG_RATED_PART = 'key_rated_part'
+    TAG_ASSESSMENT = 'key_assessment'
+
+    # see generateDataPointId
+    def post(self, request, trial_id, type_param):
+        itemId = request.POST['item_id']
+        trial = get_object_or_404(FieldTrial, pk=trial_id)
+        if type_param == SetTrialKeyValues.TAG_KEY_THESIS:
+            trial.key_thesis = int(itemId)
+        elif type_param == SetTrialKeyValues.TAG_CONTROL:
+            trial.control_thesis = int(itemId)
+        elif type_param == SetTrialKeyValues.TAG_RATE_TYPE:
+            trial.key_ratetypeunit_id = int(itemId)
+        elif type_param == SetTrialKeyValues.TAG_RATED_PART:
+            trial.key_ratedpart = itemId
+        elif type_param == SetTrialKeyValues.TAG_ASSESSMENT:
+            trial.key_assessment = int(itemId)
+        trial.save()
+        # DO we need to FORCE TO COMPUTE EFFICACY???
+        # calculate best efficacy
+        return redirect('thesis-list', field_trial_id=trial_id)

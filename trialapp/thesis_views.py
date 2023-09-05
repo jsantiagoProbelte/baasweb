@@ -360,34 +360,3 @@ class SetReplicaPosition(APIView):
             newReplica.pos_y = y
             newReplica.save()
         return redirect('thesis-list', field_trial_id=trialId)
-
-
-class SetTrialKeyValues(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['post']
-
-    TAG_KEY_THESIS = 'key_thesis'
-    TAG_CONTROL = 'control_thesis'
-    TAG_RATE_TYPE = 'key_rate_type'
-    TAG_RATED_PART = 'key_rated_part'
-    TAG_ASSESSMENT = 'key_assessment'
-
-    # see generateDataPointId
-    def post(self, request, trial_id, type_param):
-        itemId = request.POST['item_id']
-        trial = get_object_or_404(FieldTrial, pk=trial_id)
-        if type_param == SetTrialKeyValues.TAG_KEY_THESIS:
-            trial.key_thesis = itemId
-        elif type_param == SetTrialKeyValues.TAG_CONTROL:
-            trial.control_thesis = itemId
-        elif type_param == SetTrialKeyValues.TAG_RATE_TYPE:
-            trial.key_ratetypeunit_id = itemId
-        elif type_param == SetTrialKeyValues.TAG_RATED_PART:
-            trial.key_ratedpart = itemId
-        elif type_param == SetTrialKeyValues.TAG_ASSESSMENT:
-            trial.key_assessment = itemId
-        trial.save()
-        # DO we need to FORCE TO COMPUTE EFFICACY???
-        # calculate best efficacy
-        return redirect('thesis-list', field_trial_id=trial_id)
