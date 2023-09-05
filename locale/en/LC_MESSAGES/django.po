@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 20:20+0200\n"
+"POT-Creation-Date: 2023-09-05 23:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: baaswebapp/graphs.py:627
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:145
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:177
 msgid "efficacy"
 msgstr ""
 
@@ -490,6 +490,62 @@ msgstr ""
 msgid "results"
 msgstr ""
 
+#: trialapp/templates/trialapp/fieldtrial_design.html:4
+msgid "Compared Treatments"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:8
+msgid "Thesis Name"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:9
+msgid "Product"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:10
+msgid "Active Substance"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:11
+msgid "Doses"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:12
+msgid "Manufacturer"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:29
+msgid "Terrain"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:49
+msgid "One Plot"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:50
+msgid "Dimensions"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:51
+msgid "Net Area Plot (m2) ZZGRoss"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:52
+msgid "Area Plot (m2)"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:53
+msgid "Nº of plants"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:56
+msgid "Total Area Per Treatment (All Plots)"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_design.html:57
+msgid "Treatment Area"
+msgstr ""
+
 #: trialapp/templates/trialapp/thesis_list.html:6
 #: trialapp/templates/trialapp/trial_show.html:42
 msgid "trial Design"
@@ -548,7 +604,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:190
+#: trialapp/trial_views.py:222
 msgid "weather conditions"
 msgstr ""
 
@@ -617,24 +673,28 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_views.py:191
+#: trialapp/trial_helper.py:78
+msgid "Soil"
+msgstr ""
+
+#: trialapp/trial_views.py:223
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:238
+#: trialapp/trial_views.py:270
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:504
+#: trialapp/trial_views.py:536
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:507
+#: trialapp/trial_views.py:539
 msgid " in "
 msgstr ""
 
