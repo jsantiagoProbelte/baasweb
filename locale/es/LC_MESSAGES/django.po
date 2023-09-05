@@ -588,8 +588,7 @@ msgid "select key assessment"
 msgstr "Elegir evaluación clave"
 
 #: trialapp/templates/trialapp/thesis_list.html:48
-#, fuzzy
-#| msgid "efficacy range"
+
 msgid "efficacy key values"
 msgstr "rango eficacia"
 

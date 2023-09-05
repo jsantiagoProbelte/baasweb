@@ -47,7 +47,8 @@ class TrialApi(LoginRequiredMixin, DetailView):
         counter = 1
         thesisWithColor = []
         for thesis in thesisList:
-            thesisWithColor.append({'idColor': f"{bgClass}{counter}", 'thesis': thesis})
+            thesisWithColor.append({'idColor': f"{bgClass}{counter}",
+                                    'thesis': thesis})
             counter += 1
 
         return thesisWithColor

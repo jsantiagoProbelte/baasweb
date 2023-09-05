@@ -89,7 +89,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         resultPerPage = 5
-        page = self.request.GET.get('page') if self.request.GET.get('page') else 1
+        page = self.request.GET.get('page') if self.request.GET.get('page') \
+            else 1
 
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
