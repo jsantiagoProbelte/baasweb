@@ -90,7 +90,7 @@
                     <td><span class='txt-baas'> {{item.name}} </td>
                     <!--EFFICACY-->
                     <td>
-                        <span>90%</span>
+                        <span>{{item.best_efficacy}}</span>
                     </td>
                     <!--CLIMATOLOGY-->
                     <td>
@@ -98,7 +98,7 @@
                     </td>
                     <!-- CULTIVATION -->
                     <td>
-                        <span>Cultivation</span>
+                        <p class="txt-open-bold-15">{{item.cultivation|safe}}</p>
                     </td>
                     <!--TRIALS DATE-->
                     <td>
