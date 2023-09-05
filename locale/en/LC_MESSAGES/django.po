@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 23:45+0200\n"
+"POT-Creation-Date: 2023-09-06 01:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: baaswebapp/graphs.py:627
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:177
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:178
 msgid "efficacy"
 msgstr ""
 
@@ -551,27 +551,31 @@ msgstr ""
 msgid "trial Design"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:14
-msgid "select control, untreated thesis"
+#: trialapp/templates/trialapp/thesis_list.html:21
+msgid "Select key params of efficacy:"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:18
-msgid "select key thesis"
+#: trialapp/templates/trialapp/thesis_list.html:22
+msgid "control, untreated thesis"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:32
-msgid "select key rate type unit"
+#: trialapp/templates/trialapp/thesis_list.html:24
+msgid "key thesis"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:36
-msgid "select key part rated"
+#: trialapp/templates/trialapp/thesis_list.html:28
+msgid "Key rate type unit"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:41
-msgid "select key assessment"
+#: trialapp/templates/trialapp/thesis_list.html:30
+msgid "Key part rated"
 msgstr ""
 
-#: trialapp/templates/trialapp/thesis_list.html:48
+#: trialapp/templates/trialapp/thesis_list.html:33
+msgid "Key assessment"
+msgstr ""
+
+#: trialapp/templates/trialapp/thesis_list.html:40
 msgid "efficacy key values"
 msgstr ""
 
@@ -604,7 +608,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:222
+#: trialapp/trial_views.py:223
 msgid "weather conditions"
 msgstr ""
 
@@ -677,24 +681,24 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:223
+#: trialapp/trial_views.py:224
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:270
+#: trialapp/trial_views.py:271
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:536
+#: trialapp/trial_views.py:537
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:539
+#: trialapp/trial_views.py:540
 msgid " in "
 msgstr ""
 

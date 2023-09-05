@@ -121,11 +121,14 @@ class TrialProductFilterHelper:
             cultivation += item.soil if item.soil else '-'
             new_list.append({
                 'code': item.code,
-                'name': item.name,
+                'description': item.getDescription(),
+                'location': item.location if item.location else '',
+                'goal': item.objective,
                 'crop': item.crop.name,
                 'best_efficacy': f'{item.best_efficacy}%' if item.best_efficacy
                 else '??',
                 'product': item.product.name,
+                'period': item.getPeriod(),
                 'cultivation': cultivation,
                 'trial_status': item.trial_status if item.trial_status else '',
                 'objective': item.objective.name,

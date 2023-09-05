@@ -87,7 +87,8 @@
                 {% for item in object_list %}
                 <tr class="trial-tab-lines" id="item-{{item.id}}" key="{{ item.id }}">
                     <!--NAME-->
-                    <td><span class='txt-baas'> {{item.name}} </td>
+                    <td><p class="txt-open-semibold-14">{{item.description}}</p>
+                        <p class="txt-regular-13">{{item.location}}</p></td>
                     <!--EFFICACY-->
                     <td>
                         <span>{{item.best_efficacy}}</span>
@@ -102,13 +103,11 @@
                     </td>
                     <!--TRIALS DATE-->
                     <td>
-                        {% if item.initiation_date != None %}
-                        <span>{{ item.initiation_date }}</span>
-                        {% endif %}
+                        <p class="txt-regular-13">{{ item.period }}</p>
                     </td>
                     <!-- TRIALS GOALS-->
                     <td>
-                        <span class="badge badge-pill custom-badge-type custom-badge-light-violet fs-6 me-3">Goal</span>
+                        <span class="badge badge-pill custom-badge-type custom-badge-light-violet fs-6 me-3">{{item.goal}}</span>
                     </td>
                     <!-- VIEW LINK-->
                     <td>

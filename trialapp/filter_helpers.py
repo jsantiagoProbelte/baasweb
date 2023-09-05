@@ -302,9 +302,9 @@ class TrialListView(BaaSView):
                 'biological': item.product.biological,
                 'color_category': TrialFilterHelper.colorProductType(
                     item.product.type_product),
-                'efficacies': '??',
-                'date_range': item.initiation_date.year if item.initiation_date
-                              else '',
+                'efficacies': f'{item.best_efficacy} %' if item.best_efficacy
+                else '??',
+                'period': item.getPeriod(),
                 'trials': '',
                 'id': item.id})
         return {'object_list': new_list,
