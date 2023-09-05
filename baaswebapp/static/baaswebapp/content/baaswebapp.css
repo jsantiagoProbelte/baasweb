@@ -37,6 +37,7 @@
   --baas-gray: #666;
   --border-radius-tabs: 0.15rem;
   --margins-show-pages: 20px;
+  --custom-card-bg-light-violet: #EFEDFF
   --font-icons: 'bootstrap-icons'
 }
 
@@ -345,32 +346,35 @@ div.bg-custom-transparent{
   box-shadow: none !important;
 }
 
+div[class*="bg-custom-"]{
+  color: white
+}
 .bg-custom-0{
-  background-color: var(--custom-bg-color) !important;
-}
-.bg-custom-1{
-  background-color: var(--custom-morado) !important;
-}
-.bg-custom-2{
-  background: var(--custom-bio-morado ) !important;
-}
-.bg-custom-3{
-  background-color: var(--custom-violeta) !important;
-}
-.bg-custom-4{
   background: var(--custom-red) !important;
 }
+.bg-custom-1{
+  background: #AA4AE4 !important;
+}
+.bg-custom-2{
+  background-color: #E643FA !important;
+}
+.bg-custom-3{
+  background: #8243FA !important;
+}
+.bg-custom-4{
+  background-color: #4D41F0 !important;
+}
 .bg-custom-5{
-  background: var(--custom-yellow) !important;
+  background-color: #493DE3 !important;
 }
 .bg-custom-6{
-  background: var(--custom-green) !important;
+  background: #E3CF5F !important;
 }
 .bg-custom-7{
-  background: var(--custom-blue) !important;
+  background: #E354B8 !important;
 }
 .bg-custom-8{
-  background: var(--bs-primary) !important;
+  background: #4BE332 !important;
 }
 .bg-custom-9{
   background: var(--bs-success) !important;
@@ -390,7 +394,12 @@ div.bg-custom-transparent{
 .bg-custom-14{
   background: var(--bs-secondary) !important;
 }
-
+.color-icon{
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 50%;
+  display: inline-block;
+}
 .navbar-nav .nav-link{
   font-size: 1rem ;
   color: var(--bs-text-color);
@@ -424,6 +433,30 @@ div.bg-custom-transparent{
   font-weight: bold !important;
 }
 
+
+.terrain .card-group{
+  background-color: transparent;
+}
+
+.terrain-grid .graphic-legend{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.terrain-grid .graphic-legend .legend-line{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+.terrain-grid .graphic-legend .legend-line p{
+  margin: 0px
+}
+
+.terrain-grid
 .nav-gradient{
   border-radius: 2rem;
   padding:0.5rem 0.75rem;
@@ -493,6 +526,12 @@ div.bg-custom-transparent{
   flex: 1 1 auto;
 }
 
+.card-body-baas .aux-title{
+  border-bottom: 1px solid var(--baas-gray);
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+}
 .list-group-item-baas {
   color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
@@ -622,6 +661,24 @@ input[type='checkbox'], input[type="radio"] {
 .data-table-longer {
   width:100%;
   table-layout:auto;
+}
+
+.card-body-baas .title{
+  margin-left: 4px;
+  font-size: 1.3em;
+  color: var(--bs-text-color);
+  font-weight: 700;
+}
+
+.card-body-baas:has(.baas-data-table){
+  padding:0px;
+}
+
+.baas-data-table th{
+  text-transform: uppercase;
+  color: var(--baas-gray);
+  font-size: 0.8em;
+  font-weight: 600;
 }
 
 .baas-data-table th, .baas-data-table td{
