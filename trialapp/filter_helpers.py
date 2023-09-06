@@ -66,8 +66,8 @@ class TrialFilterHelper:
     def getFilter(self):
         return self._trialFilter
 
-    def filter(self):
-        q_objects = self.prepareFilter()
+    def filter(self, groupbyTag=None):
+        q_objects = self.prepareFilter(groupbyTag=groupbyTag)
         self.filterTrials(q_objects)
 
     def getTrials(self):
@@ -91,7 +91,7 @@ class TrialFilterHelper:
     def filterTrials(self, filter):
         self._trials = FieldTrial.objects.filter(filter)
 
-    def prepareFilter(self):
+    def prepareFilter(self, groupbyTag=None):
         paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
@@ -107,6 +107,10 @@ class TrialFilterHelper:
                 q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
+            elif groupbyTag == BaaSView.PLAGUE:
+                # En este caso estamos en la vista de plagues, filtramos los
+                # ensayos que no referencien a plagues
+                q_objects &= ~Q(plague__name__in=ModelHelpers.THE_UNKNNOWNS)
         return q_objects
 
     def countTrials(self):
@@ -145,17 +149,6 @@ class TrialFilterHelper:
             total=Count('id', distinct=isDistinct)
         ).order_by(param)
         return {item[param]: item['total'] for item in counts}
-
-    def getGroupedPlagues(self):
-        return Plague.objects.filter(
-                ~Q(name__in=ModelHelpers.THE_UNKNNOWNS)
-            ).annotate(
-            trial_count=Count('fieldtrial'),
-            product_count=Count('fieldtrial__product', distinct=True),
-            min_date=Min('fieldtrial__initiation_date'),
-            max_date=Max('fieldtrial__initiation_date')
-        ).values('name', 'id', 'trial_count', 'product_count',
-                 'min_date', 'max_date')
 
     def countCategoriesPerClass(self, cls):
         classProducts = {}
@@ -295,7 +288,7 @@ class BaaSView(LoginRequiredMixin, View):
             return redirect(reverse(redirectTuple[1]))
 
         self._fHelper = TrialFilterHelper(self.request.GET)
-        self._fHelper.filter()
+        self._fHelper.filter(groupbyTag=self._groupbyTag)
         context = self.get_context_data()
         context['trialfilter'] = self._fHelper.getFilter()
         context['groupbyfilter'] = BaaSView.groupByOptions()
