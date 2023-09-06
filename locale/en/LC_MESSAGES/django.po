@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 18:05+0200\n"
+"POT-Creation-Date: 2023-09-06 22:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -129,20 +129,29 @@ msgstr ""
 msgid "Search Trials"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:31
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:44
+msgid "No items yet."
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:50
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:139
+msgid "results"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:69
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
-#: trialapp/templates/trialapp/crop_list.html:6
-#: trialapp/templates/trialapp/plagues_list.html:6
+#: trialapp/templates/trialapp/crop_list_header.html:4
+#: trialapp/templates/trialapp/plagues_list_header.html:4
 msgid "products"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:32
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:70
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:23
 #: trialapp/templates/trialapp/btn_trials.html:4
 msgid "trials"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:35
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:73
 msgid "Trials by product type"
 msgstr ""
 
@@ -207,7 +216,7 @@ msgid "Welcome, please login"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
-#: catalogue/tests/tests_views_catalogue.py:136
+#: catalogue/tests/tests_views_catalogue.py:143
 msgid "Are you sure to delete"
 msgstr ""
 
@@ -235,37 +244,39 @@ msgstr ""
 msgid "Plague"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_list.html:5
-#: trialapp/filter_helpers.py:257
-#: trialapp/templates/trialapp/trials_list.html:6
+#: catalogue/templates/catalogue/product_list_header.html:3
+#: trialapp/filter_helpers.py:258
+#: trialapp/templates/trialapp/trials_list_header.html:4
 msgid "product"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_list.html:6
-#: trialapp/filter_helpers.py:26 trialapp/templates/trialapp/trials_list.html:7
+#: catalogue/templates/catalogue/product_list_header.html:4
+#: trialapp/filter_helpers.py:27
+#: trialapp/templates/trialapp/trials_list_header.html:5
 msgid "product type"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_list.html:7
+#: catalogue/templates/catalogue/product_list_header.html:5
 #: catalogue/templates/catalogue/product_show.html:80
+#: trialapp/templates/trialapp/fieldtrial_design.html:10
 #: trialapp/templates/trialapp/trial_conclusions.html:142
-#: trialapp/templates/trialapp/trials_list.html:8
+#: trialapp/templates/trialapp/trials_list_header.html:6
 msgid "active substance"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_list.html:8
+#: catalogue/templates/catalogue/product_list_header.html:6
 #: catalogue/templates/catalogue/product_show.html:12
 #: catalogue/templates/catalogue/product_show.html:70
-#: trialapp/templates/trialapp/crop_list.html:7
-#: trialapp/templates/trialapp/plagues_list.html:7
-#: trialapp/templates/trialapp/trials_list.html:9
+#: trialapp/templates/trialapp/crop_list_header.html:5
+#: trialapp/templates/trialapp/plagues_list_header.html:5
+#: trialapp/templates/trialapp/trials_list_header.html:7
 msgid "efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_list.html:9
-#: trialapp/templates/trialapp/crop_list.html:8
-#: trialapp/templates/trialapp/plagues_list.html:8
-#: trialapp/templates/trialapp/trials_list.html:10
+#: catalogue/templates/catalogue/product_list_header.html:7
+#: trialapp/templates/trialapp/crop_list_header.html:6
+#: trialapp/templates/trialapp/plagues_list_header.html:6
+#: trialapp/templates/trialapp/trials_list_header.html:8
 msgid "trials date"
 msgstr ""
 
@@ -291,8 +302,8 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:87
 #: catalogue/templates/catalogue/product_show.html:149
-#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:259
-#: trialapp/templates/trialapp/plagues_list.html:5
+#: trialapp/filter_helpers.py:22 trialapp/filter_helpers.py:260
+#: trialapp/templates/trialapp/plagues_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "pest / disease"
 msgstr ""
@@ -323,8 +334,8 @@ msgid "Mixes"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:148
-#: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:258
-#: trialapp/templates/trialapp/crop_list.html:5
+#: trialapp/filter_helpers.py:19 trialapp/filter_helpers.py:259
+#: trialapp/templates/trialapp/crop_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "crop"
 msgstr ""
@@ -357,9 +368,9 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/filter_helpers.py:260
+#: trialapp/filter_helpers.py:261
 msgid "Ungrouped"
-msgstr ""
+msgstr "No agrupado"
 
 #: trialapp/models.py:62 trialapp/models.py:100
 msgid "Field Trial"
@@ -486,10 +497,6 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:139
-msgid "results"
-msgstr ""
-
 #: trialapp/templates/trialapp/fieldtrial_design.html:4
 msgid "Compared Treatments"
 msgstr ""
@@ -500,10 +507,6 @@ msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:9
 msgid "Product"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_design.html:10
-msgid "Active Substance"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:11
@@ -669,11 +672,11 @@ msgstr ""
 msgid "average efficacy"
 msgstr ""
 
-#: trialapp/templates/trialapp/trials_list.html:5
+#: trialapp/templates/trialapp/trials_list_header.html:3
 msgid "trial"
 msgstr ""
 
-#: trialapp/templates/trialapp/trials_list.html:5
+#: trialapp/templates/trialapp/trials_list_header.html:3
 msgid "code"
 msgstr ""
 
