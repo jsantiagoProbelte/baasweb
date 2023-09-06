@@ -117,7 +117,7 @@ class TrialProductFilterHelper:
             trialData = item.showInTrialList()
             new_list.append({
                 **trialData,
-                'assessments': self.assessments,
+                'assessments': item.assessments,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 
