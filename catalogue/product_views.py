@@ -114,31 +114,10 @@ class TrialProductFilterHelper:
         thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
 
         for item in trialsFiltered:
-            cultivation = item.cultivation.name if item.cultivation else '-'
-            cultivation += '<br>'
-            cultivation += item.irrigation.name if item.irrigation else '-'
-            cultivation += '<br>'
-            cultivation += item.soil if item.soil != SoilType.UNDF.value \
-                else '-'
+            trialData = item.showInTrialList()
             new_list.append({
-                'code': item.code,
-                'description': item.getDescription(),
-                'location': item.location if item.location else '',
-                'goal': item.objective,
-                'crop': item.crop.name,
-                'best_efficacy': f'{item.best_efficacy}%' if item.best_efficacy
-                else '??',
-                'product': item.product.name,
-                'period': item.getPeriod(),
-                'cultivation': cultivation,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'id': item.id,
-                'assessments': item.assessments,
-                'initiation_date': item.initiation_date,
+                **trialData,
+                'assessments': self.assessments,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 

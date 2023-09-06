@@ -71,19 +71,10 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
         new_list = []
         for item in objectList:
+            trialData = item.showInTrialList()
             new_list.append({
-                'code': item.code,
-                'name': item.name,
-                'crop': item.crop.name,
-                'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'id': item.id,
+                **trialData,
                 'assessments': item.assessments,
-                'initiation_date': item.initiation_date,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 

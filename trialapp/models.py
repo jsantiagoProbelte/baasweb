@@ -240,6 +240,15 @@ class FieldTrial(ModelHelpers, models.Model):
                 description += f' + {self.plague}'
         return description
 
+    def getCultivation(self):
+        cultivation = self.cultivation.name if self.cultivation else '-'
+        cultivation += '<br>'
+        cultivation += self.irrigation.name if self.irrigation else '-'
+        cultivation += '<br>'
+        cultivation += self.soil if self.soil != SoilType.UNDF.value \
+            else '-'
+        return cultivation
+
     def getLocation(self):
         if self.location:
             return self.location
@@ -261,6 +270,26 @@ class FieldTrial(ModelHelpers, models.Model):
                 period += f' - {self.completion_date.strftime("%B")}'
             period += f' {self.completion_date.year}'
         return period
+
+    def showInTrialList(self):
+        return {
+            'code': self.code,
+            'description': self.getDescription(),
+            'location': self.location if self.location else '',
+            'goal': self.objective,
+            'crop': self.crop.name,
+            'best_efficacy': f'{self.best_efficacy}%' if self.best_efficacy
+            else '??',
+            'product': self.product.name,
+            'period': self.getPeriod(),
+            'cultivation': self.getCultivation(),
+            'trial_status': self.trial_status if self.trial_status else '',
+            'objective': self.objective.name,
+            'plague': self.plague.name if self.plague else '',
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'id': self.id,
+            'initiation_date': self.initiation_date}
 
     @classmethod
     def createTrial(cls, **kwargs):
