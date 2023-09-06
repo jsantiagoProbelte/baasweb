@@ -95,7 +95,21 @@
                     </td>
                     <!--CLIMATOLOGY-->
                     <td>
-                        <p class="txt-regular-13">Climatology</p>
+                        {% if item.temp_avg %}
+                            <p class="txt-regular-13">
+                                <span class="material-symbols-outlined small-icon me-2">device_thermostat</span>
+                                {{item.temp_avg}} &deg;C</p>
+                        {% endif %}
+                        {% if item.hum_avg %}
+                            <p class="txt-regular-13">
+                                <span class="material-symbols-outlined small-icon me-2">water_drop</span>
+                                {{item.hum_avg}} %</p>
+                        {% endif %}
+                        {% if item.prep_avg %}
+                            <p class="txt-regular-13">
+                                <span class="material-symbols-outlined small-icon me-2">grain</span>
+                                {{item.prep_avg}} %</p>
+                        {% endif %}
                     </td>
                     <!-- CULTIVATION -->
                     <td>

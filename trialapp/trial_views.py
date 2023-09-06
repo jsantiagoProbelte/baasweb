@@ -185,12 +185,22 @@ class TrialContent():
     ASSESSMENTS = 'assess_graphs'
     RESULT_SUMMARY = 'result_summary'
     KEY_ASSESS = 'key_assess'
+    ONLY_TRIAL_DATA = 'OTD'
+    TAG_UNKOWN = '??'
 
-    def __init__(self, trialId, content):
-        self._trial = get_object_or_404(FieldTrial, pk=trialId)
+    def __init__(self, trialId, content, trial=None):
+        if trial is not None:
+            self._trial = trial
+        else:
+            self._trial = get_object_or_404(FieldTrial, pk=trialId)
         self._content = content
-        self._category = self._trial.product.category()
-        self._assmts = Assessment.getObjects(self._trial)
+        self._assmts = None
+        if content != TrialContent.ONLY_TRIAL_DATA:
+            self._category = self._trial.product.category()
+            self.getAssmts()
+
+    def getMinMaxDate(self):
+        self.getAssmts()
         if self._assmts:
             oneweek = timedelta(days=7)
             self._min_date = self._assmts.aggregate(
@@ -202,6 +212,56 @@ class TrialContent():
         else:
             self._min_date = None
             self._max_date = None
+        return self._min_date, self._max_date
+
+    def getMeteorology(self, getMeteoDataIfMissing=True):
+        if self._trial.avg_temperature is None:
+            if getMeteoDataIfMissing:
+                # Let's try to fetch
+                meteoData = self.fetchWeatherAvg()
+                toSaved = False
+                if meteoData['temp_avg'] != TrialContent.TAG_UNKOWN:
+                    self._trial.avg_temperature = meteoData['temp_avg']
+                    toSaved = True
+                if meteoData['prep_avg'] != TrialContent.TAG_UNKOWN:
+                    self._trial.avg_precipitation = meteoData['prep_avg']
+                    toSaved = True
+                if meteoData['hum_avg'] != TrialContent.TAG_UNKOWN:
+                    self._trial.avg_humidity = meteoData['hum_avg']
+                    toSaved = True
+                if toSaved:
+                    self._trial.save()
+                return meteoData
+            else:
+                return {'dummy': '??'}
+        else:
+            return {
+                'temp_avg': self._trial.avg_temperature,
+                'prep_avg': self._trial.avg_precipitation,
+                'hum_avg': self._trial.avg_humidity}
+
+    def showInTrialList(self, getMeteoDataIfMissing=False):
+        meteoData = self.getMeteorology(
+            getMeteoDataIfMissing=getMeteoDataIfMissing)
+        return {
+            'code': self._trial.code,
+            **meteoData,
+            'description': self._trial.getDescription(),
+            'location': self._trial.getLocation(showNothing=True),
+            'goal': self._trial.objective,
+            'crop': self._trial.crop.name,
+            'best_efficacy': self._trial.getBestEfficacy(),
+            'product': self._trial.product.name,
+            'period': self._trial.getPeriod(),
+            'cultivation': self._trial.getCultivation(),
+            'trial_status': self._trial.trial_status
+            if self._trial.trial_status else '',
+            'objective': self._trial.objective.name,
+            'plague': self._trial.plague.name if self._trial.plague else '',
+            'latitude': self._trial.latitude,
+            'longitude': self._trial.longitude,
+            'id': self._trial.id,
+            'initiation_date': self._trial.initiation_date}
 
     def getAssGraphData(self, rateSets, ratedParts,
                         type_graph, showEfficacy=False,
@@ -241,11 +301,12 @@ class TrialContent():
         return graphs
 
     def getWeatherData(self):
-        Weather.enrich(self._min_date, self._max_date,
+        minDate, maxDate = self.getMinMaxDate()
+        Weather.enrich(minDate, maxDate,
                        self._trial.latitude,
                        self._trial.longitude)
         return Weather.objects.filter(
-            date__range=(self._min_date, self._max_date),
+            date__range=(minDate, maxDate),
             latitude=self._trial.latitude,
             longitude=self._trial.longitude).order_by('date')
 
@@ -287,11 +348,12 @@ class TrialContent():
                               "missing")}]
 
     def fetchWeatherAvg(self):
-        temp_avg = '??'
-        hum_avg = '??'
-        prep_avg = '??'
+        temp_avg = TrialContent.TAG_UNKOWN
+        hum_avg = TrialContent.TAG_UNKOWN
+        prep_avg = TrialContent.TAG_UNKOWN
+        minDate, maxDate = self.getMinMaxDate()
         avgData = Weather.objects.filter(
-            date__range=(self._min_date, self._max_date),
+            date__range=(minDate, maxDate),
             latitude=self._trial.latitude,
             longitude=self._trial.longitude
         ).aggregate(
@@ -606,7 +668,7 @@ class TrialContent():
         WEATHER: fetchWeather,
         KEY_ASSESS: fetchKeyAssessData,
         ASSESSMENTS: fetchAssessmentsData,
-        WEATHER_AVG: fetchWeatherAvg,
+        WEATHER_AVG: getMeteorology,
         RESULT_SUMMARY: fetchResultSummaryData}
 
     TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'

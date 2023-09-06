@@ -10,6 +10,7 @@ from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
+from trialapp.trial_views import TrialContent
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial
@@ -114,7 +115,9 @@ class TrialProductFilterHelper:
         thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
 
         for item in trialsFiltered:
-            trialData = item.showInTrialList()
+            trialC = TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
+                                  trial=item)
+            trialData = trialC.showInTrialList()
             new_list.append({
                 **trialData,
                 'assessments': item.assessments,

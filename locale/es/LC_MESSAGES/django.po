@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 12:24+0200\n"
+"POT-Creation-Date: 2023-09-06 14:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -477,14 +477,14 @@ msgstr "Tierra de turba"
 msgid "Lateritic Soil"
 msgstr "Suelo laterítico"
 
-#: trialapp/models.py:247 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:256 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 #, fuzzy
 #| msgid "Syndication"
 msgid "Undefined Location"
 msgstr "Sindicación"
 
-#: trialapp/models.py:250 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:259 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr "Periodo no definido"
 

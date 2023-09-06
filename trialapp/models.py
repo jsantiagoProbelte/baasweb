@@ -184,6 +184,10 @@ class FieldTrial(ModelHelpers, models.Model):
     best_efficacy = models.DecimalField(max_digits=10, decimal_places=2,
                                         null=True)
 
+    avg_temperature = models.IntegerField(null=True)
+    avg_humidity = models.IntegerField(null=True)
+    avg_precipitation = models.IntegerField(null=True)
+
     def keyThesis(self):
         if self.key_thesis:
             return Thesis.objects.get(id=self.key_thesis)
@@ -249,11 +253,20 @@ class FieldTrial(ModelHelpers, models.Model):
             else '-'
         return cultivation
 
-    def getLocation(self):
+    def getBestEfficacy(self):
+        if self.best_efficacy:
+            return f'{self.best_efficacy}%'
+        else:
+            return '??'
+
+    def getLocation(self, showNothing=False):
         if self.location:
             return self.location
         else:
-            return _('Undefined Location')
+            if showNothing:
+                return ''
+            else:
+                return _('Undefined Location')
 
     def getPeriod(self):
         period = _('Undefined period')
@@ -270,26 +283,6 @@ class FieldTrial(ModelHelpers, models.Model):
                 period += f' - {self.completion_date.strftime("%B")}'
             period += f' {self.completion_date.year}'
         return period
-
-    def showInTrialList(self):
-        return {
-            'code': self.code,
-            'description': self.getDescription(),
-            'location': self.location if self.location else '',
-            'goal': self.objective,
-            'crop': self.crop.name,
-            'best_efficacy': f'{self.best_efficacy}%' if self.best_efficacy
-            else '??',
-            'product': self.product.name,
-            'period': self.getPeriod(),
-            'cultivation': self.getCultivation(),
-            'trial_status': self.trial_status if self.trial_status else '',
-            'objective': self.objective.name,
-            'plague': self.plague.name if self.plague else '',
-            'latitude': self.latitude,
-            'longitude': self.longitude,
-            'id': self.id,
-            'initiation_date': self.initiation_date}
 
     @classmethod
     def createTrial(cls, **kwargs):
