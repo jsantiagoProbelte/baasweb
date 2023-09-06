@@ -34,7 +34,7 @@ class LabTrialDataTest(TestCase):
         dosis = [0, 0.25, 0.74, 2.22, 6.66, 20]
         ocurrences = [[0, 24], [3, 23], [7, 24], [13, 23], [20, 24], [24, 24]]
         ld50, ld95 = self._helper.calculateLD50(ocurrences, dosis)
-        print('{}: ld50:{} esperado:{}'.format('test', round(ld50, 3), 1.76))
+        # print('{}: ld50:{} esperado:{}'.format('test', round(ld50, 3), 1.76))
 
     def test_datastats(self):
         dosis = [0, 0.25, 0.74, 2.22, 6.66, 20]
@@ -43,9 +43,9 @@ class LabTrialDataTest(TestCase):
             expected = self.TEST_DATA['020323'][label]['ld50']
             ld50, ld95 = self._helper.calculateLD50(ocurrences, dosis)
 
-            print('{}: ld50:{} esperado:{} error:{}%'.format(label,
-                  round(ld50, 2),
-                  expected, round(100*(ld50-expected) / expected, 2)))
+            # print('{}: ld50:{} esperado:{} error:{}%'.format(label,
+            #       round(ld50, 2),
+            #       expected, round(100*(ld50-expected) / expected, 2)))
 
     def fitModel(self, log_dose_levels, probits):
         def line(x, a, b):

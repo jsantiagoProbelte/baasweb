@@ -94,5 +94,5 @@ class RiskcalcTest(TestCase):
             generateArray(120, 1.25)
         )
         results = riskcalc.computeRisks(weather)
-        print(results)
+        # print(results)
         self.assertEqual(results, expected_results)

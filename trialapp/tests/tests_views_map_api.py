@@ -99,7 +99,7 @@ class MapApiTestCase(TestCase):
         response = MapApi.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
-        print(response.content)
+        # print(response.content)
         response_data = json.loads(response.content)
         self.assertIn('coordinates', response_data)
         self.assertEqual(len(response_data['coordinates']), 2)

@@ -24,7 +24,7 @@ class WeatherTest(TestCase):
         test_temps = generateTestTemperatures(120)
         temps = weatherhelper.seperateTemperatures(test_temps)
         test_temps = test_temps[weatherhelper.WT_TAG_TEMPS]
-        print(test_temps)
+        # print(test_temps)
         self.assertEqual(temps[1][0], test_temps[1])
         self.assertEqual(temps[1][3], test_temps[4])
         self.assertEqual(temps[3][15], test_temps[64])

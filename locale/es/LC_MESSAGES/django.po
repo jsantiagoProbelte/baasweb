@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 10:23+0200\n"
+"POT-Creation-Date: 2023-09-06 12:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -239,7 +239,7 @@ msgid "Plague"
 msgstr "Plaga"
 
 #: catalogue/templates/catalogue/product_list.html:5
-#: trialapp/filter_helpers.py:240
+#: trialapp/filter_helpers.py:257
 #: trialapp/templates/trialapp/trials_list.html:6
 msgid "product"
 msgstr "producto"
@@ -295,7 +295,7 @@ msgstr "*Rango de eficacia de todos los ensayos del producto"
 
 #: catalogue/templates/catalogue/product_show.html:87
 #: catalogue/templates/catalogue/product_show.html:149
-#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:242
+#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:259
 #: trialapp/templates/trialapp/plagues_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "pest / disease"
@@ -327,7 +327,7 @@ msgid "Mixes"
 msgstr "Mezclas"
 
 #: catalogue/templates/catalogue/product_show.html:148
-#: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:241
+#: trialapp/filter_helpers.py:18 trialapp/filter_helpers.py:258
 #: trialapp/templates/trialapp/crop_list.html:5
 #: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "crop"
@@ -361,7 +361,7 @@ msgstr "intervalo dias"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
-#: trialapp/filter_helpers.py:243
+#: trialapp/filter_helpers.py:260
 msgid "Ungrouped"
 msgstr "No agrupar"
 

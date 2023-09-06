@@ -18,10 +18,10 @@ class MapApiHelper():
         self._trials = FieldTrial.objects.all().filter(id__in=self._trialIds)
 
     def get_trials_coordinates(self):
-        print(self._trials)
+        # print(self._trials)
         coordinates = []
         for trial in self._trials:
-            print(f"{trial.latitude} - {trial.longitude}")
+            # print(f"{trial.latitude} - {trial.longitude}")
 
             if trial.latitude and trial.longitude:
                 coordinates.append([trial.longitude, trial.latitude])
@@ -35,11 +35,11 @@ class MapApi(LoginRequiredMixin, View):
 
     def post(self, request):
         requestBody = json.loads(request.body)
-        print(requestBody)
+        # print(requestBody)
         helper = MapApiHelper(requestBody)
 
         coordinates = helper.get_trials_coordinates()
-        print(coordinates)
+        # print(coordinates)
         object = {'coordinates': coordinates}
 
         return JsonResponse(object, status=200)
