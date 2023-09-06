@@ -10,6 +10,7 @@ from baaswebapp.graphs import ProductCategoryGraph, COLOR_control, \
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.paginator import Paginator
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -261,7 +262,7 @@ class TrialFilterHelper:
 
 class BaaSView(LoginRequiredMixin, View):
     model = FieldTrial
-    paginate_by = 15  # if pagination is desired
+    paginate_by = 10  # if pagination is desired
     login_url = '/login'
     template_name = 'baaswebapp/baas_view_list.html'
     _fHelper = None
@@ -304,15 +305,25 @@ class BaaSView(LoginRequiredMixin, View):
                                                   (0, BaaSView.PRODUCT))
             return redirect(reverse(redirectTuple[1]))
 
+        page = request.GET.get('page') if request.GET.get('page') else 1
         self._fHelper = TrialFilterHelper(self.request.GET)
         self._fHelper.filter(groupbyTag=self._groupbyTag)
-        context = self.get_context_data()
-        context['trialfilter'] = self._fHelper.getFilter()
-        context['groupbyfilter'] = BaaSView.groupByOptions()
-        context['extra_params'] = self._fHelper.generateParamUrl()
-        context['groupby'] = self._groupbyTag
-        context['graphCategories'] = self._fHelper.graphProductCategories()
-        context['num_trials'] = self._fHelper.countTrials()
+
+        # pagination
+        allItems = self.get_context_data()
+        paginator = Paginator(allItems, BaaSView.paginate_by)
+        currentPage = paginator.get_page(page)
+
+        context = {
+            'trialfilter': self._fHelper.getFilter(),
+            'groupbyfilter': BaaSView.groupByOptions(),
+            'extra_params': self._fHelper.generateParamUrl(),
+            'groupby': self._groupbyTag,
+            'graphCategories': self._fHelper.graphProductCategories(),
+            'num_trials': self._fHelper.countTrials(),
+            'page': currentPage,
+            'paginator': paginator,
+            **self.prepareItems(currentPage.object_list)}
         return render(request, self.template_name, context)
 
 
@@ -320,8 +331,10 @@ class TrialListView(BaaSView):
     _groupbyTag = BaaSView.TRIALS
 
     def get_context_data(self, **kwargs):
+        return self._fHelper.getTrials().order_by('-code')
+
+    def prepareItems(self, objectList):
         new_list = []
-        objectList = self._fHelper.getTrials().order_by('-code')
         products = set()
         for item in objectList:
             products.add(item.product.id)
@@ -352,13 +365,15 @@ class PlaguesListView(BaaSView):
     template_name = 'baaswebapp/baas_view_list.html'
 
     def get_context_data(self, **kwargs):
-        plagues_list = []
-        objectList = self._fHelper.getClsObjects(Plague).order_by('name')
-        trialsPerPlague = self._fHelper.countBy('plague__name')
+        return self._fHelper.getClsObjects(Plague).order_by('name')
+
+    def prepareItems(self, objectList):
+        new_list = []
         pInfo, totalProducts = self._fHelper.countCategoriesPerClass(Plague)
+        trialsPerPlague = self._fHelper.countBy('plague__name')
         for item in objectList:
             tProduct, barValues = self.prepareBar(pInfo, item.id)
-            plagues_list.append({
+            new_list.append({
                 'name': item.name,
                 'trials': trialsPerPlague.get(item.name, None),
                 'id': item.id,
@@ -367,7 +382,7 @@ class PlaguesListView(BaaSView):
                 'efficacies': self._fHelper.getRangeEfficacy({'plague': item}),
                 'date_range': self._fHelper.getMinMaxYears({'plague': item})
                 })
-        return {'object_list': plagues_list,
+        return {'object_list': new_list,
                 'num_products': totalProducts}
 
 
@@ -375,8 +390,10 @@ class CropListView(BaaSView):
     _groupbyTag = BaaSView.CROP
 
     def get_context_data(self, **kwargs):
+        return self._fHelper.getClsObjects(Crop).order_by('name')
+
+    def prepareItems(self, objectList):
         new_list = []
-        objectList = self._fHelper.getClsObjects(Crop).order_by('name')
         trialsPerCrop = self._fHelper.countBy('crop__name')
         prodInfo, totalProducts = self._fHelper.countCategoriesPerClass(Crop)
         for item in objectList:
@@ -397,9 +414,11 @@ class ProductListView(BaaSView):
     _groupbyTag = BaaSView.PRODUCT
 
     def get_context_data(self, **kwargs):
-        new_list = []
-        objectList = self._fHelper.getClsObjects(Product).order_by(
+        return self._fHelper.getClsObjects(Product).order_by(
             'vendor__id', 'name')
+
+    def prepareItems(self, objectList):
+        new_list = []
         trialsPerProduct = self._fHelper.countBy('product__name')
         for item in objectList:
             new_list.append({

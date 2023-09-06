@@ -5,7 +5,7 @@ from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
 from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
-    CropListView, PlaguesListView
+    CropListView, PlaguesListView, BaaSView
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 
 
@@ -170,17 +170,36 @@ class TrialFilterTest(TestCase):
     def test_trials(self):
         response, items = self.listQuery('trials', TrialListView,
                                          FieldTrial)
-        for item in items:
-            self.assertContains(response, item.code)
+        max_items = BaaSView.paginate_by
+        itemN = 1
+        for item in items.order_by('-code'):
+            if itemN <= max_items:
+                self.assertContains(response, item.code)
+            else:
+                self.assertNotContains(response, item.code)
+            itemN += 1
 
     def test_crops(self):
         response, items = self.listQuery('crops', CropListView,
                                          Crop)
-        for item in items:
-            self.assertContains(response, item.name)
+        max_items = BaaSView.paginate_by
+        itemN = 1
+        for item in items.order_by('name'):
+            if itemN <= max_items:
+                # It appears multiple times in the page , like in the filters
+                self.assertContains(response, item.name)
+            # else: ignoring since it may appear in the filter
+            #     self.assertNotContains(response, item.name)
+            itemN += 1
 
     def test_plagues(self):
         response, items = self.listQuery('plagues', PlaguesListView,
                                          Plague)
-        for item in items:
-            self.assertContains(response, item.name)
+        max_items = BaaSView.paginate_by
+        itemN = 1
+        for item in items.order_by('name'):
+            if itemN <= max_items:
+                self.assertContains(response, item.name)
+            # else: ignoring since it may appear in the filter
+            #     self.assertNotContains(response, item.name)
+            itemN += 1
