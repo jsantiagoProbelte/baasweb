@@ -1,4 +1,4 @@
-from django.db.models import Avg
+from django.db.models import Avg, F, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from trialapp.models import FieldTrial, Thesis, Application, TreatmentThesis
@@ -14,13 +14,21 @@ from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_analytics import Abbott
 from catalogue.models import UNTREATED
-from django.db.models import F
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
     model = FieldTrial
     template_name = 'trialapp/trial_show.html'
     context_object_name = 'trial'
+
+    def getSchedule(self, fieldtrial):
+        assessments = Assessment.objects.filter(field_trial_id=fieldtrial.id)
+        applications = Application.objects.filter(field_trial_id=fieldtrial.id)
+
+        schedule_list = ScheduleAdapter.adapt_list(assessments) + ScheduleAdapter.adapt_list(applications)
+        schedule_list.sort(key=lambda schedule_line: schedule_line.date)
+
+        return schedule_list
 
     def getThesisByFieldTrialForDetail(self, fieldtrial):
         bgClass = 'bg-custom-'
@@ -50,6 +58,16 @@ class TrialApi(LoginRequiredMixin, DetailView):
             counter += 1
 
         return thesisWithColor
+
+    def getAssesmentsGroupedByPartTreated(self, trial):
+        assesments = Assessment.objects.values(
+            'part_rated',
+            'field_trial_id'
+        ).annotate(
+            count=Count('id')
+        ).filter(field_trial_id=trial.id)
+
+        return assesments
 
     def getTrialKeyData(self, trial):
         keyThesis = trial.keyThesis()
@@ -93,8 +111,10 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
             'thesisDetail': self.getThesisByFieldTrialForDetail(trial),
+            'groupedAssesments': self.getAssesmentsGroupedByPartTreated(trial),
             'numberAssessments': len(assessments),
-            'numberThesis': len(allThesis)}
+            'numberThesis': len(allThesis),
+            'schedule': self.getSchedule(trial)}
 
         keyTrialData = self.getTrialKeyData(trial)
         if trial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
@@ -107,6 +127,44 @@ class TrialApi(LoginRequiredMixin, DetailView):
                                                               None,
                                                               allThesis)
         return {**context, **showData, **trialPermision, **keyTrialData}
+
+
+class ScheduleAdapter():
+    name = None
+    date = None
+    previous_type = None
+    isAdapted = False
+
+    @staticmethod
+    def adapt_list(list):
+        adapted_list = []
+        for object in list:
+            adapted_list.append(ScheduleAdapter(object))
+
+        return adapted_list
+
+    def __init__(self, object):
+        self._process_application(object)
+        self._process_assesment(object)
+        self._check_is_adapted()
+
+    def _process_application(self, application):
+        if isinstance(application, Application):
+            self.name = application.comment
+            self.date = application.app_date
+            self.previous_type = 'application'
+            self.isAdapted = True
+
+    def _process_assesment(self, assesment):
+        if isinstance(assesment, Assessment):
+            self.name = assesment.name
+            self.date = assesment.assessment_date
+            self.previous_type = 'assessment'
+            self.isAdapted = True
+
+    def _check_is_adapted(self):
+        if not self.isAdapted:
+            raise ValueError("The object entered isn't avalaible for Schedule.")
 
 
 class TrialContent():
