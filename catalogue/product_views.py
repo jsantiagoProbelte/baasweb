@@ -6,7 +6,7 @@ from django.db.models import Count, Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
 from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
-    FieldTrial, TrialStatus, TrialType, SoilType
+    FieldTrial, TrialStatus, TrialType
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
