@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 import django_filters
-from baaswebapp.models import RateTypeUnit
+from baaswebapp.models import RateTypeUnit, ModelHelpers
 from django.db.models import Count, Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
@@ -363,10 +363,12 @@ class ProductApi(LoginRequiredMixin, View):
 
                 if 'fieldtrial__plague__name' in crop and\
                    crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(
-                        crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(
-                        cropsTable[cropName]["agents"])
+                    plagueName = crop['fieldtrial__plague__name']
+                    if plagueName and \
+                       not ModelHelpers.isInUnknowns(plagueName):
+                        cropsTable[cropName]["agents"].add(plagueName)
+                        cropsTable[cropName]["strAgents"] = ', '.join(
+                            cropsTable[cropName]["agents"])
 
                 cropsTable[cropName]["samples"] += crop[
                     "fieldtrial__samples_per_replica"]
@@ -379,8 +381,9 @@ class ProductApi(LoginRequiredMixin, View):
                     {"name": crop["fieldtrial__name"],
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
-                cropsTable[cropName]["agents"].add(
-                    crop['fieldtrial__plague__name'])
+                plagueName = crop['fieldtrial__plague__name']
+                if plagueName and not ModelHelpers.isInUnknowns(plagueName):
+                    cropsTable[cropName]["agents"].add(plagueName)
                 cropsTable[cropName]["samples"] += crop[
                     "fieldtrial__samples_per_replica"]
 
