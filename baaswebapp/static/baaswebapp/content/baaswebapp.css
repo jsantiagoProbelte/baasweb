@@ -559,25 +559,25 @@ div[class*="bg-custom-"]{
 
 .time-line-entry:is(.application)::before{
   content: "";
-  position: relative;
+  position: absolute;
   width: var(--width-height-time-line-icons);
   height: var(--width-height-time-line-icons);
   background-color: white;
   border: 2px solid var(--bs-text-color);
   rotate: 43deg;
-  left: var(--left-time-line-icon);
+  margin-left: var(--left-time-line-icon);
   margin-right: var(--margin-time-line-icon-right);
 }
 
 .time-line-entry:is(.assessment)::before{
   content: "";
-  position: relative;
+  position: absolute;
   width: var(--width-height-time-line-icons);
   height: var(--width-height-time-line-icons);
   background-color: white;
   border: 2px solid var(--bs-text-color);
   border-radius: 50%;
-  left: var(--left-time-line-icon);
+  margin-left: var(--left-time-line-icon);
   margin-right: var(--margin-time-line-icon-right);
 }
 
