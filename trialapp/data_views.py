@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from catalogue.models import UNTREATED
 from baaswebapp.graphs import GraphTrial, EfficacyGraph, \
-    COLOR_bio_morado, COLOR_UNTREATED
+    COLOR_KEY_THESIS, COLOR_CONTROL
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
 
@@ -428,14 +428,19 @@ class DataGraphFactory():
     _graph = None
     _references = {}
     _colors = {}
+    _controlNumber = None
+    _keyThesisNumber = None
 
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
+                 controlNumber=None, keyThesisNumber=None,
                  showTitle=True, references=None):
         self._level = level
         self._assessments = {item.id: item for item in assessments}
         self._references = references if references else {}
         self._colors = {}
+        self._controlNumber = controlNumber
+        self._keyThesisNumber = keyThesisNumber
         traces = self.buildData(dataPoints, xAxis)
         if len(traces) > 0:
             self._graph = GraphTrial(level, assessments[0].rate_type,
@@ -446,8 +451,8 @@ class DataGraphFactory():
             self._graph = GraphTrial.NO_DATA_AVAILABLE
 
     def addLineColorsToTraces(self, keyThesisNumber, untreatedNumber):
-        colorsDict = {keyThesisNumber: COLOR_bio_morado,
-                      untreatedNumber: COLOR_UNTREATED}
+        colorsDict = {keyThesisNumber: COLOR_KEY_THESIS,
+                      untreatedNumber: COLOR_CONTROL}
         self._graph.addColorLinesToTraces(colorsDict)
 
     def addTrace(self, line, name):
@@ -511,10 +516,15 @@ class DataGraphFactory():
             return self._references[pointRefence].name
 
     def getTraceColor(self, pointRefence):
-        color = self.traceId(pointRefence)
+        colorKey = self.traceId(pointRefence)
         if self._level == GraphTrial.L_DOSIS:
-            color = self._colors[color]
-        return GraphTrial.COLOR_LIST[color]
+            colorKey = self._colors[colorKey]
+        else:
+            if self._controlNumber and self._controlNumber == colorKey:
+                return COLOR_CONTROL
+            if self._keyThesisNumber and self._keyThesisNumber == colorKey:
+                return COLOR_KEY_THESIS
+        return GraphTrial.COLOR_LIST[colorKey]
 
     def getTraceSymbol(self, pointRefence):
         symbol = self.traceId(pointRefence)
