@@ -56,8 +56,15 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         counter = 1
         thesisWithColor = []
+        controlThesis = fieldtrial.control_thesis
+        keyThesis = fieldtrial.key_thesis
         for thesis in thesisList:
-            thesisWithColor.append({'idColor': f"{bgClass}{counter}",
+            idColor = f"{bgClass}{counter}"
+            if thesis['id'] == controlThesis:
+                idColor = 'bg-custom-control'
+            if thesis['id'] == keyThesis:
+                idColor = 'bg-custom-key-thesis'
+            thesisWithColor.append({'idColor': idColor,
                                     'thesis': thesis})
             counter += 1
 
@@ -288,9 +295,11 @@ class TrialContent():
                     orderAssmts = self.getOrderAssmts(assmts)
                     dataPoints = self.calculateDataPointsEfficacy(
                         dataPoints, orderAssmts)
-
+                controlNumber, keyThesisNumber = self.getControlKeyNumbers()
                 graphF = DataGraphFactory(
                     level, assmts, dataPoints, showTitle=False,
+                    controlNumber=controlNumber,
+                    keyThesisNumber=keyThesisNumber,
                     xAxis=xAxis, references=self._thesis)
                 if type_graph == GraphTrial.LINE and len(assmts) == 1:
                     type_graph = GraphTrial.COLUMN
@@ -506,6 +515,17 @@ class TrialContent():
 
         self._assmts = self.getKeyAssmts()
         return dataPoints
+
+    def getControlKeyNumbers(self):
+        controlNumber = None
+        keyThesisNumber = None
+        if self._trial.control_thesis:
+            thesis = Thesis.objects.get(id=self._trial.control_thesis)
+            controlNumber = thesis.number
+        if self._trial.key_thesis:
+            thesis = Thesis.objects.get(id=self._trial.key_thesis)
+            keyThesisNumber = thesis.number
+        return controlNumber, keyThesisNumber
 
     def getKeyGraphData(self):
         dataPoints = self.getKeyEfficacyComponents()
