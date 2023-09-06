@@ -6,7 +6,7 @@ from django.db.models import Count, Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
 from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
-    FieldTrial, TrialStatus, TrialType
+    FieldTrial, TrialStatus, TrialType, SoilType
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
@@ -114,11 +114,12 @@ class TrialProductFilterHelper:
         thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
 
         for item in trialsFiltered:
-            cultivation = item.cultivation if item.cultivation else '-'
+            cultivation = item.cultivation.name if item.cultivation else '-'
             cultivation += '<br>'
-            cultivation += item.irrigation if item.irrigation else '-'
+            cultivation += item.irrigation.name if item.irrigation else '-'
             cultivation += '<br>'
-            cultivation += item.soil if item.soil else '-'
+            cultivation += item.soil if item.soil != SoilType.UNDF.value \
+                else '-'
             new_list.append({
                 'code': item.code,
                 'description': item.getDescription(),
