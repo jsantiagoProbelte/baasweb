@@ -14,7 +14,7 @@ from catalogue.product_views import ProductApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.tests.tests_helpers import TrialTestData
-from trialapp.filter_helpers import ProductListView
+from trialapp.filter_helpers import ProductListView, BaaSView
 from django.utils.translation import gettext_lazy as _
 
 
@@ -108,9 +108,16 @@ class ProductViewsTest(TestCase):
         self.assertTrue(
             response,
             'analytics</span> {}</p>'.format(numberProducts))
-        products = Product.objects.all()
+        products = Product.objects.all().order_by('name')
+        # take into account pagination
+        max_products = BaaSView.paginate_by
+        itemN = 1
         for product in products:
-            self.assertContains(response, product.name)
+            if itemN <= max_products:
+                self.assertContains(response, product.name)
+            else:
+                self.assertNotContains(response, product.name)
+            itemN += 1
 
     def test_showProductS_simple(self):
         productid = 4

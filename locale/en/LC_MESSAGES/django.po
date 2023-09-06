@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 14:15+0200\n"
+"POT-Creation-Date: 2023-09-06 18:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: baaswebapp/graphs.py:627
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:178
+#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:238
 msgid "efficacy"
 msgstr ""
 
@@ -215,23 +215,23 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: catalogue/product_views.py:51
+#: catalogue/product_views.py:52
 msgid "Status"
 msgstr ""
 
-#: catalogue/product_views.py:54
+#: catalogue/product_views.py:55
 msgid "Type"
 msgstr ""
 
-#: catalogue/product_views.py:57
+#: catalogue/product_views.py:58
 msgid "Objective"
 msgstr ""
 
-#: catalogue/product_views.py:59
+#: catalogue/product_views.py:60
 msgid "Crop"
 msgstr ""
 
-#: catalogue/product_views.py:62
+#: catalogue/product_views.py:63
 msgid "Plague"
 msgstr ""
 
@@ -473,12 +473,12 @@ msgstr ""
 msgid "Lateritic Soil"
 msgstr ""
 
-#: trialapp/models.py:256 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:269 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:259 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:272 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -486,7 +486,7 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:125
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:139
 msgid "results"
 msgstr ""
 
@@ -608,7 +608,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:223
+#: trialapp/trial_views.py:284
 msgid "weather conditions"
 msgstr ""
 
@@ -681,24 +681,24 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:224
+#: trialapp/trial_views.py:285
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:271
+#: trialapp/trial_views.py:333
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:537
+#: trialapp/trial_views.py:599
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:540
+#: trialapp/trial_views.py:602
 msgid " in "
 msgstr ""
 

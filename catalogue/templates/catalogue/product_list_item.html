@@ -1,0 +1,8 @@
+<tr id="item-{{item.id}}">
+    <td><a class="btn btn-light rounded-pill" href="{% url 'product_api' item.id%}">{{ item.name }}</a></td>
+    {% include 'baaswebapp/product_display.html' %} 
+    <td><p class="txt-open-bold-15">{{item.efficacies}}</p></td>
+    <td><p class="txt-regular-13">{{item.date_range}}</p></td>
+    <td>{% include 'trialapp/btn_trials.html' with count_trials=item.trials tag='product' tagId=item.id extraInfo='' extra_params=extra_params%}
+    </td>
+</tr>

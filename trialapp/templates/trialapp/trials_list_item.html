@@ -1,0 +1,11 @@
+
+<tr id="item-{{item.id}}">
+    <td><p class="txt-open-semibold-14">{{item.description}}</p>
+        <p class="txt-regular-13">{{item.location}}</p></td>
+    <td><a class="btn btn-light txt-regular-12 rounded-pill" href="{% url 'trial_api' item.id%}">{{ item.code }}</a></td>
+    <td><p class="txt-open-semibold-14">{{item.product}}</p></td>
+    {% include 'baaswebapp/product_display.html' %} 
+    <td><p class="txt-open-bold-15">{{item.efficacies}}</p></td>
+    <td><p class="txt-regular-13">{{item.period}}</p></td>
+</tr>
+
