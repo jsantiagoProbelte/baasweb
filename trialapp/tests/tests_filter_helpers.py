@@ -64,11 +64,17 @@ class TrialFilterTest(TestCase):
             self.assertEqual(fHelper.getMinMaxYears(
                 {'product': theProduct}), rangeYears)
 
-            counts, countProductIds = fHelper.countProductCategoriesAndCrop()
+            counts, countProductIds = fHelper.countCategoriesPerClass(Crop)
             self.assertEqual(countProductIds, totalProducts)
             self.assertEqual(len(counts), totalCrops)
             self.assertEqual(counts[1][Category.UNKNOWN],
                              totalProducts)
+
+            # counts, countProductIds = fHelper.countCategoriesPerClass(Plague)
+            # self.assertEqual(countProductIds, totalProducts)
+            # self.assertEqual(len(counts), totalCrops)
+            # self.assertEqual(counts[1][Category.UNKNOWN],
+            #                  totalProducts)
 
     def test_cropfilter(self):
         # we are going to filter for 1 crop
@@ -103,7 +109,7 @@ class TrialFilterTest(TestCase):
             self.assertEqual(fHelper.getMinMaxYears(
                 {'product': otherP}), '-')
 
-            counts, countProductIds = fHelper.countProductCategoriesAndCrop()
+            counts, countProductIds = fHelper.countCategoriesPerClass(Crop)
             self.assertEqual(countProductIds, expectedProducts)
             self.assertEqual(len(counts), 1)
             self.assertEqual(counts[cropId][Category.UNKNOWN],

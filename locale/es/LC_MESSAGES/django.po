@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 01:08+0200\n"
+"POT-Creation-Date: 2023-09-06 10:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -492,7 +492,7 @@ msgstr "Periodo no definido"
 msgid "no trials"
 msgstr "no ensayos"
 
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:126
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:125
 #, fuzzy
 #| msgid "result summary"
 msgid "results"
@@ -576,7 +576,6 @@ msgid "control, untreated thesis"
 msgstr "control, tesis no tratada"
 
 #: trialapp/templates/trialapp/thesis_list.html:24
-
 msgid "key thesis"
 msgstr "Tesis Clave"
 

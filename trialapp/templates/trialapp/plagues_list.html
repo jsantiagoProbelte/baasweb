@@ -10,24 +10,11 @@
     <tbody>
     {% for item in object_list %}
     <tr id="item-{{item.id}}">
-        <td><p class="txt-open-semibold-14">{{item.name}}</p></td>
-        <td>
-            <div class="row">
-                <div class='col-md-3'>
-                    <p class="txt-open-bold-16">{{item.product_count}}</p>
-                </div>
-                <div class='col-md-8'>
-                    <div style="height: 100%; width:100%">
-                        <div class="progress" style="height: 20px;">
-                            <div class="progress-bar bg-success" style="width: {{item.progress}}%" role="progressbar" aria-valuenow={{item.product_count}} aria-valuemin="0" aria-valuemax={{num_products}}></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </td>
-        <td><p class="txt-open-bold-15">??</p></td>     
+        <td><i class="txt-open-semibold-14">{{item.name}}</i></td>
+        <td>{% include 'trialapp/product_bar.html' with values=item.bar_values total=item.products%}</td> 
+        <td><p class="txt-open-bold-15">{{item.efficacies}}</p></td>     
         <td><p class="txt-regular-13">{{item.date_range}}</p></td>
-        <td>{% include 'trialapp/btn_trials.html' with count_trials=item.trial_count tag='plague' tagId=item.id extraInfo='' extra_params=extra_params%}</td>
+        <td>{% include 'trialapp/btn_trials.html' with count_trials=item.trials tag='plague' tagId=item.id extraInfo='' extra_params=extra_params%}</td>
     </tr>
     </tbody>
     {% empty %}
