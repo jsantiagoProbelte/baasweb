@@ -17,6 +17,7 @@ from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
+from trialapp.trial_views import TrialContent
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -71,7 +72,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
         new_list = []
         for item in objectList:
-            trialData = item.showInTrialList()
+            trialC = TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
+                                  trial=item)
+            trialData = trialC.showInTrialList()
             new_list.append({
                 **trialData,
                 'assessments': item.assessments,
