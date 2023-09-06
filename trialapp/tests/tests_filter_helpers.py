@@ -12,6 +12,8 @@ from baaswebapp.tests.test_views import ApiRequestHelperTest
 class TrialFilterTest(TestCase):
     FIRST_YEAR = 2000
     _apiFactory = None
+    CROPID_WITH_PLAGUE = 6
+    PLAGUE_NAME = 'Botrytis'
 
     def setUp(self):
         self._apiFactory = ApiRequestHelperTest()
@@ -22,6 +24,7 @@ class TrialFilterTest(TestCase):
         numC = Crop.objects.count()
         code = 1
         fakemonth = 1
+        botritis = Plague.objects.get(name=TrialFilterTest.PLAGUE_NAME)
         for i in range(1, numP+1):
             for j in range(1, numC+1):
                 year = TrialFilterTest.FIRST_YEAR + j
@@ -29,6 +32,8 @@ class TrialFilterTest(TestCase):
                 trialData['name'] = f"trial{i}-{j}"
                 trialData['product'] = i
                 trialData['crop'] = j
+                if j == TrialFilterTest.CROPID_WITH_PLAGUE:
+                    trialData['plague'] = botritis.id
                 trialData['code'] = FieldTrial.formatCode(year, fakemonth,
                                                           code)
                 trialData['initiation_date'] = f'{year}-07-01'
@@ -70,17 +75,11 @@ class TrialFilterTest(TestCase):
             self.assertEqual(counts[1][Category.UNKNOWN],
                              totalProducts)
 
-            # counts, countProductIds = fHelper.countCategoriesPerClass(Plague)
-            # self.assertEqual(countProductIds, totalProducts)
-            # self.assertEqual(len(counts), totalCrops)
-            # self.assertEqual(counts[1][Category.UNKNOWN],
-            #                  totalProducts)
-
     def test_cropfilter(self):
         # we are going to filter for 1 crop
         # we have create 1 trial per crop and product
         expectedProducts = Product.objects.count()
-        cropId = 6
+        cropId = TrialFilterTest.CROPID_WITH_PLAGUE
         for posibleFilter in [{'crop': cropId}]:
             fHelper = TrialFilterHelper(posibleFilter)
             fHelper.filter()
@@ -113,6 +112,13 @@ class TrialFilterTest(TestCase):
             self.assertEqual(countProductIds, expectedProducts)
             self.assertEqual(len(counts), 1)
             self.assertEqual(counts[cropId][Category.UNKNOWN],
+                             expectedProducts)
+
+            botritis = Plague.objects.get(name=TrialFilterTest.PLAGUE_NAME)
+            counts, countProductIds = fHelper.countCategoriesPerClass(Plague)
+            self.assertEqual(countProductIds, expectedProducts)
+            self.assertEqual(len(counts), 1)
+            self.assertEqual(counts[botritis.id][Category.UNKNOWN],
                              expectedProducts)
 
     def test_namefilter(self):
