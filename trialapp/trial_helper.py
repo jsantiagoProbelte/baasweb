@@ -7,11 +7,12 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
     FieldTrial, Thesis, Objective, Replica, \
     Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety, \
-    Plague, CultivationMethod, Irrigation, Application
+    Plague, CultivationMethod, Irrigation, Application, SoilType
 from trialapp.data_models import ReplicaData
 from catalogue.models import RateUnit
 from django import forms
 from io import BytesIO
+from django.utils.translation import gettext_lazy as _
 
 
 class MyDateInput(forms.widgets.DateInput):
@@ -74,6 +75,8 @@ class TrialModel():
                           'type': T_D},
             'transplant_date': {'label': 'Transplante date', 'required': False,
                                 'type': T_D},
+            'soil': {'label': _('Soil'), 'required': False,
+                     'type': T_N, 'cls': SoilType},
         },
         'Assessments': {
             'ref_to_eppo': {'label': "EPPO Reference", 'required': False,
@@ -137,7 +140,7 @@ class TrialModel():
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude', 'application_volume_unit', 'conclusion')
+            'latitude', 'application_volume_unit', 'conclusion', 'soil')
 
     @classmethod
     def applyModel(cls, trialForm):
@@ -161,12 +164,15 @@ class TrialModel():
         trialForm.fields['product'].queryset = Product.getObjects()
         trialForm.fields['crop'].queryset = Crop.getObjects()
         trialForm.fields['plague'].queryset = Plague.getObjects()
+
         if 'application_volume_unit' in trialForm.fields:
             trialForm.fields['application_volume_unit'].queryset =\
                 RateUnit.getObjects()
         if 'crop_variety' in trialForm.fields:
             crops = CropVariety.getObjects()
             trialForm.fields['crop_variety'].queryset = crops
+        if 'irrigation' in trialForm.fields:
+            trialForm.fields['irrigation'].queryset = Irrigation.getObjects()
 
     @classmethod
     def prepareDataItems(cls, fieldTrial, asArray=False):

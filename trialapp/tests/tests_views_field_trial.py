@@ -34,14 +34,14 @@ class FieldTrialViewsTest(TestCase):
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Trials yet.')
-        self.assertContains(response, trial.name)
+        self.assertContains(response, trial.getDescription())
 
         thesis = Thesis.createThesis(**TrialTestData.THESIS[0])
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)
         response = FieldTrialListView.as_view()(request)
         self.assertNotContains(response, 'No Trials yet.')
-        self.assertContains(response, trial.name)
+        self.assertContains(response, trial.getDescription())
 
         request = self._apiFactory.get('fieldtrial-list')
         self._apiFactory.setUser(request)

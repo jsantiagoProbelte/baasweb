@@ -10,7 +10,7 @@
     <span class="badge badge-pill custom-badge-type center-items-vertical txt-open-semibold-13">{{ category }}</span>
     <div class="badge badge-pill custom-badge-efficacy center-items-vertical me-3">
       <span class="txt-uppercase txt-regular-11">{% trans "efficacy range"%}</span>
-      <span class="txt-encode-16 ms-2">94-97%</span>
+      <span class="txt-encode-16 ms-2">{{range_efficacy}}</span>
     </div>
 </div>
 {% endblock %}
@@ -71,7 +71,7 @@
             <small>{% trans "*All products trials efficacy range"%}</small>
           </div>
           <div class="range">
-            <h3>94-97%</h3>
+            <h3>{{range_efficacy}}</h3>
           </div>
         </div>
         <!--ACTIVE SUBSTANCE-->

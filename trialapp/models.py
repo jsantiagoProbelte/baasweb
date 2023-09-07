@@ -79,6 +79,20 @@ class PartRated(models.TextChoices):
     UNDF = 'UNDF', _('UNDF')
 
 
+class SoilType(models.TextChoices):
+    UNDF = 'UNDF', _('UNDF')
+    SANDY = 'Sandy', _('Sandy Soil')  # 'Suelo Arenoso'
+    CLAY = 'Clay', _('Clay Soil')  # 'Suelo Arcilloso'
+    LOAMY = 'Loamy', _('Loamy Soil')  # 'Suelo Limoso'
+    ORGANIC = 'Organic', _('Organic Soil')  # 'Suelo Orgánico'
+    ROCKY = 'Rocky', _('Rocky Soil')  # 'Suelo Pedregoso'
+    SALINE = 'Saline', _('Saline Soil')  # 'Suelo Salino'
+    ALKALINE = 'Alkaline', _('Alkaline Soil')  # 'Suelo Alcalino'
+    ACIDIC = 'Acidic', _('Acidic Soil')  # 'Suelo Ácido'
+    PEAT = 'Peat', _('Peat Soil')  # 'Suelo de Turba'
+    LATERITIC = 'Lateritic', _('Lateritic Soil')  # 'Suelo Laterítico'
+
+
 class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -126,6 +140,10 @@ class FieldTrial(ModelHelpers, models.Model):
     crop_age = models.IntegerField(null=True)
     seed_date = models.DateField(null=True)
     transplant_date = models.DateField(null=True)
+    soil = models.CharField(
+        max_length=10,
+        choices=SoilType.choices,
+        default=SoilType.UNDF)
 
     blocks = models.IntegerField()
     replicas_per_thesis = models.IntegerField()
@@ -155,15 +173,20 @@ class FieldTrial(ModelHelpers, models.Model):
     public = models.BooleanField(default=False)
     # key properties of the trial after evaluation
     key_thesis = models.IntegerField(null=True)
-    untreated_thesis = models.IntegerField(null=True)
+    control_thesis = models.IntegerField(null=True)
     key_ratetypeunit = models.ForeignKey(RateTypeUnit,
                                          on_delete=models.SET_NULL, null=True)
+    key_assessment = models.IntegerField(null=True)
     key_ratedpart = models.CharField(
         max_length=10,
         choices=PartRated.choices,
         default=PartRated.UNDF)
     best_efficacy = models.DecimalField(max_digits=10, decimal_places=2,
                                         null=True)
+
+    avg_temperature = models.IntegerField(null=True)
+    avg_humidity = models.IntegerField(null=True)
+    avg_precipitation = models.IntegerField(null=True)
 
     def keyThesis(self):
         if self.key_thesis:
@@ -221,11 +244,29 @@ class FieldTrial(ModelHelpers, models.Model):
                 description += f' + {self.plague}'
         return description
 
-    def getLocation(self):
+    def getCultivation(self):
+        cultivation = self.cultivation.name if self.cultivation else '-'
+        cultivation += '<br>'
+        cultivation += self.irrigation.name if self.irrigation else '-'
+        cultivation += '<br>'
+        cultivation += self.soil if self.soil != SoilType.UNDF.value \
+            else '-'
+        return cultivation
+
+    def getBestEfficacy(self):
+        if self.best_efficacy:
+            return f'{self.best_efficacy}%'
+        else:
+            return '??'
+
+    def getLocation(self, showNothing=False):
         if self.location:
             return self.location
         else:
-            return _('Undefined Location')
+            if showNothing:
+                return ''
+            else:
+                return _('Undefined Location')
 
     def getPeriod(self):
         period = _('Undefined period')
@@ -449,9 +490,9 @@ class TreatmentThesis(ModelHelpers, models.Model):
     @classmethod
     def getTreatment(cls, thesis):
         if thesis:
-            tt = cls.objects.get(thesis=thesis)
+            tt = cls.objects.filter(thesis=thesis)
             if tt:
-                return tt.treatment
+                return tt[0].treatment
         return None
 
     def getDosis(self):

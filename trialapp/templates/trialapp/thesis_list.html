@@ -8,18 +8,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <div class="card-body-baas mb-3">
-            <div class="row">
-                <div class="col-md-6">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select control, untreated thesis'%}</p>
-                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.untreated_thesis type_param='control_thesis'%}
-                </div>
-                <div class="col-md-6">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key thesis'%}</p>
-                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.key_thesis type_param='key_thesis'%}
-                </div>
-            </div>
-        </div>
+
         <div class="card card-body-baas mb-3">
         {% include 'trialapp/thesis_list_table.html' with show_description=True %}
         </div>
@@ -28,17 +17,22 @@
     <div class="col-md-6">
         <div class="card-body-baas mb-3">
             <div class="row">
-                <div class="col-md-4">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key rate type unit'%}</p>
+                <div class="col-md-6">
+                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'Select key params of efficacy:'%}</p>
+                    <p class="card-title txt-regular-14 capitalize-first mb-2">{% trans 'control, untreated thesis'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.control_thesis type_param='control_thesis'%}
+                    <p class="card-title txt-regular-14 capitalize-first mb-2 mt-3">{% trans 'key thesis'%}</p>
+                    {% include 'trialapp/select_key_param.html' with itemList=thesisList current_value_id=fieldTrial.key_thesis type_param='key_thesis'%}
+                </div>
+                <div class="col-md-6">
+                    <p class="card-title txt-regular-14 capitalize-first mb-2">{% trans 'Key rate type unit'%}</p>
                     {% include 'trialapp/select_key_param.html' with itemList=unitList current_value_id=fieldTrial.key_ratetypeunit.id type_param='key_rate_type'%}
-                </div>
-                <div class="col-md-4">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key part rated'%}</p>
+                    <p class="card-title txt-regular-14 capitalize-first mb-2 mt-3">{% trans 'Key part rated'%}</p>
                     {% include 'trialapp/select_key_param.html' with itemList=partList current_value_id=fieldTrial.key_ratedpart type_param='key_rated_part'%}
-                </div>
-                <div class="col-md-4">
-                    <p class="card-title txt-regular-20 capitalize-first mb-2">{% trans 'select key assessment'%}</p>
-                    {% include 'trialapp/select_key_param.html' with itemList=assmtList current_value_id=fieldTrial.key_assessment type_param='key_assessment'%}
+                    {% if assmtList %}
+                        <p class="card-title txt-regular-14 capitalize-first mb-2 mt-3">{% trans 'Key assessment'%}</p>
+                        {% include 'trialapp/select_key_param.html' with itemList=assmtList current_value_id=fieldTrial.key_assessment type_param='key_assessment'%}
+                    {% endif %}
                 </div>
             </div>
         </div>

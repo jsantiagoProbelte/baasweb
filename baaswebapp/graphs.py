@@ -17,7 +17,8 @@ COLOR_grey = '#F0EEEB'
 COLOR_unknown = '#F0EEEB'
 COLOR_black = '#333333'
 COLOR_bio_morado = '#aa4ae4'
-COLOR_UNTREATED = '#B1C23F'
+COLOR_KEY_THESIS = '#aa4ae4'
+COLOR_CONTROL = '#B1C23F'
 COLOR_morado = '#a500a5'
 COLOR_violeta = '#cfc9ff'
 COLOR_bs_blue = '#325d88'
@@ -49,6 +50,26 @@ COLOR_TEXT = '#333'
 COLOR_bg_color_cards_weather = '#F5FFFF'
 COLOR_grid = '#f0f0f0'
 COLOR_bio = '#aa4ae4'
+
+CUSTOM_COLOR_0 = '#4CAF50'
+CUSTOM_COLOR_1 = '#FF5722'
+CUSTOM_COLOR_2 = '#3F51B5'
+CUSTOM_COLOR_3 = '#009688'
+CUSTOM_COLOR_4 = '#FFEB3B'
+CUSTOM_COLOR_5 = '#795548'
+CUSTOM_COLOR_6 = '#E91E63'
+CUSTOM_COLOR_7 = '#2196F3'
+CUSTOM_COLOR_8 = '#9E9E9E'
+CUSTOM_COLOR_9 = '#FFC107'
+CUSTOM_COLOR_10 = '#607D8B'
+CUSTOM_COLOR_11 = '#9C27B0'
+CUSTOM_COLOR_12 = '#03A9F4'
+CUSTOM_COLOR_13 = '#8BC34A'
+CUSTOM_COLOR_14 = '#FF9800'
+CUSTOM_COLOR_15 = '#673AB7'
+CUSTOM_COLOR_16 = '#00BCD4'
+CUSTOM_COLOR_17 = '#CDDC39'
+CUSTOM_COLOR_18 = '#F44336'
 
 ALL_COLORS = [COLOR_main_color, COLOR_red, COLOR_yellow, COLOR_green,
               COLOR_blue, COLOR_grey, COLOR_bio_morado,
@@ -306,14 +327,15 @@ class GraphTrial:
                    'diamond-tall', 'diamond-wide', 'square-cross',
                    'circle-cross', 'circle-x', 'asterisk', 'hash']
 
-    COLOR_CONCLUSION_GRAPH = [COLOR_UNTREATED, COLOR_bio_morado]
+    COLOR_CONCLUSION_GRAPH = [COLOR_CONTROL, COLOR_KEY_THESIS]
 
-    COLOR_LIST = [COLOR_bg_color, COLOR_morado, COLOR_bio_morado,
-                  COLOR_violeta,
-                  COLOR_red, COLOR_yellow, COLOR_green, COLOR_blue,
-                  COLOR_bs_primary, COLOR_bs_success, COLOR_bs_info,
-                  COLOR_bs_warning, COLOR_bs_danger,
-                  COLOR_bs_green, COLOR_bs_secondary]
+    COLOR_LIST = [CUSTOM_COLOR_0, CUSTOM_COLOR_1, CUSTOM_COLOR_2,
+                  CUSTOM_COLOR_3, CUSTOM_COLOR_4, CUSTOM_COLOR_5,
+                  CUSTOM_COLOR_6, CUSTOM_COLOR_7, CUSTOM_COLOR_8,
+                  CUSTOM_COLOR_9, CUSTOM_COLOR_10, CUSTOM_COLOR_11,
+                  CUSTOM_COLOR_12, CUSTOM_COLOR_13, CUSTOM_COLOR_14,
+                  CUSTOM_COLOR_15, CUSTOM_COLOR_16, CUSTOM_COLOR_17,
+                  CUSTOM_COLOR_18]
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,

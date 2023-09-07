@@ -46,6 +46,10 @@ urlpatterns = [
         trial_views.trialContentApi,
         name='trial-content-api'),
     path(
+        'set_trial_key_values/<int:trial_id>/<str:type_param>/',
+        trial_views.SetTrialKeyValues.as_view(),
+        name='set-trial-key-values'),
+    path(
         'fieldtrial/delete/<int:pk>/',
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
@@ -74,10 +78,6 @@ urlpatterns = [
         'set_replica_position/<int:x>/<int:y>/<int:oldReplicaId>/',
         thesis_views.SetReplicaPosition.as_view(),
         name='set-replica-position'),
-    path(
-        'set_trial_key_values/<int:trial_id>/<str:type_param>/',
-        thesis_views.SetTrialKeyValues.as_view(),
-        name='set-trial-key-values'),
     # treatment in thesis
     path('treatment_thesis/add/<int:thesis_id>/',
          thesis_views.TreatmentThesisSetView.as_view(),

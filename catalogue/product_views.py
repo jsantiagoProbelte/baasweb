@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 import django_filters
-from baaswebapp.models import RateTypeUnit
-from django.db.models import Count
+from baaswebapp.models import RateTypeUnit, ModelHelpers
+from django.db.models import Count, Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
 from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
@@ -10,6 +10,7 @@ from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
 from trialapp.filter_helpers import TrialFilterHelper
+from trialapp.trial_views import TrialContent
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial
@@ -114,19 +115,12 @@ class TrialProductFilterHelper:
         thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
 
         for item in trialsFiltered:
+            trialC = TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
+                                  trial=item)
+            trialData = trialC.showInTrialList()
             new_list.append({
-                'code': item.code,
-                'name': item.name,
-                'crop': item.crop.name,
-                'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'id': item.id,
+                **trialData,
                 'assessments': item.assessments,
-                'initiation_date': item.initiation_date,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 
@@ -372,10 +366,12 @@ class ProductApi(LoginRequiredMixin, View):
 
                 if 'fieldtrial__plague__name' in crop and\
                    crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(
-                        crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(
-                        cropsTable[cropName]["agents"])
+                    plagueName = crop['fieldtrial__plague__name']
+                    if plagueName and \
+                       not ModelHelpers.isInUnknowns(plagueName):
+                        cropsTable[cropName]["agents"].add(plagueName)
+                        cropsTable[cropName]["strAgents"] = ', '.join(
+                            cropsTable[cropName]["agents"])
 
                 cropsTable[cropName]["samples"] += crop[
                     "fieldtrial__samples_per_replica"]
@@ -388,8 +384,9 @@ class ProductApi(LoginRequiredMixin, View):
                     {"name": crop["fieldtrial__name"],
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
-                cropsTable[cropName]["agents"].add(
-                    crop['fieldtrial__plague__name'])
+                plagueName = crop['fieldtrial__plague__name']
+                if plagueName and not ModelHelpers.isInUnknowns(plagueName):
+                    cropsTable[cropName]["agents"].add(plagueName)
                 cropsTable[cropName]["samples"] += crop[
                     "fieldtrial__samples_per_replica"]
 
@@ -401,9 +398,27 @@ class ProductApi(LoginRequiredMixin, View):
                         cropsTable[cropName]["agents"])
         return cropsTable.values()
 
+    def getRangeEfficacy(self, product):
+        trials = FieldTrial.objects.filter(product=product)
+        min_efficacy = trials.aggregate(
+                min_efficacy=Min('best_efficacy'))['min_efficacy']
+        max_efficacy = trials.aggregate(
+                max_efficacy=Max('best_efficacy'))['max_efficacy']
+
+        range_efficacy = '??'
+        if min_efficacy:
+            range_efficacy = f'{round(min_efficacy, 0)}'
+            if min_efficacy != max_efficacy:
+                range_efficacy += f' - {round(max_efficacy, 0)}'
+            range_efficacy += ' %'
+        return range_efficacy
+
     def get(self, request, *args, **kwargs):
         itemsPerPage = 5
-        activeTab = request.GET.get('activeTab') if request.GET.get('activeTab') else "1"
+        if request.GET.get('activeTab'):
+            activeTab = request.GET.get('activeTab')
+        else:
+            activeTab = "1"
         page = request.GET.get('page') if request.GET.get('page') else 1
 
         product_id = None
@@ -416,12 +431,14 @@ class ProductApi(LoginRequiredMixin, View):
         tpFilter = TrialProductFilterHelper(request.GET, product_id)
         filterTrials = tpFilter.getFieldTrialsByFilter(request.GET)
         paginator = Paginator(filterTrials, itemsPerPage)
-        print(f"TRACE | ProductView | get | paginator -> {paginator.num_pages}")
+        # print(f"TRACE | ProductView | get | paginator ->
+        # {paginator.num_pages}")
 
         currentPage = paginator.get_page(page)
 
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
         filterTrial = TrialProductFilter(request.GET)
+        range_efficacy = self.getRangeEfficacy(product)
 
         return render(
             request, template_name, {
@@ -430,6 +447,7 @@ class ProductApi(LoginRequiredMixin, View):
                 'fieldtrials': numTrials,
                 'filterData': filterData,
                 'titleGraph': titleGraph,
+                'range_efficacy': range_efficacy,
                 'graphs': graphs,
                 'variants': self.getProductTree(product),
                 'errors': errorgraphs,

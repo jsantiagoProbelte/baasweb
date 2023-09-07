@@ -27,36 +27,55 @@ class ThesisListView(LoginRequiredMixin, ListView):
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
 
-    def get_context_data(self, **kwargs):
-        field_trial_id = self.kwargs['field_trial_id']
-        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
-        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
-        headerRows = LayoutTrial.headerLayout(fieldTrial)
+    def getContextKeyData(self, trial):
+        trialContent = TrialContent(trial.id, 'what')
+        units, parts = trialContent.getRateTypeUnitsAndParts()
+        assmts = trialContent.getAssmts()
+        filterAssmts = trial.key_thesis is not None and \
+            trial.control_thesis is not None and \
+            trial.key_ratetypeunit is not None and \
+            trial.key_ratedpart is not None
+        assmtList = []
+        if filterAssmts:
+            for item in assmts:
+                if item.part_rated == trial.key_ratedpart and \
+                   item.rate_type == trial.key_ratetypeunit:
+                    assmtList.append(
+                        {'id': item.id, 'name': item.assessment_date})
+        unitList = [{'id': item.id, 'name': item.getName()} for item in units]
+        partList = [{'id': item, 'name': item} for item in parts]
+        return {'trial': trial,
+                'partList': partList,
+                'assmtList': assmtList,
+                'unitList': unitList}
+
+    def getLayoutData(self, trial):
+        allThesis, thesisDisplay = Thesis.getObjectsDisplay(trial)
+        headerRows = LayoutTrial.headerLayout(trial)
         replicas = [
             {'value': item.id, 'number': item.thesis.number,
              'name': item.getTitle()}
-            for item in Replica.getFieldTrialObjects(fieldTrial)]
+            for item in Replica.getFieldTrialObjects(trial)]
+
+        return {
+            'thesisList': thesisDisplay,
+            'rowsReplicaHeader': headerRows,
+            'replicas': replicas,
+            'rowsReplicas': LayoutTrial.showLayout(
+                trial, None, allThesis)}
+
+    def get_context_data(self, **kwargs):
+        field_trial_id = self.kwargs['field_trial_id']
+        fieldTrial = get_object_or_404(FieldTrial, pk=field_trial_id)
         permisions = TrialPermission(
             fieldTrial, self.request.user).getPermisions()
-        trialContent = TrialContent(fieldTrial.id, 'what')
-        units, parts = trialContent.getRateTupeUnitsAndParts()
-        assmts = trialContent.getAssmts()
-        assmtList = [{'id': item.id, 'name': item.assessment_date}
-                     for item in assmts]
-        unitList = [{'id': item.id, 'name': item.getName()} for item in units]
-        partList = [{'id': item, 'name': item} for item in parts]
-        return {'thesisList': thesisDisplay,
+        keyContextData = self.getContextKeyData(fieldTrial)
+        layoutData = self.getLayoutData(fieldTrial)
+        return {
                 'fieldTrial': fieldTrial,
-                'trial': fieldTrial,
-                'partList': partList,
-                'assmtList': assmtList,
-                'unitList': unitList,
-                'rowsReplicaHeader': headerRows,
-                'replicas': replicas,
-                **permisions,
-                'rowsReplicas': LayoutTrial.showLayout(fieldTrial,
-                                                       None,
-                                                       allThesis)}
+                **layoutData,
+                **keyContextData,
+                **permisions}
 
 
 class ThesisFormLayout(FormHelper):
@@ -341,31 +360,3 @@ class SetReplicaPosition(APIView):
             newReplica.pos_y = y
             newReplica.save()
         return redirect('thesis-list', field_trial_id=trialId)
-
-
-class SetTrialKeyValues(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['post']
-
-    TAG_KEY_THESIS = 'key_thesis'
-    TAG_CONTROL = 'control_thesis'
-    TAG_RATE_TYPE = 'key_rate_type'
-    TAG_RATED_PART = 'key_rated_part'
-
-    # see generateDataPointId
-    def post(self, request, trial_id, type_param):
-        itemId = request.POST['item_id']
-        trial = get_object_or_404(FieldTrial, pk=trial_id)
-        if type_param == SetTrialKeyValues.TAG_KEY_THESIS:
-            trial.key_ratetypeunit = itemId
-        elif type_param == SetTrialKeyValues.TAG_CONTROL:
-            trial.untreated_thesis = itemId
-        elif type_param == SetTrialKeyValues.TAG_RATE_TYPE:
-            trial.key_ratetypeunit_id = itemId
-        elif type_param == SetTrialKeyValues.TAG_RATED_PART:
-            trial.key_ratedpart = itemId
-        trial.save()
-        # DO we need to FORCE TO COMPUTE EFFICACY???
-        # calculate best efficacy
-        return redirect('thesis-list', field_trial_id=trial_id)

@@ -1,7 +1,7 @@
 {% extends "baaswebapp/layout.html" %}
 {% load widget_tweaks %}
 {% load i18n %}
-
+{% load custom_filter_templates %}
 {% block topbaastitle %}
 <div class="vertical-line-right txt-presicav-18 vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
 {% endblock %}
@@ -16,15 +16,53 @@
     {% include 'baaswebapp/baas_view_filter.html' with groupbyfilter=groupbyfilter groupby=groupby%}
     <div class="col-md-9 col-sm-12">
         <div class="card card-body-baas mt-3">
-            {% if groupby == 'product' %}
-                {% include 'catalogue/product_list.html' %}
-            {% elif groupby == 'trials' %}
-                {% include 'trialapp/trials_list.html' %}
-            {% elif groupby == 'plague' %}
-                {% include 'trialapp/plagues_list.html' %}
-            {% elif groupby == 'crop' %}
-                {% include 'trialapp/crop_list.html' %}
-            {% endif %}
+            {% load i18n %}
+            <table class="baas-data-table">
+                <thead>
+                    {% if groupby == 'product' %}
+                        {% include 'catalogue/product_list_header.html' %}
+                    {% elif groupby == 'trials' %}
+                        {% include 'trialapp/trials_list_header.html' %}
+                    {% elif groupby == 'plague' %}
+                        {% include 'trialapp/plagues_list_header.html' %}
+                    {% elif groupby == 'crop' %}
+                        {% include 'trialapp/crop_list_header.html' %}
+                    {% endif %}
+                </thead>
+                <tbody>
+                    {% for item in object_list %}
+                        {% if groupby == 'product' %}
+                            {% include 'catalogue/product_list_item.html' %}
+                        {% elif groupby == 'trials' %}
+                            {% include 'trialapp/trials_list_item.html' %}
+                        {% elif groupby == 'plague' %}
+                            {% include 'trialapp/plagues_list_item.html' %}
+                        {% elif groupby == 'crop' %}
+                            {% include 'trialapp/crop_list_item.html' %}
+                        {% endif %}
+                    {% empty %}
+                        <p>{% trans 'No items yet.'%}</p>
+                    {% endfor %}
+                </tbody>
+                {% if object_list %}
+                    <tfoot colspan='100%'>
+                        <tr>
+                            <td colspan='1'><span style="color:#666"><b>{{ paginator.count }}</b> {% trans 'results' %}</span></td>
+                            <td class="page-number-links" colspan="6">
+                                {% if page.has_previous %}
+                                    <a class="pagination-number chevron" href="#" data-page-number="{{ page.previous_page_number }}">&#xF284;</a>
+                                {% endif %}
+                                {% for i in 1|range_to:paginator.num_pages %}
+                                    <a class="pagination-number" href="#" data-page-number = "{{ i }}">{{ i }}</a>
+                                {% endfor %}
+                                {% if page.has_next %}
+                                    <a class="pagination-number chevron" href="#" data-page-number="{{ page.next_page_number }}">&#xF285;</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tfoot>
+                {% endif %}
+            </table> 
         </div>
     </div>
     <div class="col-md-3 col-sm-12">
@@ -37,4 +75,30 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('load', (event) => {
+        [...document.querySelectorAll(".form-control option:first-child")].forEach(option => {
+            option.disabled = true
+            //option.hidden = true
+        });
+    })
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        [...document.querySelectorAll('.page-number-links a')].forEach(link => {
+            pageNumber = link.dataset.pageNumber
+            currentQueryParams = new URLSearchParams(window.location.search)
+            pageNumberRequested = currentQueryParams.get("page") ? currentQueryParams.get("page") : "1"
+            currentQueryParams.set('page', pageNumber)
+            currentQueryParams.set('activeTab', 2)
+            if(pageNumber == pageNumberRequested){
+                link.classList.add('current')
+            }
+
+            link.href = `?${currentQueryParams}`
+        });
+    })
+</script>
 {% endblock %}
