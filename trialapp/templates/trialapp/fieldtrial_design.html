@@ -1,68 +1,87 @@
 {% load i18n %}
-<div class="row mr-4">
-  <div class="card card-body-baas col-md-8 mt-4">
-    <p class="title">{% trans 'Compared Treatments' %}</p>
-    <table class="baas-data-table">
-      <thead>
-        <tr>
-          <th>{% trans 'Thesis Name' %}</th>
-          <th>{% trans 'Product' %}</th>
-          <th>{% trans 'Active Substance' %}</th>
-          <th>{% trans 'Doses' %}</th>
-          <th>{% trans 'Manufacturer' %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for thesisData in thesis_list %}
-        <tr>
-          <td>
-            <div class="color-icon {{ thesisData.idColor }} "></div>
-            {{thesisData.thesis.name}}
-          </td>
-          <td><b>{{ thesisData.thesis.product_name }}</b></td>
-          <td>{{ thesisData.thesis.active_substance }}</td>
-          <td>Lorem Ipsum</td>
-          <td>{{ thesisData.thesis.vendor_name }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <div class="card-body-baas mt-4">
-    <p class="title">{% trans 'Terrain' %}</p>
-    <div class="terrain-grid card-baas-alt row">
-      <div class="terrain col-md-9">
-        {% for row in rowsReplicas %} {% include
-        "trialapp/data_row_replica_template.html" with row=row %} {% empty %}
-        <p>No Thesis yet.</p>
-        {% endfor %}
-      </div>
-      <div class="graphic-legend col-md-3">
-        {% for thesisData in thesis_list %}
-        <div class="legend-line">
-          <div class="color-icon {{ thesisData.idColor }}"></div>
-          <p>{{thesisData.thesis.product_name}}</p>
+<div class="row mr-4 gx-10">
+    <div class="col-sm-7 col-md-8 col-xl-8 col-lg-8">
+        <div class="card card-body-baas col-md-12 mt-4">
+            <p class="title">{% trans 'Compared Treatments' %}</p>
+            <table class="baas-data-table">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Thesis Name' %}</th>
+                        <th>{% trans 'Product' %}</th>
+                        <th class="capitalize-first">{% trans 'active substance' %}</th>
+                        <th>{% trans 'Doses' %}</th>
+                        <th>{% trans 'Manufacturer' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for thesisData in thesis_list %}
+                    <tr>
+                        <td><div class="color-icon {{ thesisData.idColor }} "></div> {{thesisData.thesis.name}}</td>
+                        <td><b>{{ thesisData.thesis.product_name }}</b></td>
+                        <td>{{ thesisData.thesis.active_substance }}</td>
+                        <td>Lorem Ipsum</td>
+                        <td>{{ thesisData.thesis.vendor_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        {% endfor %}
-      </div>
+        <div class="card-body-baas mt-4">
+            <p class="title">{% trans 'Terrain' %}</p>
+            <div class="terrain-grid card-baas-alt row">
+                <div class="terrain col-md-9">
+                    {% for row in rowsReplicas %}
+                        {% include "trialapp/data_row_replica_template.html" with row=row %}
+                    {% empty %}
+                        <p>No Thesis yet.</p>
+                    {% endfor %}
+                </div>
+                <div class="graphic-legend col-md-3">
+                    {% for thesisData in thesis_list %}
+                    <div class="legend-line">
+                        <div class="color-icon {{ thesisData.idColor }}"></div>
+                        <p>{{thesisData.thesis.product_name}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row mt-4">
+                <p class="aux-title">{% trans 'Layout Traits' %}</p>
+                <div class="col-md-6">
+                    {% for layout_trait in dataTrial.Layout|slice:"0:5"%}
+                    <p class="property"><small>{{ layout_trait.name }}</small> <b>{{layout_trait.value}}</b></p>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for layout_trait in dataTrial.Layout|slice:"5:9"%}
+                    <p class="property"><small>{{ layout_trait.name }}</small> <b>{{layout_trait.value}}</b></p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <p class="aux-title">{% trans 'One Plot' %}</p>
-        <p><small>{% trans 'Dimensions' %}</small> <b>Lorem Ipsum</b></p>
-        <p>
-          <small>{% trans 'Net Area Plot (m2) ZZGRoss' %}</small>
-          <b>Lorem Ipsum</b>
-        </p>
-        <p><small>{% trans 'Area Plot (m2)' %}</small> <b>Lorem Ipsum</b></p>
-        <p><small>{% trans 'Nº of plants' %}</small> <b>Lorem Ipsum</b></p>
-      </div>
-      <div class="col-md-6">
-        <p class="aux-title">
-          {% trans 'Total Area Per Treatment (All Plots)' %}
-        </p>
-        <p><small>{% trans 'Treatment Area' %}</small> <b>Lorem Ipsum</b></p>
-      </div>
+    <div class="col-sm-4 col-lg-3 col-xl-3 mt-4 ml-4">
+        <div class="card-body-baas">
+            <p class="title"><span class="bootstrap-icon">&#xF730</span> {% trans 'Assesments' %} <span class="bubble black"><span class="text">{{numberAssessments}}</span></span></p>
+            <div class="assesment-line">
+                {% for assesment in groupedAssesments %}
+                <div class="border-bottom-gray">
+                    <p class="aux-title no-border">{% trans 'Assesments' %} <b>{{ assesment.count }}</b></p>
+                    <p><small>{% trans 'Part Assesed' %}</small> <b>{{ assesment.part_rated }}</b></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-body-baas mt-4">
+            <p class="title"><span class="bootstrap-icon">&#xF214;</span> {% trans  'Schedule' %}</p>
+            <div class="time-line dotted">
+                {% for schedule_line in schedule %}
+                    <div class="time-line-entry {{ schedule_line.previous_type }}">
+                        <div class="time-line-title">{{ schedule_line.name }}</div>
+                        <div class="time-line-detail">{{ schedule_line.date|date:"M d, y" }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-  </div>
 </div>
