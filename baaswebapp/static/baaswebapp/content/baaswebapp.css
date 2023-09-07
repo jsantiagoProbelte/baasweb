@@ -39,6 +39,8 @@
   --margins-show-pages: 20px;
   --custom-card-bg-light-violet: #EFEDFF;
   --font-icons: 'bootstrap-icons';
+  --width-height-time-line-icons: 13px;
+  --left-time-line-icon: -22px;
   --custom-control: #B1C23F; 
   --custom-key-thesis: #aa4ae4;
   --custom-color-0: #4CAF50;
@@ -581,6 +583,70 @@ div[class*="bg-custom-"]{
   margin: 20px;
 }
 
+.time-line:is(.dotted){
+  border-left: 2px dotted var(--baas-gray);
+}
+.time-line-entry .time-line-title, .time-line-entry .time-line-detail{
+  max-width: 130px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.time-line-entry{
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  justify-content: space-between;
+}
+
+.time-line-entry:first-child{
+  padding-top: 0px;
+}
+
+.time-line-entry:last-child{
+  padding-bottom: 0px;
+}
+
+.time-line-entry .time-line-detail {
+  font-size: 0.7em;
+  color: var(--baas-gray);
+}
+
+.time-line-entry .time-line-title {
+  font-size: 0.8em;
+  font-weight: 600;
+  color: var(--bs-text-color);
+  flex: 1;
+}
+
+.time-line-entry:is(.application)::before{
+  content: "";
+  position: absolute;
+  width: var(--width-height-time-line-icons);
+  height: var(--width-height-time-line-icons);
+  background-color: white;
+  border: 2px solid var(--bs-text-color);
+  rotate: 43deg;
+  margin-left: var(--left-time-line-icon);
+  margin-right: var(--margin-time-line-icon-right);
+}
+
+.time-line-entry:is(.assessment)::before{
+  content: "";
+  position: absolute;
+  width: var(--width-height-time-line-icons);
+  height: var(--width-height-time-line-icons);
+  background-color: white;
+  border: 2px solid var(--bs-text-color);
+  border-radius: 50%;
+  margin-left: var(--left-time-line-icon);
+  margin-right: var(--margin-time-line-icon-right);
+}
+
+.border-bottom-gray:not(:last-child){
+  border-bottom: 1px solid var(--baas-gray);
+}
 .card-header-baas {
   padding: 0.5rem 1rem;
   margin-bottom: 0;
@@ -598,6 +664,7 @@ div[class*="bg-custom-"]{
   flex: 1 1 auto;
   border: 1px solid #E7E7E7 !important;
   box-shadow: 0px 0px 4px 0px #00000015;
+  height: fit-content;
 }
 
 .card-baas-alt {
@@ -614,6 +681,14 @@ div[class*="bg-custom-"]{
   text-transform: uppercase;
   font-weight: 600;
   white-space: nowrap;
+  font-size: 0.8em;
+}
+
+.card-body-baas .aux-title:is(.no-border){
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.8em;
 }
 .list-group-item-baas {
   color: var(--bs-text-color);
@@ -793,7 +868,9 @@ input[type='checkbox'], input[type="radio"] {
   color: white !important;
   text-decoration: none;
 }
-
+.bootstrap-icon{
+  font-family: var(--font-icons);
+}
 .chevron{
   font-family: var(--font-icons);
   color: var(--custom-baas);
@@ -853,6 +930,34 @@ div.flex-inline-form input:focus{
   box-shadow: none;
 }
 
+.bubble{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1em;
+}
+.bubble .text{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: small;
+}
+
+.bubble:is(.black){
+  background-color: black;
+  color: white;
+}
+
+.property {
+  display: flex;
+  justify-content: space-between;
+  max-width: 200px;
+}
 /* SCROLLTABLE */
 .form-control-baas {
   display: block;
