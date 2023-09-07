@@ -35,43 +35,46 @@ load static %} {% block content %}
   <div class="col-md-6 p-5 text-center">
     <div
       class="card no-border p-4"
-      style="background: #fff; border-radius: 20px"
+      style="background: #333333; border-radius: 20px"
     >
-      <div class="card-header" style="border: none">
+      <div class="card-header" style="border: none; background: #333333">
         <h2 class="fw-bold">Welcome to Baas !</h2>
         <p>Please register for full access to all features</p>
       </div>
       <br />
-      <div id="login_buttons">
+      <div id="login_buttons" class="d-grid gap-2">
         <button
           class="btn btn-block btn-dark"
           type="button"
           onclick="activateEmail()"
         >
-          Login using e-mail
+          <img
+            src='{% static "baaswebapp/img/email.png" %}'
+            style="width: 24px"
+          />
+          &nbsp;Login using e-mail
+        </button>
+        <button
+          class="btn btn-block btn-dark"
+          type="button"
+          onclick="authn('loginForm')"
+        >
+          <img
+            src='{% static "passkeys/imgs/FIDO-Passkey_Icon-White.png" %}'
+            style="width: 24px"
+          />
+          &nbsp;Login using Passkey
         </button>
         <form id="loginForm" action="{% url 'login' %}" method="post">
           {% csrf_token %}
           <input id="username" type="hidden" name="username" />
           <input id="password" type="hidden" name="password" />
           <input type="hidden" name="passkeys" id="passkeys" />
-          <button
-            class="btn btn-block btn-dark"
-            type="button"
-            onclick="authn('loginForm')"
-          >
-            <img
-              src='{% static "passkeys/imgs/FIDO-Passkey_Icon-White.png" %}'
-              style="width: 24px"
-            />
-            &nbsp;Login using Passkey
-          </button>
         </form>
       </div>
       <div id="email_form" style="display: none">
         <form action="/login_email" method="post">
           {% csrf_token %}
-          <label for="username">Username: </label>
           <input type="hidden" name="passkeys" id="passkeys" />
           <input
             id="username"
@@ -81,7 +84,11 @@ load static %} {% block content %}
             placeholder="Your username"
             required
           />
-          <input type="submit" value="Send E-mail" />
+          <input
+            type="submit"
+            class="btn btn-block btn-dark mt-3"
+            value="Send E-mail"
+          />
         </form>
       </div>
       <div class="card-body">

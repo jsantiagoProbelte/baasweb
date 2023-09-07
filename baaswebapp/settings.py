@@ -13,9 +13,15 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 import logging.config
 import passkeys
+from keymanager import KeyManager
+# Load local .env environment variables
+load_dotenv()
+
+keymanager = KeyManager()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -27,6 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-t78nwv1+tehfr27dg2jq!$!(!1k3bt2@vw98r37$2r=c3!9+)7'
+SENDGRID_KEY = keymanager.get_secret("SENDGRID-KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -38,15 +45,6 @@ FIDO_SERVER_ID = "localhost"
 FIDO_SERVER_NAME = "BaasWebApp"
 
 ALLOWED_HOSTS = ['*']
-
-
-# EMAIL settings
-EMAIL_HOST = "smtp.sendgrid.net"
-EMAIL_PORT = "465"
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = "apikey"
-EMAIL_HOST_PASSWORD = "SG.Jw1g4TSmRL63QF0iWw-tzw." +\
-    "4uviNHnqSvmOWi1X9rFcF8iGaoKkkv-iklUtuK1kaDA"
 
 
 # Application definition

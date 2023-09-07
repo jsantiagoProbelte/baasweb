@@ -12,8 +12,7 @@ from sesame.utils import get_query_string
 import sendgrid
 from sendgrid.helpers.mail import Email, To, Content, Mail
 
-sg = sendgrid.SendGridAPIClient(
-    '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')
+sg = sendgrid.SendGridAPIClient(settings.SENDGRID_KEY)
 
 
 def home(request):
@@ -67,21 +66,19 @@ def login_email(request):
     if request.method != 'POST':
         return redirect('/login')
     user = User.objects.get(username=request.POST["username"])
-    print(user)
-    LOGIN_URL = "https://localhost:8000/sesame/login/"
-    LOGIN_URL += get_query_string(user)
-    print(LOGIN_URL)
+    current_url = request.build_absolute_uri().rsplit('/', 1)[0]
+    LOGIN_URL = current_url + "/sesame/login/" + get_query_string(user)
+    html_content = "<html><p>Welcome to BaaS! Click <a href=" + \
+        LOGIN_URL + ">here</a> to sign in!</p</html>"
     from_email = Email("alex@arentz.cc")
-    to_email = To("aleksanderarentz@gmail.com")
-    subject = "Your Login Request to BaasWeb"
+    to_email = To(user.email)
+    subject = "Your Login Request to BaaS"
     content = Content(
-        "text/plain", "Press the following link to sign in: " + LOGIN_URL)
+        "text/html", html_content)
     mail = Mail(from_email, to_email, subject, content)
-    mail_response = sg.client.mail.send.post(request_body=mail.get())
-    print(mail_response.status_code)
-    print(mail_response.body)
-    print(mail_response.headers)
-
+    sg.client.mail.send.post(request_body=mail.get())
+    messages.info(
+        request, "Email has been sent! Check your inbox for a URL to sign in!")
     return redirect('/')
 
 

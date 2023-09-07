@@ -5,7 +5,7 @@ const code_form = document.getElementById("code_form")
 var email = ""
 
 function activateEmail(){
-  login_buttons.style.display = 'none'
+  login_buttons.style.setProperty('display', 'none', 'important')
   email_form.style.display = ''
 }
 
