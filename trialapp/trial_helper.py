@@ -1,5 +1,4 @@
 from math import ceil
-import pprint
 from trialapp.data_models import Assessment
 from baaswebapp.baas_archive import BaaSArchive
 from reportlab.pdfgen.canvas import Canvas
