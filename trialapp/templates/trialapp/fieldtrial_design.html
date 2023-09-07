@@ -1,39 +1,49 @@
 {% load i18n %}
-<div class="row mr-4">
-    <div class="card card-body-baas col-md-8 mt-4">
-        <p class="title">{% trans 'Compared Treatments' %}</p>
-        <table class="baas-data-table">
-            <thead>
-                <tr>
-                    <th>{% trans 'Thesis Name' %}</th>
-                    <th>{% trans 'Product' %}</th>
-                    <th class="capitalize-first">{% trans 'active substance' %}</th>
-                    <th>{% trans 'Doses' %}</th>
-                    <th>{% trans 'Manufacturer' %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for thesisData in thesis_list %}
-                <tr>
-                    <td><div class="color-icon {{ thesisData.idColor }} "></div> {{thesisData.thesis.name}}</td>
-                    <td><b>{{ thesisData.thesis.product_name }}</b></td>
-                    <td>{{ thesisData.thesis.active_substance }}</td>
-                    <td>Lorem Ipsum</td>
-                    <td>{{ thesisData.thesis.vendor_name }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="card-body-baas mt-4">
-        <p class="title">{% trans 'Terrain' %}</p>
-        <div class="terrain-grid card-baas-alt row">
-            <div class="terrain col-md-9">
-                {% for row in rowsReplicas %}
-                    {% include "trialapp/data_row_replica_template.html" with row=row %}
-                {% empty %}
-                    <p>No Thesis yet.</p>
-                {% endfor %}
+<div class="row mr-4 gx-10">
+    <div class="col-sm-7 col-md-8 col-xl-8 col-lg-8">
+        <div class="card card-body-baas col-md-12 mt-4">
+            <p class="title">{% trans 'Compared Treatments' %}</p>
+            <table class="baas-data-table">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Thesis Name' %}</th>
+                        <th>{% trans 'Product' %}</th>
+                        <th class="capitalize-first">{% trans 'active substance' %}</th>
+                        <th>{% trans 'Doses' %}</th>
+                        <th>{% trans 'Manufacturer' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for thesisData in thesis_list %}
+                    <tr>
+                        <td><div class="color-icon {{ thesisData.idColor }} "></div> {{thesisData.thesis.name}}</td>
+                        <td><b>{{ thesisData.thesis.product_name }}</b></td>
+                        <td>{{ thesisData.thesis.active_substance }}</td>
+                        <td>Lorem Ipsum</td>
+                        <td>{{ thesisData.thesis.vendor_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body-baas mt-4">
+            <p class="title">{% trans 'Terrain' %}</p>
+            <div class="terrain-grid card-baas-alt row">
+                <div class="terrain col-md-9">
+                    {% for row in rowsReplicas %}
+                        {% include "trialapp/data_row_replica_template.html" with row=row %}
+                    {% empty %}
+                        <p>No Thesis yet.</p>
+                    {% endfor %}
+                </div>
+                <div class="graphic-legend col-md-3">
+                    {% for thesisData in thesis_list %}
+                    <div class="legend-line">
+                        <div class="color-icon {{ thesisData.idColor }}"></div>
+                        <p>{{thesisData.thesis.product_name}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="row mt-4">
                 <p class="aux-title">{% trans 'Layout Traits' %}</p>
