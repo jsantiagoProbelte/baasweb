@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="row mr-4 gx-10">
-    <div class="row col-sm-7 col-md-8 col-xl-8 col-lg-8">
-        <div class="card card-body-baas col-md-8 mt-4">
+    <div class="col-sm-7 col-md-8 col-xl-8 col-lg-8">
+        <div class="card card-body-baas col-md-12 mt-4">
             <p class="title">{% trans 'Compared Treatments' %}</p>
             <table class="baas-data-table">
                 <thead>
@@ -46,16 +46,16 @@
                 </div>
             </div>
             <div class="row mt-4">
+                <p class="aux-title">{% trans 'Layout Traits' %}</p>
                 <div class="col-md-6">
-                    <p class="aux-title">{% trans 'One Plot' %}</p>
-                    <p><small>{% trans 'Dimensions' %}</small> <b>Lorem Ipsum</b></p>
-                    <p><small>{% trans 'Net Area Plot (m2) ZZGRoss' %}</small> <b>Lorem Ipsum</b></p>
-                    <p><small>{% trans 'Area Plot (m2)' %}</small> <b>Lorem Ipsum</b></p>
-                    <p><small>{% trans 'Nº of plants' %}</small> <b>Lorem Ipsum</b></p>
+                    {% for layout_trait in dataTrial.Layout|slice:"0:5"%}
+                    <p class="property"><small>{{ layout_trait.name }}</small> <b>{{layout_trait.value}}</b></p>
+                    {% endfor %}
                 </div>
                 <div class="col-md-6">
-                    <p class="aux-title">{% trans 'Total Area Per Treatment (All Plots)' %}</p>
-                    <p><small>{% trans 'Treatment Area' %}</small> <b>Lorem Ipsum</b></p>
+                    {% for layout_trait in dataTrial.Layout|slice:"5:9"%}
+                    <p class="property"><small>{{ layout_trait.name }}</small> <b>{{layout_trait.value}}</b></p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
