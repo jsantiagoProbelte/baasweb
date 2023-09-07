@@ -12,14 +12,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import django_extensions
 from pathlib import Path
+from dotenv import load_dotenv
 from dotenv import load_dotenv
 import os
 import logging.config
 from django.utils.translation import gettext_lazy as _
 import passkeys
-import django_extensions
 from keymanager import KeyManager
+# Load local .env environment variables
+load_dotenv()
+
+keymanager = KeyManager()
 # Load local .env environment variables
 load_dotenv()
 
