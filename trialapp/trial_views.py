@@ -31,7 +31,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         return schedule_list
 
-    def getTrialInfo(self, fieldtrial): 
+    def getTrialInfo(self, fieldtrial):
         return FieldTrial.objects.select_related(
                 'trial_type',
                 'crop',
