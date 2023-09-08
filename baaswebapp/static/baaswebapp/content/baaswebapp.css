@@ -27,7 +27,7 @@
   --custom-yellow: #ffd26e;
   --custom-green: #92eeb9;
   --custom-blue: #00bdeb;
-  --custom-grey: #F0EEEB;
+  --custom-gray: #F0EEEB;
   --custom-black: #333333;
   --custom-bio-morado: #aa4ae4;
   --custom-bio: #aa4ae4;
@@ -676,6 +676,21 @@ div[class*="bg-custom-"]{
   flex: 1 1 auto;
 }
 
+.card-body-baas:is(.no-padding){
+  padding: 0px;
+}
+
+.card-body-baas .card-section{
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.card-body-baas .card-section:not(:last-child){
+  border-bottom: 1px solid var(--custom-gray);
+  width: 100%;
+}
+
 .card-body-baas .aux-title{
   border-bottom: 1px solid var(--baas-gray);
   text-transform: uppercase;
@@ -690,6 +705,19 @@ div[class*="bg-custom-"]{
   white-space: nowrap;
   font-size: 0.8em;
 }
+
+.card-baas-alt .aux-title:is(.gray){
+  color: var(--baas-gray)
+}
+
+.clipboard{
+  -webkit-text-stroke: 1px;
+}
+
+.clipboard:is(.bi-clipboard-check){
+  color:var(--custom-color-13)
+}
+
 .list-group-item-baas {
   color: var(--bs-text-color);
   background-color: var(--custom-bg-color-cards);
@@ -957,6 +985,10 @@ div.flex-inline-form input:focus{
   display: flex;
   justify-content: space-between;
   max-width: 200px;
+}
+
+.property:is(.larger){
+  max-width: 400px;
 }
 /* SCROLLTABLE */
 .form-control-baas {

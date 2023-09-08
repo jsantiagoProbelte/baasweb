@@ -17,7 +17,6 @@ from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
-from trialapp.trial_views import TrialContent
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -72,19 +71,25 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
         new_list = []
         for item in objectList:
-            trialC = TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
-                                  trial=item)
-            trialData = trialC.showInTrialList()
             new_list.append({
-                **trialData,
+                'code': item.code,
+                'name': item.name,
+                'crop': item.crop.name,
+                'product': item.product.name,
+                'trial_status': item.trial_status if item.trial_status else '',
+                'objective': item.objective.name,
+                'plague': item.plague.name if item.plague else '',
+                'latitude': item.latitude,
+                'longitude': item.longitude,
+                'id': item.id,
                 'assessments': item.assessments,
+                'initiation_date': item.initiation_date,
                 'thesis': thesisCountDict.get(item.id, 0)})
         return new_list
 
     def get_context_data(self, **kwargs):
         resultPerPage = 5
-        page = self.request.GET.get('page') if self.request.GET.get('page') \
-            else 1
+        page = self.request.GET.get('page') if self.request.GET.get('page') else 1
 
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
@@ -268,7 +273,6 @@ class FieldTrialFormLayout(FormHelper):
             Div(Div(Row(Div(Field('crop_variety', css_class='mb-2'),
                             Field('irrigation', css_class='mb-2'),
                             Field('seed_date', css_class='mb-2'),
-                            Field('soil', css_class='mb-2'),
                             css_class='col-md-6'),
                         Div(Field('cultivation', css_class='mb-2'),
                             Field('crop_age', css_class='mb-2'),
