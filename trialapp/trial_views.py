@@ -31,6 +31,30 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         return schedule_list
 
+    def getTrialInfo(self, fieldtrial):
+        return FieldTrial.objects.select_related(
+                'trial_type',
+                'crop',
+                'crop__cropvariety'
+            ).values(
+                'trial_type__name',
+                'latitude',
+                'longitude',
+                'transplant_date',
+                'crop__name',
+                'crop__scientific',
+                'crop__cropvariety__name',
+                'crop_age',
+                'blocks',
+                'distance_between_plants',
+                'distance_between_rows',
+                'responsible',
+                'contact',
+                'cro'
+            ).filter(
+                id=fieldtrial.id
+            )[0]
+
     def getThesisByFieldTrialForDetail(self, fieldtrial):
         bgClass = 'bg-custom-'
 
@@ -119,6 +143,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'control_product': control_product,
             'type_product': trial.product.nameType(),
             'dataTrial': dataTrial, 'thesisList': thesisDisplay,
+            'trialInfo': self.getTrialInfo(trial),
             'thesisDetail': self.getThesisByFieldTrialForDetail(trial),
             'groupedAssesments': self.getAssesmentsGroupedByPartTreated(trial),
             'numberAssessments': len(assessments),

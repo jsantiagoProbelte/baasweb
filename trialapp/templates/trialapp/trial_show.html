@@ -85,7 +85,7 @@
             assessment
         </div>
         <div class="tab-pane fade" id="nav-info" role="tabpanel" aria-labelledby="info-tab">
-            info
+            {% include 'trialapp/fieldtrial_info.html' %}
         </div>
     </div>
 </div>
@@ -104,4 +104,5 @@
 </script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
 <script src='/static/baaswebapp/scripts/mapbaas.js'></script>
+<script src='/static/baaswebapp/scripts/clipboard_utils.js'></script>
 {% endblock %}  

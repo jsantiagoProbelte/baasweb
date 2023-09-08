@@ -1,0 +1,61 @@
+{% load i18n %}
+{% load static %}
+<div class="row mt-4 gx-5">
+    <div class="col-md-3 card-body-baas no-padding">
+        <p class="title">{% trans 'Trial Info' %}</p>
+        <div class="card-baas-alt ml-1 mr-1" style="margin: 0 20px">
+            <div class="aux-title no-border gray">{% trans 'Type of trial' %}</div>
+            <p class="title">{% include 'baaswebapp/show_value.html' with value=trialInfo.trial_type__name url_fix=edit_trial %}</p>
+        </div>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Nº of treatments' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.num_treatments url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Nº repetitions/treatment' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.repetitions url_fix=edit_trial %}</b></p>
+        </div>
+        <div class="card-section">
+            <div class="clipboard-container" style="display:flex; justify-content:end">
+                <span style="margin-right: 10px">{% trans 'Copy All' %}</span>
+                <i class="bi bi-clipboard clipboard" data-extract-from="#latitude #longitude"></i>
+            </div>
+            <p class="property larger"><small>{% trans 'Latitude' %}</small>
+                <b id="latitude">{% include 'baaswebapp/show_value.html' with value=trialInfo.latitude url_fix=edit_trial %}
+                    <i class="bi bi-clipboard clipboard" data-extract-from="#latitude" data-tooltip-id="#latitude-tool"></i>
+                </b>
+            </p>
+            <p class="property larger"><small>{% trans 'Longitude' %}</small>
+                <b id="longitude">{% include 'baaswebapp/show_value.html' with value=trialInfo.longitude url_fix=edit_trial %}
+                    <i class="bi bi-clipboard clipboard" data-extract-from="#longitude" data-tooltip-id="#latitude-tool"></i>
+                </b>
+            </p>
+        </div>
+    </div>
+    <div class="col-md-3 card-body-baas no-padding offset-md-1">
+        <p class="title">{% trans 'Plantation' %}</p>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Crop' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.crop__name url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Previous Crop' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.previous_crop url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Variety' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.crop__variety__name url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Scientifict Name' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.crop__scientific url_fix=edit_trial %}</b></p>
+        </div>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Crop Age' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.crop_age url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Transplant Date' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.transplant_date url_fix=edit_trial %}</b></p>
+        </div>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Plants /ha' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.plants_hec url_fix=edit_trial %}</b></p>
+        </div>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Blocks' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.blocks url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Plants Separation' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.distance_between_plants url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Rows Separation' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.distance_between_rows url_fix=edit_trial %}</b></p>
+        </div>
+    </div>
+    <div class="col-md-3 card-body-baas offset-md-1 no-padding">
+        <p class="title">{% trans 'Trial Owners' %}</p>
+        <div class="card-section">
+            <p class="property larger"><small>{% trans 'Farmer' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.contact url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'CRO' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.cro url_fix=edit_trial %}</b></p>
+            <p class="property larger"><small>{% trans 'Responsible' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.responsible url_fix=edit_trial %}</b></p>
+        </div>
+    </div>
+</div>
+
