@@ -1,12 +1,14 @@
 {% load i18n %}
 
 {% if dataContent.error %}
-    {% url 'thesis-list' dataContent.trial.id as edit_thesis_list %}
+    {% if edit_trial_perm %}
+        {% url 'thesis-list' dataContent.trial.id as edit_thesis_list %}
     
-    <a href="{{edit_thesis_list}}" class="btn txt-warning">
-        <span class="material-symbols-outlined me-3">report_problem</span>
-        {% trans 'You can select key and control thesis in this link' %}
-    </a>
+        <a href="{{edit_thesis_list}}" class="btn txt-warning">
+            <span class="material-symbols-outlined me-3">report_problem</span>
+            {% trans 'You can select key and control thesis in this link' %}
+        </a>
+    {% endif %}
     <p class='txt-regular-12 txt-warning'>{{dataContent.error|safe}}</p>
     
 {% else %}

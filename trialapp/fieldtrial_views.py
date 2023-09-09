@@ -17,6 +17,8 @@ from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
+from trialapp.trial_views import TrialContent
+from django.utils.translation import gettext_lazy as _
 
 
 class FieldTrialFilter(django_filters.FilterSet):
@@ -353,9 +355,20 @@ class DownloadTrial(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         trial = self.get_object()
-        exportFile = PdfTrial(trial, useBuffer=True)
-        exportFile.produce()
-        # Create a FileResponse with the PDF file and appropriate content type
-        response = FileResponse(exportFile.getBuffer(), as_attachment=True,
-                                filename=exportFile.getName())
-        return response
+        trialP = TrialPermission(trial, self.request.user)
+        error = None
+        if trialP.canDownload():
+            error = _('Fail on generating download')
+            try:
+                exportFile = PdfTrial(trial, useBuffer=True)
+                exportFile.produce()
+                # Create a FileResponse with the PDF file and appropriate
+                # content type
+                response = FileResponse(exportFile.getBuffer(),
+                                        as_attachment=True,
+                                        filename=exportFile.getName())
+                return response
+            except ValueError:
+                pass
+        else:
+            return trialP.renderError(request, error=error)

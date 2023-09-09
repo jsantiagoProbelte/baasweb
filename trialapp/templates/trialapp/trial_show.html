@@ -8,6 +8,11 @@
 {% endblock %}
 {% load i18n %}
 {% block topbaasheader %}
+{% if edit_trial_perm %}
+    {% url 'fieldtrial_api' trial.id as show_fieldtrial %}
+{% else %}
+    {% url 'trial_api' as show_fieldtrial %}
+{% endif %}
     <li class="nav-item">
         <a class="nav-link txt-brand txt-presicav-18" href="{% url 'trial_api' trial.id %}">
             <span class="material-symbols-outlined small-icon">assessment</span>
@@ -16,22 +21,22 @@
     <li class="nav-item">
         <p class="navbar-text txt-baas txt-encode-18" >{{location}}, {{period}}</p>
     </li>
-    <li class="nav-item">
-        <a class="btn btn-outline-baas-alt ms-3" href="{% url 'fieldtrial_api' trial.id %}">{{trial.code}}</a>
-    </li>
-    <li class="nav-item">
-        <div class="btn btn-baas-alt ms-2 capitalize-first">{% trans "efficacy"%}<span class='strong ms-2'>{{efficacy}}%</span></div>
-    </li>
-</ul>
-<ul class="navbar-nav ms-4 vertical-line-left">
-    <li class="nav-item  ms-3">
-        {% include 'trialapp/btn_trials.html' with count_trials=other_trials tag='product' tagId=trial.product.id extraInfo=trial.product extra_params=''%}
-    </li>
 
+        <li class="nav-item">
+            {% if editable %}
+                {% url_edit as }
+            {% else %}
+                <a class="btn btn-outline-baas-alt ms-3" href="{{show_fieldtrial}}">{{trial.code}}</a>
+            {% endif %}
+        </li>
+        <li class="nav-item">
+            <div class="btn btn-baas-alt ms-2 capitalize-first">{% trans "efficacy"%}<span class='strong ms-2'>{{efficacy}}%</span></div>
+        </li>
+</ul>
 {% endblock %}
 
 {% block content %}
-
+{% if read_trial %}
 <div class="row ">
     <div class="col-md-10 offset-md-1">
     <ul class="nav nav-tabs-baas" role="tablist">
@@ -56,12 +61,14 @@
         <li class="nav-item">
         <button class="nav-link txt-open-semibold-15 capitalize-first" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15 capitalize-first"
-                data-toggle="tooltip" data-placement="top" title='Download trial'>{% trans "download trial" %}
-                <span class="material-icons-outlined"> file_download </span>
-            </a>
-        </li>
+        {% if downloadable %}
+            <li class="nav-item">
+                <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15 capitalize-first"
+                    data-toggle="tooltip" data-placement="top" title='Download trial'>
+                    <span class="material-symbols-outlined">file_download</span>{% trans "download trial" %}
+                </a>
+            </li>
+        {% endif %}
     </ul>
     <div class="tab-content" id="nav-trial">
         <div class="tab-pane fade show active" id="nav-conclusions" role="tabpanel" aria-labelledby="conclusions-tab">
@@ -89,6 +96,11 @@
         </div>
     </div>
 </div>
+{% else %}
+    <div class="card card-body bg-warning col-md-6 mt-4 mb-4 offset-md-3">
+        <p class="txt-encode-20">{{error}}</p>
+    </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

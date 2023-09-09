@@ -75,7 +75,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
                 active_substance=F('field_trial__product__active_substance'),
                 vendor_name=F('field_trial__product__vendor__name')
             )
-
         counter = 1
         thesisWithColor = []
         controlThesis = fieldtrial.control_thesis
@@ -89,7 +88,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
             thesisWithColor.append({'idColor': idColor,
                                     'thesis': thesis})
             counter += 1
-
         return thesisWithColor
 
     def getAssesmentsGroupedByPartTreated(self, trial):
@@ -120,7 +118,16 @@ class TrialApi(LoginRequiredMixin, DetailView):
         trial = self.get_object()
         # Add additional data to the context
         trialPermision = TrialPermission(trial,
-                                         self.request.user).getPermisions()
+                                         self.request.user)
+        tpermisions = trialPermision.getPermisions()
+        if not trialPermision.canRead():
+            return {**tpermisions,
+                    'trial': trial,
+                    'description': trial.getDescription,
+                    'location': trial.getLocation(),
+                    'period': trial.getPeriod(),
+                    'error': trialPermision.getError()}
+
         allThesis, thesisDisplay = Thesis.getObjectsDisplay(trial)
         assessments = Assessment.getObjects(trial)
 
@@ -160,7 +167,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(trial,
                                                               None,
                                                               allThesis)
-        return {**context, **showData, **trialPermision, **keyTrialData}
+        return {**context, **showData, **tpermisions, **keyTrialData}
 
 
 class ScheduleAdapter():

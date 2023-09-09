@@ -13,6 +13,7 @@ from catalogue.models import RateUnit
 from django import forms
 from io import BytesIO
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render
 
 
 class MyDateInput(forms.widgets.DateInput):
@@ -554,38 +555,131 @@ class TrialPermission:
     _trial = None
     _user = None
     _permissions = {}
-    EDIT = 'edit_data'
-    ADD_DATA = 'add_data'
+    _type = None
+    _owner = False
+    _status = None
+    _isDone = None
+
+    # --- Permissions
+    # Can change any status and data
+    EDITABLE = 'edit_trial_perm'
+    # Can access trial
+    READIBLE = 'read_trial'
+    # Can find trial and see internal values (status, owner)
+    DISCOVERABLE = 'discover_trial'
+    # Can download status
+    DOWNLOADABLE = 'download_trial'
+
+    # --- Type users
+    EXTERNAL = 'ext'
+    INTERNAL = 'int'
+    ADMIN = 'adm'
 
     def __init__(self, trial, user):
         self._trial = trial
         self._user = user
+        self.getType()
+        self.isOwner()
+        self.isDone()
+        self.setPermissions()
+
+    def getType(self):
+        self._type = TrialPermission.EXTERNAL
+        if self._user.is_superuser:
+            self._type = TrialPermission.ADMIN
+        elif self._user.is_staff:
+            self._type = TrialPermission.INTERNAL
+
+    def isOwner(self):
+        self._owner = self._trial.responsible == self._user.username
+
+    def isDone(self):
+        self._isDone = self._trial.trial_status.name == TrialStatus.FINISHED
+
+    def setPermissions(self):
         self._permissions = {
-            TrialPermission.EDIT: False,
-            TrialPermission.ADD_DATA: False}
-        self.canEditTrial()
-        self.canAddData()
+            TrialPermission.EDITABLE: False,
+            TrialPermission.READIBLE: False,
+            TrialPermission.DISCOVERABLE: False,
+            TrialPermission.DOWNLOADABLE: False}
+        if self.setDiscover():
+            if self.setRead():
+                self.setDownload()
+                self.setEdit()
 
-    def canEditTrial(self):
-        edit = False
-        if self._trial.responsible == self._user.username:
-            edit = True
-        elif self._user.is_superuser:
-            edit = True
-        if edit:
-            self._permissions[TrialPermission.EDIT] = edit
+    def canDiscover(self):
+        return self._permissions[TrialPermission.DISCOVERABLE]
 
-    def canAddData(self):
-        add_data = False
-        if self._trial.trial_status.name == TrialStatus.FINISHED:
-            return
-        elif self._trial.responsible == self._user.username:
-            add_data = True
-        elif self._user.is_superuser:
-            add_data = True
+    def setDiscover(self):
+        permit = False
+        if self._owner or self._type == TrialPermission.ADMIN or \
+           self._type == TrialPermission.INTERNAL:
+            permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._trial.public and self._isDone:
+                permit = True
+        self._permissions[TrialPermission.DISCOVERABLE] = permit
+        return permit
 
-        if add_data:
-            self._permissions[TrialPermission.ADD_DATA] = add_data
+    def canRead(self):
+        return self._permissions[TrialPermission.READIBLE]
+
+    def setRead(self):
+        permit = False
+        if self._owner or self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._type == TrialPermission.INTERNAL:
+            if self._isDone:
+                permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._isDone and self._trial.public:
+                permit = True
+        self._permissions[TrialPermission.READIBLE] = permit
+        return permit
+
+    def canDownload(self):
+        return self._permissions[TrialPermission.DOWNLOADABLE]
+
+    def setDownload(self):
+        permit = False
+        if self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._type == TrialPermission.INTERNAL:
+            if self._isDone and self._trial.favorable:
+                permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._isDone and self._trial.favorable and self._trial.public:
+                permit = True
+        self._permissions[TrialPermission.DOWNLOADABLE] = permit
+        return permit
+
+    def canEdit(self):
+        return self._permissions[TrialPermission.EDITABLE]
+
+    def setEdit(self):
+        permit = False
+        if self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._owner and not self._isDone:
+            permit = True
+        self._permissions[TrialPermission.EDITABLE] = permit
+        return permit
 
     def getPermisions(self):
         return self._permissions
+
+    def getError(self):
+        if not self._permissions[TrialPermission.READIBLE] or \
+           not self._permissions[TrialPermission.DISCOVERABLE]:
+            return _('You do not have permission to access this trial')
+        elif not self._permissions[TrialPermission.DOWNLOADABLE]:
+            return _('You do not have permission to download this trial')
+        elif not self._permissions[TrialPermission.EDITABLE]:
+            return _('You do not have permission to edit this trial')
+        return _('No limitations on permissions')
+
+    def renderError(self, request, error=None):
+        if error is None:
+            error = self.getError()
+        return render(request, 'baaswebapp/show_permission_error.html',
+                      {'error': error})

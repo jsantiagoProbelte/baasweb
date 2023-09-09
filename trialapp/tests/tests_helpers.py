@@ -206,7 +206,7 @@ class DataGenerator:
 class ApiRequestHelperTest(APIRequestFactory):
 
     PASSWORD = 'BaaSisAwesome'
-    USER = 'pepe'
+    USER = 'Waldo'
     _user = None
 
     def __init__(self):

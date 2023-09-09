@@ -259,8 +259,8 @@ class AssessmentView(LoginRequiredMixin, DetailView):
         # Add additional data to the context
         trialPermision = TrialPermission(
             assessment.field_trial,
-            self.request.user).getPermisions()
+            self.request.user)
         dataHelper = DataHelper(assessment,
-                                trialPermision[TrialPermission.ADD_DATA])
+                                trialPermision.canEdit())
         return {**context, **dataHelper.showDataAssessment(),
-                **trialPermision}
+                **trialPermision.getPermisions()}

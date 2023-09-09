@@ -5,15 +5,20 @@ from trialapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.thesis_views import SetReplicaPosition
+from django.utils.translation import gettext_lazy as _
+from trialapp.trial_views import TrialApi
+from trialapp.fieldtrial_views import DownloadTrial
 
 
 class UserStub:
     username = None
     is_superuser = None
+    is_staff = None
 
-    def __init__(self, name, superUser):
+    def __init__(self, name, superUser, is_staff):
         self.username = name
         self.is_superuser = superUser
+        self.is_staff = is_staff
 
 
 class TrialHelperTest(TestCase):
@@ -150,29 +155,187 @@ class TrialHelperTest(TestCase):
         self.assertEqual(len(headers), self._trial.blocks)
         self.assertEqual(headers[0]['name'], 'A')
 
+    def assertPermissions(self, trial, user, discoverable, readible,
+                          downloadable, editable):
+        trialP = TrialPermission(trial, user).getPermisions()
+        self.assertEqual(trialP[TrialPermission.DISCOVERABLE], discoverable)
+        self.assertEqual(trialP[TrialPermission.READIBLE], readible)
+        self.assertEqual(trialP[TrialPermission.DOWNLOADABLE], downloadable)
+        self.assertEqual(trialP[TrialPermission.EDITABLE], editable)
+
     def test_permisions(self):
         trial = self._trial
-        owner = self._trial.responsible
+        ownerName = self._trial.responsible
 
-        trialP = TrialPermission(trial, UserStub(owner, False)).getPermisions()
-        self.assertTrue(trialP[TrialPermission.ADD_DATA])
-        self.assertTrue(trialP[TrialPermission.EDIT])
+        ownerInternal = UserStub(ownerName, False, True)
+        ownerExternal = UserStub(ownerName, False, False)
+        admin = UserStub('GOD', True, True)
+        notOwnerInternal = UserStub('Ziggy', False, True)
+        notOwnerExternal = UserStub('Ziggy', False, False)
+        open = TrialStatus.objects.get(name=TrialStatus.OPEN)
+        finished = TrialStatus.objects.get(name=TrialStatus.FINISHED)
 
-        trialP = TrialPermission(trial, UserStub('GOD', False)).getPermisions()
-        self.assertFalse(trialP[TrialPermission.ADD_DATA])
-        self.assertFalse(trialP[TrialPermission.EDIT])
+        # discoverable, readible, downloadable, editable
 
-        trialP = TrialPermission(trial, UserStub('GOD', True)).getPermisions()
-        self.assertTrue(trialP[TrialPermission.ADD_DATA])
-        self.assertTrue(trialP[TrialPermission.EDIT])
+        # Trial Not Finished, no public, no favorable
+        trial.trial_status = open
+        trial.public = False
+        trial.favorable = False
+        self.assertPermissions(trial, notOwnerExternal,
+                               False, False, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, False, False, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
 
-        finishStatus = TrialStatus.objects.get(name=TrialStatus.FINISHED)
-        trial.trial_status = finishStatus
-        trial.save()
-        trialP = TrialPermission(trial, UserStub('GOD', True)).getPermisions()
-        self.assertFalse(trialP[TrialPermission.ADD_DATA])
-        self.assertTrue(trialP[TrialPermission.EDIT])
+        # Trial Not Finished, public, no favorable
+        trial.trial_status = open
+        trial.public = True
+        trial.favorable = False
+        self.assertPermissions(trial, notOwnerExternal,
+                               False, False, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, False, False, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
 
-        trialP = TrialPermission(trial, UserStub(owner, False)).getPermisions()
-        self.assertFalse(trialP[TrialPermission.ADD_DATA])
-        self.assertTrue(trialP[TrialPermission.EDIT])
+        # Trial Not Finished, public, favorable
+        trial.trial_status = open
+        trial.public = True
+        trial.favorable = True
+        self.assertPermissions(trial, notOwnerExternal,
+                               False, False, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, False, False, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, False, True)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
+
+        # Trial Finished, no public, no favorable
+        trial.trial_status = finished
+        trial.public = False
+        trial.favorable = False
+        self.assertPermissions(trial, notOwnerExternal,
+                               False, False, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
+
+        # Trial Finished, no public, favorable
+        trial.trial_status = finished
+        trial.public = False
+        trial.favorable = True
+        self.assertPermissions(trial, notOwnerExternal,
+                               False, False, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
+
+        # Trial Finished, public, no favorable
+        trial.trial_status = finished
+        trial.public = True
+        trial.favorable = False
+        self.assertPermissions(trial, notOwnerExternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, False, False)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
+
+        # Trial Finished, public, no favorable
+        trial.trial_status = finished
+        trial.public = True
+        trial.favorable = True
+        self.assertPermissions(trial, notOwnerExternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, ownerExternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, notOwnerInternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, ownerInternal,
+                               True, True, True, False)
+        self.assertPermissions(trial, admin,
+                               True, True, True, True)
+
+    def test_errormessage(self):
+        trial = self._trial
+        self._trial.responsible = "Ziggy"
+        self._trial.save()
+        user = UserStub("Ziggy", False, True)
+        trialP = TrialPermission(trial, user)
+
+        trialP._permissions[TrialPermission.READIBLE] = True
+        trialP._permissions[TrialPermission.DISCOVERABLE] = False
+        self.assertEqual(
+            trialP.getError(),
+            _('You do not have permission to access this trial'))
+
+        trialP._permissions[TrialPermission.READIBLE] = False
+        trialP._permissions[TrialPermission.DISCOVERABLE] = True
+        self.assertEqual(
+            trialP.getError(),
+            _('You do not have permission to access this trial'))
+
+        request = self._apiFactory.get('trial_api')
+        self._apiFactory.setUser(request)
+        response = TrialApi.as_view()(request, pk=self._trial.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, _('You do not have permission to access this trial'))
+
+        trialP._permissions[TrialPermission.READIBLE] = True
+        trialP._permissions[TrialPermission.DISCOVERABLE] = True
+        trialP._permissions[TrialPermission.DOWNLOADABLE] = False
+        self.assertEqual(
+            trialP.getError(),
+            _('You do not have permission to download this trial'))
+        # make it readible and discorable but not downloadable
+        self._trial.trial_status = TrialStatus.objects.get(
+            name=TrialStatus.FINISHED)
+        self._trial.public = True
+        self._trial.favorable = False
+        self._trial.save()
+        request = self._apiFactory.get('trial_api')
+        self._apiFactory.setUser(request)
+        response = DownloadTrial.as_view()(request, pk=self._trial.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, _('You do not have permission to download this trial'))
+
+        response = trialP.renderError(request, 'Esto no es un error')
+        self.assertContains(
+            response, 'Esto no es un error')
+
+        trialP._permissions[TrialPermission.DOWNLOADABLE] = True
+        trialP._permissions[TrialPermission.EDITABLE] = False
+        self.assertEqual(trialP.getError(),
+                         _('You do not have permission to edit this trial'))
+
+        trialP._permissions[TrialPermission.EDITABLE] = True
+        self.assertEqual(trialP.getError(),
+                         _('No limitations on permissions'))

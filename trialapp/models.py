@@ -171,6 +171,7 @@ class FieldTrial(ModelHelpers, models.Model):
                              on_delete=models.CASCADE, null=True)
 
     public = models.BooleanField(default=False)
+    favorable = models.BooleanField(default=False)
     # key properties of the trial after evaluation
     key_thesis = models.IntegerField(null=True)
     control_thesis = models.IntegerField(null=True)

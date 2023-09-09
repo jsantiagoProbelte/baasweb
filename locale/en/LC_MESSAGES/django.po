@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-06 22:52+0200\n"
+"POT-Creation-Date: 2023-09-09 22:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,53 +22,53 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:102 catalogue/templates/catalogue/product_show.html:126
+#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:126
 msgid "weather"
 msgstr ""
 
-#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:133 baaswebapp/graphs.py:138
-#: baaswebapp/graphs.py:140 baaswebapp/graphs.py:143 baaswebapp/graphs.py:266
+#: baaswebapp/graphs.py:151 baaswebapp/graphs.py:154 baaswebapp/graphs.py:159
+#: baaswebapp/graphs.py:161 baaswebapp/graphs.py:164 baaswebapp/graphs.py:287
 #: trialapp/templates/trialapp/trial_conclusions.html:114
 msgid "precipitation"
 msgstr ""
 
-#: baaswebapp/graphs.py:130 baaswebapp/graphs.py:140
+#: baaswebapp/graphs.py:151 baaswebapp/graphs.py:161
 msgid "hours"
 msgstr ""
 
-#: baaswebapp/graphs.py:159 baaswebapp/graphs.py:160 baaswebapp/graphs.py:264
+#: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181 baaswebapp/graphs.py:285
 #: trialapp/templates/trialapp/trial_conclusions.html:106
 msgid "temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181 baaswebapp/graphs.py:268
+#: baaswebapp/graphs.py:201 baaswebapp/graphs.py:202 baaswebapp/graphs.py:289
 msgid "soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:187
+#: baaswebapp/graphs.py:208
 msgid "No data for soil temperature"
 msgstr ""
 
-#: baaswebapp/graphs.py:204 baaswebapp/graphs.py:205 baaswebapp/graphs.py:270
+#: baaswebapp/graphs.py:225 baaswebapp/graphs.py:226 baaswebapp/graphs.py:291
 msgid "soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:211
+#: baaswebapp/graphs.py:232
 msgid "No data for soil moisture"
 msgstr ""
 
-#: baaswebapp/graphs.py:221 baaswebapp/graphs.py:222 baaswebapp/graphs.py:272
+#: baaswebapp/graphs.py:242 baaswebapp/graphs.py:243 baaswebapp/graphs.py:293
 msgid "relative humidity"
 msgstr ""
 
-#: baaswebapp/graphs.py:234 baaswebapp/graphs.py:235 baaswebapp/graphs.py:274
+#: baaswebapp/graphs.py:255 baaswebapp/graphs.py:256 baaswebapp/graphs.py:295
 msgid "dew point"
 msgstr ""
 
-#: baaswebapp/graphs.py:627
+#: baaswebapp/graphs.py:649
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:23 trialapp/trial_views.py:238
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:254
 msgid "efficacy"
 msgstr ""
 
@@ -361,11 +361,15 @@ msgid "day intervals"
 msgstr ""
 
 #: labapp/tests/tests_labtrial_views.py:58
-#: trialapp/tests/tests_views_field_trial.py:67
+#: trialapp/tests/tests_views_field_trial.py:68
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:130
 #: venv_baas/lib/python3.9/site-packages/crispy_forms/tests/test_form_helper.py:140
 #: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:91
 msgid "This field is required."
+msgstr ""
+
+#: trialapp/fieldtrial_views.py:356
+msgid "Fail on generating download"
 msgstr ""
 
 #: trialapp/filter_helpers.py:261
@@ -484,12 +488,12 @@ msgstr ""
 msgid "Lateritic Soil"
 msgstr ""
 
-#: trialapp/models.py:269 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:270 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:272 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:273 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -550,7 +554,7 @@ msgid "Treatment Area"
 msgstr ""
 
 #: trialapp/templates/trialapp/thesis_list.html:6
-#: trialapp/templates/trialapp/trial_show.html:42
+#: trialapp/templates/trialapp/trial_show.html:47
 msgid "trial Design"
 msgstr ""
 
@@ -582,19 +586,19 @@ msgstr ""
 msgid "efficacy key values"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:8
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:9
 msgid "You can select key and control thesis in this link"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:25
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:27
 msgid "treatments"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:29
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:31
 msgid "control"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusion_graph.html:36
+#: trialapp/templates/trialapp/trial_conclusion_graph.html:38
 msgid "best efficacy"
 msgstr ""
 
@@ -611,7 +615,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:284
+#: trialapp/trial_views.py:300
 msgid "weather conditions"
 msgstr ""
 
@@ -644,31 +648,31 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:39
+#: trialapp/templates/trialapp/trial_show.html:44
 msgid "conclusions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:45
+#: trialapp/templates/trialapp/trial_show.html:50
 msgid "result summary"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:48
+#: trialapp/templates/trialapp/trial_show.html:53
 msgid "trends"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:51
+#: trialapp/templates/trialapp/trial_show.html:56
 msgid "data"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:54
+#: trialapp/templates/trialapp/trial_show.html:59
 msgid "assessments"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:61
+#: trialapp/templates/trialapp/trial_show.html:68
 msgid "download trial"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_show.html:74
+#: trialapp/templates/trialapp/trial_show.html:81
 msgid "average efficacy"
 msgstr ""
 
@@ -680,28 +684,47 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/trial_helper.py:78
+#: trialapp/tests/tests_trial_helper.py:296
+#: trialapp/tests/tests_trial_helper.py:302
+#: trialapp/tests/tests_trial_helper.py:309 trialapp/trial_helper.py:673
+msgid "You do not have permission to access this trial"
+msgstr ""
+
+#: trialapp/tests/tests_trial_helper.py:316
+#: trialapp/tests/tests_trial_helper.py:328 trialapp/trial_helper.py:675
+msgid "You do not have permission to download this trial"
+msgstr ""
+
+#: trialapp/tests/tests_trial_helper.py:337 trialapp/trial_helper.py:677
+msgid "You do not have permission to edit this trial"
+msgstr ""
+
+#: trialapp/tests/tests_trial_helper.py:341 trialapp/trial_helper.py:678
+msgid "No limitations on permissions"
+msgstr ""
+
+#: trialapp/trial_helper.py:79
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:285
+#: trialapp/trial_views.py:301
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:333
+#: trialapp/trial_views.py:349
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:599
+#: trialapp/trial_views.py:626
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:602
+#: trialapp/trial_views.py:629
 msgid " in "
 msgstr ""
 
