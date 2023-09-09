@@ -17,7 +17,6 @@ from trialapp.data_models import Assessment
 from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
-from trialapp.trial_views import TrialContent
 from django.utils.translation import gettext_lazy as _
 
 
@@ -91,7 +90,10 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         resultPerPage = 5
-        page = self.request.GET.get('page') if self.request.GET.get('page') else 1
+        if self.request.GET.get('page'):
+            page = self.request.GET.get('page')
+        else:
+            page = 1
 
         paramsReplyTemplate = FieldTrialFilter.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
