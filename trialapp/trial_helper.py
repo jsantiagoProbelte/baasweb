@@ -16,14 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render
 
 
-class MyDateInput(forms.widgets.DateInput):
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        # use the browser's HTML date picker (no css/javascript required)
-        context['widget']['type'] = 'date'
-        return context
-
-
 class TrialModel():
     T_D = 'TypeDate'
     T_I = 'TypeInteger'
@@ -61,7 +53,11 @@ class TrialModel():
                 'required': False, 'type': T_T, 'rows': 5},
             'conclusion': {
                 'label': "Conclusion", 'required': False,
-                'type': T_T, 'rows': 10}
+                'type': T_T, 'rows': 10},
+            'favorable': {'label': "Favorable",
+                          'required': False, 'type': T_N},
+            'public': {'label': "public",
+                       'required': False, 'type': T_N}
         },
         'Cultive': {
             'crop_variety': {'label': 'Crop Variety', 'required': False,
@@ -141,7 +137,8 @@ class TrialModel():
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude', 'application_volume_unit', 'conclusion', 'soil')
+            'latitude', 'application_volume_unit', 'conclusion', 'soil',
+            'favorable', 'public')
 
     @classmethod
     def applyModel(cls, trialForm):
@@ -154,7 +151,11 @@ class TrialModel():
                 trialForm.fields[field].required = fieldData['required']
                 typeField = fieldData['type']
                 if typeField == TrialModel.T_D:
-                    trialForm.fields[field].widget = MyDateInput()
+                    trialForm.fields[field].widget = forms.DateInput(
+                        format=('%Y-%m-%d'),
+                        attrs={'class': 'form-control',
+                               'type': 'date'})
+                    trialForm.fields[field].show_hidden_initial = True
                 elif typeField == TrialModel.T_I:
                     trialForm.fields[field].widget = forms.NumberInput()
                 elif typeField == TrialModel.T_T:

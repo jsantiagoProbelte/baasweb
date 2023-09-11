@@ -11,6 +11,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.paginator import Paginator
+# from trialapp.trial_helper import TrialPermission
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -92,6 +93,12 @@ class TrialFilterHelper:
     def filterTrials(self, filter):
         self._trials = FieldTrial.objects.filter(filter)
 
+    # def addTrialPermisionsToFilter(self, q_objects):
+    #     if type_user == TrialPermission.ADMIN:
+    #         return
+    #     elif type_user == TrialPermission.INTERNAL:
+    #         q_objects &= Q(public=)
+
     def prepareFilter(self, groupbyTag=None):
         paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
@@ -112,6 +119,9 @@ class TrialFilterHelper:
                 # En este caso estamos en la vista de plagues, filtramos los
                 # ensayos que no referencien a plagues
                 q_objects &= ~Q(plague__name__in=ModelHelpers.THE_UNKNNOWNS)
+
+        # add restrictions based on type of user
+        # self.addTrialPermisionsToFilter(q_objects)
         return q_objects
 
     def countTrials(self):

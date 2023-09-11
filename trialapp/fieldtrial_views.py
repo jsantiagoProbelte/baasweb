@@ -238,6 +238,8 @@ class FieldTrialFormLayout(FormHelper):
             Div(Div(Field('description', css_class='mb-2'),
                     Field('comments_criteria', css_class='mb-2'),
                     Field('conclusion', css_class='mb-2'),
+                    Field('favorable', css_class='mb-2'),
+                    Field('public', css_class='mb-2'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
@@ -279,6 +281,7 @@ class FieldTrialFormLayout(FormHelper):
                             Field('seed_date', css_class='mb-2'),
                             css_class='col-md-6'),
                         Div(Field('cultivation', css_class='mb-2'),
+                            Field('soil', css_class='mb-2'),
                             Field('crop_age', css_class='mb-2'),
                             Field('transplant_date', css_class='mb-2'),
                             css_class='col-md-6'),
