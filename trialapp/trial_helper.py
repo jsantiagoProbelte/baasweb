@@ -98,8 +98,7 @@ class TrialModel():
                                     'type': T_I},
             'samples_per_replica': {'label': "# samples/replica ",
                                     'required': False, 'type': T_I},
-
-            'number_rows': {'label': "# rows", 'required': False, 'type': T_I}, 
+            'number_rows': {'label': "# rows", 'required': False, 'type': T_I},
             'gross_surface': {'label': "Gross area plot (m2)",
                               'required': False, 'type': T_N},
             'net_surface': {'label': "Net area plot (m2)", 'required': False,

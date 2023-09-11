@@ -653,6 +653,9 @@ div[class*="bg-custom-"]{
   border-top-left-radius:10px !important;
   border-top-right-radius:10px !important;
   background: #8e8c84;
+  font-size: 14px;
+  font-family: 'Encode Sans', serif;
+  font-weight: bold;
   /* border-bottom: 1px solid rgba(223, 215, 202, 0.75); */
 }
 
