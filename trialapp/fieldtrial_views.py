@@ -1,5 +1,5 @@
 import datetime
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django import forms
 from django.http import HttpResponseRedirect, FileResponse
@@ -15,6 +15,7 @@ from trialapp.models import FieldTrial, Objective, \
     Product, TrialStatus, TrialType, Crop, Plague
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
+from trialapp.trial_views import TrialContent
 from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
 
@@ -60,31 +61,14 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return None
 
     def getList(self, filter):
-        objectList = FieldTrial.objects.annotate(
-            assessments=Count('assessment')).filter(
-            filter).order_by('-code', 'name')
-
-        thesisCounts = FieldTrial.objects.annotate(
-            thesiss=Count('thesis')).filter(
-            filter)
-        thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
+        objectList = FieldTrial.objects.filter(filter).order_by(
+            '-code', 'name')
 
         new_list = []
         for item in objectList:
-            new_list.append({
-                'code': item.code,
-                'name': item.name,
-                'crop': item.crop.name,
-                'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
-                'objective': item.objective.name,
-                'plague': item.plague.name if item.plague else '',
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'id': item.id,
-                'assessments': item.assessments,
-                'initiation_date': item.initiation_date,
-                'thesis': thesisCountDict.get(item.id, 0)})
+            new_list.append(
+                TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
+                             trial=item).showInTrialList())
         return new_list
 
     def get_context_data(self, **kwargs):

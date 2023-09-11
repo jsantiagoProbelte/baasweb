@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 import django_filters
 from baaswebapp.models import RateTypeUnit, ModelHelpers
-from django.db.models import Count, Min, Max
+from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
 from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
@@ -108,20 +108,12 @@ class TrialProductFilterHelper:
             trialsFiltered = trialsFiltered.filter(
                 name__icontains=attributes.get('name'))
 
-        trialsFiltered = trialsFiltered.annotate(
-            assessments=Count('assessment')).order_by('-code', 'name')
-        thesisCounts = trialsFiltered.annotate(
-            thesiss=Count('thesis'))
-        thesisCountDict = {item.id: item.thesiss for item in thesisCounts}
+        trialsFiltered = trialsFiltered.order_by('-code', 'name')
 
         for item in trialsFiltered:
-            trialC = TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
-                                  trial=item)
-            trialData = trialC.showInTrialList()
-            new_list.append({
-                **trialData,
-                'assessments': item.assessments,
-                'thesis': thesisCountDict.get(item.id, 0)})
+            new_list.append(
+                TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
+                             trial=item).showInTrialList())
         return new_list
 
 
