@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from labapp.labtrial_views import LabTrialView, DataLabHelper
 from labapp.models import LabDataPoint, LabAssessment, LabThesis
 from labapp.labtrial_views import LabTrialCreateView, \

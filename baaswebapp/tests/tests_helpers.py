@@ -203,6 +203,17 @@ class DataGenerator:
                         value=assData[j][0])
 
 
+class UserStub:
+    username = None
+    is_superuser = None
+    is_staff = None
+
+    def __init__(self, name, superUser, is_staff):
+        self.username = name
+        self.is_superuser = superUser
+        self.is_staff = is_staff
+
+
 class ApiRequestHelperTest(APIRequestFactory):
 
     PASSWORD = 'BaaSisAwesome'

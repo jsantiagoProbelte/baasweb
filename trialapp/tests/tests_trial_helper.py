@@ -1,24 +1,13 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica, TrialStatus
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
-from baaswebapp.tests.test_views import ApiRequestHelperTest
+from baaswebapp.tests.tests_helpers import ApiRequestHelperTest, UserStub
 from trialapp.thesis_views import SetReplicaPosition
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_views import TrialApi
 from trialapp.fieldtrial_views import DownloadTrial
-
-
-class UserStub:
-    username = None
-    is_superuser = None
-    is_staff = None
-
-    def __init__(self, name, superUser, is_staff):
-        self.username = name
-        self.is_superuser = superUser
-        self.is_staff = is_staff
 
 
 class TrialHelperTest(TestCase):

@@ -3,10 +3,10 @@ from baaswebapp.models import Category
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Crop, Plague
 from catalogue.models import Product
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
     CropListView, PlaguesListView, BaaSView
-from baaswebapp.tests.test_views import ApiRequestHelperTest
+from baaswebapp.tests.tests_helpers import ApiRequestHelperTest, UserStub
 
 
 class TrialFilterTest(TestCase):
@@ -43,11 +43,14 @@ class TrialFilterTest(TestCase):
                     code = 1
                     fakemonth += 1
 
-    class MockRequest():
+    class MockRequest:
         GET = None
+        user = None
 
-        def __init__(self, attributes) -> None:
+        def __init__(self, attributes, name='Waldo',
+                     superUser='True', is_staff='True'):
             self.GET = attributes
+            self.user = UserStub(name, superUser, is_staff)
 
     def test_emptyfilter(self):
         totalProducts = Product.objects.count()
@@ -88,7 +91,8 @@ class TrialFilterTest(TestCase):
         expectedProducts = Product.objects.count()
         cropId = TrialFilterTest.CROPID_WITH_PLAGUE
         for posibleFilter in [{'crop': cropId}]:
-            fHelper = TrialFilterHelper(posibleFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList),
@@ -133,7 +137,8 @@ class TrialFilterTest(TestCase):
         # we have create 1 trial per crop and product
         filters = [{'name': 'trial2-3'}, {'name': '20030132'}]
         for posibleFilter in filters:
-            fHelper = TrialFilterHelper(posibleFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList), 1)

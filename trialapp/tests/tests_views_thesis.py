@@ -4,7 +4,7 @@ from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit, UNTREATED
 from trialapp.models import FieldTrial, Thesis, Replica, \
                             ApplicationMode, TreatmentThesis
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.thesis_views import\
     ThesisCreateView, ThesisUpdateView, ThesisApi, ThesisDeleteView, \
     ThesisListView, TreatmentThesisSetView, TreatmentThesisDeleteView

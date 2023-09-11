@@ -147,71 +147,72 @@ class FieldTrialFormLayout(FormHelper):
 
     def showGoal(self):
         return Div(
-            Div(HTML('Goal'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('objective', css_class='mb-2'),
-                            Field('product', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        Div(Field('crop', css_class='mb-2'),
-                            Field('plague', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        css_class='mb-3'),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Goal'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('objective', css_class='trial-input'),
+                        Field('product', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    Div(Field('crop', css_class='trial-input'),
+                        Field('plague', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    css_class=''),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showStatus(self):
         return Div(
-            Div(HTML('Status'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('trial_type', css_class='mb-2'),
-                            Field('initiation_date', css_class='mb-2'),
-                            Field('public', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        Div(Field('trial_status', css_class='mb-2'),
-                            Field('completion_date', css_class='mb-2'),
-                            Field('favorable', css_class='mb-2'),
-                            Field('responsible', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        css_class='mb-3'),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Status'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('trial_type', css_class='trial-input'),
+                        Field('initiation_date', css_class='trial-input'),
+                        Field('public', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    Div(Field('trial_status', css_class='trial-input'),
+                        Field('completion_date', css_class='trial-input'),
+                        Field('favorable', css_class='trial-input'),
+                        Field('responsible', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    css_class=''),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showAssessments(self):
         return Div(
-            Div(HTML('Assessments'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('ref_to_eppo', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        Div(Field('ref_to_criteria', css_class='mb-2'),
-                            css_class='col-md-6')),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Assessments'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('ref_to_eppo', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    Div(Field('ref_to_criteria', css_class='trial-input'),
+                        css_class='col-md-6')),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showLocation(self):
         return Div(
-            Div(HTML('Location'), css_class="card-header-baas h4"),
-            Div(Div(Field('contact', css_class='mb-2'),
-                    Field('cro', css_class='mb-2'),
-                    Field('location', css_class='mb-2'),
-                    Field('latitude', css_class='mb-2'),
-                    Field('longitude', css_class='mb-2'),
-                    css_class="card-body-baas mb-3"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Location'), css_class="card-header-baas-trial"),
+            Div(Field('contact', css_class='trial-input'),
+                Field('cro', css_class='trial-input'),
+                Field('location', css_class='trial-input'),
+                Field('latitude', css_class='trial-input'),
+                Field('longitude', css_class='trial-input'),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showApplications(self):
         return Div(
-            Div(HTML('Applications'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('application_volume', css_class='mb-2'),
-                            css_class='col-md-3'),
-                        Div(Field('application_volume_unit', css_class='mb-2'),
-                            css_class='col-md-3'),
-                        Div(Field('mode', css_class='mb-2'),
-                            css_class='col-md-6')),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Applications'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('application_volume', css_class='trial-input'),
+                        css_class='col-md-3'),
+                    Div(Field('application_volume_unit',
+                              css_class='trial-input'),
+                        css_class='col-md-3'),
+                    Div(Field('mode', css_class='trial-input'),
+                        css_class='col-md-6')),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showHeader(self, title, submitTxt):
         return Row(
-            Div(HTML(title), css_class='col-md-1 h2'),
-            Div(Field('code'), css_class='col-md-2'),
-            Div(Field('name'), css_class='col-md-7'),
+            Div(HTML(title), css_class='col-md-1 txt-encode-25-700'),
+            Div(Field('code', css_class='trial-input'), css_class='col-md-2'),
+            Div(Field('name', css_class='trial-input'), css_class='col-md-7'),
             Div(FormActions(
                 Submit('submit', submitTxt, css_class="btn btn-info")),
                 css_class='col-md-1 text-sm-end'),
@@ -219,46 +220,50 @@ class FieldTrialFormLayout(FormHelper):
 
     def showReportInfo(self):
         return Div(
-            Div(HTML('Report'), css_class="card-header-baas h4"),
-            Div(Div(Field('description', css_class='mb-2'),
-                    Field('comments_criteria', css_class='mb-2'),
-                    Field('conclusion', css_class='mb-2'),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Report'), css_class="card-header-baas-trial"),
+            Div(Field('description', css_class='trial-input'),
+                Field('comments_criteria', css_class='trial-input'),
+                Field('conclusion', css_class='trial-input'),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showLayout(self):
         return Div(
-            Div(HTML('Layout'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('blocks', css_class='mb-2'),
-                            Field('replicas_per_thesis', css_class='mb-2'),
-                            Field('samples_per_replica', css_class='mb-2'),
-                            Field('number_rows', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        Div(Field('gross_surface', css_class='mb-2'),
-                            Field('net_surface', css_class='mb-2'),
-                            Field('lenght_row', css_class='mb-2'),
-                            Field('distance_between_rows', css_class='mb-2'),
-                            Field('distance_between_plants', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        css_class='mb-3'),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Layout'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('blocks', css_class='trial-input'),
+                        Field('replicas_per_thesis',
+                              css_class='trial-input'),
+                        Field('samples_per_replica',
+                              css_class='trial-input'),
+                        Field('number_rows', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    Div(Field('gross_surface', css_class='trial-input'),
+                        Field('net_surface', css_class='trial-input'),
+                        Field('lenght_row', css_class='trial-input'),
+                        Field('distance_between_rows',
+                              css_class='trial-input'),
+                        Field('distance_between_plants',
+                              css_class='trial-input'),
+                        css_class='col-md-6'),
+                    css_class=''),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def showCultive(self):
         return Div(
-            Div(HTML('Cultive'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('crop_variety', css_class='mb-2'),
-                            Field('irrigation', css_class='mb-2'),
-                            Field('seed_date', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        Div(Field('cultivation', css_class='mb-2'),
-                            Field('soil', css_class='mb-2'),
-                            Field('crop_age', css_class='mb-2'),
-                            Field('transplant_date', css_class='mb-2'),
-                            css_class='col-md-6'),
-                        css_class='mb-3'),
-                    css_class="card-body-baas"),
-                css_class="card no-border mb-3"))
+            Div(HTML('Cultive'), css_class="card-header-baas-trial"),
+            Div(Row(Div(Field('crop_variety', css_class='trial-input'),
+                        Field('irrigation', css_class='trial-input'),
+                        Field('seed_date', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    Div(Field('cultivation', css_class='trial-input'),
+                        Field('soil', css_class='trial-input'),
+                        Field('crop_age', css_class='trial-input'),
+                        Field('transplant_date', css_class='trial-input'),
+                        css_class='col-md-6'),
+                    css_class=''),
+                css_class="m-3"),
+            css_class="card no-border mb-3")
 
     def __init__(self, new=True):
         super().__init__()

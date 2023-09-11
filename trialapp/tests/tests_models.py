@@ -5,7 +5,7 @@ from trialapp.models import FieldTrial, Crop, Plague, \
                             Thesis, Sample, Replica, TrialType
 from trialapp.data_models import ThesisData, SampleData, Assessment
 import datetime
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from django.utils.translation import gettext_lazy as _
 
 

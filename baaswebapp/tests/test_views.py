@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import auth
-from trialapp.tests.tests_helpers import ApiRequestHelperTest
+from baaswebapp.tests.tests_helpers import ApiRequestHelperTest
 
 
 class BaaSWebAppTest(TestCase):

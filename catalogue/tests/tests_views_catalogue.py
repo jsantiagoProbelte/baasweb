@@ -13,7 +13,7 @@ from catalogue.product_views import ProductApi, \
     TreatmentDeleteView, TreatmentApi, BatchApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import ProductListView, BaaSView
 from django.utils.translation import gettext_lazy as _
 

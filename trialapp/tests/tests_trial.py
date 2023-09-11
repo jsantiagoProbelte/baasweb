@@ -6,7 +6,7 @@ from catalogue.models import Product, Vendor, Batch, Treatment, \
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit, \
     Application, PartRated
 from trialapp.data_models import Assessment, ReplicaData, Replica
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_views import TrialApi, TrialContent, trialContentApi, \
     SetTrialKeyValues
 from baaswebapp.tests.test_views import ApiRequestHelperTest

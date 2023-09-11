@@ -12,7 +12,7 @@
         {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn2'%}
       <div class="row">
         <div class="col-md-6">
-          {% include "trialapp/card_values.html" with title='Location' dataItems=dataTrial.Location link='assessment-list' classColumn='classColumn1'%}
+          {% include "trialapp/card_values.html" with title='Location' dataItems=dataTrial.Location classColumn='classColumn1'%}
         </div>
         <div class="col-md-6">
           {% if fieldTrial.latitude %}
@@ -29,8 +29,8 @@
     {% include "trialapp/card_values.html" with title='Cultive' dataItems=dataTrial.Cultive classColumn='classColumn2'%}
   </div>
   <div class="col-md-5">
-    {% include "trialapp/card_values.html" with title='Assessments' title2='Data' dataItems=dataTrial.Assessments link='assessment-list' link2='trial_data' classColumn='classColumn2' note=numberAssessments %}
-      {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn3'%}
+    {% include "trialapp/card_values.html" with title='Assessments' dataItems=dataTrial.Assessments classColumn='classColumn2' note=numberAssessments %}
+      {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications classColumn='classColumn3'%}
     {% include "trialapp/card_values.html" with title='Report' dataItems=dataTrial.Report classColumn='classColumn1'%}
   </div>
 
