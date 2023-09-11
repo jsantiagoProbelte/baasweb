@@ -43,6 +43,10 @@ class TrialModel():
                                 'type': T_D},
             'completion_date': {'label': 'Completed by', 'required': False,
                                 'type': T_D},
+            'favorable': {'label': "Favorable",
+                          'required': False, 'type': T_N},
+            'public': {'label': "public",
+                       'required': False, 'type': T_N}
         },
         'Report': {
             'description': {
@@ -54,10 +58,7 @@ class TrialModel():
             'conclusion': {
                 'label': "Conclusion", 'required': False,
                 'type': T_T, 'rows': 10},
-            'favorable': {'label': "Favorable",
-                          'required': False, 'type': T_N},
-            'public': {'label': "public",
-                       'required': False, 'type': T_N}
+
         },
         'Cultive': {
             'crop_variety': {'label': 'Crop Variety', 'required': False,

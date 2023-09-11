@@ -134,29 +134,13 @@ class FieldTrialApi(LoginRequiredMixin, DetailView):
         # Add additional data to the context
         trialPermision = TrialPermission(fieldTrial,
                                          self.request.user).getPermisions()
-        allThesis, thesisDisplay = Thesis.getObjectsDisplay(fieldTrial)
-        assessments = Assessment.getObjects(fieldTrial)
 
         dataTrial = TrialModel.prepareDataItems(fieldTrial)
-        for item in assessments:
-            dataTrial['Assessments'].append(
-                {'value': item.getContext(), 'name': item.assessment_date,
-                 'link': 'assessment', 'id': item.id})
+
         showData = {
             'fieldTrial': fieldTrial, 'titleView': fieldTrial.code,
-            'dataTrial': dataTrial, 'thesisList': thesisDisplay,
-            'numberAssessments': len(assessments),
-            'numberThesis': len(allThesis)}
+            'dataTrial': dataTrial}
 
-        if fieldTrial.trial_meta == FieldTrial.TrialMeta.FIELD_TRIAL:
-            for item in Application.getObjects(fieldTrial):
-                dataTrial['Applications'].append(
-                    {'name': item.getName(), 'value': item.app_date})
-            showData['rowsReplicaHeader'] = LayoutTrial.headerLayout(
-                fieldTrial)
-            showData['rowsReplicas'] = LayoutTrial.showLayout(fieldTrial,
-                                                              None,
-                                                              allThesis)
         return {**context, **showData, **trialPermision}
 
 
@@ -180,6 +164,8 @@ class FieldTrialFormLayout(FormHelper):
                     Field('responsible', css_class='mb-2'),
                     Field('initiation_date', css_class='mb-2'),
                     Field('completion_date', css_class='mb-2'),
+                    Field('favorable', css_class='mb-2'),
+                    Field('public', css_class='mb-2'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
@@ -238,8 +224,6 @@ class FieldTrialFormLayout(FormHelper):
             Div(Div(Field('description', css_class='mb-2'),
                     Field('comments_criteria', css_class='mb-2'),
                     Field('conclusion', css_class='mb-2'),
-                    Field('favorable', css_class='mb-2'),
-                    Field('public', css_class='mb-2'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 

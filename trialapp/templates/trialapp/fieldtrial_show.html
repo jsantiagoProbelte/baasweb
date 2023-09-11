@@ -7,19 +7,16 @@
 {% include "trialapp/header_page_trial.html" with title=titleView subtitle='field trial' subheader=fieldTrial.name edit_href="fieldtrial-update" item=fieldTrial delete_url='fieldtrial-delete'%}
 
 <div class="row">
-  <div class="col-md-4">
-    <div class="row">
-      <div class="col-md-6">
-        {% include "trialapp/card_values.html" with title='Goal' dataItems=dataTrial.Goal classColumn='classColumn1'%}
-      </div>
-      <div class="col-md-6">
-        {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn1'%}
-              </div>
-    </div>
-    <div class="row">
-      {% include "trialapp/card_values.html" with title='Report' dataItems=dataTrial.Report classColumn='classColumn1'%}
-    </div>
+  <div class="col-md-3">
+        {% include "trialapp/card_values.html" with title='Goal' dataItems=dataTrial.Goal classColumn='classColumn2'%}
+        {% include "trialapp/card_values.html" with title='Status' dataItems=dataTrial.Status classColumn='classColumn2'%}
   </div>
+  <div class="col-md-5">
+    {% include "trialapp/card_values.html" with title='Assessments' title2='Data' dataItems=dataTrial.Assessments link='assessment-list' link2='trial_data' classColumn='classColumn2' note=numberAssessments %}
+      {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn3'%}
+    {% include "trialapp/card_values.html" with title='Report' dataItems=dataTrial.Report classColumn='classColumn1'%}
+  </div>
+
   <div class="col-md-4">
     <div class="row">
       <div class="col-md-6">
@@ -33,27 +30,8 @@
         {% include "trialapp/card_values.html" with title='Location' dataItems=dataTrial.Location link='assessment-list' classColumn='classColumn2'%}
       </div>
     </div>
-    <div class="row">
-        {% include "trialapp/card_values.html" with title='Assessments' title2='Data' dataItems=dataTrial.Assessments link='assessment-list' link2='trial_data' classColumn='classColumn2' note=numberAssessments %}
-        {% include "trialapp/card_values.html" with title='Applications' dataItems=dataTrial.Applications link='application-list' classColumn='classColumn2'%}
-    </div>
-  </div>
-
-  <div class="col-md-4">
-
-    <div class="card no-border mb-3" >
-      <div class="card-header-baas h4">
-        <a class="btn btn-secondary btn-sm fs-5" href="{% url 'thesis-list' fieldTrial.id%}">
-          Thesis<span class='badge bg-light ms-2'>{{numberThesis}}</span></a>
-      </div>
-
-      <div class="card-body-baas">
-        {% include 'trialapp/thesis_list_table.html' with show_description=False %}
-      </div>
-    </div>
     {% include "trialapp/card_values.html" with title='Layout' dataItems=dataTrial.Layout classColumn='classColumn3'%}
     {% include "trialapp/card_values.html" with title='Cultive' dataItems=dataTrial.Cultive classColumn='classColumn3'%}
-    {% include 'trialapp/thesis_map.html' %}
   </div>
 
 </div>
