@@ -11,10 +11,9 @@ from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
-from trialapp.models import FieldTrial, Thesis, Objective, \
-    Product, TrialStatus, TrialType, Crop, Plague, Application
-from trialapp.data_models import Assessment
-from trialapp.trial_helper import LayoutTrial, TrialFile, TrialModel, \
+from trialapp.models import FieldTrial, Objective, \
+    Product, TrialStatus, TrialType, Crop, Plague
+from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
