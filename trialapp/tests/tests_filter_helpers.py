@@ -43,13 +43,20 @@ class TrialFilterTest(TestCase):
                     code = 1
                     fakemonth += 1
 
+    class MockRequest():
+        GET = None
+
+        def __init__(self, attributes) -> None:
+            self.GET = attributes
+
     def test_emptyfilter(self):
         totalProducts = Product.objects.count()
         totalCrops = Crop.objects.count()
         totalTrials = FieldTrial.objects.count()
         self.assertEqual(totalProducts*totalCrops, totalTrials)
         for posibleEmplyFilter in [{}, {'crop': ''}]:
-            fHelper = TrialFilterHelper(posibleEmplyFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleEmplyFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList), totalProducts)

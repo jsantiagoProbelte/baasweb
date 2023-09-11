@@ -11,7 +11,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.paginator import Paginator
-# from trialapp.trial_helper import TrialPermission
+from trialapp.trial_helper import TrialPermission
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -36,6 +36,8 @@ class TrialFilterHelper:
     _attributes = None
     _trials = None
     _trialFilter = None
+    _permisions = None
+    _userName = None
 
     KEY_PER_CLS = {Product: 'product_id',
                    Crop: 'crop_id',
@@ -53,8 +55,10 @@ class TrialFilterHelper:
         'bg-unknown': COLOR_unknown}
 
     # Add self.request.GET as attributes
-    def __init__(self, attributes):
-        self.setTrialFilter(attributes)
+    def __init__(self, request):
+        self.setTrialFilter(request.GET)
+        self._permisions = TrialPermission(None, request.user)
+        self._userName = request.user.username
 
     def setTrialFilter(self, attributes):
         # Take of remove empty values
@@ -93,11 +97,17 @@ class TrialFilterHelper:
     def filterTrials(self, filter):
         self._trials = FieldTrial.objects.filter(filter)
 
-    # def addTrialPermisionsToFilter(self, q_objects):
-    #     if type_user == TrialPermission.ADMIN:
-    #         return
-    #     elif type_user == TrialPermission.INTERNAL:
-    #         q_objects &= Q(public=)
+    def addTrialPermisionsToFilter(self, q_objects):
+        q_discover = Q()
+        if self._permisions._type == TrialPermission.ADMIN:
+            pass
+        elif self._permisions._type == TrialPermission.INTERNAL:
+            q_discover |= Q(trial_status_id=3)  # Temporal hack
+            q_discover |= Q(responsible=self._userName)
+        elif self._permisions._type == TrialPermission.EXTERNAL:
+            q_discover |= Q(public=True)
+            q_discover |= Q(responsible=self._userName)
+        return q_discover
 
     def prepareFilter(self, groupbyTag=None):
         paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
@@ -121,7 +131,7 @@ class TrialFilterHelper:
                 q_objects &= ~Q(plague__name__in=ModelHelpers.THE_UNKNNOWNS)
 
         # add restrictions based on type of user
-        # self.addTrialPermisionsToFilter(q_objects)
+        q_objects &= self.addTrialPermisionsToFilter(q_objects)
         return q_objects
 
     def countTrials(self):
@@ -299,7 +309,7 @@ class BaaSView(LoginRequiredMixin, View):
             return redirect(reverse(redirectTuple[1]))
 
         page = request.GET.get('page') if request.GET.get('page') else 1
-        self._fHelper = TrialFilterHelper(self.request.GET)
+        self._fHelper = TrialFilterHelper(self.request)
         self._fHelper.filter(groupbyTag=self._groupbyTag)
 
         # pagination

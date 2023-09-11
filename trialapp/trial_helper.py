@@ -582,9 +582,10 @@ class TrialPermission:
         self._trial = trial
         self._user = user
         self.getType()
-        self.isOwner()
-        self.isDone()
-        self.setPermissions()
+        if trial:
+            self.isOwner()
+            self.isDone()
+            self.setPermissions()
 
     def getType(self):
         self._type = TrialPermission.EXTERNAL
