@@ -148,31 +148,39 @@ class FieldTrialFormLayout(FormHelper):
     def showGoal(self):
         return Div(
             Div(HTML('Goal'), css_class="card-header-baas h4"),
-            Div(Div(Field('objective', css_class='mb-2'),
-                    Field('product', css_class='mb-2'),
-                    Field('crop', css_class='mb-2'),
-                    Field('plague', css_class='mb-2'),
+            Div(Div(Row(Div(Field('objective', css_class='mb-2'),
+                            Field('product', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        Div(Field('crop', css_class='mb-2'),
+                            Field('plague', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        css_class='mb-3'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
     def showStatus(self):
         return Div(
             Div(HTML('Status'), css_class="card-header-baas h4"),
-            Div(Div(Field('trial_type', css_class='mb-2'),
-                    Field('trial_status', css_class='mb-2'),
-                    Field('responsible', css_class='mb-2'),
-                    Field('initiation_date', css_class='mb-2'),
-                    Field('completion_date', css_class='mb-2'),
-                    Field('favorable', css_class='mb-2'),
-                    Field('public', css_class='mb-2'),
+            Div(Div(Row(Div(Field('trial_type', css_class='mb-2'),
+                            Field('initiation_date', css_class='mb-2'),
+                            Field('public', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        Div(Field('trial_status', css_class='mb-2'),
+                            Field('completion_date', css_class='mb-2'),
+                            Field('favorable', css_class='mb-2'),
+                            Field('responsible', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        css_class='mb-3'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
     def showAssessments(self):
         return Div(
             Div(HTML('Assessments'), css_class="card-header-baas h4"),
-            Div(Div(Field('ref_to_eppo', css_class='mb-2'),
-                    Field('ref_to_criteria', css_class='mb-2'),
+            Div(Div(Row(Div(Field('ref_to_eppo', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        Div(Field('ref_to_criteria', css_class='mb-2'),
+                            css_class='col-md-6')),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
@@ -191,10 +199,11 @@ class FieldTrialFormLayout(FormHelper):
         return Div(
             Div(HTML('Applications'), css_class="card-header-baas h4"),
             Div(Div(Row(Div(Field('application_volume', css_class='mb-2'),
-                            css_class='col-md-8'),
+                            css_class='col-md-3'),
                         Div(Field('application_volume_unit', css_class='mb-2'),
-                            css_class='col-md-4')),
-                    Field('mode', css_class='mb-2'),
+                            css_class='col-md-3'),
+                        Div(Field('mode', css_class='mb-2'),
+                            css_class='col-md-6')),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
 
@@ -208,15 +217,6 @@ class FieldTrialFormLayout(FormHelper):
                 css_class='col-md-1 text-sm-end'),
             css_class='mt-3 mb-3')
 
-    def showFirstRow(self):
-        return Row(
-            Div(self.showGoal(), css_class='col-md-3'),
-            Div(self.showStatus(), css_class='col-md-3'),
-            Div(self.showLocation(), css_class='col-md-3'),
-            Div(self.showApplications(),
-                self.showAssessments(),
-                css_class='col-md-3'))
-
     def showReportInfo(self):
         return Div(
             Div(HTML('Report'), css_class="card-header-baas h4"),
@@ -229,32 +229,20 @@ class FieldTrialFormLayout(FormHelper):
     def showLayout(self):
         return Div(
             Div(HTML('Layout'), css_class="card-header-baas h4"),
-            Div(Div(Row(Div(Field('blocks'), css_class='col-md-4'),
-                        Div(Field('replicas_per_thesis'),
-                            css_class='col-md-4'),
-                        Div(Field('samples_per_replica'),
-                            css_class='col-md-4'),
-                        css_class='mb-2'),
-                    Row(Div(Field('number_rows'),
-                            css_class='col-md-4'),
-                        Div(Field('distance_between_rows'),
-                            css_class='col-md-4'),
-                        Div(Field('distance_between_plants'),
-                            css_class='col-md-4'),
-                        css_class='mb-2'),
-                    Row(Div(Field('lenght_row'),
-                            css_class='col-md-4'),
-                        Div(Field('gross_surface'),
-                            css_class='col-md-4'),
-                        Div(Field('net_surface'),
-                            css_class='col-md-4'),
+            Div(Div(Row(Div(Field('blocks', css_class='mb-2'),
+                            Field('replicas_per_thesis', css_class='mb-2'),
+                            Field('samples_per_replica', css_class='mb-2'),
+                            Field('number_rows', css_class='mb-2'),
+                            css_class='col-md-6'),
+                        Div(Field('gross_surface', css_class='mb-2'),
+                            Field('net_surface', css_class='mb-2'),
+                            Field('lenght_row', css_class='mb-2'),
+                            Field('distance_between_rows', css_class='mb-2'),
+                            Field('distance_between_plants', css_class='mb-2'),
+                            css_class='col-md-6'),
                         css_class='mb-3'),
                     css_class="card-body-baas"),
                 css_class="card no-border mb-3"))
-
-    def showLastColumn(self):
-        return Div(self.showLayout(),
-                   self.showCultive())
 
     def showCultive(self):
         return Div(
@@ -279,10 +267,17 @@ class FieldTrialFormLayout(FormHelper):
         self.add_layout(Layout(
             self.showHeader(title, submitTxt),
             Row(
-                Div(self.showFirstRow(),
+                Div(self.showGoal(),
+                    self.showStatus(),
+                    self.showLocation(),
+                    css_class="col-md-4"),
+                Div(self.showLayout(),
+                    self.showCultive(),
+                    css_class="col-md-3"),
+                Div(self.showAssessments(),
+                    self.showApplications(),
                     self.showReportInfo(),
-                    css_class="col-md-8"),
-                Div(self.showLastColumn(), css_class="col-md-4"),
+                    css_class="col-md-5"),
                 )))
 
 
