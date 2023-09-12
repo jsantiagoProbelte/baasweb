@@ -4,7 +4,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from baaswebapp.models import RateTypeUnit
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.data_models import Assessment
-from trialapp.models import FieldTrial, Thesis
+from trialapp.models import FieldTrial, Thesis, StatusTrial
 from trialapp.map_utils import MapApi
 from trialapp.tests.tests_models import TrialTestData
 
@@ -15,7 +15,7 @@ class MapApiTestCase(TestCase):
     TRIALS = [{
         'name': 'fieldTrial 666',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -32,7 +32,7 @@ class MapApiTestCase(TestCase):
         {
         'name': 'fieldTrial 999',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -49,7 +49,7 @@ class MapApiTestCase(TestCase):
         {
         'name': 'fieldTrial 333',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 2,

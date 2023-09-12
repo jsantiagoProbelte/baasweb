@@ -1,6 +1,6 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Replica, TrialStatus
+from trialapp.models import FieldTrial, Thesis, Replica, StatusTrial
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.tests_helpers import ApiRequestHelperTest, UserStub
@@ -161,13 +161,13 @@ class TrialHelperTest(TestCase):
         admin = UserStub('GOD', True, True)
         notOwnerInternal = UserStub('Ziggy', False, True)
         notOwnerExternal = UserStub('Ziggy', False, False)
-        open = TrialStatus.objects.get(name=TrialStatus.OPEN)
-        finished = TrialStatus.objects.get(name=TrialStatus.FINISHED)
+        open = StatusTrial.PROTOCOL
+        finished = StatusTrial.DONE
 
         # discoverable, readible, downloadable, editable
 
         # Trial Not Finished, no public, no favorable
-        trial.trial_status = open
+        trial.status_trial = open
         trial.public = False
         trial.favorable = False
         self.assertPermissions(trial, notOwnerExternal,
@@ -182,7 +182,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Not Finished, public, no favorable
-        trial.trial_status = open
+        trial.status_trial = open
         trial.public = True
         trial.favorable = False
         self.assertPermissions(trial, notOwnerExternal,
@@ -197,7 +197,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Not Finished, public, favorable
-        trial.trial_status = open
+        trial.status_trial = open
         trial.public = True
         trial.favorable = True
         self.assertPermissions(trial, notOwnerExternal,
@@ -212,7 +212,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Finished, no public, no favorable
-        trial.trial_status = finished
+        trial.status_trial = finished
         trial.public = False
         trial.favorable = False
         self.assertPermissions(trial, notOwnerExternal,
@@ -227,7 +227,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Finished, no public, favorable
-        trial.trial_status = finished
+        trial.status_trial = finished
         trial.public = False
         trial.favorable = True
         self.assertPermissions(trial, notOwnerExternal,
@@ -242,7 +242,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Finished, public, no favorable
-        trial.trial_status = finished
+        trial.status_trial = finished
         trial.public = True
         trial.favorable = False
         self.assertPermissions(trial, notOwnerExternal,
@@ -257,7 +257,7 @@ class TrialHelperTest(TestCase):
                                True, True, True, True)
 
         # Trial Finished, public, no favorable
-        trial.trial_status = finished
+        trial.status_trial = finished
         trial.public = True
         trial.favorable = True
         self.assertPermissions(trial, notOwnerExternal,
@@ -304,8 +304,7 @@ class TrialHelperTest(TestCase):
             trialP.getError(),
             _('You do not have permission to download this trial'))
         # make it readible and discorable but not downloadable
-        self._trial.trial_status = TrialStatus.objects.get(
-            name=TrialStatus.FINISHED)
+        self._trial.status_trial = StatusTrial.DONE
         self._trial.public = True
         self._trial.favorable = False
         self._trial.save()

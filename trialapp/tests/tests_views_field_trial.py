@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Application, Replica, \
-    TrialStatus
+    StatusTrial
 from trialapp.data_models import Assessment, ReplicaData
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi, \
@@ -152,7 +152,7 @@ class FieldTrialViewsTest(TestCase):
         # Make it downladoble
         trial.favorable = True
         trial.public = True
-        trial.trial_status = TrialStatus.objects.get(name=TrialStatus.FINISHED)
+        trial.status_trial = StatusTrial.DONE
         trial.save()
 
         # Download it

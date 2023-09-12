@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-09 22:44+0200\n"
+"POT-Creation-Date: 2023-09-09 22:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: baaswebapp/graphs.py:649
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:254
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:337
 msgid "efficacy"
 msgstr ""
 
@@ -237,6 +237,7 @@ msgid "Objective"
 msgstr ""
 
 #: catalogue/product_views.py:60
+#: trialapp/templates/trialapp/fieldtrial_info.html:34
 msgid "Crop"
 msgstr ""
 
@@ -258,7 +259,7 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:5
 #: catalogue/templates/catalogue/product_show.html:80
-#: trialapp/templates/trialapp/fieldtrial_design.html:10
+#: trialapp/templates/trialapp/fieldtrial_design.html:11
 #: trialapp/templates/trialapp/trial_conclusions.html:142
 #: trialapp/templates/trialapp/trials_list_header.html:6
 msgid "active substance"
@@ -368,7 +369,7 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/fieldtrial_views.py:356
+#: trialapp/fieldtrial_views.py:363
 msgid "Fail on generating download"
 msgstr ""
 
@@ -501,56 +502,129 @@ msgstr ""
 msgid "no trials"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:4
+#: trialapp/templates/trialapp/fieldtrial_design.html:5
 msgid "Compared Treatments"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:8
+#: trialapp/templates/trialapp/fieldtrial_design.html:9
 msgid "Thesis Name"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:9
+#: trialapp/templates/trialapp/fieldtrial_design.html:10
 msgid "Product"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:11
+#: trialapp/templates/trialapp/fieldtrial_design.html:12
 msgid "Doses"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:12
+#: trialapp/templates/trialapp/fieldtrial_design.html:13
 msgid "Manufacturer"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:29
+#: trialapp/templates/trialapp/fieldtrial_design.html:30
 msgid "Terrain"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:49
-msgid "One Plot"
+msgid "Layout Traits"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:50
-msgid "Dimensions"
+#: trialapp/templates/trialapp/fieldtrial_design.html:65
+#: trialapp/templates/trialapp/fieldtrial_design.html:69
+msgid "Assesments"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:51
-msgid "Net Area Plot (m2) ZZGRoss"
+#: trialapp/templates/trialapp/fieldtrial_design.html:70
+msgid "Part Assesed"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:52
-msgid "Area Plot (m2)"
+#: trialapp/templates/trialapp/fieldtrial_design.html:76
+msgid "Schedule"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:53
-msgid "Nº of plants"
+#: trialapp/templates/trialapp/fieldtrial_info.html:5
+msgid "Trial Info"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:56
-msgid "Total Area Per Treatment (All Plots)"
+#: trialapp/templates/trialapp/fieldtrial_info.html:7
+msgid "Type of trial"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:57
-msgid "Treatment Area"
+#: trialapp/templates/trialapp/fieldtrial_info.html:11
+msgid "Nº of treatments"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:12
+msgid "Nº repetitions/treatment"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:16
+msgid "Copy All"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:19
+msgid "Latitude"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:24
+msgid "Longitude"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:32
+msgid "Plantation"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:35
+msgid "Previous Crop"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:36
+msgid "Variety"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:37
+msgid "Scientifict Name"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:40
+msgid "Crop Age"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:41
+msgid "Transplant Date"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:44
+msgid "Plants /ha"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:47
+msgid "Blocks"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:48
+msgid "Plants Separation"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:49
+msgid "Rows Separation"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:53
+msgid "Trial Owners"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:55
+msgid "Farmer"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:56
+msgid "CRO"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:57
+msgid "Responsible"
 msgstr ""
 
 #: trialapp/templates/trialapp/thesis_list.html:6
@@ -615,7 +689,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:300
+#: trialapp/trial_views.py:383
 msgid "weather conditions"
 msgstr ""
 
@@ -686,20 +760,20 @@ msgstr ""
 
 #: trialapp/tests/tests_trial_helper.py:296
 #: trialapp/tests/tests_trial_helper.py:302
-#: trialapp/tests/tests_trial_helper.py:309 trialapp/trial_helper.py:673
+#: trialapp/tests/tests_trial_helper.py:309 trialapp/trial_helper.py:674
 msgid "You do not have permission to access this trial"
 msgstr ""
 
 #: trialapp/tests/tests_trial_helper.py:316
-#: trialapp/tests/tests_trial_helper.py:328 trialapp/trial_helper.py:675
+#: trialapp/tests/tests_trial_helper.py:328 trialapp/trial_helper.py:676
 msgid "You do not have permission to download this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:337 trialapp/trial_helper.py:677
+#: trialapp/tests/tests_trial_helper.py:337 trialapp/trial_helper.py:678
 msgid "You do not have permission to edit this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:341 trialapp/trial_helper.py:678
+#: trialapp/tests/tests_trial_helper.py:341 trialapp/trial_helper.py:679
 msgid "No limitations on permissions"
 msgstr ""
 
@@ -707,24 +781,24 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:301
+#: trialapp/trial_views.py:384
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:349
+#: trialapp/trial_views.py:432
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:626
+#: trialapp/trial_views.py:709
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:629
+#: trialapp/trial_views.py:712
 msgid " in "
 msgstr ""
 

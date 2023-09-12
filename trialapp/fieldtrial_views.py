@@ -4,54 +4,26 @@ from django.urls import reverse_lazy
 from django import forms
 from django.http import HttpResponseRedirect, FileResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-import django_filters
 from django_filters.views import FilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
-from trialapp.models import FieldTrial, Objective, \
-    Product, TrialStatus, TrialType, Crop, Plague
+from trialapp.models import FieldTrial, StatusTrial
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from trialapp.trial_views import TrialContent
 from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
-
-
-class FieldTrialFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains')
-    trial_status = django_filters.ModelChoiceFilter(
-        queryset=TrialStatus.objects.all().order_by('name'),
-        empty_label="Status")
-    trial_type = django_filters.ModelChoiceFilter(
-        queryset=TrialType.objects.all().order_by('name'),
-        empty_label="Type")
-    objective = django_filters.ModelChoiceFilter(
-        queryset=Objective.objects.all().order_by('name'),
-        empty_label="Objective")
-    crop = django_filters.ModelChoiceFilter(
-        queryset=Crop.objects.all().order_by('name'),
-        empty_label="Crop")
-    product = django_filters.ModelChoiceFilter(
-        queryset=Product.objects.all().order_by('name'),
-        empty_label="Product")
-    plague = django_filters.ModelChoiceFilter(
-        queryset=Plague.objects.all().order_by('name'),
-        empty_label="Plague")
-
-    class Meta:
-        model = FieldTrial
-        fields = ['name', 'trial_status', 'trial_type', 'objective', 'product',
-                  'crop', 'plague']
+from trialapp.filter_helpers import TrialFilterExtended
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
     model = FieldTrial
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
-    filterset_class = FieldTrialFilter
+    filterset_class = TrialFilterExtended
     template_name = 'trialapp/fieldtrial_list.html'
 
     def getAttrValue(self, label):
@@ -78,7 +50,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         else:
             page = 1
 
-        paramsReplyTemplate = FieldTrialFilter.Meta.fields
+        paramsReplyTemplate = TrialFilterExtended.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
@@ -93,7 +65,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         new_list = []
         orderBy = paramsReplyTemplate.copy()
         orderBy.append('name')
-        filter = FieldTrialFilter(self.request.GET)
+        filter = TrialFilterExtended(self.request.GET)
         new_list = self.getList(q_objects)
 
         paginator = Paginator(new_list, resultPerPage)
@@ -149,7 +121,7 @@ class FieldTrialFormLayout(FormHelper):
                         Field('initiation_date', css_class='trial-input'),
                         Field('public', css_class='trial-input'),
                         css_class='col-md-6'),
-                    Div(Field('trial_status', css_class='trial-input'),
+                    Div(Field('status_trial', css_class='trial-input'),
                         Field('completion_date', css_class='trial-input'),
                         Field('favorable', css_class='trial-input'),
                         Field('responsible', css_class='trial-input'),
@@ -291,8 +263,7 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
         form.fields['code'].initial = FieldTrial.getCode(
             datetime.date.today(), True)
         form.fields['responsible'].initial = self.request.user.get_username()
-        form.fields['trial_status'].initial = TrialStatus.objects.get(
-            name=TrialStatus.OPEN).id
+        form.fields['status_trial'].initial = StatusTrial.PROTOCOL
         return form
 
     def form_valid(self, form):

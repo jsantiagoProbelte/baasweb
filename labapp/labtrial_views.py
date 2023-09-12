@@ -1,6 +1,6 @@
 from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from trialapp.models import FieldTrial, Plague, Crop, TrialStatus, \
+from trialapp.models import FieldTrial, Plague, Crop, StatusTrial, \
                             Objective, TrialType
 from catalogue.models import Product
 from baaswebapp.models import RateTypeUnit
@@ -13,7 +13,6 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.fieldtrial_views import FieldTrialFilter
 from trialapp.trial_helper import TrialModel
 from trialapp.data_views import DataGraphFactory
 from django.shortcuts import get_object_or_404, render
@@ -24,13 +23,14 @@ from baaswebapp.graphs import GraphTrial
 import numpy as np
 from scipy.stats import norm
 import statsmodels.api as sm
+from trialapp.filter_helpers import TrialFilterExtended
 
 
 class LabTrialListView(LoginRequiredMixin, FilterView):
     model = FieldTrial
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
-    filterset_class = FieldTrialFilter
+    filterset_class = TrialFilterExtended
     template_name = 'labapp/labtrial_list.html'
 
     def getAttrValue(self, label):
@@ -41,7 +41,7 @@ class LabTrialListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         filter_kwargs = {'trial_meta': FieldTrial.TrialMeta.LAB_TRIAL}
-        paramsReplyTemplate = FieldTrialFilter.Meta.fields
+        paramsReplyTemplate = TrialFilterExtended.Meta.fields
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
             if paramIdName == 'name' and paramId:
@@ -53,14 +53,14 @@ class LabTrialListView(LoginRequiredMixin, FilterView):
         orderBy.append('name')
         objectList = FieldTrial.objects.filter(
             **filter_kwargs).order_by('-code', 'name')
-        filter = FieldTrialFilter(self.request.GET)
+        filter = TrialFilterExtended(self.request.GET)
         for item in objectList:
             new_list.append({
                 'code': item.code,
                 'name': item.name,
                 'crop': item.crop.name,
                 'product': item.product.name,
-                'trial_status': item.trial_status if item.trial_status else '',
+                'status_trial': item.status_trial if item.status_trial else '',
                 'trial_type': item.trial_type.name,
                 'plague': item.plague.name if item.plague else '',
                 'id': item.id})
@@ -94,7 +94,7 @@ class LabTrialFormLayout(FormHelper):
                     css_class='col-md-4'),
                 Div(Div(HTML('Status'), css_class="card-header-baas h4"),
                     Div(Div(Field('trial_type', css_class='mb-2'),
-                            Field('trial_status', css_class='mb-2'),
+                            Field('status_trial', css_class='mb-2'),
                             Field('responsible', css_class='mb-2'),
                             Field('initiation_date', css_class='mb-2'),
                             Field('completion_date', css_class='mb-2'),
@@ -142,8 +142,7 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
         form.fields['trial_type'].initial = TrialType.findOrCreate(
             name='LabTrial')
         form.fields['samples_per_replica'].initial = 24
-        form.fields['trial_status'].initial = TrialStatus.objects.get(
-            name=TrialStatus.OPEN).id
+        form.fields['status_trial'].initial = StatusTrial.PROTOCOL
         form.fields['responsible'].initial = self.request.user.get_username()
         return form
 

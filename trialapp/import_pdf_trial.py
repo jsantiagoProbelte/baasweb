@@ -8,7 +8,7 @@ django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Objective, Plague, \
-    Thesis, Replica, TrialStatus, TrialType, TreatmentThesis  # noqa: E402
+    Thesis, Replica, StatusTrial, TrialType, TreatmentThesis  # noqa: E402
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant, \
     UNTREATED, DEFAULT, RateUnit  # noqa: E402
@@ -882,8 +882,7 @@ class ImportPdfTrial:
                 plague=Plague.getUnknown(),
                 blocks=4,
                 replicas_per_thesis=0,
-                trial_status=TrialStatus.objects.get(
-                    name=TrialStatus.IMPORTED),
+                status_trial=StatusTrial.REWIEW,
                 trial_type=TrialType.getUnknown(),
                 code=code)
         for evalTable in self._evals:
@@ -1125,15 +1124,20 @@ def discoverReports():
 
 def importOne():
     path = '/Users/jsantiago/Library/CloudStorage/OneDrive-PROBELTE,SAU/Data'\
-           '/estudios/todo/'  # atlantis/'  # '/impello/'  # '/estudios/todo/botrybel/'
+           '/estudios/todo/'  # atlantis/'  # '/impello/'
+    # '/estudios/todo/botrybel/'
 
-    # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site Description - Standard Form_Dec-5-2022.pdf'
-    # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - Standard Form_Sep-15-2022.pdf'
+    # fileName = path + '20221233 MDJ Elicitor Hemp Botrytis_22_Site''
+    # ' Description - Standard Form_Dec-5-2022.pdf'
+    # fileName = path + '20221215 MDJ Elicitor VITVI_CA_22_Site Description - '
+    # 'Standard Form_Sep-15-2022.pdf'
     # fileName = path + '20230502 BOTRYBEL STRAWBERRY atlantis.pdf'
     # fileName = path + '20160902 BOTRYBEL EFICACIA ITALIA TOMATE 05 copia.pdf'
-    fileName = path + '20220233 PB050, PB051, PB012, PB012B lettuce Sclerotinia sclerotiorum.pdf'
+    fileName = path + '20220233 PB050, PB051, PB012, PB012B lettuce ' \
+        'Sclerotinia sclerotiorum.pdf'
     # fileName = path + '20221102 P003 TOMATE.pdf'
-    # fileName = path + '20220303 Informe Final Botrybel patata alternaria y mildiu.pdf'
+    # fileName = path + '20220303 Informe Final Botrybel patata alternaria y '
+    # 'mildiu.pdf'
     importer = ImportPdfTrial(fileName, debugInfo=True)
     importer.run()
 

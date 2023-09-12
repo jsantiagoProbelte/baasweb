@@ -3,7 +3,8 @@ from baaswebapp.models import RateTypeUnit, PType
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit, \
     Batch, Treatment, DEFAULT
-from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis
+from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis, \
+    StatusTrial
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
 from catalogue.product_views import ProductApi, \
     ProductCreateView, ProductUpdateView, ProductDeleteView, \
@@ -25,7 +26,7 @@ class ProductViewsTest(TestCase):
     FIELDTRIALS = [{
         'name': 'fieldTrial 666',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -40,7 +41,7 @@ class ProductViewsTest(TestCase):
         {
         'name': 'fieldTrial 999',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -55,7 +56,7 @@ class ProductViewsTest(TestCase):
         {
         'name': 'fieldTrial 333',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 2,

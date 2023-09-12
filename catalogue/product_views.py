@@ -1,15 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-import django_filters
 from baaswebapp.models import RateTypeUnit, ModelHelpers
 from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, Objective, Plague, TreatmentThesis, \
-    FieldTrial, TrialStatus, TrialType
+from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
 from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
     Assessment
-from trialapp.filter_helpers import TrialFilterHelper
+from trialapp.filter_helpers import TrialFilterHelper, TrialFilterExtended
 from trialapp.trial_views import TrialContent
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -45,29 +43,6 @@ class ProductFormLayout(FormHelper):
                 css_class="card-body-baas mt-2")))
 
 
-class TrialProductFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains')
-    trial_status = django_filters.ModelChoiceFilter(
-        queryset=TrialStatus.objects.all().order_by('name'),
-        empty_label=_("Status"))
-    trial_type = django_filters.ModelChoiceFilter(
-        queryset=TrialType.objects.all().order_by('name'),
-        empty_label=_("Type"))
-    objective = django_filters.ModelChoiceFilter(
-        queryset=Objective.objects.all().order_by('name'),
-        empty_label=_("Objective"))
-    crop = django_filters.ModelChoiceFilter(
-        queryset=Crop.objects.all().order_by('name'), empty_label=_("Crop"))
-    plague = django_filters.ModelChoiceFilter(
-        queryset=Plague.objects.all().order_by('name'),
-        empty_label=_("Plague"))
-
-    class Meta:
-        model = FieldTrial
-        fields = ['trial_status', 'trial_type', 'objective',
-                  'crop', 'plague']
-
-
 class TrialProductFilterHelper:
     _attributes = None
     _trialsByProduct = None
@@ -101,9 +76,9 @@ class TrialProductFilterHelper:
         if attributes.get('plague'):
             trialsFiltered = trialsFiltered.filter(
                 plague=attributes.get('plague'))
-        if attributes.get('trial_status'):
+        if attributes.get('status_trial'):
             trialsFiltered = trialsFiltered.filter(
-                trial_status=attributes.get('trial_status'))
+                status_trial=attributes.get('status_trial'))
         if attributes.get('name'):
             trialsFiltered = trialsFiltered.filter(
                 name__icontains=attributes.get('name'))
@@ -429,7 +404,7 @@ class ProductApi(LoginRequiredMixin, View):
         currentPage = paginator.get_page(page)
 
         numTrials = TrialFilterHelper.getCountFieldTrials(product)
-        filterTrial = TrialProductFilter(request.GET)
+        filterTrial = TrialFilterExtended(request.GET)
         range_efficacy = self.getRangeEfficacy(product)
 
         return render(

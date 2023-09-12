@@ -26,7 +26,8 @@ class TrialApi(LoginRequiredMixin, DetailView):
         assessments = Assessment.objects.filter(field_trial_id=fieldtrial.id)
         applications = Application.objects.filter(field_trial_id=fieldtrial.id)
 
-        schedule_list = ScheduleAdapter.adapt_list(assessments) + ScheduleAdapter.adapt_list(applications)
+        schedule_list = ScheduleAdapter.adapt_list(assessments) + \
+            ScheduleAdapter.adapt_list(applications)
         schedule_list.sort(key=lambda schedule_line: schedule_line.date)
 
         return schedule_list
@@ -205,7 +206,8 @@ class ScheduleAdapter():
 
     def _check_is_adapted(self):
         if not self.isAdapted:
-            raise ValueError("The object entered isn't avalaible for Schedule.")
+            raise ValueError(
+                "The object entered isn't avalaible for Schedule.")
 
 
 class TrialContent():
@@ -290,8 +292,7 @@ class TrialContent():
             'product': self._trial.product.name,
             'period': self._trial.getPeriod(),
             'cultivation': self._trial.getCultivation(),
-            'trial_status': self._trial.trial_status
-            if self._trial.trial_status else '',
+            'status_trial': self._trial.status_trial,
             'objective': self._trial.objective.name,
             'plague': self._trial.plague.name if self._trial.plague else '',
             'latitude': self._trial.latitude,

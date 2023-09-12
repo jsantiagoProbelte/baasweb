@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.models import Category
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Crop, Plague, TrialStatus
+from trialapp.models import FieldTrial, Crop, Plague, StatusTrial
 from catalogue.models import Product
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
@@ -166,10 +166,10 @@ class TrialFilterTest(TestCase):
         fHelper.filter()
         self.assertEqual(fHelper.countTrials(), 0)
 
-        # Let's make 1 trila become finished
-        finished = TrialStatus.objects.get(id=3)
+        # Let's make 1 trail become finished
+        finished = StatusTrial.DONE
         trial = FieldTrial.objects.get(id=1)
-        trial.trial_status = finished
+        trial.status_trial = finished
         trial.save()
         fHelper = TrialFilterHelper(
                 TrialFilterTest.MockRequest({}, name='Romeo',

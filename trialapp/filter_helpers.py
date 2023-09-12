@@ -1,7 +1,8 @@
 from django.db.models import Q, Count, Min, Max
 import django_filters
 from baaswebapp.models import Category, PType, ModelHelpers
-from trialapp.models import FieldTrial, Crop, Plague
+from trialapp.models import FieldTrial, Crop, Plague, StatusTrial, Objective, \
+    TrialType
 from catalogue.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
@@ -30,6 +31,32 @@ class TrialFilter(django_filters.FilterSet):
     class Meta:
         model = FieldTrial
         fields = ['crop', 'plague', 'product__type_product']
+
+
+class TrialFilterExtended(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    status_trial = django_filters.ChoiceFilter(
+        choices=StatusTrial.choices,
+        field_name='status_trial',
+        label='status',
+        empty_label=_('status').capitalize())
+    trial_type = django_filters.ModelChoiceFilter(
+        queryset=TrialType.objects.all().order_by('name'),
+        empty_label=_("type").capitalize())
+    objective = django_filters.ModelChoiceFilter(
+        queryset=Objective.objects.all().order_by('name'),
+        empty_label=_("objective").capitalize())
+    crop = django_filters.ModelChoiceFilter(
+        queryset=Crop.objects.all().order_by('name'),
+        empty_label=_("crop").capitalize())
+    plague = django_filters.ModelChoiceFilter(
+        queryset=Plague.objects.all().order_by('name'),
+        empty_label=_("pest / disease").capitalize())
+
+    class Meta:
+        model = FieldTrial
+        fields = ['name', 'status_trial', 'trial_type', 'objective',
+                  'crop', 'plague']
 
 
 class TrialFilterHelper:
@@ -102,12 +129,14 @@ class TrialFilterHelper:
         if self._permisions._type == TrialPermission.ADMIN:
             pass
         elif self._permisions._type == TrialPermission.INTERNAL:
-            q_discover |= Q(trial_status_id=3)  # Temporal hack
+            q_discover |= Q(status_trial=StatusTrial.DONE)
             q_discover |= Q(responsible=self._userName)
         elif self._permisions._type == TrialPermission.EXTERNAL:
             q_discover |= Q(public=True)
             q_discover |= Q(responsible=self._userName)
         return q_discover
+
+    TAKEITASITIS = ['product__type_product', 'status_trial']
 
     def prepareFilter(self, groupbyTag=None):
         paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
@@ -121,7 +150,7 @@ class TrialFilterHelper:
                 q_name |= Q(code__icontains=paramId)
                 q_name |= Q(product__active_substance__icontains=paramId)
                 q_objects &= q_name
-            elif paramIdName in ['product__type_product'] and paramId:
+            elif paramIdName in TrialFilterHelper.TAKEITASITIS and paramId:
                 q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))

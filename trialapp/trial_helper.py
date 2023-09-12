@@ -6,7 +6,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
     FieldTrial, Thesis, Objective, Replica, \
-    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety, \
+    Product, ApplicationMode, StatusTrial, TrialType, Crop, CropVariety, \
     Plague, CultivationMethod, Irrigation, Application, SoilType
 from trialapp.data_models import ReplicaData
 from catalogue.models import RateUnit
@@ -39,8 +39,8 @@ class TrialModel():
                                 'type': T_D},
             'public': {'label': "public",
                        'required': False, 'type': T_N},
-            'trial_status': {'label': 'Status', 'required': True, 'type': T_N,
-                             'cls': TrialStatus},
+            'status_trial': {'label': 'Status', 'required': True, 'type': T_N,
+                             'cls': StatusTrial},
             'completion_date': {'label': 'Completed by', 'required': False,
                                 'type': T_D},
             'favorable': {'label': "Favorable",
@@ -126,14 +126,14 @@ class TrialModel():
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'code',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'replicas_per_thesis',
+            'status_trial', 'contact', 'replicas_per_thesis',
             'samples_per_replica')
 
     FIELD_TRIAL_FIELDS = (
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'ref_to_eppo', 'ref_to_criteria', 'comments_criteria',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'cro', 'location', 'blocks',
+            'status_trial', 'contact', 'cro', 'location', 'blocks',
             'replicas_per_thesis', 'samples_per_replica',
             'distance_between_plants', 'distance_between_rows', 'number_rows',
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
@@ -179,10 +179,28 @@ class TrialModel():
             trialForm.fields['irrigation'].queryset = Irrigation.getObjects()
 
     @classmethod
-    def prepareDataItems(cls, fieldTrial, asArray=False):
-        trialDict = fieldTrial.__dict__
+    def showValue(cls, field, trial, trialDict, group):
+        value = '?'
+        if field == 'status_trial':
+            value = trial.get_status_trial_display()
+        elif field == 'soil':
+            value = trial.get_soil_display()
+        elif field in trialDict:
+            value = trialDict[field]
+        else:
+            field_id = field + '_id'
+            if field_id in trialDict:
+                theId = trialDict[field_id]
+                if theId is not None:
+                    model = TrialModel.FIELDS[group][field]['cls']
+                    value = model.objects.get(id=theId)
+        return value if value is not None else '?'
+
+    @classmethod
+    def prepareDataItems(cls, trial, asArray=False):
+        trialDict = trial.__dict__
         trialData = {}
-        if fieldTrial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
+        if trial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
             modelFields = TrialModel.LAB_TRIAL_FIELDS
         else:
             modelFields = TrialModel.FIELD_TRIAL_FIELDS
@@ -196,25 +214,12 @@ class TrialModel():
                 if field not in modelFields:
                     continue
                 label = TrialModel.FIELDS[group][field]['label']
-                value = '?'
-                if field in trialDict:
-                    value = trialDict[field]
-                else:
-                    field_id = field + '_id'
-                    if field_id not in trialDict:
-                        continue
-                    else:
-                        theId = trialDict[field_id]
-                        if theId is not None:
-                            model = TrialModel.FIELDS[group][field]['cls']
-                            value = model.objects.get(id=theId)
-                showValue = value if value is not None else '?'
+                showValue = cls.showValue(field, trial, trialDict, group)
                 if asArray:
                     trialData[group][label] = showValue
                 else:
                     trialData[group].append({'name': label,
                                              'value': showValue})
-        print(trialData)
         return trialData
 
 
@@ -598,7 +603,7 @@ class TrialPermission:
         self._owner = self._trial.responsible == self._user.username
 
     def isDone(self):
-        self._isDone = self._trial.trial_status.name == TrialStatus.FINISHED
+        self._isDone = self._trial.status_trial == StatusTrial.DONE
 
     def setPermissions(self):
         self._permissions = {

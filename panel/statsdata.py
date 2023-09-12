@@ -16,8 +16,14 @@ class StatsDataApi(APIView):
     def getDatapointStats(self):
         pass
 
+    def getFilterFromDimension(self, dimension):
+        if dimension == 'status_trial':
+            return dimension
+        else:
+            return '{}__name'.format(dimension)
+
     def getTrialMonthStats(self, dimension, topList):
-        keyName = '{}__name'.format(dimension)
+        keyName = self.getFilterFromDimension(dimension)
         yAxis = 'last {} months created trials'.format(
             StatsDataApi.LAST_MONTHS)
         lastMonth = BaaSHelpers.lastXMonthDateIso(StatsDataApi.LAST_MONTHS)
@@ -56,7 +62,7 @@ class StatsDataApi(APIView):
                          xAxis='month', yAxis=yAxis, barmode="stack").plot()
 
     def getTrialTotalStats(self, dimension):
-        keyName = '{}__name'.format(dimension)
+        keyName = self.getFilterFromDimension(dimension)
         query = FieldTrial.objects.values(keyName)\
             .annotate(Count('id')).all()\
             .order_by('id__count')
@@ -94,7 +100,7 @@ class StatsDataApi(APIView):
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
 
-        stats = [[self.generateDataDimension('trial_status', 'Trial Status'),
+        stats = [[self.generateDataDimension('status_trial', 'Trial Status'),
                   self.generateDataDimension('product', 'Products')],
                  [self.generateDataDimension('crop', 'Crops'),
                   self.generateDataDimension('plague', 'Pests & Diseases')]]
