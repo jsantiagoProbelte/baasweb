@@ -426,6 +426,7 @@ class ProductApi(LoginRequiredMixin, View):
                 'paginator': paginator,
                 'filter': filterTrial,
                 'activeTab': activeTab,
+                'show_status': True,
                 'page': currentPage})
 
 

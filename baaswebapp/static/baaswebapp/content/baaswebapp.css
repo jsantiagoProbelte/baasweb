@@ -129,6 +129,11 @@
   color: #000;
 }
 
+.bg-status-trial {
+  background: var(--custom-card-bg-light-violet) !important;
+  color: #000;
+}
+
 .bg-unknown{
   background: var(--custom-grey );
 }

@@ -73,6 +73,7 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
         return {'object_list': paginator.get_page(page).object_list,
                 'titleList': '({}) Field trials'.format(len(new_list)),
                 'add_url': 'fieldtrial-add',
+                'show_status': True,
                 'filter': filter,
                 'paginator': paginator,
                 'page': paginator.get_page(page)}

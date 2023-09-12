@@ -88,7 +88,11 @@
                 <tr class="trial-tab-lines" id="item-{{item.id}}" key="{{ item.id }}">
                     <!--NAME-->
                     <td><p class="txt-open-semibold-14">{{item.description}}</p>
-                        <p class="txt-regular-13">{{item.location}}</p></td>
+                        <p class="txt-regular-13">{{item.location}}</p>
+                        {% if show_status %}
+                        <span class="badge rounded-pill bg-light txt-regular-11">{{item.status_trial}}</span>
+                        {% endif %}
+                    </td>
                     <!--EFFICACY-->
                     <td>
                         <p class="txt-open-bold-15">{{item.best_efficacy}}</p>

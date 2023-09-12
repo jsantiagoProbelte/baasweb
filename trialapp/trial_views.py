@@ -292,7 +292,7 @@ class TrialContent():
             'product': self._trial.product.name,
             'period': self._trial.getPeriod(),
             'cultivation': self._trial.getCultivation(),
-            'status_trial': self._trial.status_trial,
+            'status_trial': self._trial.get_status_trial_display(),
             'objective': self._trial.objective.name,
             'plague': self._trial.plague.name if self._trial.plague else '',
             'latitude': self._trial.latitude,
