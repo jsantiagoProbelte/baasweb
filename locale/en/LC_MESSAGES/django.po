@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-09 22:56+0200\n"
+"POT-Creation-Date: 2023-09-12 14:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: baaswebapp/graphs.py:649
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:337
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:338
 msgid "efficacy"
 msgstr ""
 
@@ -216,7 +216,7 @@ msgid "Welcome, please login"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
-#: catalogue/tests/tests_views_catalogue.py:143
+#: catalogue/tests/tests_views_catalogue.py:144
 msgid "Are you sure to delete"
 msgstr ""
 
@@ -224,35 +224,14 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: catalogue/product_views.py:52
-msgid "Status"
-msgstr ""
-
-#: catalogue/product_views.py:55
-msgid "Type"
-msgstr ""
-
-#: catalogue/product_views.py:58
-msgid "Objective"
-msgstr ""
-
-#: catalogue/product_views.py:60
-#: trialapp/templates/trialapp/fieldtrial_info.html:34
-msgid "Crop"
-msgstr ""
-
-#: catalogue/product_views.py:63
-msgid "Plague"
-msgstr ""
-
 #: catalogue/templates/catalogue/product_list_header.html:3
-#: trialapp/filter_helpers.py:258
+#: trialapp/filter_helpers.py:307
 #: trialapp/templates/trialapp/trials_list_header.html:4
 msgid "product"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:4
-#: trialapp/filter_helpers.py:27
+#: trialapp/filter_helpers.py:29
 #: trialapp/templates/trialapp/trials_list_header.html:5
 msgid "product type"
 msgstr ""
@@ -303,7 +282,8 @@ msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:87
 #: catalogue/templates/catalogue/product_show.html:149
-#: trialapp/filter_helpers.py:22 trialapp/filter_helpers.py:260
+#: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:54
+#: trialapp/filter_helpers.py:309
 #: trialapp/templates/trialapp/plagues_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "pest / disease"
@@ -335,7 +315,8 @@ msgid "Mixes"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:148
-#: trialapp/filter_helpers.py:19 trialapp/filter_helpers.py:259
+#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:51
+#: trialapp/filter_helpers.py:308
 #: trialapp/templates/trialapp/crop_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "crop"
@@ -369,19 +350,31 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/fieldtrial_views.py:363
+#: trialapp/fieldtrial_views.py:304
 msgid "Fail on generating download"
 msgstr ""
 
-#: trialapp/filter_helpers.py:261
+#: trialapp/filter_helpers.py:42
+msgid "status"
+msgstr ""
+
+#: trialapp/filter_helpers.py:45
+msgid "type"
+msgstr ""
+
+#: trialapp/filter_helpers.py:48
+msgid "objective"
+msgstr ""
+
+#: trialapp/filter_helpers.py:310
 msgid "Ungrouped"
 msgstr "No agrupado"
 
-#: trialapp/models.py:62 trialapp/models.py:100
+#: trialapp/models.py:62 trialapp/models.py:108
 msgid "Field Trial"
 msgstr ""
 
-#: trialapp/models.py:63 trialapp/models.py:101
+#: trialapp/models.py:63 trialapp/models.py:109
 msgid "Lab Trial"
 msgstr ""
 
@@ -489,12 +482,32 @@ msgstr ""
 msgid "Lateritic Soil"
 msgstr ""
 
-#: trialapp/models.py:270 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:97
+msgid "Design Protocol"
+msgstr ""
+
+#: trialapp/models.py:98
+msgid "Approving Protocol"
+msgstr ""
+
+#: trialapp/models.py:99
+msgid "In Progress"
+msgstr ""
+
+#: trialapp/models.py:100
+msgid "Review Results"
+msgstr ""
+
+#: trialapp/models.py:101
+msgid "Done"
+msgstr ""
+
+#: trialapp/models.py:282 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:273 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:285 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -573,6 +586,10 @@ msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:32
 msgid "Plantation"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:34
+msgid "Crop"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:35
@@ -689,7 +706,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:383
+#: trialapp/trial_views.py:384
 msgid "weather conditions"
 msgstr ""
 
@@ -758,47 +775,47 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:296
-#: trialapp/tests/tests_trial_helper.py:302
-#: trialapp/tests/tests_trial_helper.py:309 trialapp/trial_helper.py:674
+#: trialapp/tests/tests_trial_helper.py:285
+#: trialapp/tests/tests_trial_helper.py:291
+#: trialapp/tests/tests_trial_helper.py:298 trialapp/trial_helper.py:683
 msgid "You do not have permission to access this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:316
-#: trialapp/tests/tests_trial_helper.py:328 trialapp/trial_helper.py:676
+#: trialapp/tests/tests_trial_helper.py:305
+#: trialapp/tests/tests_trial_helper.py:316 trialapp/trial_helper.py:685
 msgid "You do not have permission to download this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:337 trialapp/trial_helper.py:678
+#: trialapp/tests/tests_trial_helper.py:325 trialapp/trial_helper.py:687
 msgid "You do not have permission to edit this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:341 trialapp/trial_helper.py:679
+#: trialapp/tests/tests_trial_helper.py:329 trialapp/trial_helper.py:688
 msgid "No limitations on permissions"
 msgstr ""
 
-#: trialapp/trial_helper.py:79
+#: trialapp/trial_helper.py:76
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:384
+#: trialapp/trial_views.py:385
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:432
+#: trialapp/trial_views.py:433
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:709
+#: trialapp/trial_views.py:710
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:712
+#: trialapp/trial_views.py:713
 msgid " in "
 msgstr ""
 
