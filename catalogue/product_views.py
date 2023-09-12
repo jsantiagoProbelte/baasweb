@@ -426,7 +426,7 @@ class ProductApi(LoginRequiredMixin, View):
                 'paginator': paginator,
                 'filter': filterTrial,
                 'activeTab': activeTab,
-                'show_status': True if self.request.user.is_staff else False,
+                'show_status': True if request.user.is_staff else False,
                 'page': currentPage})
 
 
