@@ -46,6 +46,29 @@ function setDataPoint(element, url) {
     return false;
 };
 
+function setDataPointWithValue(element, url, value) {
+    var formElement=element.parent()
+    var dataJson={}
+    $(element.serializeArray()).each(function(index,obj){
+        dataJson[obj.name]=value;
+    });
+    dataJson['data_point_id']=formElement.attr('id');
+
+    $.ajax({
+        type : formElement.attr('method'), 
+        url: url,
+        data: dataJson,
+        
+        success: function(data){
+            element.css("background-color", "grey");
+        },
+    
+        failure: function() {
+            alert('Error. Please reload');
+        }
+    });
+    return false;
+};
 
 function loadTrialContent(){
 {

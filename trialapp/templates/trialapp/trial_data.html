@@ -1,14 +1,14 @@
 {% extends "baaswebapp/layout.html" %}
 
 {% load crispy_forms_tags %}
-
+{% load custom_filter_templates %}
 {% block content %}
 
 {% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
 
 <div class="card card-body-baas mt-2">
   <div class="table-container-long">
-  <table class="data-table-longer table table-borderless">
+  <table class="data-table-longer table table-borderless" id="trial-data">
     <thead>
       <tr><th></th><th class="text-right">Assessment</th>
         {% for itemId in header.ids %}
@@ -32,7 +32,7 @@
             {% endif %}
             <td class=" text-right">{{dataRow.replica}}</td>
         {% for dataPointValue in dataRow.values %}
-          <td>
+          <td id="cell-{{dataPointValue.row}}-{{dataPointValue.column}}">
             {% if edit_trial_perm %}
               <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
                 class='form-data-input-template'  method="POST">
@@ -81,5 +81,48 @@ $('.assessment-input-form').on('keypress', function(event) {
     var element = $(this);
     return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
 });
+
+
+$(document).ready(function() {
+    const grid = $('#trial-data');
+    
+    grid.on('paste', function(e) {
+        e.preventDefault();
+        const clipboardData = e.originalEvent.clipboardData || window.clipboardData;
+        const pastedData = clipboardData.getData('text/plain').split('\n');
+
+        // Get the active cell (where the user right-clicked or focused)
+        const activeInput = document.activeElement;
+        // Find the td parent
+        //const activeCellID = activeCell.id;
+        const activeCellID = activeInput.parentElement.parentElement.id;
+        const [row, col] = activeCellID.split('-').slice(-2).map(Number);
+
+        // Iterate through rows of pasted data
+        for (let i = 0; i < pastedData.length; i++) {
+            const rowData = pastedData[i].split('\t'); // Assuming tab-separated data
+            
+            // Iterate through columns of pasted data
+            for (let j = 0; j < rowData.length; j++) {
+                const cellID = `cell-${row + i}-${col + j}`;
+                const cell = $(`#${cellID}`);
+                
+                if (cell.length) {
+                    const input = cell.find('input');
+                    if (input.length) {
+                      const updatedValue = rowData[j];
+                      // Update the input value locally
+                      input.val(updatedValue);
+                      // Perform AJAX update
+                      setDataPoint(input, setDataPointAPI);
+                    
+                      
+                    }
+                }
+            }
+        }
+    });
+});
+
 </script>
 {% endblock %}
