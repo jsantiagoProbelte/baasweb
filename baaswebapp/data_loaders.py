@@ -6,7 +6,7 @@ TrialDbInitialLoader.loadInitialTrialValues()
 from baaswebapp.models import ModelHelpers, RateTypeUnit
 from catalogue.models import Product, Vendor, Batch, \
     ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
-from trialapp.models import TrialType, TrialStatus, ApplicationMode, \
+from trialapp.models import TrialType, ApplicationMode, \
                             Objective, Plague, Crop, FieldTrial, \
                             Irrigation, CultivationMethod, CropVariety
 from trialapp.data_models import ThesisData, ReplicaData, SampleData
@@ -18,9 +18,6 @@ class TrialDbInitialLoader:
         return {
             TrialType: [ModelHelpers.UNKNOWN, 'Development',
                         'Commercial Demo', 'Registry', 'Technical Demo'],
-            TrialStatus: [ModelHelpers.UNKNOWN, TrialStatus.OPEN,
-                          'In Progress', 'Anual Recurrence',
-                          TrialStatus.FINISHED, 'Imported'],
             Irrigation: [ModelHelpers.UNKNOWN, 'Dry', 'Manta',
                          'Aspersion', 'Drip', 'Hydroponic', 'Others'],
             ApplicationMode: [

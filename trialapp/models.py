@@ -51,13 +51,6 @@ class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class TrialStatus(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    FINISHED = 'Finished'
-    OPEN = 'Open'
-    IMPORTED = 'Imported'
-
-
 class PartRated(models.TextChoices):
     FIELD_TRIAL = 'FT', _('Field Trial')
     LAB_TRIAL = 'LT', _('Lab Trial')
@@ -132,8 +125,6 @@ class FieldTrial(ModelHelpers, models.Model):
     initiation_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    trial_status = models.ForeignKey(TrialStatus,
-                                     on_delete=models.CASCADE, null=True)
     status_trial = models.CharField(
         max_length=4,
         choices=StatusTrial.choices,
@@ -302,7 +293,6 @@ class FieldTrial(ModelHelpers, models.Model):
         trial = cls.objects.create(
             name=kwargs['name'],
             trial_type=TrialType.objects.get(pk=kwargs['trial_type']),
-            trial_status_id=1,
             status_trial=kwargs['status_trial'],
             objective=Objective.objects.get(pk=kwargs['objective']),
             responsible=kwargs['responsible'],
