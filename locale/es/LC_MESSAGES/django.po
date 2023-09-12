@@ -427,7 +427,7 @@ msgstr "PLANTA"
 
 #: trialapp/models.py:75
 msgid "PLOT"
-msgstr "TRAMA"
+msgstr "PARCELA"
 
 #: trialapp/models.py:76
 msgid "ROOT"

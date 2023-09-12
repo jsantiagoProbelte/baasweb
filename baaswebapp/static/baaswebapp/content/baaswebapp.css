@@ -488,6 +488,84 @@ div[class*="bg-custom-"]{
 }
 
 
+.border-custom-0{
+  border: 2px solid var(--custom-color-0) !important;
+  border-left: 10px solid var(--custom-color-0) !important;
+}
+.border-custom-1{
+  border: 2px solid var(--custom-color-1) !important;
+  border-left: 10px solid var(--custom-color-1) !important;
+}
+.border-custom-2{
+  border: 2px solid var(--custom-color-2) !important;
+  border-left: 10px solid var(--custom-color-2) !important;
+}
+.border-custom-3{
+  border: 2px solid var(--custom-color-3) !important;
+  border-left: 10px solid var(--custom-color-3) !important;
+}
+.border-custom-4{
+  border: 2px solid var(--custom-color-4) !important;
+  border-left: 10px solid var(--custom-color-4) !important;
+}
+.border-custom-5{
+  border: 2px solid var(--custom-color-5) !important;
+  border-left: 10px solid var(--custom-color-5) !important;
+}
+.border-custom-6{
+  border: 2px solid var(--custom-color-6) !important;
+  border-left: 10px solid var(--custom-color-6) !important;
+}
+.border-custom-7{
+  border: 2px solid var(--custom-color-7) !important;
+  border-left: 10px solid var(--custom-color-7) !important;
+}
+.border-custom-8{
+  border: 2px solid var(--custom-color-8) !important;
+  border-left: 10px solid var(--custom-color-8) !important;
+}
+.border-custom-9{
+  border: 2px solid var(--custom-color-9) !important;
+  border-left: 10px solid var(--custom-color-9) !important;
+}
+.border-custom-10{
+  border: 2px solid var(--custom-color-10) !important;
+  border-left: 10px solid var(--custom-color-10) !important;
+}
+.border-custom-11{
+  border: 2px solid var(--custom-color-11) !important;
+  border-left: 10px solid var(--custom-color-11) !important;
+}
+.border-custom-12{
+  border: 2px solid var(--custom-color-12) !important;
+  border-left: 10px solid var(--custom-color-12) !important;
+}
+.border-custom-13{
+  border: 2px solid var(--custom-color-13) !important;
+  border-left: 10px solid var(--custom-color-13) !important;
+}
+.border-custom-14{
+  border: 2px solid var(--custom-color-14) !important;
+  border-left: 10px solid var(--custom-color-14) !important;
+}
+.border-custom-15{
+  border: 2px solid var(--custom-color-15) !important;
+  border-left: 10px solid var(--custom-color-15) !important;
+}
+.border-custom-16{
+  border: 2px solid var(--custom-color-16) !important;
+  border-left: 10px solid var(--custom-color-16) !important;
+}
+.border-custom-17{
+  border: 2px solid var(--custom-color-17) !important;
+  border-left: 10px solid var(--custom-color-17) !important;
+}
+.border-custom-18{
+  border: 2px solid var(--custom-color-18) !important;
+  border-left: 10px solid var(--custom-color-18) !important;
+}
+
+
 .color-icon{
   width: 0.9em;
   height: 0.9em;
