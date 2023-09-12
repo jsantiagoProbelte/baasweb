@@ -305,13 +305,16 @@ class DataHelper:
         rows = []
         lastThesis = None
 
+        rowNumber = 0
+        columnNumber = 0
         for replicaId in replicaList:
             value = ''
             if replicaId in replicaPointsDict:
                 value = replicaPointsDict[replicaId]['value']
             lastThesis = self.addReplicaInfo(
                 replicaNumberDict, value, replicaId, lastThesis,
-                snk, efficacyData, rows)
+                snk, efficacyData, rows, rowNumber, columnNumber)
+            rowNumber += 1
 
         return self.buildOutput(GraphTrial.L_REPLICA,
                                 replicaPoints,
@@ -320,7 +323,8 @@ class DataHelper:
                                 rows)
 
     def addReplicaInfo(self, replicaNumberDict, value, replicaId, lastThesis,
-                       snk, efficacyData, rows, sampleCols=None,
+                       snk, efficacyData, rows, rowNumber, columnNumber,
+                       sampleCols=None,
                        genReplicaId=True):
         replicaName = replicaNumberDict[replicaId].name
         thesisId = replicaNumberDict[replicaId].thesis_id
@@ -346,6 +350,8 @@ class DataHelper:
                  'value': value,
                  'item_id': rItemId,
                  'rowspan': span,
+                 'row': rowNumber,
+                 'column': columnNumber,
                  'replica': replicaName,
                  'color': thesisNumber,
                  'sampleCols': sampleCols})
@@ -395,6 +401,8 @@ class DataHelper:
         rows = []
         lastThesis = None
 
+        rowNumber = 0
+        columnNumber = 0
         for replicaId in replicaList:
             existingSamplesInReplica = {}
             if replicaId in replicaSampleDict:
@@ -417,8 +425,10 @@ class DataHelper:
 
             lastThesis = self.addReplicaInfo(
                 replicaNumberDict, rValue, replicaId, lastThesis,
-                snk, efficacyData, rows, sampleCols=sampleCols,
+                snk, efficacyData, rows, rowNumber, columnNumber,
+                sampleCols=sampleCols,
                 genReplicaId=genReplicaId)
+            rowNumber += 1
 
         return self.buildOutput(GraphTrial.L_SAMPLE,
                                 samplePoints,
