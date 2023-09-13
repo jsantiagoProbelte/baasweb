@@ -1,14 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from baaswebapp.models import RateTypeUnit, ModelHelpers
+from baaswebapp.models import ModelHelpers
 from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
+from trialapp.models import Crop, TreatmentThesis, FieldTrial
 from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from baaswebapp.graphs import GraphTrial
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
@@ -96,29 +95,6 @@ class ProductApi(LoginRequiredMixin, View):
     TAG_LEVEL = 'level'
     FILTER_DATA = [TAG_CROPS, TAG_DIMENSIONS, TAG_PLAGUES, TAG_LEVEL]
 
-    def identifyObjectFilter(self, tags):
-        dimensions = []
-        crops = []
-        plagues = []
-        level = GraphTrial.L_REPLICA
-        for tag in tags:
-            if tag in ProductApi.FILTER_DATA:
-                tagId = tags[tag]
-                if tagId == 'None' or tagId == '':
-                    continue
-                if tag == ProductApi.TAG_CROPS:
-                    crops.append(Crop.objects.get(pk=tagId))
-                if tag == ProductApi.TAG_DIMENSIONS:
-                    dimensions.append(RateTypeUnit.objects.get(pk=tagId))
-                if tag == ProductApi.TAG_PLAGUES:
-                    plagues.append(Plague.objects.get(pk=tagId))
-                if tag == ProductApi.TAG_LEVEL:
-                    if tagId == GraphTrial.L_THESIS:
-                        level = GraphTrial.L_THESIS
-                    elif tagId == GraphTrial.L_REPLICA:
-                        level = GraphTrial.L_REPLICA
-        return dimensions, crops, plagues, level
-
     def getProductTree(self, product):
         data = []
         for variant in ProductVariant.getItems(product):
@@ -130,8 +106,7 @@ class ProductApi(LoginRequiredMixin, View):
         crops = Crop.objects.filter(fieldtrial__product_id=id).values(
             "id", "name", "fieldtrial__name", "fieldtrial__id",
             "fieldtrial__plague__name", "fieldtrial__samples_per_replica",
-            "fieldtrial__location", "fieldtrial__code"
-        )
+            "fieldtrial__location", "fieldtrial__code")
         cropsTable = {}
 
         for crop in crops:
@@ -141,44 +116,30 @@ class ProductApi(LoginRequiredMixin, View):
                 cropName,
                 crop["fieldtrial__plague__name"],
                 crop["fieldtrial__location"])
-            if cropName in cropsTable:
-                cropsTable[cropName]["trials"].append(
-                    {"name": titleTrial,
-                     "id": crop["fieldtrial__id"]})
-                cropsTable[cropName]["trialsCount"] += 1
-
-                if 'fieldtrial__plague__name' in crop and\
-                   crop['fieldtrial__plague__name']:
-                    plagueName = crop['fieldtrial__plague__name']
-                    if plagueName and \
-                       not ModelHelpers.isInUnknowns(plagueName):
-                        cropsTable[cropName]["agents"].add(plagueName)
-                        cropsTable[cropName]["strAgents"] = ', '.join(
-                            cropsTable[cropName]["agents"])
-
-                cropsTable[cropName]["samples"] += crop[
-                    "fieldtrial__samples_per_replica"]
-            else:
+            if cropName not in cropsTable:
                 cropsTable[cropName] = {"trials": [], "trialsCount": 0,
                                         "name": crop["name"],
                                         "id": crop["id"], "agents": set(),
                                         "strAgents": "", "samples": 0}
-                cropsTable[cropName]["trials"].append(
-                    {"name": titleTrial,
-                     "id": crop["fieldtrial__id"]})
-                cropsTable[cropName]["trialsCount"] += 1
-                plagueName = crop['fieldtrial__plague__name']
-                if plagueName and not ModelHelpers.isInUnknowns(plagueName):
-                    cropsTable[cropName]["agents"].add(plagueName)
-                cropsTable[cropName]["samples"] += crop[
-                    "fieldtrial__samples_per_replica"]
 
-                if 'fieldtrial__plague__name' in crop and\
-                   crop['fieldtrial__plague__name']:
-                    cropsTable[cropName]["agents"].add(
-                        crop['fieldtrial__plague__name'])
-                    cropsTable[cropName]["strAgents"] = ', '.join(
-                        cropsTable[cropName]["agents"])
+            cropsTable[cropName]["trials"].append(
+                {"name": titleTrial,
+                    "id": crop["fieldtrial__id"]})
+            cropsTable[cropName]["trialsCount"] += 1
+
+            plagueName = None
+            if 'fieldtrial__plague__name' in crop and\
+               crop['fieldtrial__plague__name']:
+                plagueName = crop['fieldtrial__plague__name']
+
+            if plagueName and not ModelHelpers.isInUnknowns(plagueName):
+                cropsTable[cropName]["agents"].add(plagueName)
+                cropsTable[cropName]["strAgents"] = ', '.join(
+                    cropsTable[cropName]["agents"])
+
+            cropsTable[cropName]["samples"] += crop[
+                "fieldtrial__samples_per_replica"]
+
         return cropsTable.values()
 
     def getRangeEfficacy(self, product):

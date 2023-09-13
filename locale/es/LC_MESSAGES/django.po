@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-12 14:06+0200\n"
+"POT-Creation-Date: 2023-09-14 00:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr "punto de rocío"
 #: baaswebapp/graphs.py:649
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:338
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:316
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -135,7 +135,7 @@ msgid "No items yet."
 msgstr "No hay artículos todavía."
 
 #: baaswebapp/templates/baaswebapp/baas_view_list.html:50
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:139
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:143
 msgid "results"
 msgstr "resumen resultados"
 
@@ -165,54 +165,60 @@ msgid "crops"
 msgstr "cultivos"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:24
+#, fuzzy
+#| msgid "trial list"
+msgid "trial details"
+msgstr "lista ensayos"
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:25
 msgid "Lab Trials"
 msgstr "Prueba de Laboratorio"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:30
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:31
 msgid "Add items"
 msgstr "Añadir elementos"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:35
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:36
 msgid "new trial"
 msgstr "nuevo ensayo"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:36
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:37
 msgid "new product"
 msgstr "nuevo producto"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:37
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:38
 msgid "new lab trial"
 msgstr "nuevo ensayo de Laboratorio"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:43
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:44
 msgid "Config"
 msgstr "Configuración"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:48
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:49
 msgid "Stats"
 msgstr "Estadísticas"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:49
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:50
 msgid "Correct thesis"
 msgstr "Corregir Tesis"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:50
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:51
 msgid "Configuration"
 msgstr "Configuración"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:56
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:57
 msgid "name, code, responsible"
 msgstr "Nombre, código, responsable"
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:57
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:58
 msgid "Search"
 msgstr "Buscar"
 
-#: baaswebapp/templates/baaswebapp/layout.html:51
+#: baaswebapp/templates/baaswebapp/layout.html:52
 msgid "Hello"
 msgstr "Hola"
 
-#: baaswebapp/templates/baaswebapp/layout.html:75
+#: baaswebapp/templates/baaswebapp/layout.html:76
 msgid "Welcome, please login"
 msgstr "Bienvenido, por favor inicie sesión"
 
@@ -226,7 +232,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: catalogue/templates/catalogue/product_list_header.html:3
-#: trialapp/filter_helpers.py:307
+#: trialapp/filter_helpers.py:51 trialapp/filter_helpers.py:318
 #: trialapp/templates/trialapp/trials_list_header.html:4
 msgid "product"
 msgstr "producto"
@@ -283,8 +289,8 @@ msgstr "*Rango de eficacia de todos los ensayos del producto"
 
 #: catalogue/templates/catalogue/product_show.html:87
 #: catalogue/templates/catalogue/product_show.html:149
-#: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:54
-#: trialapp/filter_helpers.py:309
+#: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:57
+#: trialapp/filter_helpers.py:320
 #: trialapp/templates/trialapp/plagues_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:81
 msgid "pest / disease"
@@ -316,8 +322,8 @@ msgid "Mixes"
 msgstr "Mezclas"
 
 #: catalogue/templates/catalogue/product_show.html:148
-#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:51
-#: trialapp/filter_helpers.py:308
+#: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:54
+#: trialapp/filter_helpers.py:319
 #: trialapp/templates/trialapp/crop_list_header.html:3
 #: trialapp/templates/trialapp/trial_conclusions.html:84
 msgid "crop"
@@ -351,7 +357,7 @@ msgstr "intervalo dias"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
-#: trialapp/fieldtrial_views.py:304
+#: trialapp/fieldtrial_views.py:254
 msgid "Fail on generating download"
 msgstr "Fallar en generar descargar"
 
@@ -369,139 +375,139 @@ msgstr "tipo"
 msgid "objective"
 msgstr ""
 
-#: trialapp/filter_helpers.py:310
+#: trialapp/filter_helpers.py:322
 msgid "Ungrouped"
 msgstr "No agrupar"
 
-#: trialapp/models.py:62 trialapp/models.py:108
+#: trialapp/models.py:55 trialapp/models.py:101
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
 
-#: trialapp/models.py:63 trialapp/models.py:109
+#: trialapp/models.py:56 trialapp/models.py:102
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
 
-#: trialapp/models.py:64
+#: trialapp/models.py:57
 msgid "BUNCH"
 msgstr "RACIMO"
 
-#: trialapp/models.py:65
+#: trialapp/models.py:58
 msgid "CLUSTR"
 msgstr "CLUSTR"
 
-#: trialapp/models.py:66
+#: trialapp/models.py:59
 msgid "FLOWER"
 msgstr "FLOR"
 
-#: trialapp/models.py:67
+#: trialapp/models.py:60
 msgid "FRUDAM"
 msgstr "FRUDAM"
 
-#: trialapp/models.py:68
+#: trialapp/models.py:61
 msgid "FRUIT"
 msgstr "FRUTA"
 
-#: trialapp/models.py:69
+#: trialapp/models.py:62
 msgid "FRUIT C"
 msgstr "FRUTA C"
 
-#: trialapp/models.py:70
+#: trialapp/models.py:63
 msgid "FRUIT P"
 msgstr "FRUTA P"
 
-#: trialapp/models.py:71
+#: trialapp/models.py:64
 msgid "FRUROT C"
 msgstr "FRUTA C"
 
-#: trialapp/models.py:72
+#: trialapp/models.py:65
 msgid "FRUSTO P"
 msgstr "FRUSTO P"
 
-#: trialapp/models.py:73
+#: trialapp/models.py:66
 msgid "LEAF"
 msgstr "HOJA"
 
-#: trialapp/models.py:74
+#: trialapp/models.py:67
 msgid "PLANT"
 msgstr "PLANTA"
 
-#: trialapp/models.py:75
+#: trialapp/models.py:68
 msgid "PLOT"
 msgstr "PARCELA"
 
-#: trialapp/models.py:76
+#: trialapp/models.py:69
 msgid "ROOT"
 msgstr "RAÍZ"
 
-#: trialapp/models.py:77
+#: trialapp/models.py:70
 msgid "SPOT"
 msgstr "LUGAR"
 
-#: trialapp/models.py:78
+#: trialapp/models.py:71
 msgid "STEMP"
 msgstr "tallo"
 
-#: trialapp/models.py:79 trialapp/models.py:83
+#: trialapp/models.py:72 trialapp/models.py:76
 msgid "UNDF"
 msgstr "Indefinido"
 
-#: trialapp/models.py:84
+#: trialapp/models.py:77
 msgid "Sandy Soil"
 msgstr "Suelo arenoso"
 
-#: trialapp/models.py:85
+#: trialapp/models.py:78
 msgid "Clay Soil"
 msgstr "Suelo arcilloso"
 
-#: trialapp/models.py:86
+#: trialapp/models.py:79
 msgid "Loamy Soil"
 msgstr "Suelo arcilloso"
 
-#: trialapp/models.py:87
+#: trialapp/models.py:80
 msgid "Organic Soil"
 msgstr "Suelo orgánico"
 
-#: trialapp/models.py:88
+#: trialapp/models.py:81
 msgid "Rocky Soil"
 msgstr "Suelo rocoso"
 
-#: trialapp/models.py:89
+#: trialapp/models.py:82
 msgid "Saline Soil"
 msgstr "Suelo salino"
 
-#: trialapp/models.py:90
+#: trialapp/models.py:83
 msgid "Alkaline Soil"
 msgstr "Suelo alcalino"
 
-#: trialapp/models.py:91
+#: trialapp/models.py:84
 msgid "Acidic Soil"
 msgstr "Suelo ácido"
 
-#: trialapp/models.py:92
+#: trialapp/models.py:85
 msgid "Peat Soil"
 msgstr "Tierra de turba"
 
-#: trialapp/models.py:93
+#: trialapp/models.py:86
 msgid "Lateritic Soil"
 msgstr "Suelo laterítico"
 
-#: trialapp/models.py:97
+#: trialapp/models.py:90
 msgid "Design Protocol"
 msgstr "Diseñando Protocolo"
 
-#: trialapp/models.py:98
+#: trialapp/models.py:91
 msgid "Approving Protocol"
 msgstr "Aprobando protocolo"
 
-#: trialapp/models.py:99
+#: trialapp/models.py:92
 msgid "In Progress"
 msgstr "En curso"
 
-#: trialapp/models.py:100
+#: trialapp/models.py:93
 msgid "Review Results"
 msgstr "Revisando Resultados"
 
-#: trialapp/models.py:101
+#: trialapp/models.py:94
 msgid "Done"
 msgstr "Finalizado"
 
@@ -517,6 +523,12 @@ msgstr "Periodo no definido"
 #: trialapp/templates/trialapp/btn_trials.html:6
 msgid "no trials"
 msgstr "no ensayos"
+
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:65
+#, fuzzy
+#| msgid "Search"
+msgid "search"
+msgstr "Buscar"
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:5
 msgid "Compared Treatments"
@@ -721,7 +733,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:384
+#: trialapp/trial_views.py:362
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -774,11 +786,15 @@ msgstr "datos"
 msgid "assessments"
 msgstr "evaluaciones"
 
-#: trialapp/templates/trialapp/trial_show.html:68
+#: trialapp/templates/trialapp/trial_show.html:69
 msgid "download trial"
 msgstr "Descargar ensayo"
 
-#: trialapp/templates/trialapp/trial_show.html:81
+#: trialapp/templates/trialapp/trial_show.html:78
+msgid "files"
+msgstr "archivos"
+
+#: trialapp/templates/trialapp/trial_show.html:90
 msgid "average efficacy"
 msgstr "eficacia media"
 
@@ -813,7 +829,7 @@ msgstr "No hay limitaciones en los permisos"
 msgid "Soil"
 msgstr "Suelo"
 
-#: trialapp/trial_views.py:385
+#: trialapp/trial_views.py:363
 msgid ""
 "Weather conditions cannot be determined because location or assessments info"
 " aremissing"
@@ -821,7 +837,7 @@ msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:433
+#: trialapp/trial_views.py:411
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -831,11 +847,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:710
+#: trialapp/trial_views.py:688
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:713
+#: trialapp/trial_views.py:691
 msgid " in "
 msgstr " en "
 

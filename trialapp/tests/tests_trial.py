@@ -71,6 +71,21 @@ class TrialViewsTest(TestCase):
                 self._assmts.append(self.addAssessment(id, currentDate))
                 currentDate += oneweek
 
+    def addApplication(self, currentDate):
+        appModel = TrialTestData.APPLICATION[0].copy()
+        appModel['app_date'] = currentDate.date()
+        appl = Application.objects.create(**appModel)
+        return appl
+
+    def createApplications(self, numApp=3):
+        self._assmts = []
+        oneweek = timedelta(days=7)
+        self._firstRateTypeUnitId = 2
+        currentDate = datetime(2022, 7, 1)
+        for aaI in range(numApp):
+            self._assmts.append(self.addApplication(currentDate))
+            currentDate += oneweek
+
     def createThesis(self):
         # Create Thesis & Data
         self._controlThesis = self.createThesisData(
@@ -110,17 +125,11 @@ class TrialViewsTest(TestCase):
             self._treatments[prod.id] = Treatment.objects.create(
                 name=prod.name, rate=33, rate_unit=unit, batch=batch)
 
-    def createApplications(self):
-        for ass in self._assmts:
-            Application.objects.create(
-                app_date=ass.assessment_date,
-                field_trial=self._trial,
-                bbch=ass.crop_stage_majority)
-
     def createObjects(self):
         self.createCatalogue()
         self.createAssmts()
         self.createThesis()
+        self.createApplications()
 
     def test_discoverKeyInfo(self):
 
