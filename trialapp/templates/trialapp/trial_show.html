@@ -61,12 +61,21 @@
         <li class="nav-item">
         <button class="nav-link txt-open-semibold-15 capitalize-first" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
         </li>
+
         {% if downloadable %}
             <li class="nav-item">
                 <a href="{% url 'download_pdf' trial.id %}" class="nav-link txt-brand txt-open-semibold-15 capitalize-first"
                     data-toggle="tooltip" data-placement="top" title='Download trial'>
                     <span class="material-symbols-outlined">file_download</span>{% trans "download trial" %}
                 </a>
+            </li>
+        {% endif %}
+        {% if edit_trial_perm %}
+            <li class="nav-item">
+                <a href="https://probelte.sharepoint.com/sites/BaaSArchive/Documentos%20compartidos/trials/{{fieldTrial.code}}" 
+                   class="nav-link txt-brand txt-open-semibold-15 capitalize-first" target="_blank"
+                   data-toggle="tooltip" data-placement="top" title='Trial documents'>
+                   <span class="material-symbols-outlined">folder</span>{% trans "files" %}</a>
             </li>
         {% endif %}
     </ul>
