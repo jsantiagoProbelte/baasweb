@@ -93,19 +93,6 @@ class ModelHelpers:
     def __str__(self):
         return self.getName()
 
-    @classmethod
-    def extractDistincValues(cls, results, tag_id, tag_name):
-        values = {}
-        for result in results:
-            found = result[tag_id]
-            name = result[tag_name]
-            if ModelHelpers.isInUnknowns(name):
-                continue
-            if found not in values:
-                values[found] = name
-        dimensionsDic = [{'value': id, 'name': values[id]} for id in values]
-        return dimensionsDic, list(values.keys())
-
 
 class RateTypeUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
