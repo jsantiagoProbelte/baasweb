@@ -307,7 +307,10 @@ class Abbott():
 
     @classmethod
     def do(cls, value, standard):
-        return round((value - standard) * 100 / standard, 2)
+        if standard != 0:
+            return round((value - standard) * 100 / standard, 2)
+        else:
+            return 0
 
     def __init__(self, standardNumber, values):
         # values is a dictionary of number of thesis and their values
