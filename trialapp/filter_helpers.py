@@ -147,6 +147,8 @@ class TrialFilterHelper:
                 q_name = Q()
                 q_name |= Q(name__icontains=paramId)
                 q_name |= Q(responsible__icontains=paramId)
+                q_name |= Q(plague__other__icontains=paramId)
+                q_name |= Q(plague__name__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
                 q_name |= Q(product__active_substance__icontains=paramId)
                 q_objects &= q_name
