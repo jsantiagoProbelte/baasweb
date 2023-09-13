@@ -1,5 +1,4 @@
 import datetime
-from django.db.models import Q
 from django.urls import reverse_lazy
 from django import forms
 from django.http import HttpResponseRedirect, FileResponse
@@ -13,76 +12,20 @@ from crispy_forms.bootstrap import FormActions
 from trialapp.models import FieldTrial, StatusTrial
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
-from trialapp.trial_views import TrialContent
-from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
-from trialapp.filter_helpers import TrialFilterExtended, TrialFilterHelper
+from trialapp.filter_helpers import TrialFilterExtended, DetailedTrialListView
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
     model = FieldTrial
-    paginate_by = 100  # if pagination is desired
+    paginate_by = 10
     login_url = '/login'
     filterset_class = TrialFilterExtended
     template_name = 'trialapp/fieldtrial_list.html'
 
-    def getAttrValue(self, label):
-        if label in self.request.GET:
-            if self.request.GET[label] != '':
-                return self.request.GET[label]
-        return None
-
-    def getList(self, filter):
-        objectList = FieldTrial.objects.filter(filter).order_by(
-            '-code', 'name')
-
-        new_list = []
-        for item in objectList:
-            new_list.append(
-                TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
-                             trial=item).showInTrialList())
-        return new_list
-
-    TAKEITASITIS = ['product__type_product', 'status_trial']
-
     def get_context_data(self, **kwargs):
-        resultPerPage = 5
-        if self.request.GET.get('page'):
-            page = self.request.GET.get('page')
-        else:
-            page = 1
-
-        paramsReplyTemplate = TrialFilterExtended.Meta.fields
-        q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
-        for paramIdName in paramsReplyTemplate:
-            paramId = self.getAttrValue(paramIdName)
-            if paramIdName == 'name' and paramId:
-                q_name = Q()
-                q_name |= Q(name__icontains=paramId)
-                q_name |= Q(responsible__icontains=paramId)
-                q_name |= Q(plague__other__icontains=paramId)
-                q_name |= Q(plague__name__icontains=paramId)
-                q_name |= Q(code__icontains=paramId)
-                q_objects &= q_name
-            elif paramIdName in TrialFilterHelper.TAKEITASITIS and paramId:
-                q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
-            elif paramId:
-                q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
-        new_list = []
-        orderBy = paramsReplyTemplate.copy()
-        orderBy.append('name')
-        filter = TrialFilterExtended(self.request.GET)
-        new_list = self.getList(q_objects)
-
-        paginator = Paginator(new_list, resultPerPage)
-
-        return {'object_list': paginator.get_page(page).object_list,
-                'titleList': '({}) Field trials'.format(len(new_list)),
-                'add_url': 'fieldtrial-add',
-                'show_status': True if self.request.user.is_staff else False,
-                'filter': filter,
-                'paginator': paginator,
-                'page': paginator.get_page(page)}
+        helperView = DetailedTrialListView(self.request)
+        return helperView.getTrials()
 
 
 class FieldTrialApi(LoginRequiredMixin, DetailView):

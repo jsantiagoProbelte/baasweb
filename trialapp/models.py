@@ -248,6 +248,15 @@ class FieldTrial(ModelHelpers, models.Model):
                 description += f' + {self.plague}'
         return description
 
+    @classmethod
+    def buildTitle(cls, code, crop, plague, location):
+        title = f'{code} - {crop}'
+        if plague and not ModelHelpers.isInUnknowns(plague):
+            title += f' + {plague}'
+        if location:
+            title += f' . {location}'
+        return title
+
     def getCultivation(self):
         cultivation = self.cultivation.name if self.cultivation else '-'
         cultivation += '<br>'

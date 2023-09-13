@@ -5,10 +5,7 @@ from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
 from trialapp.models import Crop, Plague, TreatmentThesis, FieldTrial
-from trialapp.data_models import ThesisData, DataModel, ReplicaData, \
-    Assessment
-from trialapp.filter_helpers import TrialFilterHelper, TrialFilterExtended
-from trialapp.trial_views import TrialContent
+from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from baaswebapp.graphs import GraphTrial
@@ -20,8 +17,6 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
-from trialapp.data_views import DataGraphFactory
-from django.core.paginator import Paginator
 from django.urls import reverse
 
 
@@ -41,55 +36,6 @@ class ProductFormLayout(FormHelper):
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
                 css_class="card-body-baas mt-2")))
-
-
-class TrialProductFilterHelper:
-    _attributes = None
-    _trialsByProduct = None
-    _currentFilter = None
-    _productId = None
-
-    def __init__(self, attributes, productId):
-        self.putInitVariables(productId=productId)
-        self.readAttributes(attributes)
-
-    def putInitVariables(self, **kwargs):
-        self._productId = kwargs["productId"]
-        self._attributes = {}
-
-    def readAttributes(self, attributes):
-        for key in attributes:
-            value = attributes.get(key, None)
-            if value:
-                self._attributes[key] = value
-
-    def getFieldTrialsByFilter(self, attributes):
-        new_list = []
-        trialsFiltered = []
-        if not self._trialsByProduct:
-            self._trialsByProduct = FieldTrial.objects.filter(
-                product_id=self._productId)
-
-        trialsFiltered = self._trialsByProduct
-        if attributes.get('crop'):
-            trialsFiltered = trialsFiltered.filter(crop=attributes.get('crop'))
-        if attributes.get('plague'):
-            trialsFiltered = trialsFiltered.filter(
-                plague=attributes.get('plague'))
-        if attributes.get('status_trial'):
-            trialsFiltered = trialsFiltered.filter(
-                status_trial=attributes.get('status_trial'))
-        if attributes.get('name'):
-            trialsFiltered = trialsFiltered.filter(
-                name__icontains=attributes.get('name'))
-
-        trialsFiltered = trialsFiltered.order_by('-code', 'name')
-
-        for item in trialsFiltered:
-            new_list.append(
-                TrialContent(item.id, TrialContent.ONLY_TRIAL_DATA,
-                             trial=item).showInTrialList())
-        return new_list
 
 
 class ProductForm(forms.ModelForm):
@@ -173,161 +119,31 @@ class ProductApi(LoginRequiredMixin, View):
                         level = GraphTrial.L_REPLICA
         return dimensions, crops, plagues, level
 
-    def calcularGraphs(self, product, tags, graphPerRow=2):
-        if 'show_data' not in tags:
-            return [], '', 'col-md-12'
-        dimensions, crops, plagues, level = self.identifyObjectFilter(tags)
-        classGroup = GraphTrial.classColGraphs(len(crops), graphPerRow)
-        if len(crops) == 0:
-            return [], 'Please select crop', classGroup
-
-        if len(dimensions) == 0:
-            # Use all available dimensions
-            dimensions = DataModel.dimensionsValues(product, as_array=False)
-
-        croplagues = []
-        for crop in crops:
-            if len(plagues) > 0:
-                for plague in plagues:
-                    croplagues.append([crop, plague])
-            else:
-                croplagues.append([crop, None])
-
-        graphs = []
-        notFound = ''
-
-        for dimension in dimensions:
-            graphDim = self.fetchData(product, dimension,
-                                      croplagues, graphPerRow,
-                                      level)
-            if len(graphDim['values']):
-                graphs.append(graphDim)
-            else:
-                notFound += dimension.getName() + ', '
-        if len(notFound) > 0:
-            textNotFound = '<div class="alert alert-warning" role="alert">'\
-                           'Data not found for ' + notFound + ' dimensions.'\
-                           '</div>'
-            graphs.append(
-                {'name': 'Not Found',
-                 'values': [[{'name': 'Not Found', 'graph': textNotFound}]]})
-        return graphs, '', classGroup
-
-    def fetchData(self, product, dimension, croplagues,
-                  graphPerRow, level):
-        graphDim = {'name': "{}".format(dimension.getName()),
-                    'values': []}
-        lastRow = []
-        for croplague in croplagues:
-            # Get graph
-            crop = croplague[0]
-            plague = croplague[1]
-            nameItem = crop.name
-            if plague:
-                nameItem += '-' + plague.name
-
-            ratedParts = Assessment.getRatedPartsProduct(
-                product, crop, plague, dimension)
-
-            for ratedPart in ratedParts:
-                if ratedPart:
-                    nameItem += '-' + ratedPart
-                graph, fieldTrials = self.computeGraph(
-                    product, crop, plague, dimension, level, ratedPart)
-                if graph:
-                    item = {'name': nameItem, 'graph': graph,
-                            'trials': fieldTrials}
-                    lastRow.append(item)
-                    if len(lastRow) > graphPerRow:
-                        graphDim['values'].append(lastRow)
-                        lastRow = []
-
-        if len(lastRow) > 0:
-            graphDim['values'].append(lastRow)
-
-        return graphDim
-
-    def computeGraph(self, product, crop, plague,
-                     rateType, level, ratedPart):
-        assmnts, fieldTrials, thesis = DataModel.getDataPointsProduct(
-            product, crop, plague, rateType, ratedPart)
-
-        if assmnts:
-            assIds = [item.id for item in assmnts]
-        dataPoints = None
-        # Fetch Data
-        if level == GraphTrial.L_THESIS:
-            dataPoints = ThesisData.dataPointsAssess(assIds)
-        elif level == GraphTrial.L_REPLICA:
-            dataPoints = ReplicaData.dataPointsAssess(assIds)
-
-        if dataPoints:
-            graphT = DataGraphFactory(level, assmnts, dataPoints,
-                                      xAxis=GraphTrial.L_DAF,
-                                      references=thesis)
-            return graphT.draw(), fieldTrials
-        else:
-            return None, None
-
     def getProductTree(self, product):
         data = []
         for variant in ProductVariant.getItems(product):
-            variantItem = {'name': variant.name, 'id': variant.id,
-                           'batches': []}
-            for batch in Batch.objects.filter(
-                    product_variant=variant).order_by('name'):
-                batchItem = {'name': batch.name,
-                             'id': batch.id, 'treatments': []}
-                for treatment in Treatment.objects.filter(
-                                 batch=batch).order_by('name', 'rate'):
-                    batchItem['treatments'].append(
-                        {'name': treatment.getName(), 'id': treatment.id})
-                variantItem['batches'].append(batchItem)
+            variantItem = {'name': variant.name, 'id': variant.id}
             data.append(variantItem)
         return data
-
-    def filterData(self, filterValues, product):
-        filterData = []
-        titleGraph = ''
-        for tag in ProductApi.FILTER_DATA:
-            current = filterValues.get(tag, '')
-            currentValue = ''
-            values = None
-            if tag == ProductApi.TAG_CROPS:
-                values = DataModel.getCrops(product)
-                if current != '':
-                    currentValue = Crop.objects.get(id=current).getName()
-            elif tag == ProductApi.TAG_PLAGUES:
-                values = DataModel.getPlagues(product)
-                if current != '':
-                    currentValue = Plague.objects.get(id=current).getName()
-            elif tag == ProductApi.TAG_DIMENSIONS:
-                values = DataModel.dimensionsValues(product)
-                if current != '':
-                    currentValue = RateTypeUnit.objects.get(
-                        id=current).getName()
-            if values:
-                filterData.append({
-                    'name': tag,
-                    'current': int(current) if current != '' else '',
-                    'values': values})
-            if currentValue != '':
-                titleGraph += currentValue + ' - '
-
-        return filterData, titleGraph
 
     def get_crop_table_data(self, id):
         crops = Crop.objects.filter(fieldtrial__product_id=id).values(
             "id", "name", "fieldtrial__name", "fieldtrial__id",
-            "fieldtrial__plague__name", "fieldtrial__samples_per_replica"
+            "fieldtrial__plague__name", "fieldtrial__samples_per_replica",
+            "fieldtrial__location", "fieldtrial__code"
         )
         cropsTable = {}
 
         for crop in crops:
             cropName = crop["name"]
+            titleTrial = FieldTrial.buildTitle(
+                crop["fieldtrial__code"],
+                cropName,
+                crop["fieldtrial__plague__name"],
+                crop["fieldtrial__location"])
             if cropName in cropsTable:
                 cropsTable[cropName]["trials"].append(
-                    {"name": crop["fieldtrial__name"],
+                    {"name": titleTrial,
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
 
@@ -348,7 +164,7 @@ class ProductApi(LoginRequiredMixin, View):
                                         "id": crop["id"], "agents": set(),
                                         "strAgents": "", "samples": 0}
                 cropsTable[cropName]["trials"].append(
-                    {"name": crop["fieldtrial__name"],
+                    {"name": titleTrial,
                      "id": crop["fieldtrial__id"]})
                 cropsTable[cropName]["trialsCount"] += 1
                 plagueName = crop['fieldtrial__plague__name']
@@ -381,53 +197,25 @@ class ProductApi(LoginRequiredMixin, View):
         return range_efficacy
 
     def get(self, request, *args, **kwargs):
-        itemsPerPage = 5
-        if request.GET.get('activeTab'):
-            activeTab = request.GET.get('activeTab')
-        else:
-            activeTab = "1"
-        page = request.GET.get('page') if request.GET.get('page') else 1
-
         product_id = None
         product_id = kwargs['pk']
         template_name = 'catalogue/product_show.html'
         product = get_object_or_404(Product, pk=product_id)
-        filterData, titleGraph = self.filterData(request.GET, product)
-        graphs, errorgraphs, classGraphCol = self.calcularGraphs(product,
-                                                                 request.GET)
-        tpFilter = TrialProductFilterHelper(request.GET, product_id)
-        filterTrials = tpFilter.getFieldTrialsByFilter(request.GET)
-        paginator = Paginator(filterTrials, itemsPerPage)
-        # print(f"TRACE | ProductView | get | paginator ->
-        # {paginator.num_pages}")
 
-        currentPage = paginator.get_page(page)
-
-        numTrials = TrialFilterHelper.getCountFieldTrials(product)
-        filterTrial = TrialFilterExtended(request.GET)
-        range_efficacy = self.getRangeEfficacy(product)
+        helperView = DetailedTrialListView(
+            request, extra_params={'product': product_id})
+        context_trials = helperView.getTrials()
 
         return render(
             request, template_name, {
+                **context_trials,
                 'product': product,
-                'deleteProductForm': ProductDeleteView(),
-                'fieldtrials': numTrials,
-                'filterData': filterData,
-                'titleGraph': titleGraph,
-                'range_efficacy': range_efficacy,
-                'graphs': graphs,
+                'range_efficacy': self.getRangeEfficacy(product),
                 'variants': self.getProductTree(product),
-                'errors': errorgraphs,
-                'classGraphCol': classGraphCol,
                 'titleView': product.getName(),
                 'crops': self.get_crop_table_data(product_id),
                 'category': product.getCategory(product.type_product).label,
-                'trials': currentPage.object_list,
-                'paginator': paginator,
-                'filter': filterTrial,
-                'activeTab': activeTab,
-                'show_status': True if request.user.is_staff else False,
-                'page': currentPage})
+                'activeTab': request.GET.get('activeTab', "1")})
 
 
 ##############################

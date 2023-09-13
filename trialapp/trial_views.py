@@ -278,28 +278,6 @@ class TrialContent():
                 'prep_avg': self._trial.avg_precipitation,
                 'hum_avg': self._trial.avg_humidity}
 
-    def showInTrialList(self, getMeteoDataIfMissing=False):
-        meteoData = self.getMeteorology(
-            getMeteoDataIfMissing=getMeteoDataIfMissing)
-        return {
-            'code': self._trial.code,
-            **meteoData,
-            'description': self._trial.getDescription(),
-            'location': self._trial.getLocation(showNothing=True),
-            'goal': self._trial.objective,
-            'crop': self._trial.crop.name,
-            'best_efficacy': self._trial.getBestEfficacy(),
-            'product': self._trial.product.name,
-            'period': self._trial.getPeriod(),
-            'cultivation': self._trial.getCultivation(),
-            'status_trial': self._trial.get_status_trial_display(),
-            'objective': self._trial.objective.name,
-            'plague': self._trial.plague.name if self._trial.plague else '',
-            'latitude': self._trial.latitude,
-            'longitude': self._trial.longitude,
-            'id': self._trial.id,
-            'initiation_date': self._trial.initiation_date}
-
     def getAssGraphData(self, rateSets, ratedParts,
                         type_graph, showEfficacy=False,
                         xAxis=GraphTrial.L_DATE,

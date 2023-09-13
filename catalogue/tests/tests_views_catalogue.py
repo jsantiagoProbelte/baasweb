@@ -429,4 +429,3 @@ class ProductViewsTest(TestCase):
         api = ProductApi()
         tree = api.getProductTree(product)
         self.assertTrue(tree[0]['name'] == variant.name)
-        self.assertTrue('batches' in tree[0])
