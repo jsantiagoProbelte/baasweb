@@ -16,7 +16,7 @@ from trialapp.trial_helper import TrialFile, TrialModel, \
 from trialapp.trial_views import TrialContent
 from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
-from trialapp.filter_helpers import TrialFilterExtended
+from trialapp.filter_helpers import TrialFilterExtended, TrialFilterHelper
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
@@ -43,6 +43,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                              trial=item).showInTrialList())
         return new_list
 
+    TAKEITASITIS = ['product__type_product', 'status_trial']
+
     def get_context_data(self, **kwargs):
         resultPerPage = 5
         if self.request.GET.get('page'):
@@ -62,6 +64,8 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
                 q_name |= Q(plague__name__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
                 q_objects &= q_name
+            elif paramIdName in TrialFilterHelper.TAKEITASITIS and paramId:
+                q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
         new_list = []
