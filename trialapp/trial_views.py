@@ -135,7 +135,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         dataTrial = TrialModel.prepareDataItems(trial)
         dataTrial['Assessments'] = [
-            {'id': item.id, 'name': item.getUnitPartTitle(),
+            {'id': item.id, 'name': item.name, 'unit': item.getUnitPartTitle(),
              'date': item.assessment_date}
             for item in assessments]
         other_trials = FieldTrial.objects.filter(product=trial.product).count()
