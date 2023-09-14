@@ -3,7 +3,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from trialapp.models import FieldTrial
 from baaswebapp.baas_helpers import BaaSHelpers
-from baaswebapp.graphs import GraphStat
+from baaswebapp.graphs import GraphStat, PieGraph
+from django.utils.translation import gettext_lazy as _
 
 
 class StatsDataApi(APIView):
@@ -104,6 +105,12 @@ class StatsDataApi(APIView):
                   self.generateDataDimension('product', 'Products')],
                  [self.generateDataDimension('crop', 'Crops'),
                   self.generateDataDimension('plague', 'Pests & Diseases')]]
-
-        data = {'stats': stats, 'totalTrials': totalTrials}
+        publics = FieldTrial.objects.filter(
+            public=True, trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL).count()
+        favorables = FieldTrial.objects.filter(
+            favorable=True, trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL).count()
+        publicGraph = PieGraph.draw(publics, 'Public', totalTrials)
+        favorGraph = PieGraph.draw(favorables, 'Favorable', totalTrials)
+        data = {'stats': stats, 'totalTrials': totalTrials,
+                'publicGraph': publicGraph, 'favorGraph': favorGraph}
         return render(request, StatsDataApi.TEMPLATE, data)

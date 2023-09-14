@@ -784,50 +784,37 @@ class ProductCategoryGraph:
 class PieGraph:
 
     @staticmethod
-    def draw(dictValues, bios=3,
-             title_text=None, showLegend=True,
+    def draw(keyValue, label, totals,
+             title_text=None, showLegend=False,
              yaxis_title='trials', xaxis_title='Trials'):
 
-        colors = []
-        values = []
-        labels = []
-        totals = 0
-        for key in dictValues:
-            value = dictValues[key]['value']
-            color = dictValues[key]['color']
-            key = key if key else 'Undefined'
-            totals += value
-            values.append(value)
-            colors.append(color)
-            labels.append(f'{value} {key}')
-
         trace = go.Pie(
-            labels=[' ', f'{bios} Bio'],
-            values=[totals-bios, bios],
+            labels=[' ', f'{keyValue} {label}'],
+            values=[totals-keyValue, keyValue],
             marker_colors=[COLOR_bs_white, COLOR_bio],
             textinfo='none',  # Do not display labels on the chart
             hoverinfo='label',
-            hole=0.8)
+            hole=0.85)
 
         # Create the figure
         figure = go.Figure(data=[trace])
 
         annotations = [
-            dict(text='trials',
-                 x=0.5, y=0.3, font_size=20,
+            dict(text=label,
+                 x=0.5, y=0.25, font_size=20,
                  font_color='grey',
                  showarrow=False),
-            dict(text=f'{totals}',
-                 x=0.5, y=0.5, font_size=64,
+            dict(text=f'{keyValue}',
+                 x=0.5, y=0.8, font_size=30,
                  showarrow=False)]
 
         figure.update_layout(
             annotations=annotations,
-            paper_bgcolor=COLOR_bg_color_cards,
+            paper_bgcolor='#F7F7F7',
             title_font_color=COLOR_TEXT,
-            plot_bgcolor=COLOR_bg_color_cards,
+            plot_bgcolor='#F7F7F7',
             font_color=COLOR_TEXT,
-            font_size=24,
+            font_size=12,
             title_text=title_text,
             showlegend=showLegend,
             margin=dict(
@@ -843,6 +830,7 @@ class PieGraph:
                 y=0,
                 xanchor="left",
                 x=0),
+            height=150,
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
         figure.update_traces(textfont_size=20)

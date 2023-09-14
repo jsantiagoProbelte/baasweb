@@ -5,17 +5,18 @@
 <div class="alert alert-primary" role="alert">{{errors}}</div>
 {% endif %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 center-items-vertical">
         <p class="txt-encode-25-700">Stats data
-            <span class="txt-encode-24 text-muted">{{totalTrials}} total trials</span></p>
+            <span class="text-muted ms-4">{{totalTrials}} total trials</span></p>
     </div>
     <div class="col-md-6">
-        <div class="card no-border mb-3">
+        <div class="card no-border baas-body mb-3">
             <div class="row">
                 <div class="col-md-6">
-                    
+                    {{publicGraph|safe}}
                 </div>
                 <div class="col-md-6">
+                    {{favorGraph|safe}}
                 </div>
             </div>
         </div>
