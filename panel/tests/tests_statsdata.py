@@ -4,7 +4,7 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 from panel.statsdata import StatsDataApi
 from panel.quality_panel import ThesisPanelApi
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from catalogue.models import Product, ProductVariant, Batch, Treatment, \
     RateUnit
 

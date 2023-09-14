@@ -37,9 +37,9 @@
     {% endif %}
     {% trans "trial list"%}</button>
   </li>
-  <li id="download-link">
+  <!-- <li id="download-link">
     <a href="#" class="baas-link"><span class="boostrap-icon">&#xF30A;</span> {% trans "Download Product Info"%}</a>
-  </li>
+  </li> -->
 </ul>
 
 <div class="tab-content">
@@ -191,7 +191,7 @@
   {% else %}
   <div class="tab-pane fade" id="trials" role="tabpanel" aria-labelledby="trials-tab">
   {% endif %}
-    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter object_list=trials %}
+    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter trial_list=trial_list %}
   </div>
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Application
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.application_views import\
     ApplicationCreateView, ApplicationUpdateView, ApplicationApi, \
     ApplicationDeleteView, ApplicationListView

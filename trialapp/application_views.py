@@ -12,7 +12,6 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.trial_helper import MyDateInput
 from trialapp.trial_helper import TrialPermission
 
 
@@ -56,7 +55,11 @@ class ApplicationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ApplicationForm, self).__init__(*args, **kwargs)
         self.fields['app_date'].label = "Application date"
-        self.fields['app_date'].widget = MyDateInput()
+        self.fields['app_date'].widget = forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'class': 'form-control',
+                   'type': 'date'})
+        self.fields['app_date'].show_hidden_initial = True
         self.fields['comment'].required = False
         self.fields['bbch'].label = "Crop Stage Majority BBCH"
         self.fields['comment'].widget = forms.Textarea(attrs={'rows': 5})

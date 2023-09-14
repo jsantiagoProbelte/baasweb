@@ -5,26 +5,21 @@
     {{title}}
     <span class="text-muted">{{subtitle}}</span>
     <span><div class="btn-group ms-2" role="group">
-        {% if edit_href and edit_data%}
-        <a href="{% url edit_href item.id %}" class="btn btn-secondary btn-sm fs-3 "
+        {% if edit_href and edit_trial_perm%}
+        <a href="{% url edit_href item.id %}" class="btn btn-primary btn-sm fs-3 "
                 data-toggle="tooltip" data-placement="top" title='Edit item'>&#10000;</a>
         {% endif %}
-        {% if new_href and add_data%}
+        {% if new_href and edit_trial_perm%}
         <a href="{% url new_href %}" class="btn btn-info btn-sm fs-1"
                 data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
         {% endif %}
         
-        {% if new_href_id and add_data%}
+        {% if new_href_id and edit_trial_perm%}
         <a href="{% url new_href_id refId %}" class="btn btn-box-baas btn-sm"
             data-toggle="tooltip" data-placement="top" title='Create new item'>
             <span class="material-symbols-outlined" >add</span></a>
         {% endif %}
-        {% if download_url %}
-        <a href="{% url download_url item.id %}" class="btn btn-box-baas btn-sm fs-4"
-            data-toggle="tooltip" data-placement="top" title='Download new item'>
-            <span class="material-symbols-outlined" >file_download</span></a>
-        {% endif %}
-        {% if delete_url and add_data%}
+        {% if delete_url and edit_trial_perm%}
         <a href="{% url delete_url item.id %}" class="btn btn-warning btn-sm fs-3"
             data-toggle="tooltip" data-placement="top" title='Delete new item'>
             <span class="material-symbols-outlined" >delete</span></a>

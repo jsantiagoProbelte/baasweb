@@ -1,5 +1,5 @@
 <div class="card no-border mb-3" >
-    <div class="card-header-baas h4">
+    <div class="card-header-baas-trial">
       {% if note %}
       <span class='badge bg-light ms-2'>{{note}}</span>
       {% endif %}
@@ -19,7 +19,7 @@
     </div>
     <div class="{{classColumn}}">
       {% for data in dataItems %}
-        <div class="card">
+        <div>
           {% if data.link %}
             {% include "baaswebapp/item_list_template.html" with field=data.name value=data.value itemLink=data.link itemId=data.id%}
           {% else %}

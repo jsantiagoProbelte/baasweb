@@ -2,18 +2,17 @@ from django.test import Client
 from django.contrib import auth
 from baaswebapp.models import Weather
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Replica
+from trialapp.models import FieldTrial, Thesis, Replica, StatusTrial
 from trialapp.data_models import ReplicaData, Assessment, ThesisData
 from rest_framework.test import APIRequestFactory
 
 
 # Create your tests here.
 class TrialTestData:
-
     TRIALS = [{
             'name': 'fieldTrial 666',
             'trial_type': 1,
-            'trial_status': 1,
+            'status_trial': StatusTrial.PROTOCOL,
             'objective': 1,
             'responsible': 'Waldo',
             'product': 1,
@@ -203,10 +202,21 @@ class DataGenerator:
                         value=assData[j][0])
 
 
+class UserStub:
+    username = None
+    is_superuser = None
+    is_staff = None
+
+    def __init__(self, name, superUser, is_staff):
+        self.username = name
+        self.is_superuser = superUser
+        self.is_staff = is_staff
+
+
 class ApiRequestHelperTest(APIRequestFactory):
 
     PASSWORD = 'BaaSisAwesome'
-    USER = 'pepe'
+    USER = 'Waldo'
     _user = None
 
     def __init__(self):

@@ -1,8 +1,9 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Application, Replica
+from trialapp.models import FieldTrial, Thesis, Application, Replica, \
+    StatusTrial
 from trialapp.data_models import Assessment, ReplicaData
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.fieldtrial_views import FieldTrialCreateView, FieldTrialApi, \
     FieldTrialUpdateView, FieldTrialListView, FieldTrialDeleteView, \
     DownloadTrial
@@ -147,6 +148,12 @@ class FieldTrialViewsTest(TestCase):
         PdfTrial(trial).produce()
         trialFile = './{}_trial.pdf'.format(trial.code)
         self.assertTrue(os.path.exists(trialFile))
+
+        # Make it downladoble
+        trial.favorable = True
+        trial.public = True
+        trial.status_trial = StatusTrial.DONE
+        trial.save()
 
         # Download it
         request = self._apiFactory.get('download_pdf')

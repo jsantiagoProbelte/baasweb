@@ -3,7 +3,7 @@ from baaswebapp.models import RateTypeUnit
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from trialapp.models import FieldTrial, Thesis, Replica
 from trialapp.data_models import Assessment, ThesisData, ReplicaData
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.assessment_views import\
     AssessmentUpdateView, AssessmentCreateView, \
     AssessmentApi, AssessmentListView, AssessmentDeleteView, \

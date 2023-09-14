@@ -105,6 +105,7 @@ class TrialDataApi(LoginRequiredMixin, DetailView):
         rows = []
         thesisName = ''
         rowspan = self._trial.replicas_per_thesis
+        rowNum = 0
         for replica in replicas:
             if replica.thesis_id != lastThesisId:
                 thesisName = replica.thesis.name
@@ -118,19 +119,23 @@ class TrialDataApi(LoginRequiredMixin, DetailView):
             plotPoints = ReplicaData.objects.filter(reference=replica)
             dataPoints = {point.assessment.id: point.value
                           for point in plotPoints}
-
+            columnNum = 0
             for ass in self._assessments:
                 value = dataPoints.get(ass.id, '')
                 values.append({
                     'value': value,
+                    'row': rowNum,
+                    'column': columnNum,
                     'item_id': DataModel.generateDataPointId(
                         GraphTrial.L_REPLICA, ass, replica)})
+                columnNum += 1
             rows.append(
                 {'thesis': thesisName,
                  'rowspan': thisRowspan,
                  'replica': replica.name,
                  'color': replica.thesis.number,
                  'values': values})
+            rowNum += 1
         return rows
 
 
@@ -257,7 +262,6 @@ class DataHelper:
         thesisPointsDict = self.referencePointsDict(thesisPoints,
                                                     'reference__number')
         thesisNumberDict, thesisList = self.thesisNumberDict()
-
         rows = []
         thesisValues = []
         efficacyData = {}
@@ -301,13 +305,16 @@ class DataHelper:
         rows = []
         lastThesis = None
 
+        rowNumber = 0
+        columnNumber = 0
         for replicaId in replicaList:
             value = ''
             if replicaId in replicaPointsDict:
                 value = replicaPointsDict[replicaId]['value']
             lastThesis = self.addReplicaInfo(
                 replicaNumberDict, value, replicaId, lastThesis,
-                snk, efficacyData, rows)
+                snk, efficacyData, rows, rowNumber, columnNumber)
+            rowNumber += 1
 
         return self.buildOutput(GraphTrial.L_REPLICA,
                                 replicaPoints,
@@ -316,7 +323,8 @@ class DataHelper:
                                 rows)
 
     def addReplicaInfo(self, replicaNumberDict, value, replicaId, lastThesis,
-                       snk, efficacyData, rows, sampleCols=None,
+                       snk, efficacyData, rows, rowNumber, columnNumber,
+                       sampleCols=None,
                        genReplicaId=True):
         replicaName = replicaNumberDict[replicaId].name
         thesisId = replicaNumberDict[replicaId].thesis_id
@@ -342,6 +350,8 @@ class DataHelper:
                  'value': value,
                  'item_id': rItemId,
                  'rowspan': span,
+                 'row': rowNumber,
+                 'column': columnNumber,
                  'replica': replicaName,
                  'color': thesisNumber,
                  'sampleCols': sampleCols})
@@ -391,6 +401,8 @@ class DataHelper:
         rows = []
         lastThesis = None
 
+        rowNumber = 0
+        columnNumber = 0
         for replicaId in replicaList:
             existingSamplesInReplica = {}
             if replicaId in replicaSampleDict:
@@ -413,8 +425,10 @@ class DataHelper:
 
             lastThesis = self.addReplicaInfo(
                 replicaNumberDict, rValue, replicaId, lastThesis,
-                snk, efficacyData, rows, sampleCols=sampleCols,
+                snk, efficacyData, rows, rowNumber, columnNumber,
+                sampleCols=sampleCols,
                 genReplicaId=genReplicaId)
+            rowNumber += 1
 
         return self.buildOutput(GraphTrial.L_SAMPLE,
                                 samplePoints,

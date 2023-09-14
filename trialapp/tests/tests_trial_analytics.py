@@ -1,6 +1,6 @@
 from django.test import TestCase
 from trialapp.trial_analytics import TrialAnalytics, SNK_Table, Abbott
-from trialapp.tests.tests_helpers import DataGenerator
+from baaswebapp.tests.tests_helpers import DataGenerator
 
 
 class TrialAnalyticsTest(TestCase):

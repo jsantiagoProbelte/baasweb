@@ -3,7 +3,8 @@ from baaswebapp.models import RateTypeUnit, PType
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from catalogue.models import Product, ProductVariant, RateUnit, \
     Batch, Treatment, DEFAULT
-from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis
+from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis, \
+    StatusTrial
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
 from catalogue.product_views import ProductApi, \
     ProductCreateView, ProductUpdateView, ProductDeleteView, \
@@ -13,7 +14,7 @@ from catalogue.product_views import ProductApi, \
     TreatmentDeleteView, TreatmentApi, BatchApi, \
     ProductVariantApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import ProductListView, BaaSView
 from django.utils.translation import gettext_lazy as _
 
@@ -25,7 +26,7 @@ class ProductViewsTest(TestCase):
     FIELDTRIALS = [{
         'name': 'fieldTrial 666',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -40,7 +41,7 @@ class ProductViewsTest(TestCase):
         {
         'name': 'fieldTrial 999',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 1,
@@ -55,7 +56,7 @@ class ProductViewsTest(TestCase):
         {
         'name': 'fieldTrial 333',
         'trial_type': 1,
-        'trial_status': 1,
+        'status_trial': StatusTrial.PROTOCOL,
         'objective': 1,
         'responsible': 'Waldo',
         'product': 2,
@@ -428,4 +429,3 @@ class ProductViewsTest(TestCase):
         api = ProductApi()
         tree = api.getProductTree(product)
         self.assertTrue(tree[0]['name'] == variant.name)
-        self.assertTrue('batches' in tree[0])

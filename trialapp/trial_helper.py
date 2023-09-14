@@ -6,21 +6,14 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 from trialapp.models import\
     FieldTrial, Thesis, Objective, Replica, \
-    Product, ApplicationMode, TrialStatus, TrialType, Crop, CropVariety, \
+    Product, ApplicationMode, StatusTrial, TrialType, Crop, CropVariety, \
     Plague, CultivationMethod, Irrigation, Application, SoilType
 from trialapp.data_models import ReplicaData
 from catalogue.models import RateUnit
 from django import forms
 from io import BytesIO
 from django.utils.translation import gettext_lazy as _
-
-
-class MyDateInput(forms.widgets.DateInput):
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        # use the browser's HTML date picker (no css/javascript required)
-        context['widget']['type'] = 'date'
-        return context
+from django.shortcuts import render
 
 
 class TrialModel():
@@ -42,14 +35,18 @@ class TrialModel():
         'Status': {
             'trial_type': {'label': 'Type', 'required': True, 'type': T_N,
                            'cls': TrialType},
-            'trial_status': {'label': 'Status', 'required': True, 'type': T_N,
-                             'cls': TrialStatus},
-            'responsible': {'label': 'Responsible', 'required': True,
-                            'type': T_N},
             'initiation_date': {'label': 'Started', 'required': True,
                                 'type': T_D},
+            'public': {'label': "public",
+                       'required': False, 'type': T_N},
+            'status_trial': {'label': 'Status', 'required': True, 'type': T_N,
+                             'cls': StatusTrial},
             'completion_date': {'label': 'Completed by', 'required': False,
                                 'type': T_D},
+            'favorable': {'label': "Favorable",
+                          'required': False, 'type': T_N},
+            'responsible': {'label': 'Responsible', 'required': True,
+                            'type': T_N},
         },
         'Report': {
             'description': {
@@ -60,7 +57,8 @@ class TrialModel():
                 'required': False, 'type': T_T, 'rows': 5},
             'conclusion': {
                 'label': "Conclusion", 'required': False,
-                'type': T_T, 'rows': 10}
+                'type': T_T, 'rows': 10},
+
         },
         'Cultive': {
             'crop_variety': {'label': 'Crop Variety', 'required': False,
@@ -100,17 +98,18 @@ class TrialModel():
                                     'type': T_I},
             'samples_per_replica': {'label': "# samples/replica ",
                                     'required': False, 'type': T_I},
-            'distance_between_plants': {'label': "Plants separation",
-                                        'required': False, 'type': T_N},
-            'distance_between_rows': {'label': "Rows separation",
-                                      'required': False, 'type': T_N},
             'number_rows': {'label': "# rows", 'required': False, 'type': T_I},
-            'lenght_row': {'label': "Row length (m)", 'required': False,
-                           'type': T_N},
-            'net_surface': {'label': "Net area plot (m2)", 'required': False,
-                            'type': T_N},
             'gross_surface': {'label': "Gross area plot (m2)",
                               'required': False, 'type': T_N},
+            'net_surface': {'label': "Net area plot (m2)", 'required': False,
+                            'type': T_N},
+            'lenght_row': {'label': "Row length (m)", 'required': False,
+                           'type': T_N},
+            'distance_between_rows': {'label': "Rows separation",
+                                      'required': False, 'type': T_N},
+            'distance_between_plants': {'label': "Plants separation",
+                                        'required': False, 'type': T_N},
+
         },
         'Location': {
             'contact': {'label': "Farmer", 'required': False, 'type': T_N},
@@ -127,20 +126,21 @@ class TrialModel():
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'code',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'replicas_per_thesis',
+            'status_trial', 'contact', 'replicas_per_thesis',
             'samples_per_replica')
 
     FIELD_TRIAL_FIELDS = (
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'ref_to_eppo', 'ref_to_criteria', 'comments_criteria',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'trial_status', 'contact', 'cro', 'location', 'blocks',
+            'status_trial', 'contact', 'cro', 'location', 'blocks',
             'replicas_per_thesis', 'samples_per_replica',
             'distance_between_plants', 'distance_between_rows', 'number_rows',
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
-            'latitude', 'application_volume_unit', 'conclusion', 'soil')
+            'latitude', 'application_volume_unit', 'conclusion', 'soil',
+            'favorable', 'public')
 
     @classmethod
     def applyModel(cls, trialForm):
@@ -153,7 +153,11 @@ class TrialModel():
                 trialForm.fields[field].required = fieldData['required']
                 typeField = fieldData['type']
                 if typeField == TrialModel.T_D:
-                    trialForm.fields[field].widget = MyDateInput()
+                    trialForm.fields[field].widget = forms.DateInput(
+                        format=('%Y-%m-%d'),
+                        attrs={'class': 'form-control',
+                               'type': 'date'})
+                    trialForm.fields[field].show_hidden_initial = True
                 elif typeField == TrialModel.T_I:
                     trialForm.fields[field].widget = forms.NumberInput()
                 elif typeField == TrialModel.T_T:
@@ -175,10 +179,28 @@ class TrialModel():
             trialForm.fields['irrigation'].queryset = Irrigation.getObjects()
 
     @classmethod
-    def prepareDataItems(cls, fieldTrial, asArray=False):
-        trialDict = fieldTrial.__dict__
+    def showValue(cls, field, trial, trialDict, group):
+        value = '?'
+        if field == 'status_trial':
+            value = trial.get_status_trial_display()
+        elif field == 'soil':
+            value = trial.get_soil_display()
+        elif field in trialDict:
+            value = trialDict[field]
+        else:
+            field_id = field + '_id'
+            if field_id in trialDict:
+                theId = trialDict[field_id]
+                if theId is not None:
+                    model = TrialModel.FIELDS[group][field]['cls']
+                    value = model.objects.get(id=theId)
+        return value if value is not None else '?'
+
+    @classmethod
+    def prepareDataItems(cls, trial, asArray=False):
+        trialDict = trial.__dict__
         trialData = {}
-        if fieldTrial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
+        if trial.trial_meta == FieldTrial.TrialMeta.LAB_TRIAL:
             modelFields = TrialModel.LAB_TRIAL_FIELDS
         else:
             modelFields = TrialModel.FIELD_TRIAL_FIELDS
@@ -192,19 +214,7 @@ class TrialModel():
                 if field not in modelFields:
                     continue
                 label = TrialModel.FIELDS[group][field]['label']
-                value = '?'
-                if field in trialDict:
-                    value = trialDict[field]
-                else:
-                    field_id = field + '_id'
-                    if field_id not in trialDict:
-                        continue
-                    else:
-                        theId = trialDict[field_id]
-                        if theId is not None:
-                            model = TrialModel.FIELDS[group][field]['cls']
-                            value = model.objects.get(id=theId)
-                showValue = value if value is not None else '?'
+                showValue = cls.showValue(field, trial, trialDict, group)
                 if asArray:
                     trialData[group][label] = showValue
                 else:
@@ -553,38 +563,132 @@ class TrialPermission:
     _trial = None
     _user = None
     _permissions = {}
-    EDIT = 'edit_data'
-    ADD_DATA = 'add_data'
+    _type = None
+    _owner = False
+    _status = None
+    _isDone = None
+
+    # --- Permissions
+    # Can change any status and data
+    EDITABLE = 'edit_trial_perm'
+    # Can access trial
+    READIBLE = 'read_trial'
+    # Can find trial and see internal values (status, owner)
+    DISCOVERABLE = 'discover_trial'
+    # Can download status
+    DOWNLOADABLE = 'download_trial'
+
+    # --- Type users
+    EXTERNAL = 'ext'
+    INTERNAL = 'int'
+    ADMIN = 'adm'
 
     def __init__(self, trial, user):
         self._trial = trial
         self._user = user
+        self.getType()
+        if trial:
+            self.isOwner()
+            self.isDone()
+            self.setPermissions()
+
+    def getType(self):
+        self._type = TrialPermission.EXTERNAL
+        if self._user.is_superuser:
+            self._type = TrialPermission.ADMIN
+        elif self._user.is_staff:
+            self._type = TrialPermission.INTERNAL
+
+    def isOwner(self):
+        self._owner = self._trial.responsible == self._user.username
+
+    def isDone(self):
+        self._isDone = self._trial.status_trial == StatusTrial.DONE
+
+    def setPermissions(self):
         self._permissions = {
-            TrialPermission.EDIT: False,
-            TrialPermission.ADD_DATA: False}
-        self.canEditTrial()
-        self.canAddData()
+            TrialPermission.EDITABLE: False,
+            TrialPermission.READIBLE: False,
+            TrialPermission.DISCOVERABLE: False,
+            TrialPermission.DOWNLOADABLE: False}
+        if self.setDiscover():
+            if self.setRead():
+                self.setDownload()
+                self.setEdit()
 
-    def canEditTrial(self):
-        edit = False
-        if self._trial.responsible == self._user.username:
-            edit = True
-        elif self._user.is_superuser:
-            edit = True
-        if edit:
-            self._permissions[TrialPermission.EDIT] = edit
+    def canDiscover(self):
+        return self._permissions[TrialPermission.DISCOVERABLE]
 
-    def canAddData(self):
-        add_data = False
-        if self._trial.trial_status.name == TrialStatus.FINISHED:
-            return
-        elif self._trial.responsible == self._user.username:
-            add_data = True
-        elif self._user.is_superuser:
-            add_data = True
+    def setDiscover(self):
+        permit = False
+        if self._owner or self._type == TrialPermission.ADMIN or \
+           self._type == TrialPermission.INTERNAL:
+            permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._trial.public and self._isDone:
+                permit = True
+        self._permissions[TrialPermission.DISCOVERABLE] = permit
+        return permit
 
-        if add_data:
-            self._permissions[TrialPermission.ADD_DATA] = add_data
+    def canRead(self):
+        return self._permissions[TrialPermission.READIBLE]
+
+    def setRead(self):
+        permit = False
+        if self._owner or self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._type == TrialPermission.INTERNAL:
+            if self._isDone:
+                permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._isDone and self._trial.public:
+                permit = True
+        self._permissions[TrialPermission.READIBLE] = permit
+        return permit
+
+    def canDownload(self):
+        return self._permissions[TrialPermission.DOWNLOADABLE]
+
+    def setDownload(self):
+        permit = False
+        if self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._type == TrialPermission.INTERNAL:
+            if self._isDone and self._trial.favorable:
+                permit = True
+        elif self._type == TrialPermission.EXTERNAL:
+            if self._isDone and self._trial.favorable and self._trial.public:
+                permit = True
+        self._permissions[TrialPermission.DOWNLOADABLE] = permit
+        return permit
+
+    def canEdit(self):
+        return self._permissions[TrialPermission.EDITABLE]
+
+    def setEdit(self):
+        permit = False
+        if self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._owner and not self._isDone:
+            permit = True
+        self._permissions[TrialPermission.EDITABLE] = permit
+        return permit
 
     def getPermisions(self):
         return self._permissions
+
+    def getError(self):
+        if not self._permissions[TrialPermission.READIBLE] or \
+           not self._permissions[TrialPermission.DISCOVERABLE]:
+            return _('You do not have permission to access this trial')
+        elif not self._permissions[TrialPermission.DOWNLOADABLE]:
+            return _('You do not have permission to download this trial')
+        elif not self._permissions[TrialPermission.EDITABLE]:
+            return _('You do not have permission to edit this trial')
+        return _('No limitations on permissions')
+
+    def renderError(self, request, error=None):
+        if error is None:
+            error = self.getError()
+        return render(request, 'baaswebapp/show_permission_error.html',
+                      {'error': error})

@@ -26,7 +26,8 @@ class TrialApi(LoginRequiredMixin, DetailView):
         assessments = Assessment.objects.filter(field_trial_id=fieldtrial.id)
         applications = Application.objects.filter(field_trial_id=fieldtrial.id)
 
-        schedule_list = ScheduleAdapter.adapt_list(assessments) + ScheduleAdapter.adapt_list(applications)
+        schedule_list = ScheduleAdapter.adapt_list(assessments) + \
+            ScheduleAdapter.adapt_list(applications)
         schedule_list.sort(key=lambda schedule_line: schedule_line.date)
 
         return schedule_list
@@ -75,7 +76,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
                 active_substance=F('field_trial__product__active_substance'),
                 vendor_name=F('field_trial__product__vendor__name')
             )
-
         counter = 1
         thesisWithColor = []
         controlThesis = fieldtrial.control_thesis
@@ -89,7 +89,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
             thesisWithColor.append({'idColor': idColor,
                                     'thesis': thesis})
             counter += 1
-
         return thesisWithColor
 
     def getAssesmentsGroupedByPartTreated(self, trial):
@@ -120,7 +119,16 @@ class TrialApi(LoginRequiredMixin, DetailView):
         trial = self.get_object()
         # Add additional data to the context
         trialPermision = TrialPermission(trial,
-                                         self.request.user).getPermisions()
+                                         self.request.user)
+        tpermisions = trialPermision.getPermisions()
+        if not trialPermision.canRead():
+            return {**tpermisions,
+                    'trial': trial,
+                    'description': trial.getDescription,
+                    'location': trial.getLocation(),
+                    'period': trial.getPeriod(),
+                    'error': trialPermision.getError()}
+
         allThesis, thesisDisplay = Thesis.getObjectsDisplay(trial)
         assessments = Assessment.getObjects(trial)
 
@@ -162,7 +170,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             showData['rowsReplicas'] = LayoutTrial.showLayout(trial,
                                                               None,
                                                               allThesis)
-        return {**context, **showData, **trialPermision, **keyTrialData}
+        return {**context, **showData, **tpermisions, **keyTrialData}
 
 
 class ScheduleAdapter():
@@ -200,7 +208,8 @@ class ScheduleAdapter():
 
     def _check_is_adapted(self):
         if not self.isAdapted:
-            raise ValueError("The object entered isn't avalaible for Schedule.")
+            raise ValueError(
+                "The object entered isn't avalaible for Schedule.")
 
 
 class TrialContent():
@@ -270,29 +279,6 @@ class TrialContent():
                 'temp_avg': self._trial.avg_temperature,
                 'prep_avg': self._trial.avg_precipitation,
                 'hum_avg': self._trial.avg_humidity}
-
-    def showInTrialList(self, getMeteoDataIfMissing=False):
-        meteoData = self.getMeteorology(
-            getMeteoDataIfMissing=getMeteoDataIfMissing)
-        return {
-            'code': self._trial.code,
-            **meteoData,
-            'description': self._trial.getDescription(),
-            'location': self._trial.getLocation(showNothing=True),
-            'goal': self._trial.objective,
-            'crop': self._trial.crop.name,
-            'best_efficacy': self._trial.getBestEfficacy(),
-            'product': self._trial.product.name,
-            'period': self._trial.getPeriod(),
-            'cultivation': self._trial.getCultivation(),
-            'trial_status': self._trial.trial_status
-            if self._trial.trial_status else '',
-            'objective': self._trial.objective.name,
-            'plague': self._trial.plague.name if self._trial.plague else '',
-            'latitude': self._trial.latitude,
-            'longitude': self._trial.longitude,
-            'id': self._trial.id,
-            'initiation_date': self._trial.initiation_date}
 
     def getAssGraphData(self, rateSets, ratedParts,
                         type_graph, showEfficacy=False,

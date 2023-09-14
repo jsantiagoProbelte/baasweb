@@ -1,7 +1,9 @@
 {% extends "baaswebapp/layout.html" %}
-
+{% block topbaastitle %}
+<div class="vertical-line-right txt-presicav-18 vertical-line-left"><a class="navbar-brand txt-brand h1 ms-4 fs-1" href="{% url 'home' %}">BaaS Copilot</a></div>
+{% endblock %}
 {% block content %}
-    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter object_list=object_list %}
+    {% include "trialapp/detail_fieldtrials_list.html" with filter=filter %}
 {% endblock %}
 
 {% block scripts %}

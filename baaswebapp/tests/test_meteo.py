@@ -4,7 +4,7 @@ from baaswebapp.meteo_api import MeteoApi
 from datetime import datetime
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from trialapp.models import FieldTrial
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 
 
 class TestAssessment():

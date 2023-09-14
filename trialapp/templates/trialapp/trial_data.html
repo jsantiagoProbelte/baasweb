@@ -1,14 +1,14 @@
 {% extends "baaswebapp/layout.html" %}
 
 {% load crispy_forms_tags %}
-
+{% load custom_filter_templates %}
 {% block content %}
 
 {% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
 
 <div class="card card-body-baas mt-2">
   <div class="table-container-long">
-  <table class="data-table-longer table table-borderless">
+  <table class="data-table-longer table table-borderless" id="trial-data">
     <thead>
       <tr><th></th><th class="text-right">Assessment</th>
         {% for itemId in header.ids %}
@@ -26,14 +26,14 @@
     </thead>
     <tbody>
     {% for dataRow in dataRows %}
-        <tr>
+        <tr class="border-custom-{{dataRow.color}}">
             {% if dataRow.rowspan > 0 %}
-              <td class="bg-custom-{{dataRow.color}}" rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
+              <td rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
             {% endif %}
-            <td class="bg-custom-{{dataRow.color}} text-right">{{dataRow.replica}}</td>
+            <td class=" text-right">{{dataRow.replica}}</td>
         {% for dataPointValue in dataRow.values %}
-          <td class="bg-custom-{{dataRow.color}}">
-            {% if edit_data %}
+          <td id="cell-{{dataPointValue.row}}-{{dataPointValue.column}}">
+            {% if edit_trial_perm %}
               <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
                 class='form-data-input-template'  method="POST">
                 {% csrf_token %}
@@ -80,6 +80,11 @@ $('.assessment-input-form').on('blur', function(){
 $('.assessment-input-form').on('keypress', function(event) {
     var element = $(this);
     return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
+});
+
+
+$('#trial-data').on('paste', function(event){
+  return pasteData(event, setDataPointAPI);
 });
 </script>
 {% endblock %}

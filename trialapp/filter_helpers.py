@@ -1,7 +1,8 @@
 from django.db.models import Q, Count, Min, Max
 import django_filters
 from baaswebapp.models import Category, PType, ModelHelpers
-from trialapp.models import FieldTrial, Crop, Plague
+from trialapp.models import FieldTrial, Crop, Plague, StatusTrial, Objective, \
+    TrialType
 from catalogue.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
@@ -11,6 +12,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.paginator import Paginator
+from trialapp.trial_helper import TrialPermission
 
 
 class TrialFilter(django_filters.FilterSet):
@@ -31,10 +33,46 @@ class TrialFilter(django_filters.FilterSet):
         fields = ['crop', 'plague', 'product__type_product']
 
 
+class TrialFilterExtended(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    status_trial = django_filters.ChoiceFilter(
+        choices=StatusTrial.choices,
+        field_name='status_trial',
+        label='status',
+        empty_label=_('status').capitalize())
+    trial_type = django_filters.ModelChoiceFilter(
+        queryset=TrialType.objects.all().order_by('name'),
+        empty_label=_("type").capitalize())
+    objective = django_filters.ModelChoiceFilter(
+        queryset=Objective.objects.all().order_by('name'),
+        empty_label=_("objective").capitalize())
+    product = django_filters.ModelChoiceFilter(
+        queryset=Product.objects.all().order_by('name'),
+        empty_label=_("product").capitalize())
+    crop = django_filters.ModelChoiceFilter(
+        queryset=Crop.objects.all().order_by('name'),
+        empty_label=_("crop").capitalize())
+    plague = django_filters.ModelChoiceFilter(
+        queryset=Plague.objects.all().order_by('name'),
+        empty_label=_("pest / disease").capitalize())
+
+    class Meta:
+        model = FieldTrial
+        fields = ['name', 'status_trial', 'trial_type', 'objective',
+                  'crop', 'plague', 'product']
+
+
 class TrialFilterHelper:
     _attributes = None
     _trials = None
     _trialFilter = None
+    _permisions = None
+    _userName = None
+
+    PRODUCT = 'product'
+    CROP = 'crop'
+    PLAGUE = 'plague'
+    TRIALS = 'trials'
 
     KEY_PER_CLS = {Product: 'product_id',
                    Crop: 'crop_id',
@@ -45,6 +83,7 @@ class TrialFilterHelper:
         Category.ESTIMULANT: 'bg-estimulant',
         Category.CONTROL: 'bg-control',
         Category.UNKNOWN: 'bg-unknown'}
+
     COLOR_CODE = {
         'bg-nutritional': COLOR_nutritional,
         'bg-estimulant': COLOR_estimulant,
@@ -52,16 +91,21 @@ class TrialFilterHelper:
         'bg-unknown': COLOR_unknown}
 
     # Add self.request.GET as attributes
-    def __init__(self, attributes):
-        self.setTrialFilter(attributes)
+    def __init__(self, request, extra_attribute=None):
+        self.setTrialFilter(request.GET, extra_attribute)
+        self._permisions = TrialPermission(None, request.user)
+        self._userName = request.user.username
 
-    def setTrialFilter(self, attributes):
+    def setTrialFilter(self, attributes, extra_attribute=None):
         # Take of remove empty values
         self._attributes = {}
         for key in attributes:
             value = attributes.get(key, None)
             if value:
                 self._attributes[key] = value
+        if extra_attribute:
+            for key in extra_attribute:
+                self._attributes[key] = extra_attribute[key]
         self._trialFilter = TrialFilter(self._attributes)
 
     def getFilter(self):
@@ -92,8 +136,23 @@ class TrialFilterHelper:
     def filterTrials(self, filter):
         self._trials = FieldTrial.objects.filter(filter)
 
+    def addTrialPermisionsToFilter(self, q_objects):
+        q_discover = Q()
+        if self._permisions._type == TrialPermission.ADMIN:
+            pass
+        elif self._permisions._type == TrialPermission.INTERNAL:
+            q_discover |= Q(status_trial=StatusTrial.DONE)
+            q_discover |= Q(responsible=self._userName)
+        elif self._permisions._type == TrialPermission.EXTERNAL:
+            q_discover |= Q(public=True)
+            q_discover |= Q(responsible=self._userName)
+        return q_discover
+
+    TAKEITASITIS = ['product__type_product', 'status_trial']
+
     def prepareFilter(self, groupbyTag=None):
-        paramsReplyTemplate = TrialFilter.Meta.fields + ['name']
+        paramsReplyTemplate = TrialFilter.Meta.fields + ['name'] + \
+            TrialFilterExtended.Meta.fields
         q_objects = Q(trial_meta=FieldTrial.TrialMeta.FIELD_TRIAL)
         for paramIdName in paramsReplyTemplate:
             paramId = self.getAttrValue(paramIdName)
@@ -101,17 +160,22 @@ class TrialFilterHelper:
                 q_name = Q()
                 q_name |= Q(name__icontains=paramId)
                 q_name |= Q(responsible__icontains=paramId)
+                q_name |= Q(plague__other__icontains=paramId)
+                q_name |= Q(plague__name__icontains=paramId)
                 q_name |= Q(code__icontains=paramId)
                 q_name |= Q(product__active_substance__icontains=paramId)
                 q_objects &= q_name
-            elif paramIdName in ['product__type_product'] and paramId:
+            elif paramIdName in TrialFilterHelper.TAKEITASITIS and paramId:
                 q_objects &= Q(**({'{}'.format(paramIdName): paramId}))
             elif paramId:
                 q_objects &= Q(**({'{}__id'.format(paramIdName): paramId}))
-            elif groupbyTag == BaaSView.PLAGUE:
+            elif groupbyTag == TrialFilterHelper.PLAGUE:
                 # En este caso estamos en la vista de plagues, filtramos los
                 # ensayos que no referencien a plagues
                 q_objects &= ~Q(plague__name__in=ModelHelpers.THE_UNKNNOWNS)
+
+        # add restrictions based on type of user
+        q_objects &= self.addTrialPermisionsToFilter(q_objects)
         return q_objects
 
     def countTrials(self):
@@ -250,15 +314,12 @@ class BaaSView(LoginRequiredMixin, View):
     template_name = 'baaswebapp/baas_view_list.html'
     _fHelper = None
 
-    PRODUCT = 'product'
-    CROP = 'crop'
-    PLAGUE = 'plague'
-    TRIALS = 'trials'
     # value on select : (label on select , url )
-    GROUP_BY = {PRODUCT: (_('product'), 'product-list'),
-                CROP: (_('crop'), 'crop-list'),
-                PLAGUE: (_('pest / disease'), 'plagues-list'),
-                TRIALS: (_('Ungrouped'), 'trial-list')}
+    GROUP_BY = {TrialFilterHelper.PRODUCT: (_('product'), 'product-list'),
+                TrialFilterHelper.CROP: (_('crop'), 'crop-list'),
+                TrialFilterHelper.PLAGUE: (_('pest / disease'),
+                                           'plagues-list'),
+                TrialFilterHelper.TRIALS: (_('Ungrouped'), 'trial-list')}
 
     def prepareBar(self, itemInfo, itemId):
         counts = itemInfo.get(itemId, None)
@@ -284,12 +345,12 @@ class BaaSView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         groupbyTag = request.GET.get('groupby', None)
         if groupbyTag and groupbyTag != self._groupbyTag:
-            redirectTuple = BaaSView.GROUP_BY.get(groupbyTag,
-                                                  (0, BaaSView.PRODUCT))
+            redirectTuple = BaaSView.GROUP_BY.get(
+                groupbyTag, (0, TrialFilterHelper.PRODUCT))
             return redirect(reverse(redirectTuple[1]))
 
-        page = request.GET.get('page') if request.GET.get('page') else 1
-        self._fHelper = TrialFilterHelper(self.request.GET)
+        page = request.GET.get('page', 1)
+        self._fHelper = TrialFilterHelper(self.request)
         self._fHelper.filter(groupbyTag=self._groupbyTag)
 
         # pagination
@@ -311,7 +372,7 @@ class BaaSView(LoginRequiredMixin, View):
 
 
 class TrialListView(BaaSView):
-    _groupbyTag = BaaSView.TRIALS
+    _groupbyTag = TrialFilterHelper.TRIALS
 
     def get_context_data(self, **kwargs):
         return self._fHelper.getTrials().order_by('-code')
@@ -341,7 +402,7 @@ class TrialListView(BaaSView):
 
 
 class PlaguesListView(BaaSView):
-    _groupbyTag = BaaSView.PLAGUE
+    _groupbyTag = TrialFilterHelper.PLAGUE
     model = FieldTrial
     paginate_by = 100  # if pagination is desired
     login_url = '/login'
@@ -370,7 +431,7 @@ class PlaguesListView(BaaSView):
 
 
 class CropListView(BaaSView):
-    _groupbyTag = BaaSView.CROP
+    _groupbyTag = TrialFilterHelper.CROP
 
     def get_context_data(self, **kwargs):
         return self._fHelper.getClsObjects(Crop).order_by('name')
@@ -394,7 +455,7 @@ class CropListView(BaaSView):
 
 
 class ProductListView(BaaSView):
-    _groupbyTag = BaaSView.PRODUCT
+    _groupbyTag = TrialFilterHelper.PRODUCT
 
     def get_context_data(self, **kwargs):
         return self._fHelper.getClsObjects(Product).order_by(
@@ -418,3 +479,56 @@ class ProductListView(BaaSView):
                 'id': item.id})
         return {'object_list': new_list,
                 'num_products': len(objectList)}
+
+
+class DetailedTrialListView:
+    _request = None
+    _trialFilter = None
+    _paginate_by = None
+
+    def __init__(self, request, paginate_by=7,
+                 extra_params=None):
+        self._request = request
+        self._paginate_by = paginate_by
+        self._trialFilter = TrialFilterHelper(self._request,
+                                              extra_params)
+
+    def filterTrials(self):
+        self._trialFilter.filter(groupbyTag=TrialFilterHelper.TRIALS)
+        return self._trialFilter.getTrials().order_by('-code')
+
+    def displayTrial(self, trial):
+        return {
+            'code': trial.code,
+            'temp_avg': trial.avg_temperature,
+            'prep_avg': trial.avg_precipitation,
+            'hum_avg': trial.avg_humidity,
+            'description': trial.getDescription(),
+            'location': trial.getLocation(showNothing=True),
+            'goal': trial.objective,
+            'crop': trial.crop.name,
+            'best_efficacy': trial.getBestEfficacy(),
+            'product': trial.product.name,
+            'period': trial.getPeriod(),
+            'cultivation': trial.getCultivation(),
+            'status_trial': trial.get_status_trial_display(),
+            'objective': trial.objective.name,
+            'plague': trial.plague.name if trial.plague else '',
+            'latitude': trial.latitude,
+            'longitude': trial.longitude,
+            'id': trial.id,
+            'initiation_date': trial.initiation_date}
+
+    def getTrials(self):
+        page = self._request.GET.get('page', 1)
+        allTrials = self.filterTrials()
+        paginator = Paginator(allTrials, self._paginate_by)
+        pageTrials = [self.displayTrial(trial) for trial in
+                      paginator.get_page(page).object_list]
+
+        return {
+            'trial_list': pageTrials,
+            'show_status': True if self._request.user.is_staff else False,
+            'filter': TrialFilterExtended(self._request.GET),
+            'paginator': paginator,
+            'page': paginator.get_page(page)}

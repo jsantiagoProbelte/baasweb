@@ -16,7 +16,6 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.trial_helper import MyDateInput
 from catalogue.models import Treatment, Product
 from trialapp.trial_helper import TrialPermission
 from trialapp.trial_views import TrialContent
@@ -108,7 +107,11 @@ class ThesisForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ThesisForm, self).__init__(*args, **kwargs)
         self.fields['first_application'].required = False
-        self.fields['first_application'].widget = MyDateInput()
+        self.fields['first_application'].widget = forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'class': 'form-control',
+                   'type': 'date'})
+        self.fields['first_application'].show_hidden_initial = True
         self.fields['mode'].required = False
         self.fields['interval'].required = False
         self.fields['number_applications'].required = False
@@ -162,7 +165,11 @@ class ThesisFormUpdate(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ThesisFormUpdate, self).__init__(*args, **kwargs)
         self.fields['first_application'].required = False
-        self.fields['first_application'].widget = MyDateInput()
+        self.fields['first_application'].widget = forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'class': 'form-control',
+                   'type': 'date'})
+        self.fields['first_application'].show_hidden_initial = True
         self.fields['mode'].required = False
         self.fields['interval'].required = False
         self.fields['number_applications'].required = False

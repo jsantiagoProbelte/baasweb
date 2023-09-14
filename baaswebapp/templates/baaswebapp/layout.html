@@ -46,7 +46,8 @@
         </ul>
     
         {% if user.is_authenticated %}
-          <li class="nav-item dropdown vertical-line-left ms-auto">
+
+          <div class="nav-item dropdown vertical-line-left ms-auto">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="txt-regular-13 txt-baas-baas">{% trans "Hello" %}</span>
                 <span class="txt-open-bold-13 txt-baas-baas"> {{ user.username }}</span>
@@ -71,12 +72,11 @@
                 </li>
               </ul>
         {% else %}
-          <li class="nav-item vertical-line-left ms-auto">
-            <a class="nav-link" href="{% url 'login' %}">{% trans "Welcome, please login" %}</a></li>
+          <div class="nav-item vertical-line-left ms-auto">
+            <a class="nav-link" href="{% url 'login' %}">{% trans "Welcome, please login" %}</a>
         {% endif %}
-        
-      </li>
-      </div>
+          </div>
+
       </div>
     </div>
   </nav>

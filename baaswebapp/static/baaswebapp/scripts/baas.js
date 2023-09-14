@@ -105,3 +105,41 @@ function delete_item(item_id){
     }
 };
 
+function pasteData(event, setDataPointAPI) {
+    event.preventDefault();
+    const clipboardData = event.originalEvent.clipboardData || window.clipboardData;
+    const pastedData = clipboardData.getData('text/plain').split('\n');
+
+    // Get the active cell (where the user right-clicked or focused)
+    const activeInput = document.activeElement;
+    // Find the td parent
+    //const activeCellID = activeCell.id;
+    const activeCellID = activeInput.parentElement.parentElement.id;
+    const [row, col] = activeCellID.split('-').slice(-2).map(Number);
+
+    // Iterate through rows of pasted data
+    for (let i = 0; i < pastedData.length; i++) {
+        const rowData = pastedData[i].split('\t'); // Assuming tab-separated data
+        
+        // Iterate through columns of pasted data
+        for (let j = 0; j < rowData.length; j++) {
+            const cellID = `cell-${row + i}-${col + j}`;
+            const cell = $(`#${cellID}`);
+            
+            if (cell.length) {
+                const input = cell.find('input');
+                if (input.length) {
+                    const updatedValue = rowData[j];
+                    // Update the input value locally
+                    input.val(updatedValue);
+                    // Perform AJAX update
+                    setDataPoint(input, setDataPointAPI);
+                
+                    
+                }
+            }
+        }
+    }
+};
+
+

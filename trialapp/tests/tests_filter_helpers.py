@@ -1,12 +1,12 @@
 from django.test import TestCase
 from baaswebapp.models import Category
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Crop, Plague
+from trialapp.models import FieldTrial, Crop, Plague, StatusTrial
 from catalogue.models import Product
-from trialapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import TrialFilterHelper, TrialListView, \
     CropListView, PlaguesListView, BaaSView
-from baaswebapp.tests.test_views import ApiRequestHelperTest
+from baaswebapp.tests.tests_helpers import ApiRequestHelperTest, UserStub
 
 
 class TrialFilterTest(TestCase):
@@ -43,13 +43,23 @@ class TrialFilterTest(TestCase):
                     code = 1
                     fakemonth += 1
 
+    class MockRequest:
+        GET = None
+        user = None
+
+        def __init__(self, attributes, name='Waldo',
+                     superUser='True', is_staff='True'):
+            self.GET = attributes
+            self.user = UserStub(name, superUser, is_staff)
+
     def test_emptyfilter(self):
         totalProducts = Product.objects.count()
         totalCrops = Crop.objects.count()
         totalTrials = FieldTrial.objects.count()
         self.assertEqual(totalProducts*totalCrops, totalTrials)
         for posibleEmplyFilter in [{}, {'crop': ''}]:
-            fHelper = TrialFilterHelper(posibleEmplyFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleEmplyFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList), totalProducts)
@@ -81,7 +91,8 @@ class TrialFilterTest(TestCase):
         expectedProducts = Product.objects.count()
         cropId = TrialFilterTest.CROPID_WITH_PLAGUE
         for posibleFilter in [{'crop': cropId}]:
-            fHelper = TrialFilterHelper(posibleFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList),
@@ -126,11 +137,86 @@ class TrialFilterTest(TestCase):
         # we have create 1 trial per crop and product
         filters = [{'name': 'trial2-3'}, {'name': '20030132'}]
         for posibleFilter in filters:
-            fHelper = TrialFilterHelper(posibleFilter)
+            fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest(posibleFilter))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList), 1)
             self.assertEqual(fHelper.countTrials(), 1)
+
+    def test_filter_permisions(self):
+        totalTrials = FieldTrial.objects.count()
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, superUser=True))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), totalTrials)
+
+        # Internal, Owner of all them
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, superUser=False,
+                                            is_staff=True))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), totalTrials)
+
+        # internal, but not owmer,  and none of trials is finished
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Romeo',
+                                            superUser=False,
+                                            is_staff=True))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 0)
+
+        # Let's make 1 trail become finished
+        finished = StatusTrial.DONE
+        trial = FieldTrial.objects.get(id=1)
+        trial.status_trial = finished
+        trial.save()
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Romeo',
+                                            superUser=False,
+                                            is_staff=True))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 1)
+
+        # also downble chek, it read own trials
+        trial2 = FieldTrial.objects.get(id=2)
+        trial2.responsible = 'Romeo'
+        trial2.save()
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Romeo',
+                                            superUser=False,
+                                            is_staff=True))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 2)
+
+        # Same checks for External
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Julietta',
+                                            superUser=False,
+                                            is_staff=False))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 0)
+        # Check externals can access own trials
+        trial3 = FieldTrial.objects.get(id=3)
+        trial3.responsible = 'Julietta'
+        trial3.save()
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Julietta',
+                                            superUser=False,
+                                            is_staff=False))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 1)
+
+        # Check externals can access public trials
+        trial4 = FieldTrial.objects.get(id=4)
+        trial4.public = True
+        trial4.save()
+        fHelper = TrialFilterHelper(
+                TrialFilterTest.MockRequest({}, name='Julietta',
+                                            superUser=False,
+                                            is_staff=False))
+        fHelper.filter()
+        self.assertEqual(fHelper.countTrials(), 2)
 
     def test_colors(self):
         self.assertTrue(TrialFilterHelper.colorProductType('Biofertilizer'),

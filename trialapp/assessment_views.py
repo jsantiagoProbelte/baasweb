@@ -18,7 +18,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from trialapp.trial_helper import MyDateInput, TrialPermission
+from trialapp.trial_helper import TrialPermission
 
 CLASS_DATA_LEVEL = {
     GraphTrial.L_REPLICA: ReplicaData,
@@ -160,7 +160,11 @@ class AssessmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AssessmentForm, self).__init__(*args, **kwargs)
-        self.fields['assessment_date'].widget = MyDateInput()
+        self.fields['assessment_date'].widget = forms.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={'class': 'form-control',
+                   'type': 'date'})
+        self.fields['assessment_date'].show_hidden_initial = True
         self.fields['crop_stage_majority'].label = 'Crop Stage Majority (BBCH)'
         self.fields['rate_type'].queryset =\
             RateTypeUnit.objects.all().order_by('name', 'unit')
@@ -259,12 +263,11 @@ class AssessmentView(LoginRequiredMixin, DetailView):
         # Add additional data to the context
         trialPermision = TrialPermission(
             assessment.field_trial,
-            self.request.user).getPermisions()
+            self.request.user)
         dataHelper = DataHelper(assessment,
-                                trialPermision[TrialPermission.ADD_DATA])
-
+                                trialPermision.canEdit())
         return {**context, **dataHelper.showDataAssessment(),
-                **trialPermision}
+                **trialPermision.getPermisions()}
 
 
 class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
@@ -279,7 +282,7 @@ class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
             assessment.field_trial,
             self.request.user).getPermisions()
         dataHelper = DataHelper(assessment,
-                                trialPermision[TrialPermission.ADD_DATA])
+                                trialPermision.canEdit())
 
         return render(request, self.template_name, {
             **dataHelper.showDataAssessment(), **trialPermision,

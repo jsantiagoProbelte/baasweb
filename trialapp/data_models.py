@@ -77,25 +77,6 @@ class Assessment(ModelHelpers, models.Model):
         return self.part_rated
 
     @classmethod
-    def getRatedPartsProduct(cls, product, crop, plague,
-                             dimension):
-        criteria = {
-            'field_trial__product_id': product.id,
-            'rate_type_id': dimension.id}
-        if crop:
-            criteria['field_trial__crop_id'] = crop.id
-        if plague:
-            criteria['field_trial__plague_id'] = plague.id
-
-        parts = cls.objects.filter(**criteria).values('part_rated')
-        partsDict = {}
-        for item in parts:
-            thisPart = item['part_rated']
-            if thisPart not in partsDict:
-                partsDict[thisPart] = thisPart
-        return list(partsDict.keys())
-
-    @classmethod
     def computeDDT(cls, trial):
         firstItem = None
         # We assume getObjects ordered by date
@@ -142,79 +123,6 @@ class DataModel(ModelHelpers):
     @classmethod
     def getDataPoints(cls, assessment):
         return cls.objects.filter(assessment=assessment)
-
-    @classmethod
-    def getDataPointsProduct(cls, product, crop, plague, rateType, ratedPart):
-
-        criteria = {
-            'field_trial__trial_meta': FieldTrial.TrialMeta.FIELD_TRIAL,
-            'field_trial__product_id': product.id,
-            'rate_type_id': rateType.id,
-            'part_rated': ratedPart}
-        if crop:
-            criteria['field_trial__crop_id'] = crop.id
-        if plague:
-            criteria['field_trial__plague_id'] = plague.id
-
-        assessments = Assessment.objects.filter(**criteria).order_by(
-            'field_trial_id')
-
-        trials = {}
-        for assessment in assessments:
-            if assessment.field_trial_id not in trials:
-                trials[assessment.field_trial_id] = assessment.field_trial.code
-        fieldTrials = [{'id': trialId, 'code': trials[trialId]}
-                       for trialId in trials]
-
-        thesis = Thesis.objects.filter(field_trial_id__in=list(trials.keys()))
-        allThesis = {item.id: item for item in thesis}
-
-        return assessments, fieldTrials, allThesis
-
-    @classmethod
-    def distinctValues(cls, product, tag):
-        tag_id = '{}__id'.format(tag)
-        tag_name = '{}__name'.format(tag)
-        results = FieldTrial.objects.filter(product=product).values(
-            tag_id, tag_name).order_by(tag_name)
-        theArray, theIds = ModelHelpers.extractDistincValues(results, tag_id,
-                                                             tag_name)
-        return theArray
-
-    @classmethod
-    def getCrops(cls, product):
-        return cls.distinctValues(product, 'crop')
-
-    @classmethod
-    def getPlagues(cls, product):
-        return cls.distinctValues(product, 'plague')
-
-    @classmethod
-    def dimensionsValues(cls, product, as_array=True):
-        results = FieldTrial.objects.filter(product=product).values('id')
-        ids = [value['id'] for value in results]
-        tag = 'rate_type'
-        # We need the id from the set, but we display the name from the type
-        tag_id = '{}__id'.format(tag)
-        tag_name = '{}__name'.format(tag)
-        tag_unit = '{}__unit'.format(tag)
-        results = Assessment.objects.filter(
-                field_trial_id__in=ids).values(
-                tag_id, tag_name, tag_unit).order_by(
-                    tag_name, tag_unit)
-
-        # merge _name & _unit
-        new_results = [{tag_id: item[tag_id],
-                        tag_name: '{} ({})'.format(item[tag_name],
-                                                   item[tag_unit])}
-                       for item in results]
-
-        dimensions, theIds = ModelHelpers.extractDistincValues(
-            new_results, tag_id, tag_name)
-        if as_array:
-            return dimensions
-        else:
-            return RateTypeUnit.objects.filter(id__in=theIds)
 
 
 class ThesisData(DataModel, models.Model):

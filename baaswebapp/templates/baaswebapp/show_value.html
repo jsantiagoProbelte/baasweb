@@ -1,9 +1,14 @@
 {% if value %}
     {{value}}
 {% elif url_fix %}
-    <a href="{{url_fix}}" class="btn btn-sm txt-warning">
-        <span class="material-symbols-outlined">report_problem</span>
-    </a>
+    {% if edit_trial_perm %}
+        <a href="{{url_fix}}" class="btn btn-sm txt-warning">
+            <span class="material-symbols-outlined">report_problem</span>
+        </a>
+    {% else %}
+        <span class="txt-warning">??</span>
+    {% endif %}
+    
 {% else %}
     <span class="txt-warning">??</span>
 {% endif %}

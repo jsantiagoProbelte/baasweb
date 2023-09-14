@@ -51,13 +51,6 @@ class CultivationMethod(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
 
-class TrialStatus(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    FINISHED = 'Finished'
-    OPEN = 'Open'
-    IMPORTED = 'Imported'
-
-
 class PartRated(models.TextChoices):
     FIELD_TRIAL = 'FT', _('Field Trial')
     LAB_TRIAL = 'LT', _('Lab Trial')
@@ -93,6 +86,14 @@ class SoilType(models.TextChoices):
     LATERITIC = 'Lateritic', _('Lateritic Soil')  # 'Suelo Laterítico'
 
 
+class StatusTrial(models.TextChoices):
+    PROTOCOL = 'PROT', _('Design Protocol')
+    APROVAL = 'APRV', _('Approving Protocol')
+    INPROGRESS = 'INPR', _('In Progress')
+    REWIEW = 'REVW', _('Review Results')
+    DONE = 'DONE', _('Done')
+
+
 class FieldTrial(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
@@ -124,8 +125,10 @@ class FieldTrial(ModelHelpers, models.Model):
     initiation_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
     created = models.DateTimeField(auto_now_add=True)
-    trial_status = models.ForeignKey(TrialStatus,
-                                     on_delete=models.CASCADE, null=True)
+    status_trial = models.CharField(
+        max_length=4,
+        choices=StatusTrial.choices,
+        default=StatusTrial.PROTOCOL)
 
     contact = models.CharField(max_length=100, null=True)
     cro = models.CharField(max_length=100, null=True)
@@ -171,6 +174,7 @@ class FieldTrial(ModelHelpers, models.Model):
                              on_delete=models.CASCADE, null=True)
 
     public = models.BooleanField(default=False)
+    favorable = models.BooleanField(default=False)
     # key properties of the trial after evaluation
     key_thesis = models.IntegerField(null=True)
     control_thesis = models.IntegerField(null=True)
@@ -244,6 +248,15 @@ class FieldTrial(ModelHelpers, models.Model):
                 description += f' + {self.plague}'
         return description
 
+    @classmethod
+    def buildTitle(cls, code, crop, plague, location):
+        title = f'{code} - {crop}'
+        if plague and not ModelHelpers.isInUnknowns(plague):
+            title += f' + {plague}'
+        if location:
+            title += f' . {location}'
+        return title
+
     def getCultivation(self):
         cultivation = self.cultivation.name if self.cultivation else '-'
         cultivation += '<br>'
@@ -289,7 +302,7 @@ class FieldTrial(ModelHelpers, models.Model):
         trial = cls.objects.create(
             name=kwargs['name'],
             trial_type=TrialType.objects.get(pk=kwargs['trial_type']),
-            trial_status=TrialStatus.objects.get(pk=kwargs['trial_status']),
+            status_trial=kwargs['status_trial'],
             objective=Objective.objects.get(pk=kwargs['objective']),
             responsible=kwargs['responsible'],
             product=Product.objects.get(pk=kwargs['product']),

@@ -26,13 +26,13 @@
         });
     })
 </script>
-<div class='card-body-baas mt-3 mb-3 bg-custom-transparent'>
+<div class='mt-2 mb-1 bg-custom-transparent'>
     <form method="get" class="">
-        <div class="row mb-3" style="display: flex-inline" style="margin-bottom: 0px !important">
-            <div class="col-sm-2 col-md-2 flex-inline-form baas-box-shadow">
-                <span><i class="bi bi-search"></i> Search</span>
+        <div class="row mb-3" style="display: flex-inline" >
+            <div class="col-sm-2 col-md-3 flex-inline-form baas-box-shadow">
+                <span class="input-group-text txt-regular-11 material-symbols-outlined" id="basic-addon2">search</span>
                 <div class="form-group">
-                    {% render_field filter.form.name class="form-control" placeholder="i.e. product, active substance"%}
+                    {% render_field filter.form.name class="form-control" placeholder="i.e. product, active substance" aria-describedby="basic-addon2"%}
                 </div>
             </div>
             <div class="form-group col-sm-1 ">
@@ -44,7 +44,7 @@
             </div>
 
             <div class="form-group col-sm-1 col-md-1">
-                {% render_field filter.form.trial_status class="form-control form-select baas-box-shadow" %}
+                {% render_field filter.form.status_trial class="form-control form-select baas-box-shadow" %}
             </div>
 
             {% if filter.form.product %}
@@ -62,13 +62,13 @@
             </div>
 
             <div class="form-group col-sm-1 col-md-3">
-                <button type="submit" class="btn btn-info mt-4" style="margin-top:0px !important">Search</button>
+                <button type="submit" class="btn btn-baas capitalize-first" style="margin-top:0px !important">{% trans 'search' %}</button>
             </div>
         </div>
         <input type="hidden" id="activeTab" name="activeTab" value="2"/>
     </form>
 </div>
-<div class="row mt-4" style="margin-top: 0px !important">
+<div class="row mt-3">
     <div class="col-md-8">
         <div class="card card-body-baas " style="padding:0px">
             <table class="baas-data-table">
@@ -84,11 +84,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for item in object_list %}
+                {% for item in trial_list %}
                 <tr class="trial-tab-lines" id="item-{{item.id}}" key="{{ item.id }}">
                     <!--NAME-->
                     <td><p class="txt-open-semibold-14">{{item.description}}</p>
-                        <p class="txt-regular-13">{{item.location}}</p></td>
+                        <p class="txt-regular-13">{{item.location}}</p>
+                        {% if show_status %}
+                        <span class="badge rounded-pill bg-light txt-regular-11">{{item.status_trial}}</span>
+                        {% endif %}
+                    </td>
                     <!--EFFICACY-->
                     <td>
                         <p class="txt-open-bold-15">{{item.best_efficacy}}</p>
@@ -133,7 +137,7 @@
                     <p>No Trials yet.</p>
                 {% endfor %}
             </tbody>
-            {% if object_list %}
+            {% if trial_list %}
             <tfoot colspan='100%'>
                 <tr>
                     <td colspan='1'><span style="color:#666"><b>{{ paginator.count }}</b> {% trans 'results' %}</span></td>
