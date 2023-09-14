@@ -285,6 +285,6 @@ class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
                                 trialPermision.canEdit())
 
         return render(request, self.template_name, {
-            **dataHelper.showDataAssessment(), **trialPermision,
+            **dataHelper.showDataAssessment(), **trialPermision.getPermisions(),
             'assessment': assessment
             })
