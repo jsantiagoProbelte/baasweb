@@ -135,8 +135,8 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         dataTrial = TrialModel.prepareDataItems(trial)
         dataTrial['Assessments'] = [
-            {'id': item.id, 'value': item.getContext(),
-             'name': item.assessment_date, 'link': 'assessment'}
+            {'id': item.id, 'name': item.getUnitPartTitle(),
+             'date': item.assessment_date}
             for item in assessments]
         other_trials = FieldTrial.objects.filter(product=trial.product).count()
         control_product = False
