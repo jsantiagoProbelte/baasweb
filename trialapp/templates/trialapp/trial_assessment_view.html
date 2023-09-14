@@ -2,23 +2,11 @@
 {% if dataContent.error %}
   <p class='txt-regular-12 txt-warning'>{{dataContent.error|safe}}</p>
 {% else %}
-<div class="card-body-baas mt-2">
-    <table>
-      <tr>
-        <td>
-        {% include "baaswebapp/item_list_template.html" with field='Name' value=dataContent.assessment.name%}
-        </td>
-        <td>
-        {% include "baaswebapp/item_list_template.html" with field='Rate Date' value=dataContent.assessment.assessment_date%}
-        </td>
-        <td>
-        {% include "baaswebapp/item_list_template.html" with field='Crop Stage Majority' value=dataContent.assessment.crop_stage_majority%}
-        </td>
-        <td>
-          {% include "baaswebapp/item_list_template.html" with field='Part Rated' value=dataContent.assessment.part_rated%}
-        </td>
-      </tr>
-    </table>
+<div class="card-body-baas">
+  <p class="txt-encode-20 capitalize-first">{% trans "assessment results" %}
+    <span class="material-symbols-outlined ms-4">calendar_month</span>
+    <span class="txt-encode-16">{{dataContent.assessment.assessment_date}}</span>
+  </p>
 </div>
 <div class="row mt-3">
   <div class="col-md-6">
@@ -116,6 +104,12 @@
   <div class="col-md-4">
   <div class="card card-baas-alt">
     <p class="card-title txt-encode-20 capitalize-first">{% trans "statistics" %}</p>
+    <table class="table stats-table">
+      <tr ><td >{% trans 'name'%}</td><td >{{dataContent.assessment.name}}</td></tr>
+      <tr><td >{% trans 'date'%}</td><td >{{dataContent.assessment.assessment_date}}</td></tr>
+      <tr><td >{% trans 'Crop Stage Majority'%}</td><td >{{dataContent.assessment.crop_stage_majority}}</td></tr>
+      <tr><td >{% trans 'part rated'%}</td><td >{{dataContent.assessment.part_rated}}</td></tr>
+    </table>
     {{dataContent.stats|safe}}
   </div>
 </div>

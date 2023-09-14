@@ -79,7 +79,8 @@
             </li>
         {% endif %}
     </ul>
-    <div class="tab-content" id="nav-trial">
+</div>
+    <div class="tab-content m-2" id="nav-trial">
         <div class="tab-pane fade show active" id="nav-conclusions" role="tabpanel" aria-labelledby="conclusions-tab">
             {% include 'trialapp/trial_conclusions.html' %}
         </div>
@@ -104,7 +105,7 @@
             {% include 'trialapp/fieldtrial_info.html' %}
         </div>
     </div>
-</div>
+
 {% else %}
     <div class="card card-body bg-warning col-md-6 mt-4 mb-4 offset-md-3">
         <p class="txt-encode-20">{{error}}</p>

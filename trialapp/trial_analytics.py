@@ -177,8 +177,9 @@ class AssessmentAnalytics:
         # Perform one-way ANOVA
         model = ols('Data ~ Groups', data=df).fit()
         self._anova_table = sm.stats.anova_lm(model, typ=2)
-        self._statsText += '<strong>ANOVA stats</strong>'
-        self._statsText += self._anova_table.to_html()
+        self._statsText += "<p class='txt-regular-16'>ANOVA test</p>"
+        self._statsText += self._anova_table.transpose().to_html(
+            classes='table stats-table')
         if self._debug:
             print(self._anova_table)
 
@@ -282,8 +283,9 @@ class AssessmentAnalytics:
     def barlett(self):
         self._bartlett_stat, self._bartlett_p = bartlett(*self._data_groups)
         # Print the test statistic and p-value
-        text = "<table><tr><td><b><h4>Bartlett statistic</h4><b><td>"\
-               "</td></tr>"
+        text = "<table class='table stats-table'><tr><td>"\
+               "<p class='txt-regular-16'>Bartlett statistic</p>"\
+               "</td><td></td></tr>"
         text += f"<tr><td>X^2</td><td>{round(self._bartlett_stat,2)}</td><tr>"\
                 f"<tr><td>p-value</td><td>{round(self._bartlett_p,3)}</td><tr>"
         self._statsText += text
@@ -292,7 +294,9 @@ class AssessmentAnalytics:
 
     def levene(self):
         self._levene_stat, self._levene_p = levene(*self._data_groups)
-        text = "<tr><td><b><h4>Levene statistic</h4><b><td></td></tr>"
+        text = "<table class='table stats-table'><tr><td>"\
+               "<p class='txt-regular-16'>Levene statistic</p>"\
+               "</td><td></td></tr>"
         text += f"<tr><td>X^2</td><td>{round(self._levene_stat,2)}</td><tr>"\
                 f"<tr><td>p-value</td><td>{round(self._levene_p,3)}</td><tr>"
         text += "</table>"

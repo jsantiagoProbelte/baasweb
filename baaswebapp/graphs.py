@@ -656,6 +656,7 @@ class EfficacyGraph:
     def draw(numNameDict, numValueDict,
              title_text=_('efficacy') + '(%)', showLegend=False,
              yaxis_title='Abbott (%)', xaxis_title='thesis',
+             showTitle=False,
              barmode='group'):
 
         colors = []
@@ -681,7 +682,7 @@ class EfficacyGraph:
             title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
-            title_text=title_text,
+            title_text=title_text if showTitle else '',
             showlegend=showLegend,
             margin=dict(
                 t=20,  # Adjust this value to reduce the top margin
