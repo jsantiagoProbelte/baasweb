@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from trialapp.models import FieldTrial
 from baaswebapp.baas_helpers import BaaSHelpers
 from baaswebapp.graphs import GraphStat, PieGraph
-from django.utils.translation import gettext_lazy as _
 
 
 class StatsDataApi(APIView):
