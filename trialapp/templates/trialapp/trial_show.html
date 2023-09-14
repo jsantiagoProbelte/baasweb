@@ -38,7 +38,7 @@
 {% block content %}
 {% if read_trial %}
 <div class="row ">
-    <div class="col-md-10 offset-md-1">
+    <div class="col-md-11 offset-md-1">
     <ul class="nav nav-tabs-baas" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active txt-open-semibold-15 capitalize-first" id="conclusions-tab" data-bs-toggle="tab" data-bs-target="#nav-conclusions" type="button" role="tab" aria-controls="nav-conclusions" aria-selected="true">{% trans "conclusions" %}</button>
@@ -98,7 +98,7 @@
             data
         </div>
         <div class="tab-pane fade" id="nav-assessment" role="tabpanel" aria-labelledby="assessment-tab">
-            assessment
+            {% include 'trialapp/trial_assesment.html' %}
         </div>
         <div class="tab-pane fade" id="nav-info" role="tabpanel" aria-labelledby="info-tab">
             {% include 'trialapp/fieldtrial_info.html' %}
@@ -118,12 +118,6 @@
     $(document).ready(function() {
         loadTrialContent();
     });
-
-    // Create a default Marker and add it to the map.
-    var latitude={{trial.latitude}};
-    var longitude={{trial.longitude}};
 </script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
-<script src='/static/baaswebapp/scripts/mapbaas.js'></script>
 <script src='/static/baaswebapp/scripts/clipboard_utils.js'></script>
 {% endblock %}  

@@ -32,7 +32,7 @@ div.product-variant-tabs ul{
     border: 1px solid var(--custom-table-borders);
     box-shadow: 0px 0px 4px var(--custom-table-borders);
     margin-top: 10px;
-    background-color: var(--custom-bg-color);
+    background-color: white;
     align-items: center;
     justify-content: center;
     max-width: 182px;
@@ -46,7 +46,7 @@ div.product-variant-tabs ul li{
     margin-bottom: 5px !important;
     border: none !important;
     color: var(--bs-text-color-white) !important;
-    background-color: var(--custom-bg-color) !important;
+    background-color: white !important;
     width: 95%;
     border-bottom: 1px solid var(--custom-table-borders) !important;
     max-height: 37px;
@@ -67,7 +67,7 @@ div.product-variant-tabs ul li:has(button.active){
 
 div.product-variant-tabs ul li:has(button:not(.active)){
     color: var(--baas-gray) !important;
-    background-color: var(--custom-bg-color) !important;
+    background-color: white !important;
 }
 
 div.product-variant-tabs ul li button.active{

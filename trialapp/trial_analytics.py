@@ -282,7 +282,7 @@ class AssessmentAnalytics:
     def barlett(self):
         self._bartlett_stat, self._bartlett_p = bartlett(*self._data_groups)
         # Print the test statistic and p-value
-        text = "<table class='table'><tr><td><h4>Bartlett statistic</h4><td>"\
+        text = "<table><tr><td><b><h4>Bartlett statistic</h4><b><td>"\
                "</td></tr>"
         text += f"<tr><td>X^2</td><td>{round(self._bartlett_stat,2)}</td><tr>"\
                 f"<tr><td>p-value</td><td>{round(self._bartlett_p,3)}</td><tr>"
@@ -292,7 +292,7 @@ class AssessmentAnalytics:
 
     def levene(self):
         self._levene_stat, self._levene_p = levene(*self._data_groups)
-        text = "<tr><td><h4>Levene statistic</h4><td></td></tr>"
+        text = "<tr><td><b><h4>Levene statistic</h4><b><td></td></tr>"
         text += f"<tr><td>X^2</td><td>{round(self._levene_stat,2)}</td><tr>"\
                 f"<tr><td>p-value</td><td>{round(self._levene_p,3)}</td><tr>"
         text += "</table>"

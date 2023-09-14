@@ -1,0 +1,125 @@
+<div class="card card-body-baas mt-2">
+    <table>
+      <tr>
+        <td>
+        {% include "baaswebapp/item_list_template.html" with field='Name' value=assessment.name%}
+        </td>
+        <td>
+        {% include "baaswebapp/item_list_template.html" with field='Rate Date' value=assessment.assessment_date%}
+        </td>
+        <td>
+        {% include "baaswebapp/item_list_template.html" with field='Crop Stage Majority' value=assessment.crop_stage_majority%}
+        </td>
+        <td>
+          {% include "baaswebapp/item_list_template.html" with field='Part Rated' value=assessment.part_rated%}
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="row ml-1" style="margin: 3px 0px">
+    <div class="card card-body-baas col-md-6 mt-2">
+      {{efficacy|safe}}
+      {{graphData|safe}}
+    </div>
+    <div class="card card-baas-alt assessment-stats mt-2 col-md-5" style="margin-left: 12px;">
+      <h5>Statistics</h5>
+      {{stats|safe}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-body-baas mt-2">
+      <div class="table-container-long">
+      <table class="baas-data-table">
+        <thead>
+          <tr><th class="col-md-2">Thesis</th>
+              {% if level != 'thesis' %}
+                <th class="text-right col-md-1">avg</th>
+                {% if level == 'sample' %}
+                  <th></th>
+                {% endif %}
+                <th class="text-right col-md-1">replica</th>
+              {% endif %}
+              <th class="text-right col-md-1">value</th>
+              {% if sampleNums %}
+                <th></th>
+                {% for num in sampleNums %}
+                  <th class="text-right col-md-1">{{num}}</th>
+                {% endfor %}
+              {% endif %}
+          </tr></thead>
+        <tbody>
+        {% for dataRow in dataRows %}
+          <tr>
+            {% if dataRow.rowspan > 0 %}
+              <td rowspan="{{dataRow.rowspan}}"><div class="color-icon bg-custom-{{dataRow.color}}"></div>{{dataRow.thesis}}</td>
+              {% if level != 'thesis' %}
+                <td class="text-right" rowspan="{{dataRow.rowspan}}"> {{dataRow.tvalue}}</td>
+              {% endif %}
+            {% endif %}
+            {% if level == 'sample' %}
+              <td>&ThickSpace;</td>
+            {% endif %}
+            {% if level != 'thesis' %}
+              <td>{{dataRow.replica}}</td>
+            {% endif %}
+            <td class="text-right">
+              {% if dataRow.item_id %}
+                <form id="form-data-input-template-{{dataRow.item_id}}" 
+                  class='form-data-input-template' disabled method="POST">
+                  {% csrf_token %}
+                  <input type="text" disabled name="data-point"
+                      id="{{dataRow.item_id}}"
+                      class="form-control-baas input data-input-template text-right"
+                      placeholder="-"
+                      value={{dataRow.value}}></input>
+                </form>
+              {% else %}
+                {{dataRow.value}}
+              {% endif %}
+            </td>
+            {% if dataRow.sampleCols %}
+              <td>&ThickSpace;</td>
+              {% for col in dataRow.sampleCols %}
+                <td class="text-right">
+                  {% if col.item_id %}
+                    <form id="form-data-input-template-{{col.item_id}}" class='form-data-input-template'  method="POST">
+                      {% csrf_token %}
+                      <input type="text" disabled name="data-point"
+                          id="{{col.item_id}}"
+                          class="form-control-baas input data-input-template text-right"
+                          placeholder="-"
+                          value={{col.value}}></input>
+                    </form>
+                  {% else %}
+                    {{col.value}}
+                  {% endif %}
+                </td>
+              {% endfor %}
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+    </div>
+    
+  </div>
+
+  {% block scripts %}
+  <!-- <script src="https://cdn.plot.ly/plotly-2.25.2.min.js" charset="utf-8"></script> -->
+  <script src='/static/baaswebapp/scripts/baas.js'></script>
+  <script>
+    var setDataPointAPI = '/set_data_point';
+    $('.data-input-template').on('blur', function(){
+        var element=$(this);
+        return setDataPoint(element, setDataPointAPI);
+    });
+
+    $('.data-input-template').on('keypress', function(event) {
+        var element = $(this);
+        return processEnter(event, element, setDataPointAPI, 'data-input-template');
+    });
+  </script>
+  {% endblock %}
