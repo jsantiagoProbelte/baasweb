@@ -76,6 +76,9 @@
   margin-left: auto;
 }
 
+.no-wrap{
+  white-space: nowrap;
+}
 
 .icon-baas {
   width: 75px;
@@ -674,6 +677,12 @@ div[class*="bg-custom-"]{
   padding:20px;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
+}
+
+.card-baas-alt:is(.assessment-stats) table:not(:last-child) {
+  background-color: #efedff;
+  border:none;
+  border-bottom: 3px solid var(--custom-baas-alt);
 }
 
 .card-body-baas:is(.no-padding){

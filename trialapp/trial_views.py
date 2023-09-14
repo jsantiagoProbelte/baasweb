@@ -126,9 +126,11 @@ class TrialApi(LoginRequiredMixin, DetailView):
 
         dataTrial = TrialModel.prepareDataItems(trial)
         for item in assessments:
-            dataTrial['Assessments'].append(
-                {'value': item.getContext(), 'name': item.assessment_date,
-                 'link': 'assessment', 'id': item.id})
+            assessmentId = item.id
+            if assessmentId:
+                dataTrial['Assessments'].append(
+                    {'id': assessmentId, 'value': item.getContext(), 
+                        'name': item.assessment_date, 'link': 'assessment'})
         other_trials = FieldTrial.objects.filter(product=trial.product).count()
         control_product = False
         if trial.product.category() == Category.CONTROL:

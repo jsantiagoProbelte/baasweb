@@ -6,7 +6,7 @@ from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial, Thesis
 from trialapp.data_models import ThesisData, ReplicaData, SampleData, \
     Assessment
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataHelper, DataGraphFactory
 from django.views.generic import DetailView, View
@@ -262,5 +262,26 @@ class AssessmentView(LoginRequiredMixin, DetailView):
             self.request.user).getPermisions()
         dataHelper = DataHelper(assessment,
                                 trialPermision[TrialPermission.ADD_DATA])
+
         return {**context, **dataHelper.showDataAssessment(),
                 **trialPermision}
+
+
+class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
+    model = Assessment
+    template_name = 'trialapp/trial_assessment_view.html'
+    context_object_name = 'assessment'
+
+    def get(self, request, pk):
+        assessment = self.get_object()
+        # Add additional data to the context
+        trialPermision = TrialPermission(
+            assessment.field_trial,
+            self.request.user).getPermisions()
+        dataHelper = DataHelper(assessment,
+                                trialPermision[TrialPermission.ADD_DATA])
+
+        return render(request, self.template_name, {
+            **dataHelper.showDataAssessment(), **trialPermision,
+            'assessment': assessment
+            })

@@ -210,7 +210,6 @@ class TrialModel():
                 else:
                     trialData[group].append({'name': label,
                                              'value': showValue})
-        print(trialData)
         return trialData
 
 
