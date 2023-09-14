@@ -339,9 +339,11 @@ class GraphTrial:
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,
+                 showLegend=True,
                  showTitle=False):
         self._level = level
         self._showTitle = showTitle
+        self._showLegend = showLegend
         self._xAxis = xAxis
         self._title = self.getTitle(rateType, ratedPart)
         self._graphData = {
@@ -372,7 +374,7 @@ class GraphTrial:
     def drawConclussionGraph(self, typeFigure=LINE,
                              orientation='v'):
         fig = self.figure(self._graphData, typeFigure=typeFigure,
-                          showLegend=False, orientation=orientation)
+                          orientation=orientation)
         return self.plot(fig)
 
     def bar(self):
@@ -399,7 +401,7 @@ class GraphTrial:
                   L_ASSMT: column,
                   L_THESIS: bar}
 
-    def formatFigure(self, fig, thisGraph, showLegend,
+    def formatFigure(self, fig, thisGraph,
                      orientation, typeFigure, num_x):
         # Update layout for graph object Figure
         if orientation == 'v':
@@ -420,7 +422,7 @@ class GraphTrial:
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
             title_text=thisGraph['title'] if self._showTitle else '',
-            showlegend=showLegend,
+            showlegend=self._showLegend,
             autosize=True,
             legend=legend,
             margin=dict(
@@ -463,7 +465,7 @@ class GraphTrial:
                       x=xValues, y=yValues)
         return data
 
-    def figure(self, thisGraph, showLegend=True,
+    def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
         data = None
         fig = go.Figure()
@@ -513,7 +515,7 @@ class GraphTrial:
                                  line_color=color)
             fig.add_trace(data)
 
-        self.formatFigure(fig, thisGraph, showLegend, orientation,
+        self.formatFigure(fig, thisGraph, orientation,
                           typeFigure, len(x))
         return fig
 
@@ -681,6 +683,12 @@ class EfficacyGraph:
             font_color=COLOR_TEXT,
             title_text=title_text,
             showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
             legend=dict(
                 orientation="h",
                 yanchor="top",
@@ -689,6 +697,7 @@ class EfficacyGraph:
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
+            height=GraphTrial.DEFAULT_HEIGHT,
             barmode=barmode)
         figure.update_traces(textfont_size=20)
         figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)

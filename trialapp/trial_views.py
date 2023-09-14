@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from trialapp.trial_analytics import Abbott
 from catalogue.models import UNTREATED
 from rest_framework.views import APIView
+from trialapp.data_views import DataHelper
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -133,12 +134,10 @@ class TrialApi(LoginRequiredMixin, DetailView):
         assessments = Assessment.getObjects(trial)
 
         dataTrial = TrialModel.prepareDataItems(trial)
-        for item in assessments:
-            assessmentId = item.id
-            if assessmentId:
-                dataTrial['Assessments'].append(
-                    {'id': assessmentId, 'value': item.getContext(),
-                        'name': item.assessment_date, 'link': 'assessment'})
+        dataTrial['Assessments'] = [
+            {'id': item.id, 'value': item.getContext(),
+             'name': item.assessment_date, 'link': 'assessment'}
+            for item in assessments]
         other_trials = FieldTrial.objects.filter(product=trial.product).count()
         control_product = False
         if trial.product.category() == Category.CONTROL:
@@ -219,20 +218,26 @@ class TrialContent():
     _category = None
     _assmts = None
     _thesis = None
+    _user = None
+    _extra_id = None
 
     WEATHER = 'weather_graphs'
     WEATHER_AVG = 'weather_avg'
     ASSESSMENTS = 'assess_graphs'
+    ASSESSMENT_VIEW = 'assessment_view'
     RESULT_SUMMARY = 'result_summary'
     KEY_ASSESS = 'key_assess'
     ONLY_TRIAL_DATA = 'OTD'
     TAG_UNKOWN = '??'
 
-    def __init__(self, trialId, content, trial=None):
+    def __init__(self, trialId, content, user,
+                 trial=None, extra_id=None):
         if trial is not None:
             self._trial = trial
         else:
             self._trial = get_object_or_404(FieldTrial, pk=trialId)
+        self._user = user
+        self._extra_id = extra_id
         self._content = content
         self._assmts = None
         if content != TrialContent.ONLY_TRIAL_DATA:
@@ -307,7 +312,7 @@ class TrialContent():
                         dataPoints, orderAssmts)
                 controlNumber, keyThesisNumber = self.getControlKeyNumbers()
                 graphF = DataGraphFactory(
-                    level, assmts, dataPoints, showTitle=False,
+                    level, assmts, dataPoints,
                     controlNumber=controlNumber,
                     keyThesisNumber=keyThesisNumber,
                     xAxis=xAxis, references=self._thesis)
@@ -391,6 +396,26 @@ class TrialContent():
         rateSets = Assessment.getRateSets(self._assmts)
         ratedParts = Assessment.getRatedParts(self._assmts)
         return rateSets, ratedParts
+
+    def fetchAssessment(self):
+        assessment = None
+        if self._extra_id:
+            assessment = Assessment.objects.get(id=self._extra_id)
+        else:
+            assmts = Assessment.getObjects(self._trial)
+            if not assmts:
+                return {'error': _('No assessements yet')}
+            assessment = assmts[0]
+        # Add additional data to the context
+        trialPermision = TrialPermission(
+            assessment.field_trial,
+            self._user)
+        dataHelper = DataHelper(assessment,
+                                trialPermision.canEdit())
+        return {'assessment': assessment,
+                'rateunitpart': assessment.getUnitPartTitle(),
+                **dataHelper.showDataAssessment(),
+                **trialPermision.getPermisions()}
 
     def fetchAssessmentsData(self):
         rateSets, ratedParts = self.getRateTypeUnitsAndParts()
@@ -550,7 +575,8 @@ class TrialContent():
             self._untreatedThesisId: untreatedThesis}
         graphF = DataGraphFactory(
             GraphTrial.L_REPLICA, self._assmts, dataPoints,
-            references=thesiss, showTitle=False)
+            showLegend=False,
+            references=thesiss)
         num_assmts = len(self._assmts)
         graphF.addLineColorsToTraces(keyThesis.number,
                                      untreatedThesis.number)
@@ -699,6 +725,7 @@ class TrialContent():
         KEY_ASSESS: fetchKeyAssessData,
         ASSESSMENTS: fetchAssessmentsData,
         WEATHER_AVG: getMeteorology,
+        ASSESSMENT_VIEW: fetchAssessment,
         RESULT_SUMMARY: fetchResultSummaryData}
 
     TEMPLATE_CARDS = 'trialapp/trial_content_cards.html'
@@ -706,6 +733,7 @@ class TrialContent():
     TEMPLATE_CONCLUSION_GRAPH = 'trialapp/trial_conclusion_graph.html'
 
     FETCH_TEMPLATES = {
+        ASSESSMENT_VIEW: 'trialapp/trial_assessment_view.html',
         WEATHER: TEMPLATE_CARDS,
         KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
         ASSESSMENTS: TEMPLATE_CARDS,
@@ -725,7 +753,9 @@ class TrialContent():
 def trialContentApi(request):
     trialId = int(request.GET.get('id', 0))
     content = request.GET.get('content_type')
-    return TrialContent(trialId, content).fetch()
+    extra_id = request.GET.get('extra_id', None)
+    return TrialContent(trialId, content,
+                        request.user, extra_id=extra_id).fetch()
 
 
 class SetTrialKeyValues(APIView):

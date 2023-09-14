@@ -114,10 +114,15 @@
 
 {% block scripts %}
 <script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>
-    $(document).ready(function() {
-        loadTrialContent();
-    });
+<script>    
+$(document).ready(function() {
+    loadTrialContent(); 
+});
+$('.btn-assessment-trial').on('click', function() {
+    var element = $(this)
+    loadAssessment(element);
+});
+
 </script>
 <script src='/static/baaswebapp/scripts/clipboard_utils.js'></script>
 {% endblock %}  

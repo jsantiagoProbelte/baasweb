@@ -6,7 +6,7 @@ from catalogue.models import Product, Vendor, Batch, Treatment, \
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit, \
     Application, PartRated
 from trialapp.data_models import Assessment, ReplicaData, Replica
-from baaswebapp.tests.tests_helpers import TrialTestData
+from baaswebapp.tests.tests_helpers import TrialTestData, UserStub
 from trialapp.trial_views import TrialApi, TrialContent, trialContentApi, \
     SetTrialKeyValues
 from baaswebapp.tests.test_views import ApiRequestHelperTest
@@ -134,7 +134,8 @@ class TrialViewsTest(TestCase):
     def test_discoverKeyInfo(self):
 
         self.createObjects()
-        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        userS = UserStub('Waldus', True, True)
+        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS, userS)
         self.assertEqual(trialH.whatIsControlThesis(), self._controlThesis.id)
         self.assertEqual(trialH.whatIsKeyThesis(), self._keyThesis.id)
         self._trial = FieldTrial.objects.get(id=self._trial.id)
@@ -145,7 +146,7 @@ class TrialViewsTest(TestCase):
         self._trial.key_thesis = 66
         self._trial.control_thesis = 66
         self._trial.save()
-        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS, userS)
         self.assertEqual(trialH.whatIsControlThesis(), 66)
         self.assertEqual(trialH.whatIsKeyThesis(), 66)
 
@@ -201,7 +202,7 @@ class TrialViewsTest(TestCase):
         self._trial = FieldTrial.objects.get(id=self._trial.id)
         self._trial.key_assessment = None
         self._trial.save()
-        tContent = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        tContent = TrialContent(self._trial.id, TrialContent.KEY_ASSESS, userS)
         content = tContent.fetchKeyAssessData()
         secondEfficacyExpected = tContent.calculateEfficacy(
             TrialViewsTest.CONTROL_VALUE, TrialViewsTest.LAST_MIN_VALUE)
@@ -218,7 +219,8 @@ class TrialViewsTest(TestCase):
         self._trial = FieldTrial.objects.get(id=self._trial.id)
         self._trial.key_assessment = None
         self._trial.save()
-        tContent2 = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        tContent2 = TrialContent(self._trial.id, TrialContent.KEY_ASSESS,
+                                 userS)
         thirdEfficacyExpected = tContent2.calculateEfficacy(
             TrialViewsTest.CONTROL_VALUE, TrialViewsTest.FIRST_MIN_VALUE)
         content2 = tContent2.fetchKeyAssessData()
@@ -231,7 +233,9 @@ class TrialViewsTest(TestCase):
 
     def test_computeBestEfficacy(self):
         self.createObjects()
-        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        userS = UserStub('Waldus', True, True)
+        trialH = TrialContent(self._trial.id, TrialContent.KEY_ASSESS,
+                              userS)
         dataPoints = trialH.getKeyEfficacyComponents()
         efficacy, line, fAssmId = trialH.calculateBestEfficacy(dataPoints)
         self.assertTrue(efficacy is not None)
@@ -240,7 +244,8 @@ class TrialViewsTest(TestCase):
         # Lets change to another assessment not optimal
         self._trial.key_assessment = fAssmId + 1
         self._trial.save()
-        trialH2 = TrialContent(self._trial.id, TrialContent.KEY_ASSESS)
+        trialH2 = TrialContent(self._trial.id, TrialContent.KEY_ASSESS,
+                               userS)
         dataPoints = trialH2.getKeyEfficacyComponents()
         efficacy2, line, fAssmId2 = trialH2.calculateBestEfficacy(dataPoints)
         self.assertTrue(fAssmId2 != fAssmId)
@@ -250,9 +255,11 @@ class TrialViewsTest(TestCase):
         self.assertTrue(fAssmId3 == fAssmId)
 
     def test_fetches(self):
+        userS = UserStub('Waldus', True, True)
         # Fetch content before data is created.. to go through empty statments
         for typeContent in list(TrialContent.FETCH_FUNCTIONS.keys()):
-            tContent = TrialContent(self._trial.id, typeContent)
+            tContent = TrialContent(self._trial.id, typeContent,
+                                    userS)
             theFetch = TrialContent.FETCH_FUNCTIONS.get(
                 typeContent, TrialContent.fetchDefault)
             theFetch(tContent)

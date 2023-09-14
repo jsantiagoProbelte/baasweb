@@ -246,6 +246,7 @@ class DataHelper:
         if points:
             graphHelper = DataGraphFactory(
                 level, [self._assessment], points,
+                showLegend=False,
                 references=self._thesisTrial)
             graph = graphHelper.draw()
         if efficacyData:
@@ -448,8 +449,10 @@ class DataGraphFactory():
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
                  controlNumber=None, keyThesisNumber=None,
-                 showTitle=True, references=None):
+                 showLegend=True,
+                 showTitle=False, references=None):
         self._level = level
+        self._showLegend = showLegend
         self._assessments = {item.id: item for item in assessments}
         self._references = references if references else {}
         self._colors = {}
@@ -460,6 +463,7 @@ class DataGraphFactory():
             self._graph = GraphTrial(level, assessments[0].rate_type,
                                      assessments[0].getPartRated(),
                                      traces, xAxis=xAxis,
+                                     showLegend=showLegend,
                                      showTitle=showTitle)
         else:
             self._graph = GraphTrial.NO_DATA_AVAILABLE

@@ -27,7 +27,7 @@ class ThesisListView(LoginRequiredMixin, ListView):
     login_url = '/login'
 
     def getContextKeyData(self, trial):
-        trialContent = TrialContent(trial.id, 'what')
+        trialContent = TrialContent(trial.id, 'what', self.request.user)
         units, parts = trialContent.getRateTypeUnitsAndParts()
         assmts = trialContent.getAssmts()
         filterAssmts = trial.key_thesis is not None and \

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 00:40+0200\n"
+"POT-Creation-Date: 2023-09-14 16:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,10 +65,11 @@ msgstr ""
 msgid "dew point"
 msgstr ""
 
-#: baaswebapp/graphs.py:649
+#: baaswebapp/graphs.py:657
+#: trialapp/templates/trialapp/trial_assessment_view.html:26
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:316
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:323
 msgid "efficacy"
 msgstr ""
 
@@ -685,6 +686,14 @@ msgstr ""
 msgid "efficacy key values"
 msgstr ""
 
+#: trialapp/templates/trialapp/trial_assessment_view.html:50
+msgid "plots"
+msgstr ""
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:118
+msgid "statistics"
+msgstr ""
+
 #: trialapp/templates/trialapp/trial_conclusion_graph.html:9
 msgid "You can select key and control thesis in this link"
 msgstr ""
@@ -714,7 +723,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:362
+#: trialapp/trial_views.py:369
 msgid "weather conditions"
 msgstr ""
 
@@ -810,24 +819,28 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:363
+#: trialapp/trial_views.py:370
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:411
+#: trialapp/trial_views.py:407
+msgid "No assessements yet"
+msgstr ""
+
+#: trialapp/trial_views.py:438
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:688
+#: trialapp/trial_views.py:716
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:691
+#: trialapp/trial_views.py:719
 msgid " in "
 msgstr ""
 
