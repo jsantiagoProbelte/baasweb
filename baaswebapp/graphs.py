@@ -625,6 +625,12 @@ class GraphStat():
             font_color=COLOR_TEXT,
             title_text=self._graphData['title'] if self._showTitle else '',
             showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=10,  # Right margin
+                b=20,  # Bottom margin
+                l=10   # Left margin
+            ),
             legend=dict(
                 orientation="h",
                 yanchor="top",
@@ -736,6 +742,75 @@ class ProductCategoryGraph:
 
         # Create the figure
         figure = go.Figure(data=[trace_inner, trace_center, trace_outer])
+
+        annotations = [
+            dict(text='trials',
+                 x=0.5, y=0.3, font_size=20,
+                 font_color='grey',
+                 showarrow=False),
+            dict(text=f'{totals}',
+                 x=0.5, y=0.5, font_size=64,
+                 showarrow=False)]
+
+        figure.update_layout(
+            annotations=annotations,
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color=COLOR_TEXT,
+            font_size=24,
+            title_text=title_text,
+            showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
+            legend=dict(
+                font_size=14,
+                orientation="h",
+                yanchor="top",
+                y=0,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
+        figure.update_traces(textfont_size=20)
+        plotly_plot_obj = plot({'data': figure}, output_type='div')
+        return plotly_plot_obj
+
+
+class PieGraph:
+
+    @staticmethod
+    def draw(dictValues, bios=3,
+             title_text=None, showLegend=True,
+             yaxis_title='trials', xaxis_title='Trials'):
+
+        colors = []
+        values = []
+        labels = []
+        totals = 0
+        for key in dictValues:
+            value = dictValues[key]['value']
+            color = dictValues[key]['color']
+            key = key if key else 'Undefined'
+            totals += value
+            values.append(value)
+            colors.append(color)
+            labels.append(f'{value} {key}')
+
+        trace = go.Pie(
+            labels=[' ', f'{bios} Bio'],
+            values=[totals-bios, bios],
+            marker_colors=[COLOR_bs_white, COLOR_bio],
+            textinfo='none',  # Do not display labels on the chart
+            hoverinfo='label',
+            hole=0.8)
+
+        # Create the figure
+        figure = go.Figure(data=[trace])
 
         annotations = [
             dict(text='trials',
