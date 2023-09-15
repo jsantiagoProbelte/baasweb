@@ -143,9 +143,6 @@ class TrialFilterHelper:
         bios = self.countBy('product__biological')
         return bios.get(True, 0)
 
-    def countProducts(self):
-        return len(list(self.countBy('product', True).keys()))
-
     def countBy(self, param, isDistinct=False):
         counts = self._trials.values(
             param
@@ -175,14 +172,9 @@ class TrialFilterHelper:
         productTypes = Product.objects.filter(
             id__in=productIds).values('id', 'type_product')
         productCategories = {item['id']:
-<<<<<<< HEAD
                              TrialFilterHelper.productCategory(
             item['category__name'])
             for item in productTypes}
-=======
-                             Product.getCategory(item['type_product'])
-                             for item in productTypes}
->>>>>>> d39a8f1 (change for product type and category)
         counts = {}
         for itemId in classProducts:
             productsInCrop = classProducts[itemId]
@@ -201,7 +193,8 @@ class TrialFilterHelper:
             product_count=Count('fieldtrial__product', distinct=True),
             min_date=Min('fieldtrial__initiation_date'),
             max_date=Max('fieldtrial__initiation_date')
-        ).values('name', 'id', 'trial_count', 'product_count', 'min_date', 'max_date')
+        ).values('name', 'id', 'trial_count', 'product_count', 'min_date',
+                 'max_date')
 
     def generateParamUrl(self):
         params = ''
@@ -247,9 +240,9 @@ class TrialFilterHelper:
     def getRangeEfficacy(self, param):
         items = self._trials.filter(**param)
         min_efficacy = items.aggregate(
-                min_efficacy=Min('best_efficacy'))['min_efficacy']
+            min_efficacy=Min('best_efficacy'))['min_efficacy']
         max_efficacy = items.aggregate(
-                max_efficacy=Max('best_efficacy'))['max_efficacy']
+            max_efficacy=Max('best_efficacy'))['max_efficacy']
 
         range_efficacy = '??'
         if min_efficacy:
@@ -381,7 +374,7 @@ class PlaguesListView(BaaSView):
                 'bar_values': barValues,
                 'efficacies': self._fHelper.getRangeEfficacy({'plague': item}),
                 'date_range': self._fHelper.getMinMaxYears({'plague': item})
-                })
+            })
         return {'object_list': new_list,
                 'num_products': totalProducts}
 

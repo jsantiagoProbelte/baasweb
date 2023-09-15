@@ -15,7 +15,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import django_extensions
 from pathlib import Path
 from dotenv import load_dotenv
-from dotenv import load_dotenv
 import os
 import logging.config
 from django.utils.translation import gettext_lazy as _
@@ -48,7 +47,7 @@ AUTHENTICATION_BACKENDS = [
     'sesame.backends.ModelBackend', 'passkeys.backend.PasskeyModelBackend']
 KEY_ATTACHMENT = passkeys.Attachment.PLATFORM
 # Server rp id for FIDO2, it the full domain of your project
-FIDO_SERVER_ID = "localhost"
+
 FIDO_SERVER_NAME = "BaasWebApp"
 
 ALLOWED_HOSTS = ['*']

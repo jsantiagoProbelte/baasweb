@@ -7,7 +7,7 @@ class KeyManager:
     def __init__(self):
         # Use the DefaultAzureCredential to automatically use Managed Identity
         self.secret_client = SecretClient(
-            vault_url=os.environ.get("KEYVAULT_URL"),
+            vault_url=os.environ.get("KEYVAULT-URL"),
             credential=DefaultAzureCredential())
 
     def get_secret(self, secret_name):
