@@ -24,6 +24,17 @@ class Product(ModelHelpers, models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
     active_substance = models.CharField(max_length=100, null=True)
 
+    # Product Basics
+    pest_disease = models.CharField(max_length=100, null=True)
+    concentration = models.CharField(max_length=100, null=True)
+    ph = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    presentation = models.CharField(max_length=100, null=True)
+    application = models.CharField(max_length=100, null=True)
+    weather_temperature = models.IntegerField(null=True)
+    weather_humidity = models.IntegerField(null=True)
+    security_period = models.CharField(max_length=100, null=True)
+    mixes = models.CharField(max_length=100, null=True)
+
     type_product = models.CharField(
         max_length=3,
         choices=PType.choices,
