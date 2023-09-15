@@ -179,7 +179,7 @@ class AssessmentAnalytics:
         self._anova_table = sm.stats.anova_lm(model, typ=2)
         self._statsText += "<p class='txt-regular-16'>ANOVA test</p>"
         self._statsText += self._anova_table.transpose().to_html(
-            classes='table stats-table')
+            classes='table stats-table no-border')
         if self._debug:
             print(self._anova_table)
 

@@ -332,15 +332,15 @@ class DataHelper:
         thesisNumber = self._thesisTrial[thesisId].number
         span = 0
         tvalue = ''
+        groups = None
         if lastThesis != thesisNumber:
             lastThesis = thesisNumber
             span = self._replicas_thesis
             if snk and thesisNumber in snk:
                 mean = snk[thesisNumber]['mean']
-                groups = ''
                 if 'group' in snk[thesisNumber]:
-                    groups = f" ({', '.join(snk[thesisNumber]['group'])})"
-                tvalue = f"{mean}{groups}"
+                    groups = f"{', '.join(snk[thesisNumber]['group'])}"
+                tvalue = mean
                 efficacyData[thesisNumber] = mean
         rItemId = DataModel.genDataPointId(
             GraphTrial.L_REPLICA, self._assessment.id,
@@ -349,6 +349,7 @@ class DataHelper:
                 {'thesis': self._thesisTrial[thesisId],
                  'tvalue': tvalue,
                  'value': value,
+                 'groups': groups,
                  'item_id': rItemId,
                  'rowspan': span,
                  'row': rowNumber,

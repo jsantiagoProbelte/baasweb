@@ -49,9 +49,13 @@
       {% for dataRow in dataContent.dataRows %}
       <tr class="border-custom-{{dataRow.color}}">
           {% if dataRow.rowspan > 0 %}
-            <td rowspan="{{dataRow.rowspan}}"><div class="color-icon bg-custom-{{dataRow.color}}"></div>{{dataRow.thesis}}</td>
+            <td rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
             {% if level != 'thesis' %}
-              <td rowspan="{{dataRow.rowspan}}"> {{dataRow.tvalue}}</td>
+              <td rowspan="{{dataRow.rowspan}}"> {{dataRow.tvalue}}
+                {% if dataRow.groups %}
+                  <span class="badge rounded-pill bg-custom-baas-primary">{{dataRow.groups}}</span>
+                {% endif %}
+              </td>
             {% endif %}
           {% endif %}
           {% if level == 'sample' %}
@@ -107,7 +111,7 @@
     <table class="table stats-table">
       <tr ><td >{% trans 'name'%}</td><td >{{dataContent.assessment.name}}</td></tr>
       <tr><td >{% trans 'date'%}</td><td >{{dataContent.assessment.assessment_date}}</td></tr>
-      <tr><td >{% trans 'Crop Stage Majority'%}</td><td >{{dataContent.assessment.crop_stage_majority}}</td></tr>
+      <tr><td >{% trans 'crop stage majority'%}</td><td >{{dataContent.assessment.crop_stage_majority}}</td></tr>
       <tr><td >{% trans 'part rated'%}</td><td >{{dataContent.assessment.part_rated}}</td></tr>
     </table>
     {{dataContent.stats|safe}}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 16:07+0200\n"
+"POT-Creation-Date: 2023-09-15 12:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,7 +67,7 @@ msgid "dew point"
 msgstr "punto de rocío"
 
 #: baaswebapp/graphs.py:657
-#: trialapp/templates/trialapp/trial_assessment_view.html:26
+#: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
 #: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:323
@@ -166,8 +166,6 @@ msgid "crops"
 msgstr "cultivos"
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:24
-#, fuzzy
-#| msgid "trial list"
 msgid "trial details"
 msgstr "lista ensayos"
 
@@ -363,10 +361,8 @@ msgid "Fail on generating download"
 msgstr "Fallar en generar descargar"
 
 #: trialapp/filter_helpers.py:42
-#, fuzzy
-#| msgid "Status"
 msgid "status"
-msgstr "Estadísticas"
+msgstr "estado"
 
 #: trialapp/filter_helpers.py:45
 msgid "type"
@@ -526,10 +522,8 @@ msgid "no trials"
 msgstr "no ensayos"
 
 #: trialapp/templates/trialapp/detail_fieldtrials_list.html:65
-#, fuzzy
-#| msgid "Search"
 msgid "search"
-msgstr "Buscar"
+msgstr "buscar"
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:5
 msgid "Compared Treatments"
@@ -561,10 +555,8 @@ msgstr "Rasgos de diseño"
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:65
 #: trialapp/templates/trialapp/fieldtrial_design.html:69
-#, fuzzy
-#| msgid "assessments"
 msgid "Assesments"
-msgstr "evaluaciones"
+msgstr "Evaluaciones"
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:70
 msgid "Part Assesed"
@@ -575,25 +567,20 @@ msgid "Schedule"
 msgstr "Cronograma"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:5
-#, fuzzy
 msgid "Trial Info"
 msgstr "Prueba de Laboratorio"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:7
-#, fuzzy
-#| msgid "new trial"
 msgid "Type of trial"
-msgstr "nuevo ensayo"
+msgstr "tipo de ensayo"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:11
-#, fuzzy
-#| msgid "treatments"
 msgid "Nº of treatments"
-msgstr "tratamientos"
+msgstr "Nº tratamientos"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:12
 msgid "Nº repetitions/treatment"
-msgstr "Repeticiones/tratamiento nº"
+msgstr "Nº Repeticiones por tratamiento"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:16
 msgid "Copy All"
@@ -608,10 +595,8 @@ msgid "Longitude"
 msgstr "Longitud"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:32
-#, fuzzy
-#| msgid "infestation"
 msgid "Plantation"
-msgstr "Infección"
+msgstr "Plantación"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:34
 msgid "Crop"
@@ -630,10 +615,8 @@ msgid "Scientifict Name"
 msgstr "Nombre científico"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:40
-#, fuzzy
-#| msgid "Crop"
 msgid "Crop Age"
-msgstr "Cultivo"
+msgstr "Edad Cultivo"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:41
 msgid "Transplant Date"
@@ -656,9 +639,8 @@ msgid "Rows Separation"
 msgstr "Separación de filas"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:53
-#, fuzzy
 msgid "Trial Owners"
-msgstr "Prueba de Laboratorio"
+msgstr "Responsable Ensayo"
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:55
 msgid "Farmer"
@@ -705,15 +687,39 @@ msgstr "evaluación clave"
 msgid "efficacy key values"
 msgstr "rango eficacia"
 
-#: trialapp/templates/trialapp/trial_assessment_view.html:50
-msgid "plots"
-msgstr "tramas"
+#: trialapp/templates/trialapp/trial_assesment.html:5
+#: trialapp/templates/trialapp/trial_show.html:59
+msgid "assessments"
+msgstr "evaluaciones"
 
-#: trialapp/templates/trialapp/trial_assessment_view.html:118
-#, fuzzy
-#| msgid "Status"
+#: trialapp/templates/trialapp/trial_assessment_view.html:6
+msgid "assessment results"
+msgstr "resultados evaluaciones"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:38
+msgid "plots"
+msgstr "parcelas"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:110
 msgid "statistics"
 msgstr "Estadísticas"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:112
+msgid "name"
+msgstr "nombre"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:113
+#: trialapp/templates/trialapp/trial_conclusions.html:86
+msgid "date"
+msgstr "fecha"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:114
+msgid "crop stage majority"
+msgstr "mayoría de la etapa de cultivo"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:115
+msgid "part rated"
+msgstr "parte evaluada"
 
 #: trialapp/templates/trialapp/trial_conclusion_graph.html:9
 msgid "You can select key and control thesis in this link"
@@ -734,10 +740,6 @@ msgstr "Mejor eficacia"
 #: trialapp/templates/trialapp/trial_conclusions.html:55
 msgid "recommendations"
 msgstr "Recomendaciones"
-
-#: trialapp/templates/trialapp/trial_conclusions.html:86
-msgid "date"
-msgstr "fecha"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:90
 msgid "location"
@@ -793,10 +795,6 @@ msgstr "tendencias"
 msgid "data"
 msgstr "datos"
 
-#: trialapp/templates/trialapp/trial_show.html:59
-msgid "assessments"
-msgstr "evaluaciones"
-
 #: trialapp/templates/trialapp/trial_show.html:69
 msgid "download trial"
 msgstr "Descargar ensayo"
@@ -805,7 +803,7 @@ msgstr "Descargar ensayo"
 msgid "files"
 msgstr "archivos"
 
-#: trialapp/templates/trialapp/trial_show.html:90
+#: trialapp/templates/trialapp/trial_show.html:91
 msgid "average efficacy"
 msgstr "eficacia media"
 
