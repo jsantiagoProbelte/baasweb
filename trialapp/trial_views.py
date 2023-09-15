@@ -83,12 +83,20 @@ class TrialApi(LoginRequiredMixin, DetailView):
         keyThesis = fieldtrial.key_thesis
         for thesis in thesisList:
             idColor = f"{bgClass}{counter}"
+            treatments = ''
+            thesisObj = Thesis.objects.get(id=thesis['id'])
+            for treatment in TreatmentThesis.getObjects(thesisObj):
+                if treatments != '':
+                    treatments += ' + '
+                treatments += treatment.treatment.getName()
             if thesis['id'] == controlThesis:
                 idColor = 'bg-custom-control'
             if thesis['id'] == keyThesis:
                 idColor = 'bg-custom-key-thesis'
-            thesisWithColor.append({'idColor': idColor,
-                                    'thesis': thesis})
+            thesisWithColor.append(
+                {'idColor': idColor,
+                 'thesis': {**thesis,
+                            'treatments': treatments}})
             counter += 1
         return thesisWithColor
 

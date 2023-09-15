@@ -17,7 +17,7 @@
                     {% for thesisData in thesis_list %}
                     <tr>
                         <td><div class="color-icon {{ thesisData.idColor }} "></div> {{thesisData.thesis.name}}</td>
-                        <td><b>{{ thesisData.thesis.product_name }}</b></td>
+                        <td><b>{{ thesisData.thesis.treatments }}</b></td>
                         <td>{{ thesisData.thesis.active_substance }}</td>
                         <td>Lorem Ipsum</td>
                         <td>{{ thesisData.thesis.vendor_name }}</td>
@@ -40,7 +40,7 @@
                     {% for thesisData in thesis_list %}
                     <div class="legend-line">
                         <div class="color-icon {{ thesisData.idColor }}"></div>
-                        <p>{{thesisData.thesis.product_name}}</p>
+                        <p>{{thesisData.thesis.name}}</p>
                     </div>
                     {% endfor %}
                 </div>
