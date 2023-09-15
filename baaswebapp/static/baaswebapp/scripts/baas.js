@@ -75,6 +75,33 @@ function loadTrialContent(){
 }
 
 
+function loadAssessment(btn){
+    var btnId = $(btn).attr('id'); // Get the ID of the current div
+    /* Id will be like trial-id-contentId */
+    var items = btnId.split('-');
+    var assessmentId = items[3]
+    var trialId = items[2]
+    // Make an AJAX call to the Django server
+    // See trial_assessment_view.html
+    var divId = '#trial-'+ trialId + '-assessment_view'
+    $.ajax({
+        type: 'GET',
+        url: '/trial_content_api' ,  // Update with the actual URL
+        data: { content_type: "assessment_view", 
+                id: trialId ,
+                extra_id: assessmentId}, // Send the div ID to the server
+        success: function(response) {
+            // Update the content of the div with the loaded content
+            $(divId).html(response);
+        },
+        error: function() {
+            // Handle error if the AJAX call fails
+            $(divId).html('<p>Error loading content.</p>');
+        }
+    });
+};
+
+
 // Delete product on click
 $("#table-items").on('click', 'a[id^=delete-item-]', function(){
     var item_id = $(this).attr('id').split('-')[2];

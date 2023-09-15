@@ -761,6 +761,19 @@ div[class*="bg-custom-"]{
   /* border-bottom: 1px solid rgba(223, 215, 202, 0.75); */
 }
 
+.stats-table th {
+  background-color: var(--custom-card-bg-light-violet) !important;
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  font-weight: normal;
+}
+
+.stats-table td {
+  background-color: var(--custom-card-bg-light-violet) !important;
+  font-size: 13px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+}
 
 .card-body-baas {
   background-color:var(--custom-bg-color-cards);
@@ -1263,6 +1276,7 @@ div.flex-inline-form input:focus{
   font-family: 'Open Sans', serif;
   font-weight: bold;
 }
+
 
 .txt-open-bold-13 {
   font-size: 13px;

@@ -339,9 +339,11 @@ class GraphTrial:
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,
+                 showLegend=True,
                  showTitle=False):
         self._level = level
         self._showTitle = showTitle
+        self._showLegend = showLegend
         self._xAxis = xAxis
         self._title = self.getTitle(rateType, ratedPart)
         self._graphData = {
@@ -372,7 +374,7 @@ class GraphTrial:
     def drawConclussionGraph(self, typeFigure=LINE,
                              orientation='v'):
         fig = self.figure(self._graphData, typeFigure=typeFigure,
-                          showLegend=False, orientation=orientation)
+                          orientation=orientation)
         return self.plot(fig)
 
     def bar(self):
@@ -399,7 +401,7 @@ class GraphTrial:
                   L_ASSMT: column,
                   L_THESIS: bar}
 
-    def formatFigure(self, fig, thisGraph, showLegend,
+    def formatFigure(self, fig, thisGraph,
                      orientation, typeFigure, num_x):
         # Update layout for graph object Figure
         if orientation == 'v':
@@ -420,7 +422,7 @@ class GraphTrial:
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
             title_text=thisGraph['title'] if self._showTitle else '',
-            showlegend=showLegend,
+            showlegend=self._showLegend,
             autosize=True,
             legend=legend,
             margin=dict(
@@ -463,7 +465,7 @@ class GraphTrial:
                       x=xValues, y=yValues)
         return data
 
-    def figure(self, thisGraph, showLegend=True,
+    def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
         data = None
         fig = go.Figure()
@@ -513,7 +515,7 @@ class GraphTrial:
                                  line_color=color)
             fig.add_trace(data)
 
-        self.formatFigure(fig, thisGraph, showLegend, orientation,
+        self.formatFigure(fig, thisGraph, orientation,
                           typeFigure, len(x))
         return fig
 
@@ -625,6 +627,12 @@ class GraphStat():
             font_color=COLOR_TEXT,
             title_text=self._graphData['title'] if self._showTitle else '',
             showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=10,  # Right margin
+                b=20,  # Bottom margin
+                l=10   # Left margin
+            ),
             legend=dict(
                 orientation="h",
                 yanchor="top",
@@ -648,6 +656,7 @@ class EfficacyGraph:
     def draw(numNameDict, numValueDict,
              title_text=_('efficacy') + '(%)', showLegend=False,
              yaxis_title='Abbott (%)', xaxis_title='thesis',
+             showTitle=False,
              barmode='group'):
 
         colors = []
@@ -673,8 +682,14 @@ class EfficacyGraph:
             title_font_color=COLOR_TEXT,
             plot_bgcolor=COLOR_bg_color_cards,
             font_color=COLOR_TEXT,
-            title_text=title_text,
+            title_text=title_text if showTitle else '',
             showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
             legend=dict(
                 orientation="h",
                 yanchor="top",
@@ -683,6 +698,7 @@ class EfficacyGraph:
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
+            height=GraphTrial.DEFAULT_HEIGHT,
             barmode=barmode)
         figure.update_traces(textfont_size=20)
         figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
@@ -768,6 +784,63 @@ class ProductCategoryGraph:
                 y=0,
                 xanchor="left",
                 x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title)
+        figure.update_traces(textfont_size=20)
+        plotly_plot_obj = plot({'data': figure}, output_type='div')
+        return plotly_plot_obj
+
+
+class PieGraph:
+
+    @staticmethod
+    def draw(keyValue, label, totals,
+             title_text=None, showLegend=False,
+             yaxis_title='trials', xaxis_title='Trials'):
+
+        trace = go.Pie(
+            labels=[' ', f'{keyValue} {label}'],
+            values=[totals-keyValue, keyValue],
+            marker_colors=[COLOR_bs_white, COLOR_bio],
+            textinfo='none',  # Do not display labels on the chart
+            hoverinfo='label',
+            hole=0.85)
+
+        # Create the figure
+        figure = go.Figure(data=[trace])
+
+        annotations = [
+            dict(text=label,
+                 x=0.5, y=0.25, font_size=20,
+                 font_color='grey',
+                 showarrow=False),
+            dict(text=f'{keyValue}',
+                 x=0.5, y=0.8, font_size=30,
+                 showarrow=False)]
+
+        figure.update_layout(
+            annotations=annotations,
+            paper_bgcolor='#F7F7F7',
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor='#F7F7F7',
+            font_color=COLOR_TEXT,
+            font_size=12,
+            title_text=title_text,
+            showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
+            legend=dict(
+                font_size=14,
+                orientation="h",
+                yanchor="top",
+                y=0,
+                xanchor="left",
+                x=0),
+            height=150,
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title)
         figure.update_traces(textfont_size=20)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 00:54+0200\n"
+"POT-Creation-Date: 2023-09-14 16:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,10 +66,11 @@ msgstr "humedad relativa"
 msgid "dew point"
 msgstr "punto de rocío"
 
-#: baaswebapp/graphs.py:649
+#: baaswebapp/graphs.py:657
+#: trialapp/templates/trialapp/trial_assessment_view.html:26
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:316
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:323
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -704,6 +705,16 @@ msgstr "evaluación clave"
 msgid "efficacy key values"
 msgstr "rango eficacia"
 
+#: trialapp/templates/trialapp/trial_assessment_view.html:50
+msgid "plots"
+msgstr "tramas"
+
+#: trialapp/templates/trialapp/trial_assessment_view.html:118
+#, fuzzy
+#| msgid "Status"
+msgid "statistics"
+msgstr "Estadísticas"
+
 #: trialapp/templates/trialapp/trial_conclusion_graph.html:9
 msgid "You can select key and control thesis in this link"
 msgstr "Puede seleccionar la tesis de clave y controlar en este enlace"
@@ -733,7 +744,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:362
+#: trialapp/trial_views.py:369
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -829,7 +840,7 @@ msgstr "No hay limitaciones en los permisos"
 msgid "Soil"
 msgstr "Suelo"
 
-#: trialapp/trial_views.py:363
+#: trialapp/trial_views.py:370
 msgid ""
 "Weather conditions cannot be determined because location or assessments info"
 " aremissing"
@@ -837,7 +848,11 @@ msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:411
+#: trialapp/trial_views.py:407
+msgid "No assessements yet"
+msgstr "No hay evaluaciones todavia"
+
+#: trialapp/trial_views.py:438
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -847,11 +862,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:688
+#: trialapp/trial_views.py:716
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:691
+#: trialapp/trial_views.py:719
 msgid " in "
 msgstr " en "
 

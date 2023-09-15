@@ -52,6 +52,10 @@ class Assessment(ModelHelpers, models.Model):
         return "[{}] {}".format(self.assessment_date,
                                 self.rate_type)
 
+    def getUnitPartTitle(self):
+        return "{} {}".format(self.rate_type.getName(),
+                              self.getPartRated())
+
     def get_success_url(self):
         return "/assessment_list/%i/" % self.field_trial.id
 
