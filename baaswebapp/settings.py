@@ -12,7 +12,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import django_extensions
 from pathlib import Path
 from dotenv import load_dotenv
 import os
