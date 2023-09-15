@@ -71,7 +71,7 @@ def login_email(request):
     LOGIN_URL = current_url + "/sesame/login/" + get_query_string(user)
     html_content = "<html><p>Welcome to BaaS! Click <a href=" + \
         LOGIN_URL + ">here</a> to sign in!</p</html>"
-    from_email = Email("alex@arentz.cc")
+    from_email = Email("jsantiago@probelte.com")
     to_email = To(user.email)
     subject = "Your Login Request to BaaS"
     content = Content(
