@@ -1422,6 +1422,12 @@ div.flex-inline-form input:focus{
   color: var(--custom-brand-color)
 }
 
+.btn-assessment-trial:hover{
+  background: var(--custom-brand-color);
+  color: white;
+}
+
+
 .sidebar-item:hover {
   color: #000;
 }
