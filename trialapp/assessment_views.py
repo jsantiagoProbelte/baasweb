@@ -9,11 +9,12 @@ from trialapp.data_models import ThesisData, ReplicaData, SampleData, \
 from django.shortcuts import get_object_or_404, render
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
 from trialapp.data_views import DataHelper, DataGraphFactory
-from django.views.generic import DetailView, View
+from django.views.generic import DetailView
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from crispy_forms.helper import FormHelper
 from django.urls import reverse
-from rest_framework.response import Response
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
@@ -228,7 +229,10 @@ class AssessmentDeleteView(LoginRequiredMixin, DeleteView):
             return reverse('trial-list')
 
 
-class AssessmentApi(LoginRequiredMixin, View):
+class AssessmentApi(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
 
     # see generateDataPointId
     def post(self, request, format=None):
@@ -285,6 +289,6 @@ class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
                                 trialPermision.canEdit())
 
         return render(request, self.template_name, {
-            **dataHelper.showDataAssessment(), **trialPermision.getPermisions(),
-            'assessment': assessment
-            })
+            **dataHelper.showDataAssessment(),
+            **trialPermision.getPermisions(),
+            'assessment': assessment})

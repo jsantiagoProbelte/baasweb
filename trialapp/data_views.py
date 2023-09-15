@@ -57,15 +57,25 @@ class TrialDataApi(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self._trial = self.get_object()
-        permisions = TrialPermission(
-            self._trial, self.request.user).getPermisions()
+        trial = self.get_object()
+        dataAssHelper = DataTrialHelper(trial)
+        permisions = TrialPermission(trial, self.request.user).getPermisions()
+        assData = dataAssHelper.getTrialData()
+        return {**context, **permisions, **{'dataContent': assData}}
+
+
+class DataTrialHelper:
+    def __init__(self, trial):
+        self._trial = trial
+
+    def getTrialData(self):
         self._assessments = Assessment.getObjects(
             self._trial, date_order=False)
         header = self.prepareHeader()
         showData = {'header': header, 'dataRows': self.preparaRows(),
+                    'trialId': self._trial.id,
                     'ratings': RateTypeUnit.getSelectList(asDict=True)}
-        return {**context, **permisions, **showData}
+        return showData
 
     def addValue(self, array, assessment, key, value):
         array.append({'name': key, 'value': value,

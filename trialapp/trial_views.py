@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from trialapp.trial_analytics import Abbott
 from catalogue.models import UNTREATED
 from rest_framework.views import APIView
-from trialapp.data_views import DataHelper
+from trialapp.data_views import DataHelper, DataTrialHelper
 
 
 class TrialApi(LoginRequiredMixin, DetailView):
@@ -224,6 +224,7 @@ class TrialContent():
     WEATHER = 'weather_graphs'
     WEATHER_AVG = 'weather_avg'
     ASSESSMENTS = 'assess_graphs'
+    ALL_ASS_DATA = 'all_ass_data'
     ASSESSMENT_VIEW = 'assessment_view'
     RESULT_SUMMARY = 'result_summary'
     KEY_ASSESS = 'key_assess'
@@ -240,6 +241,7 @@ class TrialContent():
         self._extra_id = extra_id
         self._content = content
         self._assmts = None
+        self._permisions = TrialPermission(self._trial, user)
         if content != TrialContent.ONLY_TRIAL_DATA:
             self._category = self._trial.product.category()
             self.getAssmts()
@@ -428,6 +430,10 @@ class TrialContent():
         return self.getAssGraphData(
             rateSets, ratedParts, GraphTrial.COLUMN, showEfficacy=True,
             xAxis=GraphTrial.L_ASSMT)
+
+    def fetchAllAssessData(self):
+        helper = DataTrialHelper(self._trial)
+        return {**helper.getTrialData()}
 
     def fetchKeyAssessData(self):
         content = self.getKeyGraphData()
@@ -723,6 +729,7 @@ class TrialContent():
     FETCH_FUNCTIONS = {
         WEATHER: fetchWeather,
         KEY_ASSESS: fetchKeyAssessData,
+        ALL_ASS_DATA: fetchAllAssessData,
         ASSESSMENTS: fetchAssessmentsData,
         WEATHER_AVG: getMeteorology,
         ASSESSMENT_VIEW: fetchAssessment,
@@ -738,6 +745,7 @@ class TrialContent():
         KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
         ASSESSMENTS: TEMPLATE_CARDS,
         WEATHER_AVG: 'trialapp/trial_weather_avg.html',
+        ALL_ASS_DATA: 'trialapp/trial_data_table.html',
         RESULT_SUMMARY: TEMPLATE_CARDS}
 
     def fetch(self):
@@ -746,7 +754,9 @@ class TrialContent():
         content = theFetch(self)
         template = TrialContent.FETCH_TEMPLATES.get(
             self._content, TrialContent.TEMPLATE_CARDS)
-        return render(self._request, template, {'dataContent': content})
+        return render(self._request, template,
+                      {'dataContent': content,
+                       **self._permisions.getPermisions()})
 
 
 @login_required

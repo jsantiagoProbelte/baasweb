@@ -2,7 +2,7 @@
 <tr><th></th><th class="text-right">{{title}}</th>
 {% for itemHeader in headerRowClass %}
   <th class="text-right">
-    {%if edit_data %}
+    {%if edit_trial_perm %}
       <form id="form-header-input-{{itemHeader.id}}"
           class='form-header-input-template'  method="POST">
         {% csrf_token %}

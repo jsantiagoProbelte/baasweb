@@ -52,12 +52,13 @@
         <li class="nav-item">
             <button class="nav-link txt-open-semibold-15 capitalize-first" id="trends-tab" data-bs-toggle="tab" data-bs-target="#nav-trends" type="button" role="tab" aria-controls="nav-trends" aria-selected="true">{% trans "trends" %}</button>
         </li>
-        <li class="nav-item">
-        <button class="nav-link txt-open-semibold-15 capitalize-first" id="data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="true">{% trans "data" %}</button>
-        </li>
+
         <li class="nav-item">
         <button class="nav-link txt-open-semibold-15 capitalize-first" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#nav-assessment" type="button" role="tab" aria-controls="nav-assessment" aria-selected="true">{% trans "assessments" %}</button>
         </li>
+        <li class="nav-item">
+            <button class="nav-link txt-open-semibold-15 capitalize-first" id="data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="true">{% trans "data" %}</button>
+            </li>
         <li class="nav-item">
         <button class="nav-link txt-open-semibold-15 capitalize-first" id="info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
         </li>
@@ -91,13 +92,14 @@
             <p class="txt-encode-20 capitalize-first mt-3">{% trans 'average efficacy'%}</p>
             {% include 'trialapp/trial_content_topic_div.html' with topic='result_summary'%}
         </div>
+        <div class="tab-pane fade" id="nav-data" role="tabpanel" aria-labelledby="data-tab">
+            {% include 'trialapp/trial_content_topic_div.html' with topic='all_ass_data'%}
+        </div>
         <div class="tab-pane fade" id="nav-trends" role="tabpanel" aria-labelledby="trends-tab">
             {% include 'trialapp/trial_content_topic_div.html' with topic='weather_graphs'%}
             {% include 'trialapp/trial_content_topic_div.html' with topic='assess_graphs'%}
         </div>
-        <div class="tab-pane fade" id="nav-data" role="tabpanel" aria-labelledby="data-tab">
-            data
-        </div>
+
         <div class="tab-pane fade" id="nav-assessment" role="tabpanel" aria-labelledby="assessment-tab">
             {% include 'trialapp/trial_assesment.html' %}
         </div>
@@ -122,6 +124,33 @@ $(document).ready(function() {
 $('.btn-assessment-trial').on('click', function() {
     var element = $(this)
     loadAssessment(element);
+});
+
+var setDataPointAPI = '/set_data_point';
+$('.data-input-template').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, setDataPointAPI);
+});
+
+$('.data-input-template').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, setDataPointAPI, 'data-input-template');
+});
+
+var assessmentInfoUpdateAPI = '/assessment_api';
+$('.assessment-input-form').on('blur', function(){
+    var element=$(this);
+    return setDataPoint(element, assessmentInfoUpdateAPI);
+});
+
+$('.assessment-input-form').on('keypress', function(event) {
+    var element = $(this);
+    return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
+});
+
+
+$('#trial-data').on('paste', function(event){
+  return pasteData(event, setDataPointAPI);
 });
 
 </script>

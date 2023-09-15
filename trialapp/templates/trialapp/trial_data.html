@@ -5,55 +5,8 @@
 {% block content %}
 
 {% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
+{% include "trialapp/trial_data_table.html" %}
 
-<div class="card card-body-baas mt-2">
-  <div class="table-container-long">
-  <table class="data-table-longer table table-borderless" id="trial-data">
-    <thead>
-      <tr><th></th><th class="text-right">Assessment</th>
-        {% for itemId in header.ids %}
-          <th class="text-right">
-            <a href="{% url 'assessment' itemId.id %}" class="btn btn-secondary">
-              {{itemId.name}}</a>
-          </th>
-        {% endfor %}
-      </tr>
-      {% include "trialapp/trial_data_header_edit_select.html" with headerRowClass=header.rating title='Rating (Unit)' selectOptions=ratings %}
-      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.dates title='Date' type='date' %}
-      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.bbch title='BBCH' type='text' %}
-      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.partRated title='Part Rated' type='text' %}
-      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=header.names title='Name/Interval' type='text' %}
-    </thead>
-    <tbody>
-    {% for dataRow in dataRows %}
-        <tr class="border-custom-{{dataRow.color}}">
-            {% if dataRow.rowspan > 0 %}
-              <td rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
-            {% endif %}
-            <td class=" text-right">{{dataRow.replica}}</td>
-        {% for dataPointValue in dataRow.values %}
-          <td id="cell-{{dataPointValue.row}}-{{dataPointValue.column}}">
-            {% if edit_trial_perm %}
-              <form id="form-data-input-template-{{level}}-{{dataPointValue.item_id}}" 
-                class='form-data-input-template'  method="POST">
-                {% csrf_token %}
-                <input type="text" name="data-point"
-                    id="{{dataPointValue.item_id}}"
-                    class="form-control-baas input data-input-template text-right"
-                    placeholder="-"
-                    value={{dataPointValue.value}}></input>
-              </form>
-            {% else %}
-              {{dataPointValue.value}}
-            {% endif %}
-          </td>
-        {% endfor %}
-        </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  </div>
-</div>
 
 {% endblock %}
 
