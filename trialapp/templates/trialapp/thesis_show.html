@@ -29,7 +29,7 @@
     <div class="card no-border" >
         <div class="card-body-baas">
               <h4>Treatments 
-                {%if edit_data %}
+                {%if edit_trial_perm %}
                 <span><a href="{% url 'treatment_thesis-add' thesis.id %}" class="btn btn-info btn-sm fs-4"
                 data-toggle="tooltip" data-placement="top" title='Add treatment'>&#43;</a></span>
                 {% endif %}
@@ -38,7 +38,7 @@
                 {% for treatment in treatments %}
                 <li class="list-group-item list-group-item-baas">
                     {{treatment.name}}
-                    {%if edit_data %}
+                    {%if edit_trial_perm %}
                     <span class=""><a href="{% url 'treatment_thesis-delete' treatment.id %}" class="btn btn-warning float-end btn-sm fs-3"
                         data-toggle="tooltip" data-placement="top" title='Delete new item'>
                         <span class="material-symbols-outlined" >delete</span></a></span>

@@ -157,6 +157,9 @@ class ProductApi(LoginRequiredMixin, View):
             range_efficacy += ' %'
         return range_efficacy
 
+    def editPermision(self, request):
+        return True if request.user.is_superuser else False
+
     def get(self, request, *args, **kwargs):
         product_id = None
         product_id = kwargs['pk']
@@ -166,11 +169,11 @@ class ProductApi(LoginRequiredMixin, View):
         helperView = DetailedTrialListView(
             request, extra_params={'product': product_id})
         context_trials = helperView.getTrials()
-
         return render(
             request, template_name, {
                 **context_trials,
                 'product': product,
+                'edit_trial_perm': self.editPermision(request),
                 'range_efficacy': self.getRangeEfficacy(product),
                 'variants': self.getProductTree(product),
                 'titleView': product.getName(),

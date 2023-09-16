@@ -16,6 +16,7 @@
 {% endblock %}
 
 {% block content %}
+{% url 'product-update' product.id as edit_product %}
 <ul class="nav nav-tabs product-primary-tabs">
   <li class="nav-item product-recommendations-tab">
     {% if activeTab == '1' %}
@@ -79,14 +80,14 @@
           <div class="labels">
             <small class="txt-uppercase">{% trans "active substance"%}</small>
           </div>
-          <p><b>{% include 'baaswebapp/show_value.html' with value=product.active_substance url_fix=edit_trial %}</b></p>
+          <p><b>{% include 'baaswebapp/show_value.html' with value=product.active_substance url_fix=edit_product %}</b></p>
         </div>
         <!--PLAGUES-->
         <div id="plagues" class="card-baas-alt col-3">
           <div class="labels">
             <small class="txt-uppercase">{% trans "pest / disease" %}</small>
           </div>
-          <p><b>{% include 'baaswebapp/show_value.html' with value=product.pest_disease url_fix=edit_trial %}</b></p>
+          <p><b>{% include 'baaswebapp/show_value.html' with value=product.pest_disease url_fix=edit_product %}</b></p>
         </div>
       </div>
       <div class="row">
@@ -97,17 +98,17 @@
             <div class="row">
               <div class="col-5">
                 <small class="txt-uppercase">{% trans "concentration"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.concentration url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.concentration url_fix=edit_product %}</p>
               </div>
               <div class="col-5">
                 <small>PH</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.ph url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.ph url_fix=edit_product %}</p>
               </div>
             </div>
             <div class="row">
               <div class="col-6">
                 <small class="txt-uppercase">{% trans "presentation"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.presentation url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.presentation url_fix=edit_product %}</p>
               </div>
             </div>
           </div>
@@ -119,22 +120,22 @@
             <div class="row">
               <div class="col-5">
                 <small class="txt-uppercase">{% trans "Application"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.application url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.application url_fix=edit_product %}</p>
               </div>
               <div class="col-5">
                 <small class="txt-uppercase">{% trans "weather"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.weather_temperature url_fix=edit_trial %}&deg;C</p>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.weather_humidity url_fix=edit_trial %}%</p></p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.weather_temperature url_fix=edit_product %}&deg;C</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.weather_humidity url_fix=edit_product %}%</p></p>
               </div>
             </div>
             <div class="row">
               <div class="col-5">
                 <small class="txt-uppercase">{% trans "Security period"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.security_period url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.security_period url_fix=edit_product %}</p>
               </div>
               <div class="col-5">
                 <small class="txt-uppercase">{% trans "Mixes"%}</small>
-                <p>{% include 'baaswebapp/show_value.html' with value=product.mixes url_fix=edit_trial %}</p>
+                <p>{% include 'baaswebapp/show_value.html' with value=product.mixes url_fix=edit_product %}</p>
               </div>
             </div>
           </div>
