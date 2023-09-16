@@ -281,10 +281,8 @@ class DataViewsTest(TestCase):
         tPoints = SampleData.objects.all()
         self.assertEqual(len(tPoints), 1)
         self.assertEqual(tPoints[0].value, value)
-        self.assertEqual(tPoints[0].assessment.id,
-                         assmt.id)
-        self.assertEqual(tPoints[0].reference.number,
-                         fakeSmpId)
+        self.assertEqual(tPoints[0].assessment.id, assmt.id)
+        self.assertEqual(tPoints[0].reference.number, fakeSmpId)
 
         # See that now we do not see the replicaId
         dataShow = dataHelper.showDataAssessment()

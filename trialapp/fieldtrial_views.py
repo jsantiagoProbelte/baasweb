@@ -14,6 +14,7 @@ from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.utils.translation import gettext_lazy as _
 from trialapp.filter_helpers import TrialFilterExtended, DetailedTrialListView
+from baaswebapp.models import EventBaas, EventLog
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
@@ -222,6 +223,10 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
+            EventLog.track(
+                EventBaas.NEW_TRIAL,
+                self.request.user.id,
+                fieldTrial.id)
             TrialFile().createTrialFolder(fieldTrial.code)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
 
@@ -235,6 +240,13 @@ class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         form.helper = FieldTrialFormLayout(new=False)
         return form
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_TRIAL,
+                       self.request.user.id,
+                       form.instance.id)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class FieldTrialDeleteView(LoginRequiredMixin, DeleteView):

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from trialapp.models import FieldTrial
 from baaswebapp.baas_helpers import BaaSHelpers
 from baaswebapp.graphs import GraphStat, PieGraph
+from baaswebapp.models import EventLog
 
 
 class StatsDataApi(APIView):
@@ -97,6 +98,35 @@ class StatsDataApi(APIView):
                 'total': totalGraph,
                 'time': self.getTrialMonthStats(dimension, topList)}
 
+    def generateEventGraphs(self):
+        events = EventLog.objects.values('event')\
+            .annotate(Count('id')).all()\
+            .order_by('id__count')
+
+        dataset = {}
+        # Sorting in array of values per keyName
+        labels = []
+        topList = []
+        for item in events:
+            datasetKey = item['event']
+            datasetKey = 'Unknown' if datasetKey is None else datasetKey
+            dataset[datasetKey] = item['id__count']
+            labels.append(datasetKey)
+
+        # reverse order of labels to draw from top to bottom
+        newlabels = list(reversed(labels))
+        sizeTops = 25
+        for label in newlabels:
+            topList.append(label)
+            sizeTops -= 1
+            if sizeTops == 0:
+                break
+        # prepare data to display
+        return GraphStat({'event': dataset}, newlabels,
+                         orientation='v',
+                         showLegend=False, showTitle=False,
+                         xAxis='events', yAxis='total events').plot()
+
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
 
@@ -111,5 +141,6 @@ class StatsDataApi(APIView):
         publicGraph = PieGraph.draw(publics, 'Public', totalTrials)
         favorGraph = PieGraph.draw(favorables, 'Favorable', totalTrials)
         data = {'stats': stats, 'totalTrials': totalTrials,
-                'publicGraph': publicGraph, 'favorGraph': favorGraph}
+                'publicGraph': publicGraph, 'favorGraph': favorGraph,
+                'eventsGraph': self.generateEventGraphs()}
         return render(request, StatsDataApi.TEMPLATE, data)

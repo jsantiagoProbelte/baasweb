@@ -20,6 +20,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import TrialPermission
+from baaswebapp.models import EventBaas, EventLog
 
 CLASS_DATA_LEVEL = {
     GraphTrial.L_REPLICA: ReplicaData,
@@ -188,6 +189,10 @@ class AssessmentCreateView(LoginRequiredMixin, CreateView):
             assessment = form.instance
             assessment.save()
             Assessment.computeDDT(assessment.field_trial)
+            EventLog.track(
+                EventBaas.NEW_ASS,
+                self.request.user.id,
+                assessment.field_trial_id)
             return HttpResponseRedirect(assessment.get_absolute_url())
 
 
@@ -205,6 +210,10 @@ class AssessmentUpdateView(LoginRequiredMixin, UpdateView):
         if form.is_valid():
             assessment = form.instance
             assessment.save()
+            EventLog.track(
+                EventBaas.UPDATE_ASS,
+                self.request.user.id,
+                assessment.field_trial_id)
             Assessment.computeDDT(assessment.field_trial)
             return HttpResponseRedirect(assessment.get_absolute_url())
 
@@ -219,6 +228,9 @@ class AssessmentDeleteView(LoginRequiredMixin, DeleteView):
         self._parent = self.object.field_trial
         self.object.delete()
         Assessment.computeDDT(self._parent)
+        EventLog.track(EventBaas.DELETE_ASS,
+                       self.request.user.id,
+                       self._parent.id)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -253,6 +265,10 @@ class AssessmentApi(APIView):
         elif 'crop_stage_majority' in request.POST:
             ass.crop_stage_majority = request.POST['crop_stage_majority']
         ass.save()
+        EventLog.track(
+                EventBaas.UPDATE_ASS,
+                0,  # TODO request.user.id if request.user.id else 0,
+                ass.field_trial_id)
         return Response({'success': True})
 
 

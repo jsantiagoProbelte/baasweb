@@ -13,6 +13,7 @@ from baaswebapp.graphs import GraphTrial, EfficacyGraph, \
     COLOR_KEY_THESIS, COLOR_CONTROL
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
+from baaswebapp.models import EventBaas, EventLog
 
 
 class SetDataAssessment(APIView):
@@ -45,6 +46,10 @@ class SetDataAssessment(APIView):
             SampleData.setDataPoint(item, assessment, value)
         else:
             return Response({'success': False}, status='500')
+        EventLog.track(
+                EventBaas.NEW_DATA,
+                0,  # TODO request.user.id if request.user.id else 0,
+                assessment.field_trial_id)
         return Response({'success': True})
 
 

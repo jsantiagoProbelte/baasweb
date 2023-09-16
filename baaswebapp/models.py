@@ -253,3 +253,49 @@ class Weather(ModelHelpers, models.Model):
 
     def __str__(self):
         return str(self.date)
+
+
+class EventBaas(models.TextChoices):
+    UNKNOWN = 'UNK', 'Unknown'
+    NEW_TRIAL = 'N_T', 'new trial'
+    UPDATE_TRIAL = 'U_T', 'update trial'
+    DELETE_TRIAL = 'D_T', 'delete trial'
+    TRIAL_DONE = 'T_D', 'trial done'
+    NEW_THESIS = 'N_TH', 'new thesis'
+    UPDATE_THESIS = 'U_TH', 'update thesis'
+    DELETE_THESIS = 'D_TH', 'delete thesis'
+    NEW_ASS = 'N_ASS', 'new assessment'
+    UPDATE_ASS = 'U_ASS', 'update assessment'
+    DELETE_ASS = 'D_ASS', 'delete assessment'
+    NEW_APP = 'N_APP', 'new application'
+    UPDATE_APP = 'U_APP', 'update application'
+    DELETE_APP = 'D_APP', 'delete application'
+    NEW_PRODUCT = 'N_P', 'new product'
+    UPDATE_PRODUCT = 'U_P', 'update product'
+    DELETE_PRODUCT = 'D_P', 'delete product'
+    NEW_VARIANT = 'N_V', 'new VARIANT'
+    UPDATE_VARIANT = 'U_V', 'update VARIANT'
+    DELETE_VARIANT = 'D_V', 'delete VARIANT'
+    NEW_BATCH = 'N_B', 'new BATCH'
+    UPDATE_BATCH = 'U_B', 'update BATCH'
+    DELETE_BATCH = 'D_B', 'delete BATCH'
+    NEW_TREATMENT = 'N_TT', 'new TREATMENT'
+    UPDATE_TREATMENT = 'U_TT', 'update TREATMENT'
+    DELETE_TREATMENT = 'D_TT', 'delete TREATMENT'
+    NEW_DATA = 'N_DT', 'new data'
+
+
+class EventLog(ModelHelpers, models.Model):
+    event = models.CharField(
+        max_length=10,
+        choices=EventBaas.choices,
+        default=EventBaas.UNKNOWN)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user_id = models.IntegerField()
+    obj_id = models.IntegerField(null=True)
+
+    @classmethod
+    def track(cls, name, user_id, obj_id=None):
+        EventLog.objects.create(
+            event=name, user_id=user_id,
+            obj_id=obj_id)

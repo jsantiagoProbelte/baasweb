@@ -13,6 +13,7 @@ from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import TrialPermission
+from baaswebapp.models import EventBaas, EventLog
 
 
 class ApplicationListView(LoginRequiredMixin, ListView):
@@ -81,6 +82,10 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
             application = form.instance
             application.save()
             Application.computeDDT(application.field_trial)
+            EventLog.track(
+                EventBaas.NEW_APP,
+                self.request.user.id,
+                form.instance.field_trial_id)
             return HttpResponseRedirect(application.get_success_url())
 
 
@@ -99,6 +104,10 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
             application = form.instance
             application.save()
             Application.computeDDT(application.field_trial)
+            EventLog.track(
+                EventBaas.UPDATE_APP,
+                self.request.user.id,
+                form.instance.field_trial_id)
             return HttpResponseRedirect(application.get_success_url())
 
 
@@ -111,6 +120,9 @@ class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         self._parent = self.object.field_trial
         self.object.delete()
+        EventLog.track(EventBaas.DELETE_APP,
+                       self.request.user.id,
+                       self._parent.id)
         Application.computeDDT(self._parent)
         return HttpResponseRedirect(self.get_success_url())
 

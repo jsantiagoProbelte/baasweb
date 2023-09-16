@@ -17,6 +17,7 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from baaswebapp.models import EventBaas, EventLog
 
 
 class ProductFormLayout(FormHelper):
@@ -64,7 +65,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             item = form.instance
             item.save()
-
+            EventLog.track(EventBaas.NEW_PRODUCT,
+                           self.request.user.id,
+                           item.id)
             # Let's create default variant and default batch
             variant = ProductVariant.createDefault(item)
             Batch.createDefault(variant)
@@ -80,6 +83,13 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         form.helper = ProductFormLayout(new=False)
         return form
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_PRODUCT,
+                       self.request.user.id,
+                       form.instance.id)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProductDeleteView(DeleteView):
@@ -252,7 +262,10 @@ class BatchCreateView(LoginRequiredMixin, CreateView):
             item = form.instance
             item.product_variant_id = self.kwargs["reference_id"]
             item.save()
-
+            EventLog.track(
+                EventBaas.NEW_BATCH,
+                self.request.user.id,
+                item.product_variant.product.id)
             variant = ProductVariant.objects.get(id=item.product_variant_id)
             return HttpResponseRedirect(variant.get_absolute_url())
 
@@ -267,6 +280,13 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
         form.helper = BatchFormLayout(new=False)
         return form
 
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_BATCH,
+                       self.request.user.id,
+                       form.instance.product_variant.product.id)
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class BatchDeleteView(DeleteView):
     model = Batch
@@ -277,6 +297,9 @@ class BatchDeleteView(DeleteView):
         self.object = self.get_object()
         self._parent = self.object.product_variant
         self.object.delete()
+        EventLog.track(EventBaas.DELETE_BATCH,
+                       self.request.user.id,
+                       self._parent.product.id)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -375,6 +398,10 @@ class ProductVariantCreateView(LoginRequiredMixin, CreateView):
             item = form.instance
             item.product_id = self.kwargs["reference_id"]
             item.save()
+            EventLog.track(
+                EventBaas.NEW_VARIANT,
+                self.request.user.id,
+                form.instance.product.id)
             Batch.createDefault(item)
             return HttpResponseRedirect(item.product.get_absolute_url())
 
@@ -389,6 +416,13 @@ class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
         form.helper = ProductVariantFormLayout(new=False)
         return form
 
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_VARIANT,
+                       self.request.user.id,
+                       form.instance.product.id)
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class ProductVariantDeleteView(DeleteView):
     model = ProductVariant
@@ -399,6 +433,9 @@ class ProductVariantDeleteView(DeleteView):
         self.object = self.get_object()
         self._parent = self.object.product
         self.object.delete()
+        EventLog.track(EventBaas.DELETE_VARIANT,
+                       self.request.user.id,
+                       self._parent.id)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -499,6 +536,10 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
             item.batch_id = self.kwargs["reference_id"]
             item.save()
             batch = Batch.objects.get(id=item.batch_id)
+            EventLog.track(
+                EventBaas.NEW_TREATMENT,
+                self.request.user.id,
+                batch.product_variant.product.id)
             return HttpResponseRedirect(
                 batch.get_absolute_url())
 
@@ -518,6 +559,13 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
         form.helper = TreatmentFormLayout(new=False)
         return form
 
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_TREATMENT,
+                       self.request.user.id,
+                       form.instance.batch.product_variant.product.id)
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class TreatmentDeleteView(DeleteView):
     model = Treatment
@@ -528,6 +576,9 @@ class TreatmentDeleteView(DeleteView):
         self.object = self.get_object()
         self._parent = self.object.batch
         self.object.delete()
+        EventLog.track(EventBaas.DELETE_TREATMENT,
+                       self.request.user.id,
+                       self._parent.product_variant.product.id)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):

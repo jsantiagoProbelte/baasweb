@@ -44,8 +44,11 @@
         </div>
     {% endfor %}
     </div>
-
 {% endfor %}
+<div class="card no-border mb-3">
+    <div class="card-header-baas-trial">Events</div>
+    {{eventsGraph|safe}}
+</div>
 {% endblock %}  
 
 {% block scripts %}

@@ -19,6 +19,7 @@ from django import forms
 from catalogue.models import Treatment, Product
 from trialapp.trial_helper import TrialPermission
 from trialapp.trial_views import TrialContent
+from baaswebapp.models import EventBaas, EventLog
 
 
 class ThesisListView(LoginRequiredMixin, ListView):
@@ -145,6 +146,11 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
             TreatmentThesis.objects.create(
                 treatment=treatment,
                 thesis=thesis)
+
+            EventLog.track(
+                EventBaas.NEW_THESIS,
+                self.request.user.id,
+                thesis.field_trial_id)
             # Create replicas
             Replica.createReplicas(thesis,
                                    thesis.field_trial.replicas_per_thesis)
@@ -187,6 +193,13 @@ class ThesisUpdateView(LoginRequiredMixin, UpdateView):
         form.helper = ThesisFormLayout(new=False)
         return form
 
+    def form_valid(self, form):
+        super().form_valid(form)
+        EventLog.track(EventBaas.UPDATE_THESIS,
+                       self.request.user.id,
+                       form.instance.field_trial.id)
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class ThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = Thesis
@@ -196,6 +209,10 @@ class ThesisDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         trial = self.object.field_trial
         self.object.delete()
+        EventLog.track(
+                EventBaas.DELETE_THESIS,
+                self.request.user.id,
+                trial.id)
         return HttpResponseRedirect(
             reverse('thesis-list',
                     kwargs={'field_trial_id': trial.id}))
@@ -282,6 +299,10 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
             TreatmentThesis.findOrCreate(
                 thesis=thesis,
                 treatment_id=int(treatmentId))
+            EventLog.track(
+                EventBaas.UPDATE_THESIS,
+                request.user.id,
+                thesis.field_trial_id)
             return HttpResponseRedirect(thesis.get_absolute_url())
 
         productId = request.GET.get('product', None)
@@ -322,6 +343,10 @@ class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         self._parent = self.object.thesis
         self.object.delete()
+        EventLog.track(
+                EventBaas.UPDATE_THESIS,
+                request.user.id,
+                self._parent.field_trial_id)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -366,4 +391,8 @@ class SetReplicaPosition(APIView):
             newReplica.pos_x = x
             newReplica.pos_y = y
             newReplica.save()
+        EventLog.track(
+                EventBaas.UPDATE_THESIS,
+                0,  # TODO request.user.id if request.user.id else 0,
+                trialId)
         return redirect('thesis-list', field_trial_id=trialId)

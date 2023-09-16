@@ -24,6 +24,7 @@ import numpy as np
 from scipy.stats import norm
 import statsmodels.api as sm
 from trialapp.filter_helpers import TrialFilterExtended
+from baaswebapp.models import EventLog, EventBaas
 
 
 class LabTrialListView(LoginRequiredMixin, FilterView):
@@ -157,6 +158,10 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
             # Create assessment, thesis, dosis and points
             dataHelper = DataLabHelper(fieldTrial)
             dataHelper.createData()
+            EventLog.track(
+                EventBaas.NEW_TRIAL,
+                self.request.user.id,
+                fieldTrial.id)
             return HttpResponseRedirect(fieldTrial.get_absolute_url())
         else:
             pass
