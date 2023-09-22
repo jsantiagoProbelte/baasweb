@@ -4,7 +4,7 @@ from baaswebapp.models import ModelHelpers
 from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, TreatmentThesis, FieldTrial
+from trialapp.models import Crop, Product_Plague, TreatmentThesis, FieldTrial
 from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -32,6 +32,16 @@ class ProductFormLayout(FormHelper):
                 Field('vendor', css_class='mb-3'),
                 Field('type_product', css_class='mb-3'),
                 Field('biological', css_class='mb-3'),
+                Field('img_link', css_class='mb-3'),
+                Field('description', css_class='mb-3'),
+                Field('mixes', css_class='mb-3'),
+                Field('weather_temperature', css_class='mb-3'),
+                Field('weather_humidity', css_class='mb-3'),
+                Field('security_period', css_class='mb-3'),
+                Field('presentation', css_class='mb-3'),
+                Field('pest_disease', css_class='mb-3'),
+                Field('concentration', css_class='mb-3'),
+                Field('active_substance', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -49,6 +59,8 @@ class ProductForm(forms.ModelForm):
         vendors = Vendor.objects.all().order_by('name')
         self.fields['vendor'].queryset = vendors
         self.fields['active_substance'].required = False
+        self.fields['description'].widget = forms.Textarea(
+                        attrs={'rows': 5})
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -183,6 +195,7 @@ class ProductApi(LoginRequiredMixin, View):
             request, template_name, {
                 **context_trials,
                 'product': product,
+                'plagues': Product_Plague.Selectors.getPlaguesByProduct(product_id),
                 'edit_trial_perm': self.editPermision(request),
                 'range_efficacy': self.getRangeEfficacy(product),
                 'variants': self.getProductTree(product),

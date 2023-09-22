@@ -31,6 +31,22 @@ class Plague(ModelHelpers, models.Model):
             return self.name
 
 
+class Product_Plague(ModelHelpers, models.Model):
+    plague = models.ForeignKey(Plague, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Selectors:
+        @staticmethod
+        def getPlaguesByProduct(productId):
+            plague_product_list = Product_Plague.objects.all().filter(product_id=productId)
+            plagues = map(lambda product_plague: product_plague.plague.scientific, plague_product_list)
+            print(plagues)
+            return plagues
+
+    class Meta:
+        unique_together = ('product', 'plague')
+
+
 class Irrigation(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
 
