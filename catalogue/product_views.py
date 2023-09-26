@@ -1,10 +1,11 @@
+from typing import Any
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from baaswebapp.models import ModelHelpers
 from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, Product_Plague, TreatmentThesis, FieldTrial
+from trialapp.models import Crop, Plague, Product_Plague, TreatmentThesis, FieldTrial
 from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -41,7 +42,7 @@ class ProductFormLayout(FormHelper):
                 Field('presentation', css_class='mb-3'),
                 Field('pest_disease', css_class='mb-3'),
                 Field('concentration', css_class='mb-3'),
-                Field('active_substance', css_class='mb-3'),
+                Field('plagues', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -49,18 +50,63 @@ class ProductFormLayout(FormHelper):
 
 
 class ProductForm(forms.ModelForm):
+    notRequiredFields = ('img_link', 'description',
+                         'mixes', 'weather_temperature', 'weather_humidity',
+                         'security_period', 'presentation', 'pest_disease',
+                         'concentration', 'active_substance', 'plagues')
+
+    plagues = forms.ModelMultipleChoiceField(
+                    queryset=Plague.objects.all().order_by("scientific"),
+                    widget=forms.widgets.CheckboxSelectMultiple)
+
     class Meta:
         model = Product
         fields = ('name', 'vendor', 'active_substance',
-                  'type_product', 'biological')
+                  'type_product', 'biological', 'img_link', 'description',
+                  'mixes', 'weather_temperature', 'weather_humidity',
+                  'security_period', 'presentation', 'pest_disease',
+                  'concentration', 'active_substance')
+
+    def __manage_plagues__(self, product):
+        plagueList = self.cleaned_data.get('plagues', [])
+        previousPlagueList = Product_Plague.Selectors.getPlaguesByProduct(product.id)
+        addedPlagues = set(plagueList) - set(previousPlagueList)
+        removedPlagues = set(previousPlagueList) - set(plagueList)
+
+        removedProductPlagues = Product_Plague.Selectors.getPlagueProductByPlagues(removedPlagues)
+        for removedProductPlague in removedProductPlagues:
+            removedProductPlague.delete()
+
+        for addedPlague in addedPlagues:
+            Product_Plague(product=product, plague=addedPlague).save()
+
+    def save(self, commit=True):
+        product = super().save(commit)
+        if product:
+            self.__manage_plagues__(product)
+
+        return product
+
+    def set_not_required_fields(self):
+        for field in self.notRequiredFields:
+            self.fields[field].required = False
+
+    def get_options_for_target(self):
+        targets = Plague.objects.all().order_by('scientific')
+        return map(lambda target: (target.id, target.scientific), targets)
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
+        self.set_not_required_fields()
         vendors = Vendor.objects.all().order_by('name')
+
         self.fields['vendor'].queryset = vendors
-        self.fields['active_substance'].required = False
         self.fields['description'].widget = forms.Textarea(
                         attrs={'rows': 5})
+
+        product = kwargs.get('instance')
+        if product:
+            self.fields['plagues'].initial = Product_Plague.Selectors.getPlaguesByProduct(product.id)
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -76,7 +122,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         if form.is_valid():
             item = form.instance
-            item.save()
+            form.save()
             EventLog.track(EventBaas.NEW_PRODUCT,
                            self.request.user.id,
                            item.id)
@@ -195,7 +241,7 @@ class ProductApi(LoginRequiredMixin, View):
             request, template_name, {
                 **context_trials,
                 'product': product,
-                'plagues': Product_Plague.Selectors.getPlaguesByProduct(product_id),
+                'plagues': Product_Plague.Selectors.getPlagueNamesByProduct(product_id),
                 'edit_trial_perm': self.editPermision(request),
                 'range_efficacy': self.getRangeEfficacy(product),
                 'variants': self.getProductTree(product),

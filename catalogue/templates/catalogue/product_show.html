@@ -222,11 +222,16 @@
 <script>
   try{
     $(document).ready(() => {
-      $("#textCarousel").carousel({
+      const textCarousel = $("#textCarousel")
+      textCarousel.carousel('cycle',{
           interval : 1500
       })
 
       $(".carousel-inner .carousel-item:first-child").addClass('active')
+      const firstIndicator = $(".carousel-indicators button:first-child")
+      firstIndicator.addClass('active')
+      firstIndicator.attr('aria-current', true)
+
     })
   }catch(error){
     console.log(error)

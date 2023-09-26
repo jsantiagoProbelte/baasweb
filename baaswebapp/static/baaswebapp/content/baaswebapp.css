@@ -1572,3 +1572,17 @@ div.flex-inline-form input:focus{
   font-family: 'Encode Sans', serif;
   font-weight: bold;
 }
+
+.controls:has(.checkbox){
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.controls .checkbox{
+  flex-basis: fit-content;
+  flex-grow: 1;
+}
+
+.checkbox label input{
+  margin-right: 5px;
+}

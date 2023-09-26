@@ -1,4 +1,9 @@
 <div id="textCarousel" class="carousel slide" data-ride="carousel">
+  <div class="carousel-indicators">
+    {% for counter in textList %}
+      <button data-bs-target="#textCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="item"></button>
+    {% endfor %}
+  </div>
   <div class="carousel-inner">
       {% for text in textList %}
       <div class="carousel-item">
@@ -7,5 +12,5 @@
         </div>
       </div>
       {% endfor %}
-   </div>
+  </div>
 </div>

@@ -324,3 +324,11 @@ div#product-basics p.title, div#application p.title, div#description p.title {
     text-decoration: underline;
 }
 
+.carousel-indicators button{
+    background-color: var(--custom-morado) !important;
+}
+
+.carousel-indicators button.active{
+    background-color: var(--custom-brand-color) !important;
+}
+
