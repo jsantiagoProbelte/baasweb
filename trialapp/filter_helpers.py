@@ -497,12 +497,18 @@ class DetailedTrialListView:
         self._trialFilter.filter(groupbyTag=TrialFilterHelper.TRIALS)
         return self._trialFilter.getTrials().order_by('-code')
 
+    def mindTheZero(self, value):
+        if value == 0:
+            return '0'
+        else:
+            return value
+
     def displayTrial(self, trial):
         return {
             'code': trial.code,
-            'temp_avg': trial.avg_temperature,
-            'prep_avg': trial.avg_precipitation,
-            'hum_avg': trial.avg_humidity,
+            'temp_avg': self.mindTheZero(trial.avg_temperature),
+            'prep_avg': self.mindTheZero(trial.avg_precipitation),
+            'hum_avg': self.mindTheZero(trial.avg_humidity),
             'description': trial.getDescription(),
             'location': trial.getLocation(showNothing=True),
             'goal': trial.objective,
