@@ -77,6 +77,7 @@ class SoilType(models.TextChoices):
     SANDY = 'Sandy', _('Sandy Soil')  # 'Suelo Arenoso'
     CLAY = 'Clay', _('Clay Soil')  # 'Suelo Arcilloso'
     LOAMY = 'Loamy', _('Loamy Soil')  # 'Suelo Limoso'
+    CLAYLOAMY = 'ClayLoamy', _('Clay Loam') # Franco Arcilloso
     ORGANIC = 'Organic', _('Organic Soil')  # 'Suelo Orgánico'
     ROCKY = 'Rocky', _('Rocky Soil')  # 'Suelo Pedregoso'
     SALINE = 'Saline', _('Saline Soil')  # 'Suelo Salino'
