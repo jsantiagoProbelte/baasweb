@@ -20,7 +20,7 @@
       {% include "trialapp/trial_data_header_edit_select.html" with headerRowClass=dataContent.header.rating title='Rating (Unit)' selectOptions=dataContent.ratings %}
       {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.dates title='Date' type='date' %}
       {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.bbch title='BBCH' type='text' %}
-      {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.partRated title='Part Rated' type='text' %}
+      {% include "trialapp/trial_data_header_edit_select.html" with headerRowClass=dataContent.header.partRated title='Part Rated' selectOptions=dataContent.ratedparts %}
       {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.names title='Name/Interval' type='text' %}
     </thead>
     <tbody>

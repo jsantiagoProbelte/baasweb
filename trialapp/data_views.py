@@ -1,6 +1,6 @@
 from baaswebapp.models import RateTypeUnit
 from trialapp.models import Thesis, Replica, Sample, FieldTrial, \
-    TreatmentThesis
+    TreatmentThesis, PartRated
 from trialapp.data_models import DataModel, ThesisData, \
     ReplicaData, Assessment, SampleData
 from django.shortcuts import get_object_or_404
@@ -14,6 +14,7 @@ from baaswebapp.graphs import GraphTrial, EfficacyGraph, \
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
 from baaswebapp.models import EventBaas, EventLog
+from django.utils.translation import gettext_lazy as _
 
 
 class SetDataAssessment(APIView):
@@ -79,6 +80,8 @@ class DataTrialHelper:
         header = self.prepareHeader()
         showData = {'header': header, 'dataRows': self.preparaRows(),
                     'trialId': self._trial.id,
+                    'ratedparts': [{'name':  _(item[1]), 'value': item[0]}
+                                   for item in PartRated.choices],
                     'ratings': RateTypeUnit.getSelectList(asDict=True)}
         return showData
 
