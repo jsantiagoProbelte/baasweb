@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-15 12:17+0200\n"
+"POT-Creation-Date: 2023-09-27 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,7 @@ msgstr ""
 msgid "Password"
 msgstr "Clave"
 
-#: baaswebapp/graphs.py:123
-#: catalogue/templates/catalogue/product_show.html:126
+#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:126
 msgid "weather"
 msgstr "clima"
 
@@ -70,7 +69,7 @@ msgstr "punto de rocío"
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:323
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:333
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -243,7 +242,7 @@ msgid "product type"
 msgstr "tipo producto"
 
 #: catalogue/templates/catalogue/product_list_header.html:5
-#: catalogue/templates/catalogue/product_show.html:80
+#: catalogue/templates/catalogue/product_show.html:81
 #: trialapp/templates/trialapp/fieldtrial_design.html:11
 #: trialapp/templates/trialapp/trial_conclusions.html:142
 #: trialapp/templates/trialapp/trials_list_header.html:6
@@ -252,7 +251,7 @@ msgstr "substancia activa"
 
 #: catalogue/templates/catalogue/product_list_header.html:6
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:70
+#: catalogue/templates/catalogue/product_show.html:71
 #: trialapp/templates/trialapp/crop_list_header.html:5
 #: trialapp/templates/trialapp/plagues_list_header.html:5
 #: trialapp/templates/trialapp/trials_list_header.html:7
@@ -266,27 +265,27 @@ msgstr "rango eficacia"
 msgid "trials date"
 msgstr "fecha ensayo"
 
-#: catalogue/templates/catalogue/product_show.html:28
+#: catalogue/templates/catalogue/product_show.html:29
 msgid "product recommendations"
 msgstr "Recomendaciones del producto"
 
-#: catalogue/templates/catalogue/product_show.html:38
+#: catalogue/templates/catalogue/product_show.html:39
 msgid "trial list"
 msgstr "lista ensayos"
 
-#: catalogue/templates/catalogue/product_show.html:41
+#: catalogue/templates/catalogue/product_show.html:42
 msgid "Download Product Info"
 msgstr "Descargar información del producto"
 
-#: catalogue/templates/catalogue/product_show.html:54
+#: catalogue/templates/catalogue/product_show.html:55
 msgid "product variants"
 msgstr "Formulaciones del producto"
 
-#: catalogue/templates/catalogue/product_show.html:71
+#: catalogue/templates/catalogue/product_show.html:72
 msgid "*All products trials efficacy range"
 msgstr "*Rango de eficacia de todos los ensayos del producto"
 
-#: catalogue/templates/catalogue/product_show.html:87
+#: catalogue/templates/catalogue/product_show.html:88
 #: catalogue/templates/catalogue/product_show.html:149
 #: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:57
 #: trialapp/filter_helpers.py:320
@@ -295,20 +294,20 @@ msgstr "*Rango de eficacia de todos los ensayos del producto"
 msgid "pest / disease"
 msgstr "plaga / enfermedad"
 
-#: catalogue/templates/catalogue/product_show.html:95
+#: catalogue/templates/catalogue/product_show.html:96
 msgid "Product Basics"
 msgstr "Propiedades básicas"
 
-#: catalogue/templates/catalogue/product_show.html:99
+#: catalogue/templates/catalogue/product_show.html:100
 msgid "concentration"
 msgstr "concentración"
 
-#: catalogue/templates/catalogue/product_show.html:109
+#: catalogue/templates/catalogue/product_show.html:110
 msgid "presentation"
 msgstr "presentación"
 
-#: catalogue/templates/catalogue/product_show.html:117
-#: catalogue/templates/catalogue/product_show.html:121
+#: catalogue/templates/catalogue/product_show.html:118
+#: catalogue/templates/catalogue/product_show.html:122
 msgid "Application"
 msgstr "Aplicación"
 
@@ -356,7 +355,7 @@ msgstr "intervalo dias"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
-#: trialapp/fieldtrial_views.py:254
+#: trialapp/fieldtrial_views.py:266
 msgid "Fail on generating download"
 msgstr "Fallar en generar descargar"
 
@@ -376,11 +375,11 @@ msgstr ""
 msgid "Ungrouped"
 msgstr "No agrupar"
 
-#: trialapp/models.py:55 trialapp/models.py:101
+#: trialapp/models.py:55 trialapp/models.py:102
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
 
-#: trialapp/models.py:56 trialapp/models.py:102
+#: trialapp/models.py:56 trialapp/models.py:103
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
 
@@ -458,62 +457,66 @@ msgstr "Suelo arcilloso"
 
 #: trialapp/models.py:79
 msgid "Loamy Soil"
-msgstr "Suelo arcilloso"
+msgstr "Suelo franco"
 
 #: trialapp/models.py:80
+msgid "Clay Loam"
+msgstr "Franco arcilloso"
+
+#: trialapp/models.py:81
 msgid "Organic Soil"
 msgstr "Suelo orgánico"
 
-#: trialapp/models.py:81
+#: trialapp/models.py:82
 msgid "Rocky Soil"
 msgstr "Suelo rocoso"
 
-#: trialapp/models.py:82
+#: trialapp/models.py:83
 msgid "Saline Soil"
 msgstr "Suelo salino"
 
-#: trialapp/models.py:83
+#: trialapp/models.py:84
 msgid "Alkaline Soil"
 msgstr "Suelo alcalino"
 
-#: trialapp/models.py:84
+#: trialapp/models.py:85
 msgid "Acidic Soil"
 msgstr "Suelo ácido"
 
-#: trialapp/models.py:85
+#: trialapp/models.py:86
 msgid "Peat Soil"
 msgstr "Tierra de turba"
 
-#: trialapp/models.py:86
+#: trialapp/models.py:87
 msgid "Lateritic Soil"
 msgstr "Suelo laterítico"
 
-#: trialapp/models.py:90
+#: trialapp/models.py:91
 msgid "Design Protocol"
 msgstr "Diseñando Protocolo"
 
-#: trialapp/models.py:91
+#: trialapp/models.py:92
 msgid "Approving Protocol"
 msgstr "Aprobando protocolo"
 
-#: trialapp/models.py:92
+#: trialapp/models.py:93
 msgid "In Progress"
 msgstr "En curso"
 
-#: trialapp/models.py:93
+#: trialapp/models.py:94
 msgid "Review Results"
 msgstr "Revisando Resultados"
 
-#: trialapp/models.py:94
+#: trialapp/models.py:95
 msgid "Done"
 msgstr "Finalizado"
 
-#: trialapp/models.py:282 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:283 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr "Localización Sin Definir"
 
-#: trialapp/models.py:285 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:286 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr "Periodo no definido"
 
@@ -566,91 +569,91 @@ msgstr "Parte evaluado"
 msgid "Schedule"
 msgstr "Cronograma"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:5
+#: trialapp/templates/trialapp/fieldtrial_info.html:6
 msgid "Trial Info"
 msgstr "Prueba de Laboratorio"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:7
+#: trialapp/templates/trialapp/fieldtrial_info.html:8
 msgid "Type of trial"
 msgstr "tipo de ensayo"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:11
+#: trialapp/templates/trialapp/fieldtrial_info.html:12
 msgid "Nº of treatments"
 msgstr "Nº tratamientos"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:12
+#: trialapp/templates/trialapp/fieldtrial_info.html:13
 msgid "Nº repetitions/treatment"
 msgstr "Nº Repeticiones por tratamiento"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:16
+#: trialapp/templates/trialapp/fieldtrial_info.html:17
 msgid "Copy All"
 msgstr "Copie todo"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:19
+#: trialapp/templates/trialapp/fieldtrial_info.html:20
 msgid "Latitude"
 msgstr "Latitud"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:24
+#: trialapp/templates/trialapp/fieldtrial_info.html:25
 msgid "Longitude"
 msgstr "Longitud"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:32
+#: trialapp/templates/trialapp/fieldtrial_info.html:33
 msgid "Plantation"
 msgstr "Plantación"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:34
+#: trialapp/templates/trialapp/fieldtrial_info.html:35
 msgid "Crop"
 msgstr "Cultivo"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:35
+#: trialapp/templates/trialapp/fieldtrial_info.html:36
 msgid "Previous Crop"
 msgstr "Cultivo anterior"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:36
+#: trialapp/templates/trialapp/fieldtrial_info.html:37
 msgid "Variety"
 msgstr "Variedad"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:37
+#: trialapp/templates/trialapp/fieldtrial_info.html:38
 msgid "Scientifict Name"
 msgstr "Nombre científico"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:40
+#: trialapp/templates/trialapp/fieldtrial_info.html:41
 msgid "Crop Age"
 msgstr "Edad Cultivo"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:41
+#: trialapp/templates/trialapp/fieldtrial_info.html:42
 msgid "Transplant Date"
 msgstr "Fecha de trasplante"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:44
+#: trialapp/templates/trialapp/fieldtrial_info.html:45
 msgid "Plants /ha"
 msgstr "Plantas /ha"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:47
+#: trialapp/templates/trialapp/fieldtrial_info.html:48
 msgid "Blocks"
 msgstr "Bloques"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:48
+#: trialapp/templates/trialapp/fieldtrial_info.html:49
 msgid "Plants Separation"
 msgstr "Separación de plantas"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:49
+#: trialapp/templates/trialapp/fieldtrial_info.html:50
 msgid "Rows Separation"
 msgstr "Separación de filas"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:53
+#: trialapp/templates/trialapp/fieldtrial_info.html:54
 msgid "Trial Owners"
 msgstr "Responsable Ensayo"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:55
+#: trialapp/templates/trialapp/fieldtrial_info.html:56
 msgid "Farmer"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:56
+#: trialapp/templates/trialapp/fieldtrial_info.html:57
 msgid "CRO"
 msgstr "Cro"
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:57
+#: trialapp/templates/trialapp/fieldtrial_info.html:58
 msgid "Responsible"
 msgstr "Responsable"
 
@@ -688,7 +691,7 @@ msgid "efficacy key values"
 msgstr "rango eficacia"
 
 #: trialapp/templates/trialapp/trial_assesment.html:5
-#: trialapp/templates/trialapp/trial_show.html:59
+#: trialapp/templates/trialapp/trial_show.html:57
 msgid "assessments"
 msgstr "evaluaciones"
 
@@ -746,7 +749,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:369
+#: trialapp/trial_views.py:379
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -779,6 +782,12 @@ msgstr "beneficio"
 msgid "No data to display"
 msgstr "no hay información para mostrar"
 
+#: trialapp/templates/trialapp/trial_data_table.html:12
+#, fuzzy
+#| msgid "assessments"
+msgid "assessements"
+msgstr "evaluaciones"
+
 #: trialapp/templates/trialapp/trial_show.html:44
 msgid "conclusions"
 msgstr "conclusiones"
@@ -791,19 +800,19 @@ msgstr "resumen resultados"
 msgid "trends"
 msgstr "tendencias"
 
-#: trialapp/templates/trialapp/trial_show.html:56
+#: trialapp/templates/trialapp/trial_show.html:60
 msgid "data"
 msgstr "datos"
 
-#: trialapp/templates/trialapp/trial_show.html:69
+#: trialapp/templates/trialapp/trial_show.html:70
 msgid "download trial"
 msgstr "Descargar ensayo"
 
-#: trialapp/templates/trialapp/trial_show.html:78
+#: trialapp/templates/trialapp/trial_show.html:79
 msgid "files"
 msgstr "archivos"
 
-#: trialapp/templates/trialapp/trial_show.html:91
+#: trialapp/templates/trialapp/trial_show.html:92
 msgid "average efficacy"
 msgstr "eficacia media"
 
@@ -838,19 +847,19 @@ msgstr "No hay limitaciones en los permisos"
 msgid "Soil"
 msgstr "Suelo"
 
-#: trialapp/trial_views.py:370
+#: trialapp/trial_views.py:380
 msgid ""
-"Weather conditions cannot be determined because location or assessments info"
-" aremissing"
+"Weather conditions cannot be determined because location or assessments info "
+"aremissing"
 msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:407
+#: trialapp/trial_views.py:417
 msgid "No assessements yet"
 msgstr "No hay evaluaciones todavia"
 
-#: trialapp/trial_views.py:438
+#: trialapp/trial_views.py:452
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -860,11 +869,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:716
+#: trialapp/trial_views.py:730
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:719
+#: trialapp/trial_views.py:733
 msgid " in "
 msgstr " en "
 
@@ -1049,8 +1058,7 @@ msgstr[1] ""
 #: venv_baas/lib/python3.9/site-packages/click/shell_completion.py:316
 msgid "Shell completion is not supported for Bash versions older than 4.4."
 msgstr ""
-"La finalización del shell no es compatible con versiones bash mayores de "
-"4.4."
+"La finalización del shell no es compatible con versiones bash mayores de 4.4."
 
 #: venv_baas/lib/python3.9/site-packages/click/shell_completion.py:322
 msgid "Couldn't detect Bash version, shell completion is not supported."
@@ -1235,8 +1243,8 @@ msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:264
 msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or"
-" hyphens."
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
+"hyphens."
 msgstr ""
 "Ingrese una \"babosa\" válida que consiste en letras unicode, números, "
 "subrayos o guiones."
@@ -1280,8 +1288,8 @@ msgstr "Asegúrese de que este valor sea mayor o igual al %(limit_value)s."
 #, python-format
 msgid "Ensure this value is a multiple of step size %(limit_value)s."
 msgstr ""
-"Asegúrese de que este valor sea un múltiplo de tamaño de paso %(limit_value)"
-" s."
+"Asegúrese de que este valor sea un múltiplo de tamaño de paso "
+"%(limit_value) s."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:417
 #, python-format
@@ -1340,8 +1348,8 @@ msgid ""
 "File extension “%(extension)s” is not allowed. Allowed extensions are: "
 "%(allowed_extensions)s."
 msgstr ""
-"La extensión del archivo \"%(extension)s\" no está permitida.Las extensiones"
-" permitidas son: %(allowed_extensions)s."
+"La extensión del archivo \"%(extension)s\" no está permitida.Las extensiones "
+"permitidas son: %(allowed_extensions)s."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:602
 msgid "Null characters are not allowed."
@@ -1447,20 +1455,20 @@ msgstr "Fecha (sin tiempo)"
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1489
 #, python-format
 msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD "
-"HH:MM[:ss[.uuuuuu]][TZ] format."
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
+"uuuuuu]][TZ] format."
 msgstr ""
-"El valor “%(value)s” tiene un formato no válido.Debe estar en YYYY-MM-DD "
-"HH:MM[:ss[.uuuuuu]][TZ] formato."
+"El valor “%(value)s” tiene un formato no válido.Debe estar en YYYY-MM-DD HH:"
+"MM[:ss[.uuuuuu]][TZ] formato."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1497
 #, python-format
 msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD "
-"HH:MM[:ss[.uuuuuu]][TZ]) but it is an invalid date/time."
+"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
+"[TZ]) but it is an invalid date/time."
 msgstr ""
-"El valor “%(value)s” tiene el formato correcto (YYYY-MM-DD HH:MM[: ss "
-"[.uuuuuuu]] [tz]) pero es una fecha/hora inválida."
+"El valor “%(value)s” tiene el formato correcto (YYYY-MM-DD HH:MM[: ss [."
+"uuuuuuu]] [tz]) pero es una fecha/hora inválida."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1502
 msgid "Date (with time)"
@@ -1478,8 +1486,8 @@ msgstr "Número decimal"
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1791
 #, python-format
 msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] "
-"[[HH:]MM:]ss[.uuuuuu] format."
+"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
+"uuuuuu] format."
 msgstr ""
 "El valor “%(value)s” tiene un formato no válido.Debe estar en [dd] [[HH:] "
 "MM:]ss[.uuuuuuu] formato."
@@ -1567,8 +1575,8 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
 "format."
 msgstr ""
-"El valor “%(value)s” tiene un formato no válido.Debe estar en HH:MM[: "
-"ss[.uuuuuuu]] formato."
+"El valor “%(value)s” tiene un formato no válido.Debe estar en HH:MM[: ss[."
+"uuuuuuu]] formato."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2454
 #, python-format
@@ -1644,8 +1652,7 @@ msgid "Many-to-many relationship"
 msgstr "Muchos a muchos"
 
 #. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to the
-#. label
+#. characters will prevent the default label_suffix to be appended to the label
 #: venv_baas/lib/python3.9/site-packages/django/forms/boundfield.py:184
 msgid ":?.!"
 msgstr ":?.!"
@@ -1693,8 +1700,7 @@ msgstr "El archivo enviado está vacío."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:622
 #, python-format
-msgid ""
-"Ensure this filename has at most %(max)d character (it has %(length)d)."
+msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
 msgid_plural ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr[0] ""
@@ -1757,8 +1763,8 @@ msgid ""
 "ManagementForm data is missing or has been tampered with. Missing fields: "
 "%(field_names)s. You may need to file a bug report if the issue persists."
 msgstr ""
-"Los datos de la forma de administración faltan o han sido manipulados.Campos"
-" faltantes: %(field_names)s. Es posible que deba presentar un informe de "
+"Los datos de la forma de administración faltan o han sido manipulados.Campos "
+"faltantes: %(field_names)s. Es posible que deba presentar un informe de "
 "error si el problema persiste."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/formsets.py:67
@@ -1812,8 +1818,7 @@ msgid "The inline value did not match the parent instance."
 msgstr "El valor en línea no coincidía con la instancia principal."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/models.py:1429
-msgid ""
-"Select a valid choice. That choice is not one of the available choices."
+msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr ""
 "Seleccione una opción válida.Esa elección no es una de las opciones "
 "disponibles."
@@ -1829,8 +1834,8 @@ msgid ""
 "%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
 "may be ambiguous or it may not exist."
 msgstr ""
-"%(datetime)s no se pudo interpretar en la zona horaria %(current_timezone) "
-"s;Puede ser ambiguo o puede no existir."
+"%(datetime)s no se pudo interpretar en la zona horaria %(current_timezone) s;"
+"Puede ser ambiguo o puede no existir."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:463
 msgid "Clear"
@@ -2280,17 +2285,17 @@ msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/django/views/csrf.py:127
 msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or"
-" including the “Referrer-Policy: no-referrer” header, please remove them. "
-"The CSRF protection requires the “Referer” header to do strict referer "
-"checking. If you’re concerned about privacy, use alternatives like <a "
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
+"including the “Referrer-Policy: no-referrer” header, please remove them. The "
+"CSRF protection requires the “Referer” header to do strict referer checking. "
+"If you’re concerned about privacy, use alternatives like <a "
 "rel=\"noreferrer\" …> for links to third-party sites."
 msgstr ""
 "Si está utilizando la etiqueta <meta name = \"referrer\" content = \"no-ree-"
 "refrer\"> o incluye el encabezado \"Referrer-Policy: No-Re-Ferrer\", "
 "elimínelos.La protección CSRF requiere que el encabezado del \"referente\" "
-"realice una verificación estricta de referente.Si le preocupa la privacidad,"
-" use alternativas como <a rel=\"noreferrer\" ...> para enlaces a sitios de "
+"realice una verificación estricta de referente.Si le preocupa la privacidad, "
+"use alternativas como <a rel=\"noreferrer\" ...> para enlaces a sitios de "
 "terceros."
 
 #: venv_baas/lib/python3.9/site-packages/django/views/csrf.py:136
@@ -2347,8 +2352,8 @@ msgstr "No %(verbose_name_plural)s disponible"
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/dates.py:652
 #, python-format
 msgid ""
-"Future %(verbose_name_plural)s not available because "
-"%(class_name)s.allow_future is False."
+"Future %(verbose_name_plural)s not available because %(class_name)s."
+"allow_future is False."
 msgstr ""
 "Future %(verbose_name_plural)s no disponible porque %(class_name)s. "
 "Allow_future es falso."
@@ -2356,7 +2361,8 @@ msgstr ""
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/dates.py:692
 #, python-format
 msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr "Cadena de fecha no válida \"%(datestr)s\" dada el formato \"%(format)s\""
+msgstr ""
+"Cadena de fecha no válida \"%(datestr)s\" dada el formato \"%(format)s\""
 
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/detail.py:56
 #, python-format
@@ -2409,15 +2415,15 @@ msgstr ""
 #: venv_baas/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:222
 #, python-format
 msgid ""
-"You are seeing this page because <a "
-"href=\"https://docs.djangoproject.com/en/%(version)s/ref/settings/#debug\" "
-"target=\"_blank\" rel=\"noopener\">DEBUG=True</a> is in your settings file "
-"and you have not configured any URLs."
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
 msgstr ""
-"Estás viendo esta página porque <a "
-"href=\"https://docs.djangoproject.com/en/%(version)s/ref/settings/#debug\" "
-"target=\"_blank\" rel=\"noopener\"> debug = verdadero</a> está en su archivo"
-" de configuración y no ha configurado ninguna URL."
+"Estás viendo esta página porque <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" rel=\"noopener\"> debug "
+"= verdadero</a> está en su archivo de configuración y no ha configurado "
+"ninguna URL."
 
 #: venv_baas/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:230
 msgid "Django Documentation"
