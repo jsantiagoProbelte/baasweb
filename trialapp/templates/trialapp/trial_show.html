@@ -117,7 +117,11 @@
 
 {% block scripts %}
 <script src='/static/baaswebapp/scripts/baas.js'></script>
-<script>    
+
+<script>  
+var latitude={{trial.latitude}};
+var longitude={{trial.longitude}};  
+
 $(document).ready(function() {
     loadTrialContent(); 
 });
@@ -155,4 +159,6 @@ $('#trial-data').on('paste', function(event){
 
 </script>
 <script src='/static/baaswebapp/scripts/clipboard_utils.js'></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+<script src='/static/baaswebapp/scripts/mapbaas.js'></script>
 {% endblock %}  
