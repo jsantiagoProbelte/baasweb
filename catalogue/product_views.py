@@ -74,6 +74,8 @@ class ProductForm(forms.ModelForm):
         removedPlagues = set(previousPlagueList) - set(plagueList)
 
         removedProductPlagues = Product_Plague.Selectors.getPlagueProductByPlagues(removedPlagues)
+        removedProductPlagues = removedProductPlagues.filter(product_id=product.id)
+
         for removedProductPlague in removedProductPlagues:
             removedProductPlague.delete()
 
