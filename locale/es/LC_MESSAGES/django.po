@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-27 22:36+0200\n"
+"POT-Creation-Date: 2023-09-27 23:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr "punto de rocío"
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:333
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:342
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -375,11 +375,11 @@ msgstr ""
 msgid "Ungrouped"
 msgstr "No agrupar"
 
-#: trialapp/models.py:55 trialapp/models.py:102
+#: trialapp/models.py:55 trialapp/models.py:103
 msgid "Field Trial"
 msgstr "Ensayo de Campo"
 
-#: trialapp/models.py:56 trialapp/models.py:103
+#: trialapp/models.py:56 trialapp/models.py:104
 msgid "Lab Trial"
 msgstr "Prueba de Laboratorio"
 
@@ -491,32 +491,36 @@ msgstr "Tierra de turba"
 msgid "Lateritic Soil"
 msgstr "Suelo laterítico"
 
-#: trialapp/models.py:91
+#: trialapp/models.py:88
+msgid "Silt Loam"
+msgstr "Franco limoso"
+
+#: trialapp/models.py:92
 msgid "Design Protocol"
 msgstr "Diseñando Protocolo"
 
-#: trialapp/models.py:92
+#: trialapp/models.py:93
 msgid "Approving Protocol"
 msgstr "Aprobando protocolo"
 
-#: trialapp/models.py:93
+#: trialapp/models.py:94
 msgid "In Progress"
 msgstr "En curso"
 
-#: trialapp/models.py:94
+#: trialapp/models.py:95
 msgid "Review Results"
 msgstr "Revisando Resultados"
 
-#: trialapp/models.py:95
+#: trialapp/models.py:96
 msgid "Done"
 msgstr "Finalizado"
 
-#: trialapp/models.py:283 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:284 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr "Localización Sin Definir"
 
-#: trialapp/models.py:286 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:287 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr "Periodo no definido"
 
@@ -749,7 +753,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:379
+#: trialapp/trial_views.py:388
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -847,7 +851,7 @@ msgstr "No hay limitaciones en los permisos"
 msgid "Soil"
 msgstr "Suelo"
 
-#: trialapp/trial_views.py:380
+#: trialapp/trial_views.py:389
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
@@ -855,11 +859,11 @@ msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:417
+#: trialapp/trial_views.py:428
 msgid "No assessements yet"
 msgstr "No hay evaluaciones todavia"
 
-#: trialapp/trial_views.py:452
+#: trialapp/trial_views.py:463
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -869,11 +873,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:730
+#: trialapp/trial_views.py:741
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:733
+#: trialapp/trial_views.py:744
 msgid " in "
 msgstr " en "
 

@@ -52,9 +52,7 @@ class CultivationMethod(ModelHelpers, models.Model):
 
 
 class PartRated(models.TextChoices):
-    FIELD_TRIAL = 'FT', _('Field Trial')
-    LAB_TRIAL = 'LT', _('Lab Trial')
-    BUNCH = 'BUNCH', _('BUNCH')
+    BUNCH = 'BUNCH', _('bunch')
     CLUSTR = 'CLUSTR', _('CLUSTR')
     FLOWER = 'FLOWER', _('FLOWER')
     FRUDAM = 'FRUDAM', _('FRUDAM')
@@ -85,6 +83,7 @@ class SoilType(models.TextChoices):
     ACIDIC = 'Acidic', _('Acidic Soil')  # 'Suelo Ácido'
     PEAT = 'Peat', _('Peat Soil')  # 'Suelo de Turba'
     LATERITIC = 'Lateritic', _('Lateritic Soil')  # 'Suelo Laterítico'
+    SILTLOAM = 'SiltLoam', _('Silt Loam')   # 'Franco Limoso'
 
 
 class StatusTrial(models.TextChoices):
