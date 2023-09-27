@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-27 16:40+0200\n"
+"POT-Creation-Date: 2023-09-27 22:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,7 +460,7 @@ msgid "Loamy Soil"
 msgstr "Suelo franco"
 
 #: trialapp/models.py:80
-msgid "Clay Loam"
+msgid "Clay Loamy"
 msgstr "Franco arcilloso"
 
 #: trialapp/models.py:81
