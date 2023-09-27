@@ -270,6 +270,7 @@ class TrialContent():
         return self._min_date, self._max_date
 
     def getMeteorology(self, getMeteoDataIfMissing=True):
+        toReturn = {}
         if self._trial.avg_temperature is None:
             if getMeteoDataIfMissing:
                 # Let's try to fetch
@@ -286,14 +287,22 @@ class TrialContent():
                     toSaved = True
                 if toSaved:
                     self._trial.save()
-                return meteoData
+                toReturn = meteoData
             else:
-                return {'dummy': '??'}
+                toReturn = {'dummy': '??'}
         else:
-            return {
+            toReturn = {
                 'temp_avg': self._trial.avg_temperature,
                 'prep_avg': self._trial.avg_precipitation,
                 'hum_avg': self._trial.avg_humidity}
+
+        toReturnMindZeroValue = {}
+        # Unfortunately if value is zero, is like the value is not in
+        # it might happen with prep_avg
+        for key in toReturn:
+            value = toReturn.get(key)
+            toReturnMindZeroValue[key] = value if value != 0 else '0'
+        return toReturnMindZeroValue
 
     def getAssGraphData(self, rateSets, ratedParts,
                         type_graph, showEfficacy=False,
@@ -398,7 +407,9 @@ class TrialContent():
             temp_avg = round(avgData['temp_avg'], 0)
             prep_avg = round(avgData['prep_avg'], 0)
             hum_avg = round(avgData['hum_avg'], 0)
-        return {'temp_avg': temp_avg, 'hum_avg': hum_avg, 'prep_avg': prep_avg}
+        return {'temp_avg': temp_avg,
+                'hum_avg': hum_avg,
+                'prep_avg': prep_avg}
 
     def getRateTypeUnitsAndParts(self):
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
