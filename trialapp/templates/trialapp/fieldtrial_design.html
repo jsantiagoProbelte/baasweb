@@ -8,9 +8,6 @@
                     <tr>
                         <th>{% trans 'Thesis Name' %}</th>
                         <th>{% trans 'Product' %}</th>
-                        <th class="capitalize-first">{% trans 'active substance' %}</th>
-                        <th>{% trans 'Doses' %}</th>
-                        <th>{% trans 'Manufacturer' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -18,9 +15,6 @@
                     <tr>
                         <td><div class="color-icon {{ thesisData.idColor }} "></div> {{thesisData.thesis.name}}</td>
                         <td><b>{{ thesisData.thesis.treatments }}</b></td>
-                        <td>{{ thesisData.thesis.active_substance }}</td>
-                        <td>Lorem Ipsum</td>
-                        <td>{{ thesisData.thesis.vendor_name }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
