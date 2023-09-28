@@ -62,10 +62,10 @@ class TrialAnalyticsTest(TestCase):
                 SNK_Table.qCritical__0_05[row][-1])
 
     def test_abbott(self):
-        self.assertEqual(Abbott.do(80, 100), -20)
-        self.assertEqual(Abbott.do(100, 80), 25)
+        self.assertEqual(Abbott.do(80, 100), 20)
+        self.assertEqual(Abbott.do(100, 80), -25)
 
         self.assertEqual(Abbott(0, {0: 0, 1: 80, 2: 100}).run(), None)
         self.assertEqual(Abbott(0, {1: 80, 2: 100}).run(), None)
         self.assertEqual(Abbott(0, {0: 80, 1: 100, 2: 160, 3: 40}).run(),
-                         {1: 25, 2: 100, 3: -50})
+                         {1: -25, 2: -100, 3: 50})
