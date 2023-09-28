@@ -23,3 +23,4 @@ TRIALS_ARCHIVE = 'LOCAL'
 #         'PORT': '5432',
 #     }
 # }
+FIDO_SERVER_ID = "localhost"

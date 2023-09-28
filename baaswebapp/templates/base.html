@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'baaswebapp/content/bootstrap.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'baaswebapp/content/baaswebapp.css' %}"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>BaasWeb Passkey Manager</title>
+  </head>
+
+  <body id="baas-body">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-main">
+      <div class="container-xl">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <img
+            class="w-50"
+            src="{% static 'baaswebapp/img/ProbelteBlancoTransparente.png' %}"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarColor02"
+          aria-controls="navbarColor02"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor02">
+          <form
+            class="d-flex"
+            action="{% url 'fieldtrial-list' %}"
+            method="GET"
+          >
+            <input
+              class="form-control me-sm-2"
+              type="text"
+              placeholder="name, code, responsible"
+              name="name"
+            />
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">
+              Search
+            </button>
+          </form>
+          <ul class="navbar-nav ms-auto">
+            <!-- <form class="d-flex">
+              <input class="form-control me-sm-2" type="text" placeholder="Search">
+              <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form> -->
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'home' %}"
+                >Home
+                <span class="visually-hidden">(current)</span>
+              </a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                id="navbarActionsDropdownMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Menu
+              </a>
+
+              <ul
+                class="dropdown-menu"
+                aria-labelledby="navbarActionsDropdownMenu"
+              >
+                <li>
+                  <a class="dropdown-item" href="{% url 'fieldtrial-list' %}"
+                    >Field Trials</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'labtrial-list' %}"
+                    >Lab Trials</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'product-list' %}"
+                    >Product</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'statsdata' %}"
+                    >Stats</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'thesis_quality_panel' %}"
+                    >Correct thesis</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'admin:index' %}"
+                    >Configuration</a
+                  >
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              {% if user.is_authenticated %}
+              <p class="nav-link">Hi {{ user.username }}!</p>
+              {% endif %}
+            </li>
+
+            <li class="nav-item">
+              {% if user.is_authenticated %}
+              <a
+                class="nav-link btn btn-outline-secondary"
+                href="{% url 'logout' %}"
+                >Logout</a
+              >
+              {% else %}
+              <a
+                class="nav-link btn btn-outline-secondary"
+                href="{% url 'login' %}"
+                >Login</a
+              >
+              {% endif %}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      {% block content %}{% endblock %}
+      <footer class="fixed-bottom bg-custom-main text-white text-center">
+        <p class="pt-3">&copy; {{ year }} - Baas is a Probelte application</p>
+      </footer>
+    </div>
+
+    {% load bootstrap5 %} 
+    {% bootstrap_css %} 
+    {%bootstrap_javascript %} 
+    {% bootstrap_messages %}
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+    {% block head %} {% endblock %}
+  </body>
+</html>

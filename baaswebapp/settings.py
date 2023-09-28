@@ -13,9 +13,16 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 import logging.config
 from django.utils.translation import gettext_lazy as _
+import passkeys
+from keymanager import KeyManager
+
+# Load local .env environment variables
+load_dotenv()
+keymanager = KeyManager()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -26,7 +33,8 @@ BASE_DIR = Path(__file__).resolve().parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t78nwv1+tehfr27dg2jq!$!(!1k3bt2@vw98r37$2r=c3!9+)7'
+SECRET_KEY = keymanager.get_secret("DJANGO-SECRET-KEY")
+SENDGRID_KEY = keymanager.get_secret("SENDGRID-KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -40,8 +48,18 @@ BASE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'passkeys',
+    'django_extensions',
+    'rest_framework.authtoken',
+    'drfpasswordless',
 ]
+
+# This is configuration for passkey
+AUTHENTICATION_BACKENDS = [
+    'sesame.backends.ModelBackend', 'passkeys.backend.PasskeyModelBackend']
+KEY_ATTACHMENT = passkeys.Attachment.PLATFORM
+FIDO_SERVER_NAME = "BaasWebApp"
 
 EXTENDED_APPS = [
     'crispy_forms',
@@ -71,7 +89,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
-
 ]
 
 ROOT_URLCONF = 'baaswebapp.urls'
@@ -192,6 +209,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [
+        'rest_framework.authentication.TokenAuthentication',
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
