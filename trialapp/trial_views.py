@@ -133,7 +133,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
         if not trialPermision.canRead():
             return {**tpermisions,
                     'trial': trial,
-                    'description': trial.getDescription,
+                    'description': trial.getDescription(),
                     'location': trial.getLocation(),
                     'period': trial.getPeriod(),
                     'error': trialPermision.getError()}
@@ -155,6 +155,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             'description': trial.getDescription(),
             'location': trial.getLocation(),
             'period': trial.getPeriod(),
+            'benefit': trial.objective.name if trial.objective else '??',
             'efficacy': trial.best_efficacy if trial.best_efficacy else '?',
             'other_trials': other_trials,
             'control_product': control_product,
