@@ -139,7 +139,7 @@ div#efficacy-range .labels p {
 div#efficacy-range div.range{
     width: 100%;
     align-self: center;
-    color: var(--custom-baas);
+    color: var(--baas-gray);
 }
 
 div#efficacy-range div.range h3{
@@ -151,6 +151,13 @@ div#active-substance small, div#plagues small{
     font-size: 0.688em;
 }
 
+p.title .subtitle {
+    font-size: 0.688em;
+    color: var(--custom-color-9);
+    font-weight: 400 !important;
+    float:right;
+}
+
 div#product-basics, div#application {
     margin-top: var(--margins-show-pages);
 }
@@ -160,10 +167,12 @@ div#product-basics div[class*='col-'], div#application div[class*='col-']{
     padding-left: 0px;
 }
 
-div#product-basics p.title, div#application p.title {
+div#product-basics p.title, div#application p.title, div#description p.title {
     font-size: 1.25em;
     font-weight: 600;
     color: black;
+    margin-left: 0px;
+    padding: 0px;
 }
 
 #crops-table{
@@ -314,3 +323,12 @@ div#product-basics p.title, div#application p.title {
     color: var(--custom-morado);
     text-decoration: underline;
 }
+
+.carousel-indicators button{
+    background-color: var(--custom-morado) !important;
+}
+
+.carousel-indicators button.active{
+    background-color: var(--custom-brand-color) !important;
+}
+

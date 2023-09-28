@@ -65,6 +65,29 @@
     </div>
     <div class="container">
       <div class="row">
+        <div id="image" class="card-bass-alt container items-centered col-3">
+          <div class="corporative-gradient"></div>
+          <img class="product-image" src="{{ product.img_link }}" alt="{% trans 'Product Image' %} {{product.name}}"/>
+        </div>
+        <div id="description" class="card-baas-alt col-5">
+          <div class="labels">
+            <p class="title">{{ product.name }}
+              {% if product.purpose %}
+                <small class="subtitle"><i class="bi bi-bookmark"></i>{% include 'baaswebapp/show_value.html' with value=product.purpose url_fix=edit_product %}</small>
+              {% endif %}
+            </p>
+          </div>
+          <p>{{ product.description|safe }}</p>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <!--ACTIVE SUBSTANCE-->
+        <div id="active-substance" class="card-baas-alt col-3">
+          <div class="labels">
+            <small class="txt-uppercase"><i></i>{% trans "active substance"%}</small>
+          </div>
+          <p><i>{% include 'baaswebapp/show_value.html' with value=product.active_substance url_fix=edit_product %}</i></p>
+        </div>
         <!--EFFICACY RANGE-->
         <div id="efficacy-range" class="card-baas-alt col-3">
           <div class="labels">
@@ -72,22 +95,15 @@
             <small>{% trans "*All products trials efficacy range"%}</small>
           </div>
           <div class="range">
-            <h3>{{range_efficacy}}</h3>
+            <h3>{{ range_efficacy }}</h3>
           </div>
-        </div>
-        <!--ACTIVE SUBSTANCE-->
-        <div id="active-substance" class="card-baas-alt col-3">
-          <div class="labels">
-            <small class="txt-uppercase">{% trans "active substance"%}</small>
-          </div>
-          <p><b>{% include 'baaswebapp/show_value.html' with value=product.active_substance url_fix=edit_product %}</b></p>
         </div>
         <!--PLAGUES-->
         <div id="plagues" class="card-baas-alt col-3">
           <div class="labels">
-            <small class="txt-uppercase">{% trans "pest / disease" %}</small>
+            <small class="txt-uppercase">{% trans "target" %}</small>
           </div>
-          <p><b>{% include 'baaswebapp/show_value.html' with value=product.pest_disease url_fix=edit_product %}</b></p>
+          {% include 'catalogue/text_carousel.html' with textList=plagues %}
         </div>
       </div>
       <div class="row">
@@ -96,7 +112,7 @@
           <p class="title">{% trans "Product Basics"%}</p>
           <div class="container">
             <div class="row">
-              <div class="col-5">
+              <div class="col-6">
                 <small class="txt-uppercase">{% trans "concentration"%}</small>
                 <p>{% include 'baaswebapp/show_value.html' with value=product.concentration url_fix=edit_product %}</p>
               </div>
@@ -146,7 +162,7 @@
         <div class="container">
           <div id="header" class="row flex-nowrap txt-uppercase">
             <div class="col-2"><small>{% trans "crop"%}</small></div>
-            <div class="col-2"><small>{% trans "pest / disease" %}</small></div>
+            <div class="col-2"><small>{% trans "target" %}</small></div>
             <div class="col-2"><small>{% trans "dosis" %}</small></div>
             <div class="col-2"><small>{% trans "solution volume" %}</small></div>
             <div class="col-2"><small>{% trans "number applications"%}</small></div>
@@ -203,4 +219,23 @@
 </script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
 <script src='/static/baaswebapp/scripts/mapbaas.js'></script>
+<script>
+  try{
+    $(document).ready(() => {
+      const textCarousel = $("#textCarousel")
+      textCarousel.carousel('cycle',{
+          interval : 1500
+      })
+
+      $(".carousel-inner .carousel-item:first-child").addClass('active')
+      const firstIndicator = $(".carousel-indicators button:first-child")
+      firstIndicator.addClass('active')
+      firstIndicator.attr('aria-current', true)
+
+    })
+  }catch(error){
+    console.log(error)
+  }
+
+</script>
 {% endblock %}

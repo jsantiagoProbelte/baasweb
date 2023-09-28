@@ -62,6 +62,7 @@
   --custom-color-16: #00BCD4;
   --custom-color-17: #CDDC39;
   --custom-color-18: #F44336;
+  --product-image-wh: 150px;
 }
 
 .no-gutters{
@@ -818,6 +819,50 @@ div[class*="bg-custom-"]{
   flex: 1 1 auto;
 }
 
+.card-baas-alt:is(.no-color){
+  background-color: none;
+}
+
+.corporative-gradient{
+  background-image: url('https://probelte.com/es/wp-content/uploads/sites/2/2022/09/Probelte_home_color-circle-elements.png');
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  z-index: 0;
+  mask-position: 80%;
+  -webkit-mask-position: 30% 70%;
+  -webkit-mask-image: url("mask_paint_circle.png");
+  mask-image: url("mask_paint_circle.png");
+  -webkit-mask-size: 150%;
+  mask-size:200px;
+}
+
+.card-bass-alt:has(.masked-paint), .card-bass-alt:is(.container){
+  position: relative;
+}
+
+.masked-paint{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 105%;
+  mask-position: 80%;
+  -webkit-mask-position: 80% 10%;
+  -webkit-mask-image: url("mask_paint.png");
+  mask-image: url("mask_paint.png");
+  -webkit-mask-size: 100%;
+  mask-size:200px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background-color: var(--custom-baas-alt);
+  z-index: 0;
+}
+
 .card-baas-alt:is(.assessment-stats) table:not(:last-child) {
   background-color: #efedff;
   border:none;
@@ -909,6 +954,11 @@ div[class*="bg-custom-"]{
 .card-bottom a{
   text-decoration: none;
   vertical-align:middle;
+}
+
+.product-image{
+  width: var(--product-image-wh);
+  z-index: 1;
 }
 
 .card-bottom .btn-large{
@@ -1036,6 +1086,17 @@ input[type='checkbox'], input[type="radio"] {
 .baas-data-table .page-number-links{
   vertical-align: middle;
   text-align: right;
+}
+
+.carousel, .carousel-inner, .carousel-item{
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-caption{
+  color: var(--bs-text-color) !important;
+  text-align: left !important;
+  left: 0px !important;
 }
 
 .baas-data-table tfoot a.current, .baas-data-table tfoot a:hover{
@@ -1496,6 +1557,12 @@ div.flex-inline-form input:focus{
   width: 100%;
 }
 
+.items-centered{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .txt-center {
   text-align: center;
 }
@@ -1504,4 +1571,18 @@ div.flex-inline-form input:focus{
   font-size: 14px;
   font-family: 'Encode Sans', serif;
   font-weight: bold;
+}
+
+.controls:has(.checkbox){
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.controls .checkbox{
+  flex-basis: fit-content;
+  flex-grow: 1;
+}
+
+.checkbox label input{
+  margin-right: 5px;
 }

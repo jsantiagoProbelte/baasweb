@@ -35,6 +35,11 @@ class Product(ModelHelpers, models.Model):
     security_period = models.CharField(max_length=100, null=True)
     mixes = models.CharField(max_length=100, null=True)
 
+    img_link = models.URLField(max_length=300, null=True)
+    description = models.TextField(null=True)
+
+    purpose = models.CharField(max_length=100, null=True)
+
     type_product = models.CharField(
         max_length=3,
         choices=PType.choices,
