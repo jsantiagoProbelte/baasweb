@@ -135,3 +135,6 @@ dmypy.json
 
 # test artifacts
 reports_tests/*
+
+cert.crt
+cert.key
