@@ -103,10 +103,12 @@ class PartRated(models.TextChoices):
 
 class SoilType(models.TextChoices):
     UNDF = 'UNDF', _('UNDF')
-    SANDY = 'Sandy', _('Sandy Soil')  # 'Suelo Arenoso'
     CLAY = 'Clay', _('Clay Soil')  # 'Suelo Arcilloso'
-    LOAMY = 'Loamy', _('Loamy Soil')  # 'Suelo Limoso'
     CLAYLOAMY = 'ClayLoamy', _('Clay Loamy')  # Franco Arcilloso
+    SANDY = 'Sandy', _('Sandy Soil')  # 'Suelo Arenoso'
+    SANDYCLAY = 'SandyClay', _('Sandy Clay')  # 'Suelo Arenoso'
+    SANDYLOAM = 'SandyLoam', _('Sandy Loam')  # 'Arenoso Franco'
+    LOAMY = 'Loamy', _('Loamy Soil')  # 'Suelo Franco'
     ORGANIC = 'Organic', _('Organic Soil')  # 'Suelo Orgánico'
     ROCKY = 'Rocky', _('Rocky Soil')  # 'Suelo Pedregoso'
     SALINE = 'Saline', _('Saline Soil')  # 'Suelo Salino'
