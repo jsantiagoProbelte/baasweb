@@ -55,7 +55,8 @@ class ThesisListView(LoginRequiredMixin, ListView):
         replicas = [
             {'value': item.id, 'number': item.thesis.number,
              'name': item.getTitle()}
-            for item in Replica.getFieldTrialObjects(trial)]
+            for item in Replica.getFieldTrialObjects(trial,
+                                                     orderByThesis=False)]
 
         return {
             'thesisList': thesisDisplay,

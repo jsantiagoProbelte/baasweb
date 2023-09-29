@@ -600,10 +600,11 @@ class Replica(ModelHelpers, models.Model):
         return replicas
 
     @classmethod
-    def getFieldTrialObjects(cls, field_trial):
+    def getFieldTrialObjects(cls, field_trial, orderByThesis=True):
+        orderby = ['thesis__number', 'number'] if orderByThesis else ['number']
         return Replica.objects.filter(
             thesis__field_trial_id=field_trial.id
-        ).order_by('thesis__number', 'number')
+        ).order_by(*orderby)
 
     @classmethod
     def getDict(cls, trial):
