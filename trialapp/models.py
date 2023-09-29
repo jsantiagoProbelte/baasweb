@@ -601,7 +601,7 @@ class Replica(ModelHelpers, models.Model):
 
     @classmethod
     def getFieldTrialObjects(cls, field_trial, orderByThesis=True):
-        orderby = ['thesis__number', 'number'] if orderByThesis else ['number']
+        orderby = ['thesis__number', 'number'] if orderByThesis else ['name']
         return Replica.objects.filter(
             thesis__field_trial_id=field_trial.id
         ).order_by(*orderby)
