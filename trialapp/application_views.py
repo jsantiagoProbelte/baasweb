@@ -114,24 +114,20 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
 class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
     model = Application
     template_name = 'trialapp/application_delete.html'
-    _parent = None
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self._parent = self.object.field_trial
-        self.object.delete()
-        EventLog.track(EventBaas.DELETE_APP,
-                       self.request.user.id,
-                       self._parent.id)
-        Application.computeDDT(self._parent)
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        if self._parent:
-            return reverse('application-list',
-                           kwargs={'field_trial_id': self._parent.id})
-        else:
-            return reverse('trial-list')
+        return reverse(
+            'application-list',
+            kwargs={'field_trial_id': self.get_object().field_trial_id})
+
+    def form_valid(self, form):
+        trial = self.get_object().field_trial
+        Application.computeDDT(trial)
+        EventLog.track(
+                EventBaas.DELETE_APP,
+                self.request.user.id,
+                trial.id)
+        return super().form_valid(form)
 
 
 class ApplicationApi(LoginRequiredMixin, DetailView):
