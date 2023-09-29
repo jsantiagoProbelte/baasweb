@@ -212,9 +212,9 @@ class ThesisDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         EventLog.track(
-                EventBaas.DELETE_THESIS,
-                self.request.user.id,
-                self._trial_id)
+            EventBaas.DELETE_THESIS,
+            self.request.user.id,
+            self.get_object().field_trial_id)
         return super().form_valid(form)
 
 
