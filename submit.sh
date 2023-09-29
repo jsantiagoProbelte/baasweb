@@ -1,3 +1,4 @@
+git pull
 # ./translate.sh
 ./run_test.sh 
 if [ $? -eq 0 ]; then
