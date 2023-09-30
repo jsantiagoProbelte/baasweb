@@ -5,6 +5,7 @@ from keymanager import KeyManager
 
 keymanager = KeyManager()
 DEBUG = True
+SECRET_KEY = keymanager.get_secret("DJANGO-SECRET-KEY")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
