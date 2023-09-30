@@ -12,7 +12,8 @@ DATABASES = {
 }
 
 TRIALS_ARCHIVE = 'LOCAL'
-KEYVAULT_URL = 'blabla'
+
+SECRET_KEY = 'blabla'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
