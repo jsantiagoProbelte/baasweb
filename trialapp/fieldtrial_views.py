@@ -220,7 +220,6 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         if form.is_valid():
             fieldTrial = form.instance
-            fieldTrial.code = FieldTrial.getCode(datetime.date.today(), True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
             fieldTrial.save()
             EventLog.track(
@@ -243,6 +242,7 @@ class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         super().form_valid(form)
+        TrialFile().createTrialFolder(self.get_object().code)
         EventLog.track(EventBaas.UPDATE_TRIAL,
                        self.request.user.id,
                        form.instance.id)

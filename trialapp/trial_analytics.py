@@ -312,7 +312,7 @@ class Abbott():
     @classmethod
     def do(cls, value, standard):
         if standard != 0:
-            return round((value - standard) * 100 / standard, 2)
+            return round((standard - value) * 100 / standard, 2)
         else:
             return 0
 

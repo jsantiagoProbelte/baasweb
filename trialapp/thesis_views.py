@@ -55,7 +55,8 @@ class ThesisListView(LoginRequiredMixin, ListView):
         replicas = [
             {'value': item.id, 'number': item.thesis.number,
              'name': item.getTitle()}
-            for item in Replica.getFieldTrialObjects(trial)]
+            for item in Replica.getFieldTrialObjects(trial,
+                                                     orderByThesis=False)]
 
         return {
             'thesisList': thesisDisplay,
@@ -205,17 +206,17 @@ class ThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = Thesis
     template_name = 'trialapp/thesis_delete.html'
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        trial = self.object.field_trial
-        self.object.delete()
+    def get_success_url(self) -> str:
+        return reverse(
+            'thesis-list',
+            kwargs={'field_trial_id': self.get_object().field_trial_id})
+
+    def form_valid(self, form):
         EventLog.track(
-                EventBaas.DELETE_THESIS,
-                self.request.user.id,
-                trial.id)
-        return HttpResponseRedirect(
-            reverse('thesis-list',
-                    kwargs={'field_trial_id': trial.id}))
+            EventBaas.DELETE_THESIS,
+            self.request.user.id,
+            self.get_object().field_trial_id)
+        return super().form_valid(form)
 
 
 class ThesisApi(LoginRequiredMixin, DetailView):
@@ -337,24 +338,18 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
 class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
     model = TreatmentThesis
     template_name = 'trialapp/treatment_thesis_delete.html'
-    _parent = None
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self._parent = self.object.thesis
-        self.object.delete()
+    def get_success_url(self) -> str:
+        return reverse(
+            'thesis_api',
+            kwargs={'pk': self.get_object().thesis_id})
+
+    def form_valid(self, form):
         EventLog.track(
                 EventBaas.UPDATE_THESIS,
-                request.user.id,
-                self._parent.field_trial_id)
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_success_url(self):
-        if self._parent:
-            return reverse('thesis_api',
-                           kwargs={'pk': self._parent.id})
-        else:
-            return reverse('trial-list')
+                self.request.user.id,
+                self.get_object().thesis.field_trial_id)
+        return super().form_valid(form)
 
 
 class SetReplicaPosition(APIView):

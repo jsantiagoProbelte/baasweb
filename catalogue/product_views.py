@@ -151,10 +151,17 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('product-list')
     template_name = 'catalogue/product_delete.html'
+
+    def form_valid(self, form):
+        EventLog.track(
+                EventBaas.DELETE_PRODUCT,
+                self.request.user.id,
+                self.get_object().id)
+        return super().form_valid(form)
 
 
 class ProductApi(LoginRequiredMixin, View):
@@ -344,30 +351,25 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
         super().form_valid(form)
         EventLog.track(EventBaas.UPDATE_BATCH,
                        self.request.user.id,
-                       form.instance.product_variant.product.id)
+                       form.instance.product_variant.product_id)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class BatchDeleteView(DeleteView):
+class BatchDeleteView(LoginRequiredMixin, DeleteView):
     model = Batch
     template_name = 'catalogue/batch_delete.html'
-    _parent = None
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self._parent = self.object.product_variant
-        self.object.delete()
-        EventLog.track(EventBaas.DELETE_BATCH,
-                       self.request.user.id,
-                       self._parent.product.id)
-        return HttpResponseRedirect(self.get_success_url())
+    def form_valid(self, form):
+        EventLog.track(
+                EventBaas.DELETE_PRODUCT,
+                self.request.user.id,
+                self.get_object().product_variant.product_id)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        if self._parent:
-            return reverse('product_variant-api',
-                           kwargs={'pk': self._parent.id})
-        else:
-            return reverse('product-list')
+        return reverse(
+            'product_variant-api',
+            kwargs={'pk': self.get_object().product_variant_id})
 
 
 def prepareChildrenCatalogue(childKey, cls, filter, orderBy):
@@ -480,30 +482,25 @@ class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
         super().form_valid(form)
         EventLog.track(EventBaas.UPDATE_VARIANT,
                        self.request.user.id,
-                       form.instance.product.id)
+                       form.instance.product_id)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProductVariantDeleteView(DeleteView):
+class ProductVariantDeleteView(LoginRequiredMixin, DeleteView):
     model = ProductVariant
     template_name = 'catalogue/product_variant_delete.html'
-    _parent = None
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self._parent = self.object.product
-        self.object.delete()
-        EventLog.track(EventBaas.DELETE_VARIANT,
-                       self.request.user.id,
-                       self._parent.id)
-        return HttpResponseRedirect(self.get_success_url())
+    def get_success_url(self) -> str:
+        return reverse(
+            'product_api',
+            kwargs={'pk': self.get_object().product_id})
 
-    def get_success_url(self):
-        if self._parent:
-            return reverse('product_api',
-                           kwargs={'pk': self._parent.id})
-        else:
-            return reverse('product-list')
+    def form_valid(self, form):
+        EventLog.track(
+                EventBaas.DELETE_VARIANT,
+                self.request.user.id,
+                self.get_object().product_id)
+        return super().form_valid(form)
 
 
 ##############################
@@ -627,23 +624,17 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class TreatmentDeleteView(DeleteView):
+class TreatmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Treatment
     template_name = 'catalogue/treatment_delete.html'
-    _parent = None
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self._parent = self.object.batch
-        self.object.delete()
+    def get_success_url(self) -> str:
+        return reverse(
+            'batch-api',
+            kwargs={'pk': self.get_object().batch_id})
+
+    def form_valid(self, form):
         EventLog.track(EventBaas.DELETE_TREATMENT,
                        self.request.user.id,
-                       self._parent.product_variant.product.id)
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_success_url(self):
-        if self._parent:
-            return reverse('batch-api',
-                           kwargs={'pk': self._parent.id})
-        else:
-            return reverse('product-list')
+                       self.get_object().batch.product_variant.product_id)
+        return super().form_valid(form)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-27 23:53+0200\n"
+"POT-Creation-Date: 2023-09-28 23:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,13 +22,13 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:126
+#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:142
 msgid "weather"
 msgstr ""
 
 #: baaswebapp/graphs.py:151 baaswebapp/graphs.py:154 baaswebapp/graphs.py:159
 #: baaswebapp/graphs.py:161 baaswebapp/graphs.py:164 baaswebapp/graphs.py:287
-#: trialapp/templates/trialapp/trial_conclusions.html:114
+#: trialapp/templates/trialapp/trial_conclusions.html:115
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181 baaswebapp/graphs.py:285
-#: trialapp/templates/trialapp/trial_conclusions.html:106
+#: trialapp/templates/trialapp/trial_conclusions.html:107
 msgid "temperature"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgstr ""
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:342
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:343
 msgid "efficacy"
 msgstr ""
 
@@ -242,16 +242,15 @@ msgid "product type"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:5
-#: catalogue/templates/catalogue/product_show.html:81
-#: trialapp/templates/trialapp/fieldtrial_design.html:11
-#: trialapp/templates/trialapp/trial_conclusions.html:142
+#: catalogue/templates/catalogue/product_show.html:87
+#: trialapp/templates/trialapp/trial_conclusions.html:143
 #: trialapp/templates/trialapp/trials_list_header.html:6
 msgid "active substance"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:6
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:71
+#: catalogue/templates/catalogue/product_show.html:94
 #: trialapp/templates/trialapp/crop_list_header.html:5
 #: trialapp/templates/trialapp/plagues_list_header.html:5
 #: trialapp/templates/trialapp/trials_list_header.html:7
@@ -281,68 +280,68 @@ msgstr ""
 msgid "product variants"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:72
+#: catalogue/templates/catalogue/product_show.html:70
+msgid "Product Image"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:95
 msgid "*All products trials efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:88
-#: catalogue/templates/catalogue/product_show.html:149
-#: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:57
-#: trialapp/filter_helpers.py:320
-#: trialapp/templates/trialapp/plagues_list_header.html:3
-#: trialapp/templates/trialapp/trial_conclusions.html:81
-msgid "pest / disease"
+#: catalogue/templates/catalogue/product_show.html:104
+#: catalogue/templates/catalogue/product_show.html:165
+msgid "target"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:96
+#: catalogue/templates/catalogue/product_show.html:112
 msgid "Product Basics"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:100
+#: catalogue/templates/catalogue/product_show.html:116
 msgid "concentration"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:110
+#: catalogue/templates/catalogue/product_show.html:126
 msgid "presentation"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:118
-#: catalogue/templates/catalogue/product_show.html:122
+#: catalogue/templates/catalogue/product_show.html:134
+#: catalogue/templates/catalogue/product_show.html:138
 msgid "Application"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:133
+#: catalogue/templates/catalogue/product_show.html:149
 msgid "Security period"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:137
+#: catalogue/templates/catalogue/product_show.html:153
 msgid "Mixes"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:148
+#: catalogue/templates/catalogue/product_show.html:164
 #: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:54
 #: trialapp/filter_helpers.py:319
 #: trialapp/templates/trialapp/crop_list_header.html:3
-#: trialapp/templates/trialapp/trial_conclusions.html:84
+#: trialapp/templates/trialapp/trial_conclusions.html:85
 msgid "crop"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:150
+#: catalogue/templates/catalogue/product_show.html:166
 #: trialapp/templates/trialapp/trial_conclusions.html:17
 msgid "dosis"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:151
+#: catalogue/templates/catalogue/product_show.html:167
 #: trialapp/templates/trialapp/trial_conclusions.html:29
 msgid "solution volume"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:152
+#: catalogue/templates/catalogue/product_show.html:168
 #: trialapp/templates/trialapp/trial_conclusions.html:39
 msgid "number applications"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:153
+#: catalogue/templates/catalogue/product_show.html:169
 #: trialapp/templates/trialapp/trial_conclusions.html:47
 msgid "day intervals"
 msgstr ""
@@ -357,6 +356,13 @@ msgstr ""
 
 #: trialapp/fieldtrial_views.py:266
 msgid "Fail on generating download"
+msgstr ""
+
+#: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:57
+#: trialapp/filter_helpers.py:320
+#: trialapp/templates/trialapp/plagues_list_header.html:3
+#: trialapp/templates/trialapp/trial_conclusions.html:82
+msgid "pest / disease"
 msgstr ""
 
 #: trialapp/filter_helpers.py:42
@@ -375,152 +381,160 @@ msgstr ""
 msgid "Ungrouped"
 msgstr "No agrupado"
 
-#: trialapp/models.py:55 trialapp/models.py:103
-msgid "Field Trial"
-msgstr ""
-
-#: trialapp/models.py:56 trialapp/models.py:104
-msgid "Lab Trial"
-msgstr ""
-
-#: trialapp/models.py:57
-msgid "BUNCH"
-msgstr ""
-
-#: trialapp/models.py:58
-msgid "CLUSTR"
-msgstr ""
-
-#: trialapp/models.py:59
-msgid "FLOWER"
-msgstr ""
-
-#: trialapp/models.py:60
-msgid "FRUDAM"
-msgstr ""
-
-#: trialapp/models.py:61
-msgid "FRUIT"
-msgstr ""
-
-#: trialapp/models.py:62
-msgid "FRUIT C"
-msgstr ""
-
-#: trialapp/models.py:63
-msgid "FRUIT P"
-msgstr ""
-
-#: trialapp/models.py:64
-msgid "FRUROT C"
-msgstr ""
-
-#: trialapp/models.py:65
-msgid "FRUSTO P"
-msgstr ""
-
-#: trialapp/models.py:66
-msgid "LEAF"
-msgstr ""
-
-#: trialapp/models.py:67
-msgid "PLANT"
-msgstr ""
-
-#: trialapp/models.py:68
-msgid "PLOT"
-msgstr ""
-
-#: trialapp/models.py:69
-msgid "ROOT"
-msgstr ""
-
-#: trialapp/models.py:70
-msgid "SPOT"
-msgstr ""
-
-#: trialapp/models.py:71
-msgid "STEMP"
-msgstr ""
-
-#: trialapp/models.py:72 trialapp/models.py:76
-msgid "UNDF"
-msgstr ""
-
-#: trialapp/models.py:77
-msgid "Sandy Soil"
-msgstr ""
-
-#: trialapp/models.py:78
-msgid "Clay Soil"
-msgstr ""
-
-#: trialapp/models.py:79
-msgid "Loamy Soil"
-msgstr ""
-
-#: trialapp/models.py:80
-msgid "Clay Loamy"
-msgstr ""
-
-#: trialapp/models.py:81
-msgid "Organic Soil"
-msgstr ""
-
-#: trialapp/models.py:82
-msgid "Rocky Soil"
-msgstr ""
-
-#: trialapp/models.py:83
-msgid "Saline Soil"
-msgstr ""
-
-#: trialapp/models.py:84
-msgid "Alkaline Soil"
-msgstr ""
-
-#: trialapp/models.py:85
-msgid "Acidic Soil"
-msgstr ""
-
 #: trialapp/models.py:86
-msgid "Peat Soil"
+msgid "bunch"
 msgstr ""
 
 #: trialapp/models.py:87
-msgid "Lateritic Soil"
+msgid "CLUSTR"
 msgstr ""
 
 #: trialapp/models.py:88
-msgid "Silt Loam"
+msgid "FLOWER"
+msgstr ""
+
+#: trialapp/models.py:89
+msgid "FRUDAM"
+msgstr ""
+
+#: trialapp/models.py:90
+msgid "FRUIT"
+msgstr ""
+
+#: trialapp/models.py:91
+msgid "FRUIT C"
 msgstr ""
 
 #: trialapp/models.py:92
-msgid "Design Protocol"
+msgid "FRUIT P"
 msgstr ""
 
 #: trialapp/models.py:93
-msgid "Approving Protocol"
+msgid "FRUROT C"
 msgstr ""
 
 #: trialapp/models.py:94
-msgid "In Progress"
+msgid "FRUSTO P"
 msgstr ""
 
 #: trialapp/models.py:95
-msgid "Review Results"
+msgid "LEAF"
 msgstr ""
 
 #: trialapp/models.py:96
+msgid "PLANT"
+msgstr ""
+
+#: trialapp/models.py:97
+msgid "PLOT"
+msgstr ""
+
+#: trialapp/models.py:98
+msgid "ROOT"
+msgstr ""
+
+#: trialapp/models.py:99
+msgid "SPOT"
+msgstr ""
+
+#: trialapp/models.py:100
+msgid "STEMP"
+msgstr ""
+
+#: trialapp/models.py:101 trialapp/models.py:105
+msgid "UNDF"
+msgstr ""
+
+#: trialapp/models.py:106
+msgid "Clay Soil"
+msgstr ""
+
+#: trialapp/models.py:107
+msgid "Clay Loamy"
+msgstr ""
+
+#: trialapp/models.py:108
+msgid "Sandy Soil"
+msgstr ""
+
+#: trialapp/models.py:109
+msgid "Sandy Clay"
+msgstr ""
+
+#: trialapp/models.py:110
+msgid "Sandy Loam"
+msgstr ""
+
+#: trialapp/models.py:111
+msgid "Loamy Soil"
+msgstr ""
+
+#: trialapp/models.py:112
+msgid "Organic Soil"
+msgstr ""
+
+#: trialapp/models.py:113
+msgid "Rocky Soil"
+msgstr ""
+
+#: trialapp/models.py:114
+msgid "Saline Soil"
+msgstr ""
+
+#: trialapp/models.py:115
+msgid "Alkaline Soil"
+msgstr ""
+
+#: trialapp/models.py:116
+msgid "Acidic Soil"
+msgstr ""
+
+#: trialapp/models.py:117
+msgid "Peat Soil"
+msgstr ""
+
+#: trialapp/models.py:118
+msgid "Lateritic Soil"
+msgstr ""
+
+#: trialapp/models.py:119
+msgid "Silt Loam"
+msgstr ""
+
+#: trialapp/models.py:123
+msgid "Design Protocol"
+msgstr ""
+
+#: trialapp/models.py:124
+msgid "Approving Protocol"
+msgstr ""
+
+#: trialapp/models.py:125
+msgid "In Progress"
+msgstr ""
+
+#: trialapp/models.py:126
+msgid "Review Results"
+msgstr ""
+
+#: trialapp/models.py:127
 msgid "Done"
 msgstr ""
 
-#: trialapp/models.py:284 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:134
+msgid "Field Trial"
+msgstr ""
+
+#: trialapp/models.py:135
+msgid "Lab Trial"
+msgstr ""
+
+#: trialapp/models.py:315 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:287 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:318 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -544,32 +558,24 @@ msgstr ""
 msgid "Product"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:12
-msgid "Doses"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_design.html:13
-msgid "Manufacturer"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_design.html:30
+#: trialapp/templates/trialapp/fieldtrial_design.html:24
 msgid "Terrain"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:49
+#: trialapp/templates/trialapp/fieldtrial_design.html:43
 msgid "Layout Traits"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:65
-#: trialapp/templates/trialapp/fieldtrial_design.html:69
+#: trialapp/templates/trialapp/fieldtrial_design.html:59
+#: trialapp/templates/trialapp/fieldtrial_design.html:63
 msgid "Assesments"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:70
+#: trialapp/templates/trialapp/fieldtrial_design.html:64
 msgid "Part Assesed"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_design.html:76
+#: trialapp/templates/trialapp/fieldtrial_design.html:70
 msgid "Schedule"
 msgstr ""
 
@@ -716,7 +722,7 @@ msgid "name"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_assessment_view.html:113
-#: trialapp/templates/trialapp/trial_conclusions.html:86
+#: trialapp/templates/trialapp/trial_conclusions.html:87
 msgid "date"
 msgstr ""
 
@@ -748,36 +754,36 @@ msgstr ""
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:90
+#: trialapp/templates/trialapp/trial_conclusions.html:91
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:101
-#: trialapp/trial_views.py:388
+#: trialapp/templates/trialapp/trial_conclusions.html:102
+#: trialapp/trial_views.py:389
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:110
+#: trialapp/templates/trialapp/trial_conclusions.html:111
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:122
+#: trialapp/templates/trialapp/trial_conclusions.html:123
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:126
+#: trialapp/templates/trialapp/trial_conclusions.html:127
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:131
+#: trialapp/templates/trialapp/trial_conclusions.html:132
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:135
+#: trialapp/templates/trialapp/trial_conclusions.html:136
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:146
+#: trialapp/templates/trialapp/trial_conclusions.html:147
 msgid "benefit"
 msgstr ""
 
@@ -849,28 +855,28 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:389
+#: trialapp/trial_views.py:390
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:428
+#: trialapp/trial_views.py:429
 msgid "No assessements yet"
 msgstr ""
 
-#: trialapp/trial_views.py:463
+#: trialapp/trial_views.py:464
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:741
+#: trialapp/trial_views.py:742
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:744
+#: trialapp/trial_views.py:745
 msgid " in "
 msgstr ""
 
@@ -2380,4 +2386,82 @@ msgstr ""
 #: venv_baas/lib/python3.9/site-packages/django_plotly_dash/templates/admin/django_plotly_dash/statelessapp/change_list.html:13
 #, python-format
 msgid "Add %(name)s"
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/apps.py:6
+msgid "DRF Passwordless"
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:18
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:19
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:20
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:232
+msgid "Invalid Token"
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:21
+#, python-brace-format
+msgid "Tokens are {max_length} digits long."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:22
+#, python-brace-format
+msgid "Tokens are {min_length} digits long."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:62
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:124
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:215
+msgid "User account is disabled."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:65
+msgid "No account is associated with this alias."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:68
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:135
+#, python-format
+msgid "Missing %s."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:111
+msgid "There was a problem with your request."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:132
+#, python-format
+msgid "This user doesn't have an %s."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:225
+msgid "Error validating user alias."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:235
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:241
+msgid "Invalid alias parameters provided."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:238
+msgid "Invalid user alias parameters provided."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:272
+msgid "This token is invalid. Try again later."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:276
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:280
+msgid "We could not verify this alias."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:284
+msgid "Insufficient permissions."
+msgstr ""
+
+#: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:333
+#: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:340
+#: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:347
+msgid "global"
 msgstr ""
