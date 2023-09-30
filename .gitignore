@@ -136,5 +136,8 @@ dmypy.json
 # test artifacts
 reports_tests/*
 
+# SSL certificates
+cert.pem
+key.pem
 cert.crt
 cert.key

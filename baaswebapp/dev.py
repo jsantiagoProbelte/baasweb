@@ -13,6 +13,7 @@ DATABASES = {
 
 TRIALS_ARCHIVE = 'LOCAL'
 
+SECRET_KEY = 'blabla'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -23,3 +24,4 @@ TRIALS_ARCHIVE = 'LOCAL'
 #         'PORT': '5432',
 #     }
 # }
+FIDO_SERVER_ID = "localhost"

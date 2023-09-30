@@ -1485,6 +1485,12 @@ div.flex-inline-form input:focus{
   margin-bottom: 0rem !important;
 }
 
+.txt-presicav-50-700 {
+  font-weight: 700;
+  font-size: 50px !important;
+  font-family: 'Presicav';
+  font-weight: bold;
+}
 
 .sidebar-item {
   font-size: 14px;

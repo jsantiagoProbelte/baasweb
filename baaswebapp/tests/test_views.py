@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib import auth
 from baaswebapp.tests.tests_helpers import ApiRequestHelperTest
+import json
 
 
 class BaaSWebAppTest(TestCase):
@@ -20,7 +21,7 @@ class BaaSWebAppTest(TestCase):
 
     def test_login(self):
         response = self.client.get(reverse('login'))
-        self.assertContains(response, 'Baas Web App the Agro Recommendation')
+        self.assertContains(response, 'Please login for full access')
 
     def test_user_can_login_and_logout(self):
         self.client.post(
@@ -51,6 +52,7 @@ class BaaSWebAppTest(TestCase):
         self.client.post(
             reverse('login'), {
                 'username': '',
+                'passkeys': json.dumps({'id': 123}),
                 'password': 'badpassword'})
         self.assertNotEqual(user.get_username(), ApiRequestHelperTest.USER)
 

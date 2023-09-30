@@ -11,7 +11,12 @@
 {% endblock %}
 
 {% block content %}
-
+{% if user.is_authenticated %}
+<div id="pk" class="alert alert-info" style="display: none">
+  Your device supports passkeys,
+  <a href="{%url 'passkeys:enroll'%}">Enroll</a>
+</div>
+{% endif %}
 <div class="row ms-3 me-3">
     {% include 'baaswebapp/baas_view_filter.html' with groupbyfilter=groupbyfilter groupby=groupby%}
     <div class="col-md-9 col-sm-12">
@@ -79,6 +84,13 @@
 
 {% block scripts %}
 <script>
+    function register_pk()
+    {
+        $('#pk').show();
+    }
+    {% include 'check_passkeys.js' %}
+    $(document).ready(check_passkey(true,register_pk))
+
     window.addEventListener('load', (event) => {
         [...document.querySelectorAll(".form-control option:first-child")].forEach(option => {
             option.disabled = true

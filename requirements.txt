@@ -21,3 +21,16 @@ statsmodels==0.13.5
 # Teams
 SharePlum
 reportlab==4.0.4
+
+# Authentication and secrets
+azure-common
+azure-core
+azure-identity
+azure-keyvault-secrets
+django-passkeys
+django-sesame
+drfpasswordless
+django-extensions
+python-dotenv
+sendgrid
+pyOpenSSL
