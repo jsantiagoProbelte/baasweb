@@ -9,7 +9,7 @@ SECRET_KEY = keymanager.get_secret("DJANGO-SECRET-KEY")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'baas_db',
+        'NAME': keymanager.get_secret("DB-NAME"),
         'USER': keymanager.get_secret("DB-USER"),
         'PASSWORD': keymanager.get_secret("DB-PASS"),
         'HOST': keymanager.get_secret("DB-HOST"),
