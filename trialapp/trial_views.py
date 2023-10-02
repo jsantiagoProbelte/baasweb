@@ -232,7 +232,7 @@ class TrialContent():
 
     WEATHER = 'weather_graphs'
     WEATHER_AVG = 'weather_avg'
-    ASSESSMENTS = 'assess_graphs'
+    ASSMT_GRAPHS = 'assess_graphs'
     ALL_ASS_DATA = 'all_ass_data'
     ASSESSMENT_VIEW = 'assessment_view'
     RESULT_SUMMARY = 'result_summary'
@@ -308,7 +308,8 @@ class TrialContent():
     def getAssGraphData(self, rateSets, ratedParts,
                         type_graph, showEfficacy=False,
                         xAxis=GraphTrial.L_DATE,
-                        level=GraphTrial.L_REPLICA):
+                        level=GraphTrial.L_REPLICA,
+                        extra_title=''):
         graphs = []
         for rateSet in rateSets:
             for ratedPart in ratedParts:
@@ -340,7 +341,7 @@ class TrialContent():
                     type_graph = GraphTrial.COLUMN
                 graphs.append(
                     {'title': graphF.getTitle(),
-                     'extra_title': _('efficacy'),
+                     'extra_title': extra_title,
                      'content': graphF.draw(type_graph=type_graph)})
         return graphs
 
@@ -439,7 +440,7 @@ class TrialContent():
                 **dataHelper.showDataAssessment(),
                 **trialPermision.getPermisions()}
 
-    def fetchAssessmentsData(self):
+    def fetchAssessmentsGraphs(self):
         rateSets, ratedParts = self.getRateTypeUnitsAndParts()
         return self.getAssGraphData(
             rateSets, ratedParts, GraphTrial.LINE, showEfficacy=False,
@@ -447,9 +448,10 @@ class TrialContent():
 
     def fetchResultSummaryData(self):
         rateSets, ratedParts = self.getRateTypeUnitsAndParts()
+        extra_title = _('efficacy')
         return self.getAssGraphData(
             rateSets, ratedParts, GraphTrial.COLUMN, showEfficacy=True,
-            xAxis=GraphTrial.L_ASSMT)
+            xAxis=GraphTrial.L_ASSMT, extra_title=extra_title)
 
     def fetchAllAssessData(self):
         helper = DataTrialHelper(self._trial)
@@ -750,7 +752,7 @@ class TrialContent():
         WEATHER: fetchWeather,
         KEY_ASSESS: fetchKeyAssessData,
         ALL_ASS_DATA: fetchAllAssessData,
-        ASSESSMENTS: fetchAssessmentsData,
+        ASSMT_GRAPHS: fetchAssessmentsGraphs,
         WEATHER_AVG: getMeteorology,
         ASSESSMENT_VIEW: fetchAssessment,
         RESULT_SUMMARY: fetchResultSummaryData}
@@ -763,7 +765,7 @@ class TrialContent():
         ASSESSMENT_VIEW: 'trialapp/trial_assessment_view.html',
         WEATHER: TEMPLATE_CARDS,
         KEY_ASSESS: TEMPLATE_CONCLUSION_GRAPH,
-        ASSESSMENTS: TEMPLATE_CARDS,
+        ASSMT_GRAPHS: TEMPLATE_CARDS,
         WEATHER_AVG: 'trialapp/trial_weather_avg.html',
         ALL_ASS_DATA: 'trialapp/trial_data_table.html',
         RESULT_SUMMARY: TEMPLATE_CARDS}
