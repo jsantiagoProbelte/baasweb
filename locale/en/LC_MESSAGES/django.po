@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-28 23:19+0200\n"
+"POT-Creation-Date: 2023-10-02 14:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr ""
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:343
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:451
 msgid "efficacy"
 msgstr ""
 
@@ -110,11 +110,11 @@ msgstr ""
 msgid "Control"
 msgstr ""
 
-#: baaswebapp/settings.py:128
+#: baaswebapp/settings.py:144
 msgid "English"
 msgstr ""
 
-#: baaswebapp/settings.py:129
+#: baaswebapp/settings.py:145
 msgid "Spanish"
 msgstr ""
 
@@ -130,29 +130,29 @@ msgstr ""
 msgid "Search Trials"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:44
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:49
 msgid "No items yet."
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:50
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:143
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:55
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:144
 msgid "results"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:69
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:74
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
 #: trialapp/templates/trialapp/crop_list_header.html:4
 #: trialapp/templates/trialapp/plagues_list_header.html:4
 msgid "products"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:70
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:75
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:23
 #: trialapp/templates/trialapp/btn_trials.html:4
 msgid "trials"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:73
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:78
 msgid "Trials by product type"
 msgstr ""
 
@@ -218,6 +218,50 @@ msgstr ""
 
 #: baaswebapp/templates/baaswebapp/layout.html:76
 msgid "Welcome, please login"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:35
+msgid "Collect trial data,"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:36
+msgid "build insights"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:37
+msgid "and get smarter!"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:40
+msgid "the agro input recommendation tool"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:44
+msgid "Please login for full access to all features"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:49
+msgid "Login without password"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:53
+msgid "Login using e-mail"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:56
+msgid "Login using Passkey"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:69
+msgid "Your email "
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:70
+msgid "Send e-mail"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/login.html:76
+msgid "Login using BaaS user and password:"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
@@ -759,7 +803,7 @@ msgid "location"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_conclusions.html:102
-#: trialapp/trial_views.py:389
+#: trialapp/trial_views.py:390
 msgid "weather conditions"
 msgstr ""
 
@@ -855,28 +899,28 @@ msgstr ""
 msgid "Soil"
 msgstr ""
 
-#: trialapp/trial_views.py:390
+#: trialapp/trial_views.py:391
 msgid ""
 "Weather conditions cannot be determined because location or assessments info "
 "aremissing"
 msgstr ""
 
-#: trialapp/trial_views.py:429
+#: trialapp/trial_views.py:430
 msgid "No assessements yet"
 msgstr ""
 
-#: trialapp/trial_views.py:464
+#: trialapp/trial_views.py:466
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
 "identified."
 msgstr ""
 
-#: trialapp/trial_views.py:742
+#: trialapp/trial_views.py:744
 msgid "* in the moment of maximum difference at "
 msgstr ""
 
-#: trialapp/trial_views.py:745
+#: trialapp/trial_views.py:747
 msgid " in "
 msgstr ""
 

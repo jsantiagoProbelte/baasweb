@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-28 23:19+0200\n"
+"POT-Creation-Date: 2023-10-02 14:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,8 @@ msgstr ""
 msgid "Password"
 msgstr "Clave"
 
-#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:142
+#: baaswebapp/graphs.py:123
+#: catalogue/templates/catalogue/product_show.html:142
 msgid "weather"
 msgstr "clima"
 
@@ -69,7 +70,7 @@ msgstr "punto de rocío"
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
 #: trialapp/templates/trialapp/trial_conclusions.html:61
 #: trialapp/templates/trialapp/trial_conclusions.html:72
-#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:343
+#: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:451
 msgid "efficacy"
 msgstr "eficacia"
 
@@ -110,11 +111,11 @@ msgstr "Nutricional"
 msgid "Control"
 msgstr "Control"
 
-#: baaswebapp/settings.py:128
+#: baaswebapp/settings.py:144
 msgid "English"
 msgstr "Inglés"
 
-#: baaswebapp/settings.py:129
+#: baaswebapp/settings.py:145
 msgid "Spanish"
 msgstr "Castellano"
 
@@ -130,29 +131,29 @@ msgstr "Buscar, es decir, producto, código, cosecha, responsable"
 msgid "Search Trials"
 msgstr "Buscar ensayos"
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:44
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:49
 msgid "No items yet."
 msgstr "No hay artículos todavía."
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:50
-#: trialapp/templates/trialapp/detail_fieldtrials_list.html:143
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:55
+#: trialapp/templates/trialapp/detail_fieldtrials_list.html:144
 msgid "results"
 msgstr "resumen resultados"
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:69
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:74
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:21
 #: trialapp/templates/trialapp/crop_list_header.html:4
 #: trialapp/templates/trialapp/plagues_list_header.html:4
 msgid "products"
 msgstr "productos"
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:70
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:75
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:23
 #: trialapp/templates/trialapp/btn_trials.html:4
 msgid "trials"
 msgstr "ensayos"
 
-#: baaswebapp/templates/baaswebapp/baas_view_list.html:73
+#: baaswebapp/templates/baaswebapp/baas_view_list.html:78
 msgid "Trials by product type"
 msgstr "Ensayos por tipo de producto"
 
@@ -219,6 +220,50 @@ msgstr "Hola"
 #: baaswebapp/templates/baaswebapp/layout.html:76
 msgid "Welcome, please login"
 msgstr "Bienvenido, por favor inicie sesión"
+
+#: baaswebapp/templates/baaswebapp/login.html:35
+msgid "Gestione datos de ensayos,"
+msgstr "fecha ensayo"
+
+#: baaswebapp/templates/baaswebapp/login.html:36
+msgid "build insights"
+msgstr "genere conocimiento"
+
+#: baaswebapp/templates/baaswebapp/login.html:37
+msgid "and get smarter!"
+msgstr "y mejore resultados!"
+
+#: baaswebapp/templates/baaswebapp/login.html:40
+msgid "the agro input recommendation tool"
+msgstr "la herramienta para recomendaciones de insumos agrarios"
+
+#: baaswebapp/templates/baaswebapp/login.html:44
+msgid "Please login for full access to all features"
+msgstr "Inicie sesión para obtener acceso completo a todas las funciones"
+
+#: baaswebapp/templates/baaswebapp/login.html:49
+msgid "Login without password"
+msgstr "Iniciar sesión sin contraseña"
+
+#: baaswebapp/templates/baaswebapp/login.html:53
+msgid "Login using e-mail"
+msgstr "Iniciar sesión con el correo electrónico"
+
+#: baaswebapp/templates/baaswebapp/login.html:56
+msgid "Login using Passkey"
+msgstr "Iniciar sesión usando PassKey"
+
+#: baaswebapp/templates/baaswebapp/login.html:69
+msgid "Your email "
+msgstr "Tu correo electrónico"
+
+#: baaswebapp/templates/baaswebapp/login.html:70
+msgid "Send e-mail"
+msgstr "Enviar correo electrónico"
+
+#: baaswebapp/templates/baaswebapp/login.html:76
+msgid "Login using BaaS user and password:"
+msgstr "Iniciar sesión con el usuario y la contraseña de BAAS:"
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
 #: catalogue/tests/tests_views_catalogue.py:144
@@ -383,7 +428,7 @@ msgstr "No agrupar"
 
 #: trialapp/models.py:86
 msgid "bunch"
-msgstr ""
+msgstr "racimo"
 
 #: trialapp/models.py:87
 msgid "CLUSTR"
@@ -759,7 +804,7 @@ msgid "location"
 msgstr "Localización"
 
 #: trialapp/templates/trialapp/trial_conclusions.html:102
-#: trialapp/trial_views.py:389
+#: trialapp/trial_views.py:390
 msgid "weather conditions"
 msgstr "condiciones climáticas"
 
@@ -857,19 +902,19 @@ msgstr "No hay limitaciones en los permisos"
 msgid "Soil"
 msgstr "Suelo"
 
-#: trialapp/trial_views.py:390
+#: trialapp/trial_views.py:391
 msgid ""
-"Weather conditions cannot be determined because location or assessments info "
-"aremissing"
+"Weather conditions cannot be determined because location or assessments info"
+" aremissing"
 msgstr ""
 "No se pueden determinar las condiciones climáticas porque falta información "
 "sobre la ubicación o las evaluaciones."
 
-#: trialapp/trial_views.py:429
+#: trialapp/trial_views.py:430
 msgid "No assessements yet"
 msgstr "No hay evaluaciones todavia"
 
-#: trialapp/trial_views.py:464
+#: trialapp/trial_views.py:466
 msgid ""
 "Efficacy cannot be determined yet.Data is not available,key thesis or "
 "untreated thesis are not well identified,key rate type unit is not well "
@@ -879,11 +924,11 @@ msgstr ""
 "tesis clave o la tesis no tratada no están bien identificadas, la unidad de "
 "tipo de tasa clave no está bien identificada."
 
-#: trialapp/trial_views.py:742
+#: trialapp/trial_views.py:744
 msgid "* in the moment of maximum difference at "
 msgstr "* en el momento de mayor diferencia "
 
-#: trialapp/trial_views.py:745
+#: trialapp/trial_views.py:747
 msgid " in "
 msgstr " en "
 
@@ -1068,7 +1113,8 @@ msgstr[1] ""
 #: venv_baas/lib/python3.9/site-packages/click/shell_completion.py:316
 msgid "Shell completion is not supported for Bash versions older than 4.4."
 msgstr ""
-"La finalización del shell no es compatible con versiones bash mayores de 4.4."
+"La finalización del shell no es compatible con versiones bash mayores de "
+"4.4."
 
 #: venv_baas/lib/python3.9/site-packages/click/shell_completion.py:322
 msgid "Couldn't detect Bash version, shell completion is not supported."
@@ -1253,8 +1299,8 @@ msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:264
 msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or"
+" hyphens."
 msgstr ""
 "Ingrese una \"babosa\" válida que consiste en letras unicode, números, "
 "subrayos o guiones."
@@ -1298,8 +1344,8 @@ msgstr "Asegúrese de que este valor sea mayor o igual al %(limit_value)s."
 #, python-format
 msgid "Ensure this value is a multiple of step size %(limit_value)s."
 msgstr ""
-"Asegúrese de que este valor sea un múltiplo de tamaño de paso "
-"%(limit_value) s."
+"Asegúrese de que este valor sea un múltiplo de tamaño de paso %(limit_value)"
+" s."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:417
 #, python-format
@@ -1358,8 +1404,8 @@ msgid ""
 "File extension “%(extension)s” is not allowed. Allowed extensions are: "
 "%(allowed_extensions)s."
 msgstr ""
-"La extensión del archivo \"%(extension)s\" no está permitida.Las extensiones "
-"permitidas son: %(allowed_extensions)s."
+"La extensión del archivo \"%(extension)s\" no está permitida.Las extensiones"
+" permitidas son: %(allowed_extensions)s."
 
 #: venv_baas/lib/python3.9/site-packages/django/core/validators.py:602
 msgid "Null characters are not allowed."
@@ -1465,20 +1511,20 @@ msgstr "Fecha (sin tiempo)"
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1489
 #, python-format
 msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD "
+"HH:MM[:ss[.uuuuuu]][TZ] format."
 msgstr ""
-"El valor “%(value)s” tiene un formato no válido.Debe estar en YYYY-MM-DD HH:"
-"MM[:ss[.uuuuuu]][TZ] formato."
+"El valor “%(value)s” tiene un formato no válido.Debe estar en YYYY-MM-DD "
+"HH:MM[:ss[.uuuuuu]][TZ] formato."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1497
 #, python-format
 msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
+"“%(value)s” value has the correct format (YYYY-MM-DD "
+"HH:MM[:ss[.uuuuuu]][TZ]) but it is an invalid date/time."
 msgstr ""
-"El valor “%(value)s” tiene el formato correcto (YYYY-MM-DD HH:MM[: ss [."
-"uuuuuuu]] [tz]) pero es una fecha/hora inválida."
+"El valor “%(value)s” tiene el formato correcto (YYYY-MM-DD HH:MM[: ss "
+"[.uuuuuuu]] [tz]) pero es una fecha/hora inválida."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1502
 msgid "Date (with time)"
@@ -1496,8 +1542,8 @@ msgstr "Número decimal"
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1791
 #, python-format
 msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
-"uuuuuu] format."
+"“%(value)s” value has an invalid format. It must be in [DD] "
+"[[HH:]MM:]ss[.uuuuuu] format."
 msgstr ""
 "El valor “%(value)s” tiene un formato no válido.Debe estar en [dd] [[HH:] "
 "MM:]ss[.uuuuuuu] formato."
@@ -1585,8 +1631,8 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
 "format."
 msgstr ""
-"El valor “%(value)s” tiene un formato no válido.Debe estar en HH:MM[: ss[."
-"uuuuuuu]] formato."
+"El valor “%(value)s” tiene un formato no válido.Debe estar en HH:MM[: "
+"ss[.uuuuuuu]] formato."
 
 #: venv_baas/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2454
 #, python-format
@@ -1662,7 +1708,8 @@ msgid "Many-to-many relationship"
 msgstr "Muchos a muchos"
 
 #. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to the label
+#. characters will prevent the default label_suffix to be appended to the
+#. label
 #: venv_baas/lib/python3.9/site-packages/django/forms/boundfield.py:184
 msgid ":?.!"
 msgstr ":?.!"
@@ -1710,7 +1757,8 @@ msgstr "El archivo enviado está vacío."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/fields.py:622
 #, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
+msgid ""
+"Ensure this filename has at most %(max)d character (it has %(length)d)."
 msgid_plural ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr[0] ""
@@ -1773,8 +1821,8 @@ msgid ""
 "ManagementForm data is missing or has been tampered with. Missing fields: "
 "%(field_names)s. You may need to file a bug report if the issue persists."
 msgstr ""
-"Los datos de la forma de administración faltan o han sido manipulados.Campos "
-"faltantes: %(field_names)s. Es posible que deba presentar un informe de "
+"Los datos de la forma de administración faltan o han sido manipulados.Campos"
+" faltantes: %(field_names)s. Es posible que deba presentar un informe de "
 "error si el problema persiste."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/formsets.py:67
@@ -1828,7 +1876,8 @@ msgid "The inline value did not match the parent instance."
 msgstr "El valor en línea no coincidía con la instancia principal."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/models.py:1429
-msgid "Select a valid choice. That choice is not one of the available choices."
+msgid ""
+"Select a valid choice. That choice is not one of the available choices."
 msgstr ""
 "Seleccione una opción válida.Esa elección no es una de las opciones "
 "disponibles."
@@ -1844,8 +1893,8 @@ msgid ""
 "%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
 "may be ambiguous or it may not exist."
 msgstr ""
-"%(datetime)s no se pudo interpretar en la zona horaria %(current_timezone) s;"
-"Puede ser ambiguo o puede no existir."
+"%(datetime)s no se pudo interpretar en la zona horaria %(current_timezone) "
+"s;Puede ser ambiguo o puede no existir."
 
 #: venv_baas/lib/python3.9/site-packages/django/forms/widgets.py:463
 msgid "Clear"
@@ -2295,17 +2344,17 @@ msgstr ""
 
 #: venv_baas/lib/python3.9/site-packages/django/views/csrf.py:127
 msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a "
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or"
+" including the “Referrer-Policy: no-referrer” header, please remove them. "
+"The CSRF protection requires the “Referer” header to do strict referer "
+"checking. If you’re concerned about privacy, use alternatives like <a "
 "rel=\"noreferrer\" …> for links to third-party sites."
 msgstr ""
 "Si está utilizando la etiqueta <meta name = \"referrer\" content = \"no-ree-"
 "refrer\"> o incluye el encabezado \"Referrer-Policy: No-Re-Ferrer\", "
 "elimínelos.La protección CSRF requiere que el encabezado del \"referente\" "
-"realice una verificación estricta de referente.Si le preocupa la privacidad, "
-"use alternativas como <a rel=\"noreferrer\" ...> para enlaces a sitios de "
+"realice una verificación estricta de referente.Si le preocupa la privacidad,"
+" use alternativas como <a rel=\"noreferrer\" ...> para enlaces a sitios de "
 "terceros."
 
 #: venv_baas/lib/python3.9/site-packages/django/views/csrf.py:136
@@ -2362,8 +2411,8 @@ msgstr "No %(verbose_name_plural)s disponible"
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/dates.py:652
 #, python-format
 msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
+"Future %(verbose_name_plural)s not available because "
+"%(class_name)s.allow_future is False."
 msgstr ""
 "Future %(verbose_name_plural)s no disponible porque %(class_name)s. "
 "Allow_future es falso."
@@ -2371,8 +2420,7 @@ msgstr ""
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/dates.py:692
 #, python-format
 msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
-"Cadena de fecha no válida \"%(datestr)s\" dada el formato \"%(format)s\""
+msgstr "Cadena de fecha no válida \"%(datestr)s\" dada el formato \"%(format)s\""
 
 #: venv_baas/lib/python3.9/site-packages/django/views/generic/detail.py:56
 #, python-format
@@ -2425,15 +2473,15 @@ msgstr ""
 #: venv_baas/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:222
 #, python-format
 msgid ""
-"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" "
-"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
-"configured any URLs."
+"You are seeing this page because <a "
+"href=\"https://docs.djangoproject.com/en/%(version)s/ref/settings/#debug\" "
+"target=\"_blank\" rel=\"noopener\">DEBUG=True</a> is in your settings file "
+"and you have not configured any URLs."
 msgstr ""
-"Estás viendo esta página porque <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" rel=\"noopener\"> debug "
-"= verdadero</a> está en su archivo de configuración y no ha configurado "
-"ninguna URL."
+"Estás viendo esta página porque <a "
+"href=\"https://docs.djangoproject.com/en/%(version)s/ref/settings/#debug\" "
+"target=\"_blank\" rel=\"noopener\"> debug = verdadero</a> está en su archivo"
+" de configuración y no ha configurado ninguna URL."
 
 #: venv_baas/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:230
 msgid "Django Documentation"
@@ -2479,27 +2527,27 @@ msgstr "Clave"
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:20
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:232
 msgid "Invalid Token"
-msgstr ""
+msgstr "simbolo no valido"
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:21
 #, python-brace-format
 msgid "Tokens are {max_length} digits long."
-msgstr ""
+msgstr "Los tokens son {max_length} dígitos de largo."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:22
 #, python-brace-format
 msgid "Tokens are {min_length} digits long."
-msgstr ""
+msgstr "Los tokens son {min_length} dígitos de largo."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:62
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:124
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:215
 msgid "User account is disabled."
-msgstr ""
+msgstr "La cuenta de usuario está deshabilitada."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:65
 msgid "No account is associated with this alias."
-msgstr ""
+msgstr "Ninguna cuenta está asociada con este alias."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:68
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:135
@@ -2510,44 +2558,44 @@ msgstr "Comando faltante."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:111
 msgid "There was a problem with your request."
-msgstr ""
+msgstr "Hubo un problema con su solicitud."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:132
 #, python-format
 msgid "This user doesn't have an %s."
-msgstr ""
+msgstr "Este usuario no tiene un %s."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:225
 msgid "Error validating user alias."
-msgstr ""
+msgstr "Error de validación de alias de usuario."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:235
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:241
 msgid "Invalid alias parameters provided."
-msgstr ""
+msgstr "Parámetros de alias no válidos proporcionados."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:238
 msgid "Invalid user alias parameters provided."
-msgstr ""
+msgstr "Parámetros de alias de usuario no válidos proporcionados."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:272
 msgid "This token is invalid. Try again later."
-msgstr ""
+msgstr "Este token no es válido.Inténtalo de nuevo más tarde."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:276
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:280
 msgid "We could not verify this alias."
-msgstr ""
+msgstr "No pudimos verificar este alias."
 
 #: venv_baas/lib/python3.9/site-packages/drfpasswordless/serializers.py:284
 msgid "Insufficient permissions."
-msgstr ""
+msgstr "Permisos insuficientes."
 
 #: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:333
 #: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:340
 #: venv_baas/lib/python3.9/site-packages/test/integ/test_sendgrid.py:347
 msgid "global"
-msgstr ""
+msgstr "global"
 
 #~ msgid "BUNCH"
 #~ msgstr "RACIMO"
