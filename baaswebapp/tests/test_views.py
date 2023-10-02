@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import auth
 from baaswebapp.tests.tests_helpers import ApiRequestHelperTest
 import json
+from django.utils.translation import gettext_lazy as _
 
 
 class BaaSWebAppTest(TestCase):
@@ -21,7 +22,7 @@ class BaaSWebAppTest(TestCase):
 
     def test_login(self):
         response = self.client.get(reverse('login'))
-        self.assertContains(response, 'Please login for full access')
+        self.assertContains(response, _('Please login for full access to all features'))
 
     def test_user_can_login_and_logout(self):
         self.client.post(
