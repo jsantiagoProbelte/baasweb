@@ -12,6 +12,7 @@ from django.utils.translation import activate
 from sesame.utils import get_query_string
 import sendgrid
 from sendgrid.helpers.mail import Email, To, Content, Mail
+from django.utils.translation import gettext_lazy as _
 
 
 sg = sendgrid.SendGridAPIClient(settings.SENDGRID_KEY)
@@ -62,7 +63,18 @@ def login_request_passkey(request):
 def login_email(request):
     if request.method != 'POST':
         return redirect('/login')
-    user = User.objects.get(username=request.POST["username"])
+    username = request.POST["username"]
+    if User.objects.filter(username=username).exists():
+        user = User.objects.get(username=username)
+    elif User.objects.filter(email=username).exists():
+        user = User.objects.get(email=username)
+    else:
+        formLogin = BootstrapAuthenticationForm()
+        return render(
+            request=request,
+            template_name="baaswebapp/login.html",
+            context={"formLogin": formLogin,
+                     'errors': _('This user is not known: ')+username})
     current_url = request.build_absolute_uri().rsplit('/', 1)[0]
     LOGIN_URL = current_url + "/sesame/login/" + get_query_string(user)
     html_content = "<html><p>Welcome to BaaS! Click <a href=" + \

@@ -29,6 +29,15 @@
         font-weight:900;
     }
 </style>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="alert alert-info" role="alert" > {{ message }} </div>
+    {% endfor %}
+{% endif %}
+{% if errors %}
+    <div class="alert alert-warning" role="alert">{{errors}}</div>
+{% endif %}
 <div class="row">
     <div class="col-md-6  p-5">
         <p class="txt-encode-25 txt-baas-baas fs-2">
