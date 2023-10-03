@@ -22,7 +22,8 @@ class BaaSWebAppTest(TestCase):
 
     def test_login(self):
         response = self.client.get(reverse('login'))
-        self.assertContains(response, _('Please login for full access to all features'))
+        self.assertContains(
+            response, _('Please login for full access to all features'))
 
     def test_user_can_login_and_logout(self):
         self.client.post(
