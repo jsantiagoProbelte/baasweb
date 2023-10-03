@@ -8,10 +8,11 @@ django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Objective, Plague, \
-    Thesis, Replica, StatusTrial, TrialType, TreatmentThesis  # noqa: E402
+    Thesis, Replica, StatusTrial, TrialType, TreatmentThesis, \
+    Application  # noqa: E402
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
 from catalogue.models import Product, Treatment, Batch, ProductVariant, \
-    UNTREATED, DEFAULT, RateUnit  # noqa: E402
+    UNTREATED, DEFAULT, RateUnit, Vendor  # noqa: E402
 from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
 import glob  # noqa: E402
 import csv  # noqa: E402
@@ -1264,8 +1265,82 @@ def cleanPlagues():
                 plague.save()
 
 
+def exportCsvFile(filename, data):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, delimiter=';',
+                                fieldnames=list(data[0].keys()))
+        writer.writeheader()
+        # Write the data
+        for row in data:
+            writer.writerow(row)
+
+
+def extractData():
+    trialFields = [
+        'id', 'irrigation', 'mode', 'soil', 'cultivation',
+        'application_volume', 'avg_temperature', 'avg_humidity',
+        'avg_precipitation']
+    
+    trials = FieldTrial.objects.filter(
+        plague=Plague.objects.get(other='Botrytis'),
+        crop=Crop.objects.get(name='Strawberry')).values(*trialFields)
+    trialIds = [item['id'] for item in trials]
+    #exportCsvFile('./trials_data', trials)
+    treatments = TreatmentThesis.objects.filter(thesis__field_trial_id__in=trialIds)
+    treatmentData = []
+    probelte = Vendor.objects.get(name='Probelte').id
+    thesisIds = set()
+    for ttreatment in treatments:
+        # filter treatments that are not probelte product
+        rate = 0
+        if ttreatment.treatment.batch.product_variant.product.name == UNTREATED:
+            rate = 0
+            unit = 'l'
+        elif ttreatment.treatment.batch.product_variant.product.vendor_id == probelte:
+            rate = ttreatment.treatment.rate
+            unit = ttreatment.treatment.rate_unit.name
+        else:
+            continue
+
+        thesisId = ttreatment.thesis.id
+        thesisIds.add(thesisId)
+        treatmentData.append(
+            {'thesis_id': thesisId,
+             'trial_id': ttreatment.thesis.field_trial_id,
+             'rate': rate,
+             'unit': unit})
+    # exportCsvFile('./thesis_data',
+    #               treatmentData)
+
+    applications = Application.objects.filter(field_trial_id__in=trialIds)
+    applicationsData = []
+    for application in applications:
+        applicationsData.append({
+            'trial_id': application.field_trial.id,
+            'app_date': application.app_date,
+            'daf': application.daf})
+    exportCsvFile('./applications', applicationsData)
+
+    datasReplica = ReplicaData.objects.filter(
+        reference__thesis__in=thesisIds,
+        assessment__rate_type__name__in=['PESINC']).order_by(
+            'reference__thesis__id',
+            'assessment__assessment_date')
+
+    dataPoints = []
+    for dataPoint in datasReplica:
+        dataPoints.append({
+            'thesis_id': dataPoint.reference.thesis.id,
+            'replica_id': dataPoint.reference.id,
+            'value': dataPoint.value,
+            'date': dataPoint.assessment.assessment_date,
+            'unit': dataPoint.assessment.rate_type.getName()
+        })
+    exportCsvFile('./datapoints', dataPoints)
+
+
 if __name__ == '__main__':
-    cleanPlagues()
+    # cleanPlagues()
     # importConcreateCSV()
     # createThesisTreatments()
     # importOne()
@@ -1273,3 +1348,4 @@ if __name__ == '__main__':
     # importOneMapa()
     # discoverReports()
     # testArchive()
+    extractData()
