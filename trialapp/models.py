@@ -176,8 +176,7 @@ class FieldTrial(ModelHelpers, models.Model):
         choices=SoilType.choices,
         default=SoilType.UNDF)
 
-    blocks = models.IntegerField()
-    replicas_per_thesis = models.IntegerField()
+    repetitions = models.IntegerField()
     samples_per_replica = models.IntegerField(default=0, null=True)
     distance_between_plants = models.DecimalField(
         max_digits=10, decimal_places=2, null=True)
@@ -340,8 +339,7 @@ class FieldTrial(ModelHelpers, models.Model):
             report_filename=kwargs['report_filename'],
             contact=kwargs['contact'],
             location=kwargs['location'],
-            replicas_per_thesis=kwargs['replicas_per_thesis'],
-            blocks=kwargs['blocks'],
+            repetitions=kwargs['repetitions'],
             latitude=kwargs['latitude'] if 'latitude' in kwargs else None,
             longitude=kwargs['longitude'] if 'longitude' in kwargs else None)
         if 'code' in kwargs:
@@ -581,9 +579,9 @@ class Replica(ModelHelpers, models.Model):
 
     # create the replicas asociated with this
     @classmethod
-    def createReplicas(cls, thesis, replicas_per_thesis):
+    def createReplicas(cls, thesis, repetitions):
         replicas = []
-        for number in range(0, replicas_per_thesis):
+        for number in range(0, repetitions):
             nameId = 100*(number+1) + thesis.number
             item = Replica.objects.create(
                 number=number+1,

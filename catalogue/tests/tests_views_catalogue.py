@@ -35,9 +35,8 @@ class ProductViewsTest(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
         'report_filename': '',
-        'blocks': 3},
+        'repetitions': 4},
         {
         'name': 'fieldTrial 999',
         'trial_type': 1,
@@ -50,9 +49,8 @@ class ProductViewsTest(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
         'report_filename': '',
-        'blocks': 3},
+        'repetitions': 4},
         {
         'name': 'fieldTrial 333',
         'trial_type': 1,
@@ -65,9 +63,8 @@ class ProductViewsTest(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
         'report_filename': '',
-        'blocks': 3},
+        'repetitions': 4},
     ]
     _products = []
     _fieldTrials = []

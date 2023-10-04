@@ -122,7 +122,7 @@ class DataTrialHelper:
         lastThesisId = None
         rows = []
         thesisName = ''
-        rowspan = self._trial.replicas_per_thesis
+        rowspan = self._trial.repetitions
         rowNum = 0
         for replica in replicas:
             if replica.thesis_id != lastThesisId:
@@ -190,7 +190,7 @@ class DataHelper:
         if rData == 0 and tData == 0 and sData == 0:
             if self._trial.samples_per_replica > 0:
                 return GraphTrial.L_SAMPLE + GraphTrial.L_REPLICA
-            if self._trial.replicas_per_thesis > 0:
+            if self._trial.repetitions > 0:
                 return GraphTrial.L_REPLICA
             else:
                 return GraphTrial.L_THESIS

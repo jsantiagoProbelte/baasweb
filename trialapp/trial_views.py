@@ -47,7 +47,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
                 'crop__scientific',
                 'crop__cropvariety__name',
                 'crop_age',
-                'blocks',
+                'repetitions',
                 'distance_between_plants',
                 'distance_between_rows',
                 'responsible',

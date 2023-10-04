@@ -223,7 +223,7 @@ class DataViewsTest(TestCase):
         assmt = datagenerator._assessments[assName]
 
         # Let's pretend no repicas are defined
-        trial.replicas_per_thesis = 0
+        trial.repetitions = 0
         trial.save()
 
         self.incompleteDataset(GraphTrial.L_THESIS,

@@ -103,7 +103,7 @@ class LabTrialFormLayout(FormHelper):
                         css_class="card no-border mb-3"),
                     css_class='col-md-4'),
                 Div(Div(HTML('Layout'), css_class="card-header-baas h4"),
-                    Div(Div(Field('replicas_per_thesis'),
+                    Div(Div(Field('repetitions'),
                             Field('samples_per_replica'),
                             css_class="card-body-baas"),
                         css_class="card no-border mb-3"),
@@ -121,7 +121,7 @@ class LabTrialForm(forms.ModelForm):
         super(LabTrialForm, self).__init__(*args, **kwargs)
         TrialModel.applyModel(self)
         self.fields['samples_per_replica'].label = '# samples'
-        self.fields['replicas_per_thesis'].label = '# thesis'
+        self.fields['repetitions'].label = '# thesis'
 
 
 class LabTrialCreateView(LoginRequiredMixin, CreateView):
@@ -153,7 +153,7 @@ class LabTrialCreateView(LoginRequiredMixin, CreateView):
             fieldTrial.code = FieldTrial.getLabCode(datetime.date.today(),
                                                     True)
             fieldTrial.trial_meta = FieldTrial.TrialMeta.LAB_TRIAL
-            fieldTrial.blocks = 1
+            fieldTrial.repetitions = 1
             fieldTrial.save()
             # Create assessment, thesis, dosis and points
             dataHelper = DataLabHelper(fieldTrial)

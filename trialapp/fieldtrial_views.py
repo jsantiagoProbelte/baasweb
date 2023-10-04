@@ -137,8 +137,7 @@ class FieldTrialFormLayout(FormHelper):
     def showLayout(self):
         return Div(
             Div(HTML('Layout'), css_class="card-header-baas-trial"),
-            Div(Row(Div(Field('blocks', css_class='trial-input'),
-                        Field('replicas_per_thesis',
+            Div(Row(Div(Field('repetitions',
                               css_class='trial-input'),
                         Field('samples_per_replica',
                               css_class='trial-input'),

@@ -154,7 +154,7 @@ class ThesisViewsTest(TestCase):
 
         # when thesis is created, it is expected that its replicas are
         # also created
-        expectedReplicas = self._trial.replicas_per_thesis
+        expectedReplicas = self._trial.repetitions
         self.assertEqual(Replica.objects.count(),
                          expectedReplicas)
 
@@ -209,8 +209,8 @@ class ThesisViewsTest(TestCase):
 
         api._thesis = Thesis.objects.get(id=theThesisId)
         thesisVolume = api.getThesisVolume()
-        # litres = grossArea * appVolume * self._trial.replicas_per_thesis
-        # surfacePerThesis = (numberThesis * self._trial.blocks * 10000)
+        # litres = grossArea * appVolume * self._trial.repetitions
+        # surfacePerThesis = (numberThesis * self._trial.repetitions * 10000)
         # thesisVolumeV = litres / surfacePerThesis
         # unit = 'L'
         # rounding = 2
@@ -218,5 +218,5 @@ class ThesisViewsTest(TestCase):
         #     thesisVolumeV = thesisVolumeV * 1000
         #     unit = 'mL'
         #     rounding = 0
-        self.assertEqual(thesisVolume['value'], '667 mL')
+        self.assertEqual(thesisVolume['value'], '500 mL')
         # {} {}'.format(round(thesisVolumeV, rounding), unit))

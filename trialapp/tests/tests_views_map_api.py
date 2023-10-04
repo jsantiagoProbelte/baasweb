@@ -24,9 +24,8 @@ class MapApiTestCase(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
+        'repetitions': 4,
         'report_filename': '',
-        'blocks': 3,
         'latitude': 38.2796,
         'longitude': -0.7914},
         {
@@ -41,9 +40,8 @@ class MapApiTestCase(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
+        'repetitions': 4,
         'report_filename': '',
-        'blocks': 3,
         'latitude': 41.5432,
         'longitude': 2.1098},
         {
@@ -58,9 +56,8 @@ class MapApiTestCase(TestCase):
         'initiation_date': '2021-07-01',
         'contact': 'Mr Farmer',
         'location': 'La Finca',
-        'replicas_per_thesis': 4,
-        'report_filename': '',
-        'blocks': 3},
+        'repetitions': 4,
+        'report_filename': ''},
     ]
     _products = []
     _fieldTrials = []

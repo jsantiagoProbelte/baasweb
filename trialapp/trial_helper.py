@@ -1,4 +1,3 @@
-from math import ceil
 from trialapp.data_models import Assessment
 from baaswebapp.baas_archive import BaaSArchive
 from reportlab.pdfgen.canvas import Canvas
@@ -92,11 +91,9 @@ class TrialModel():
                      'type': T_N, 'cls': ApplicationMode},
         },
         'Layout': {
-            'blocks': {'label': "# blocks", 'required': True,
-                       'type': T_I},
-            'replicas_per_thesis': {'label': "# replicas", 'required': True,
-                                    'type': T_I},
-            'samples_per_replica': {'label': "# samples/replica ",
+            'repetitions': {'label': "# repetitions", 'required': True,
+                            'type': T_I},
+            'samples_per_replica': {'label': "# samples/repetition",
                                     'required': False, 'type': T_I},
             'number_rows': {'label': "# rows", 'required': False, 'type': T_I},
             'gross_surface': {'label': "Gross area plot (m2)",
@@ -126,15 +123,15 @@ class TrialModel():
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'code',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'status_trial', 'contact', 'replicas_per_thesis',
+            'status_trial', 'contact', 'repetitions',
             'samples_per_replica')
 
     FIELD_TRIAL_FIELDS = (
             'name', 'trial_type', 'objective', 'responsible', 'description',
             'ref_to_eppo', 'ref_to_criteria', 'comments_criteria',
             'product', 'crop', 'plague', 'initiation_date', 'completion_date',
-            'status_trial', 'contact', 'cro', 'location', 'blocks',
-            'replicas_per_thesis', 'samples_per_replica',
+            'status_trial', 'contact', 'cro', 'location',
+            'repetitions', 'samples_per_replica',
             'distance_between_plants', 'distance_between_rows', 'number_rows',
             'lenght_row', 'net_surface', 'gross_surface', 'code', 'irrigation',
             'application_volume', 'mode', 'crop_variety', 'cultivation',
@@ -226,19 +223,15 @@ class TrialModel():
 class LayoutTrial:
     @classmethod
     def calculateLayoutDim(cls, fieldTrial, numberThesis):
-        blocks = fieldTrial.blocks
-        numberReplicas = fieldTrial.replicas_per_thesis
-        rows = 0 if blocks == 0 else\
-            ceil(numberThesis * numberReplicas / blocks)
-        return blocks, rows
+        return fieldTrial.repetitions, numberThesis
 
     @classmethod
     def computeInitialLayout(cls, fieldTrial, numberThesis):
-        blocks, rows = LayoutTrial.calculateLayoutDim(
+        columns, rows = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
         deck = [[LayoutTrial.setDeckCell(None, None, x=i+1, y=j+1)
-                 for i in range(0, blocks)] for j in range(0, rows)]
-        return deck, (blocks, rows)
+                 for i in range(0, columns)] for j in range(0, rows)]
+        return deck, (columns, rows)
 
     @classmethod
     def setDeckCell(cls, replica: Replica, assessment,
@@ -266,7 +259,7 @@ class LayoutTrial:
         letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
                    'J', 'K', 'L', 'M', 'N']
         header = []
-        for i in range(0, fieldTrial.blocks):
+        for i in range(0, fieldTrial.repetitions):
             header.append({'name': letters[i],
                            'replica_id': 0,
                            'number': 0})

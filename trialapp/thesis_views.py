@@ -154,7 +154,7 @@ class ThesisCreateView(LoginRequiredMixin, CreateView):
                 thesis.field_trial_id)
             # Create replicas
             Replica.createReplicas(thesis,
-                                   thesis.field_trial.replicas_per_thesis)
+                                   thesis.field_trial.repetitions)
             return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -258,13 +258,12 @@ class ThesisApi(LoginRequiredMixin, DetailView):
             return {'value': 'Missing Data: Gross area',
                     'detail': 'Please define Gross Surface in trial'}
 
-        replicas_per_thesis = trial.replicas_per_thesis
-        blocks = trial.blocks
+        repetitions = trial.repetitions
 
         numberThesis = Thesis.getObjects(trial).count()
 
-        litres = grossArea * appVolume * replicas_per_thesis
-        surfacePerThesis = (numberThesis * blocks * 10000)
+        litres = grossArea * appVolume * repetitions
+        surfacePerThesis = (numberThesis * repetitions * 10000)
         thesisVolume = litres / surfacePerThesis
         rounding = 2
         unit = 'L'

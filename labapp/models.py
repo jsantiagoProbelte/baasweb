@@ -37,7 +37,7 @@ class LabThesis(ModelHelpers, models.Model):
     @classmethod
     def createLabThesis(cls, trial):
         LabThesis.objects.create(name='DIPEL', trial=trial)
-        for i in range(0, trial.replicas_per_thesis - 1):
+        for i in range(0, trial.repetitions - 1):
             LabThesis.objects.create(name='Thesis {}'.format(i),
                                      trial=trial)
         return LabThesis.objects.filter(trial=trial).order_by('name')

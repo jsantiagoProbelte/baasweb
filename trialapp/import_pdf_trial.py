@@ -504,8 +504,8 @@ class AssmtTableMultiLineHeader(AssmtTable):
                     index += 1
                     foundReplicas += 1
             # Update number of replicas
-            if index > self._trial.replicas_per_thesis:
-                self._trial.replicas_per_thesis = index
+            if index > self._trial.repetitions:
+                self._trial.repetitions = index
                 self._trial.save()
         return foundReplicas
 
@@ -617,8 +617,8 @@ class AssmtTableSimpleHeader(AssmtTable):
         # Update number of replicas
         if fThesis > 0:
             number_replicas_thesis = fReplicas / fThesis
-            if number_replicas_thesis > self._trial.replicas_per_thesis:
-                self._trial.replicas_per_thesis = number_replicas_thesis
+            if number_replicas_thesis > self._trial.repetitions:
+                self._trial.repetitions = number_replicas_thesis
                 self._trial.save()
         return fReplicas
 
@@ -881,8 +881,7 @@ class ImportPdfTrial:
                 product=self.getProduct(name),
                 crop=Crop.getUnknown(),
                 plague=Plague.getUnknown(),
-                blocks=4,
-                replicas_per_thesis=0,
+                repetitions=4,
                 status_trial=StatusTrial.REWIEW,
                 trial_type=TrialType.getUnknown(),
                 code=code)
@@ -1280,13 +1279,14 @@ def extractData():
         'id', 'irrigation', 'mode', 'soil', 'cultivation',
         'application_volume', 'avg_temperature', 'avg_humidity',
         'avg_precipitation']
-    
+
     trials = FieldTrial.objects.filter(
         plague=Plague.objects.get(other='Botrytis'),
         crop=Crop.objects.get(name='Strawberry')).values(*trialFields)
     trialIds = [item['id'] for item in trials]
-    #exportCsvFile('./trials_data', trials)
-    treatments = TreatmentThesis.objects.filter(thesis__field_trial_id__in=trialIds)
+    exportCsvFile('./trials_data', trials)
+    treatments = TreatmentThesis.objects.filter(
+        thesis__field_trial_id__in=trialIds)
     treatmentData = []
     probelte = Vendor.objects.get(name='Probelte').id
     thesisIds = set()
@@ -1309,8 +1309,7 @@ def extractData():
              'trial_id': ttreatment.thesis.field_trial_id,
              'rate': rate,
              'unit': unit})
-    # exportCsvFile('./thesis_data',
-    #               treatmentData)
+    exportCsvFile('./thesis_data', treatmentData)
 
     applications = Application.objects.filter(field_trial_id__in=trialIds)
     applicationsData = []
