@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 14:25+0200\n"
+"POT-Creation-Date: 2023-10-04 18:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,57 +220,62 @@ msgstr ""
 msgid "Welcome, please login"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:35
+#: baaswebapp/templates/baaswebapp/login.html:44
 msgid "Collect trial data,"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:36
+#: baaswebapp/templates/baaswebapp/login.html:45
 msgid "build insights"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:37
+#: baaswebapp/templates/baaswebapp/login.html:46
 msgid "and get smarter!"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:40
+#: baaswebapp/templates/baaswebapp/login.html:49
 msgid "the agro input recommendation tool"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:44
+#: baaswebapp/templates/baaswebapp/login.html:53
+#: baaswebapp/tests/test_views.py:26
 msgid "Please login for full access to all features"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:49
+#: baaswebapp/templates/baaswebapp/login.html:58
 msgid "Login without password"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:53
+#: baaswebapp/templates/baaswebapp/login.html:62
 msgid "Login using e-mail"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:56
+#: baaswebapp/templates/baaswebapp/login.html:65
 msgid "Login using Passkey"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:69
+#: baaswebapp/templates/baaswebapp/login.html:78
 msgid "Your email "
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:70
+#: baaswebapp/templates/baaswebapp/login.html:79
 msgid "Send e-mail"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/login.html:76
+#: baaswebapp/templates/baaswebapp/login.html:85
 msgid "Login using BaaS user and password:"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
-#: catalogue/tests/tests_views_catalogue.py:144
+#: catalogue/tests/tests_views_catalogue.py:141
 msgid "Are you sure to delete"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:12
 msgid "Cancel"
+msgstr ""
+
+#: baaswebapp/views.py:77
+msgid "This user is not known: "
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:3
@@ -398,7 +403,7 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/fieldtrial_views.py:266
+#: trialapp/fieldtrial_views.py:265
 msgid "Fail on generating download"
 msgstr ""
 
@@ -438,147 +443,127 @@ msgid "FLOWER"
 msgstr ""
 
 #: trialapp/models.py:89
-msgid "FRUDAM"
-msgstr ""
-
-#: trialapp/models.py:90
 msgid "FRUIT"
 msgstr ""
 
-#: trialapp/models.py:91
-msgid "FRUIT C"
-msgstr ""
-
-#: trialapp/models.py:92
-msgid "FRUIT P"
-msgstr ""
-
-#: trialapp/models.py:93
-msgid "FRUROT C"
-msgstr ""
-
-#: trialapp/models.py:94
-msgid "FRUSTO P"
-msgstr ""
-
-#: trialapp/models.py:95
+#: trialapp/models.py:90
 msgid "LEAF"
 msgstr ""
 
-#: trialapp/models.py:96
+#: trialapp/models.py:91
 msgid "PLANT"
 msgstr ""
 
-#: trialapp/models.py:97
+#: trialapp/models.py:92
 msgid "PLOT"
 msgstr ""
 
-#: trialapp/models.py:98
+#: trialapp/models.py:93
 msgid "ROOT"
 msgstr ""
 
-#: trialapp/models.py:99
+#: trialapp/models.py:94
 msgid "SPOT"
 msgstr ""
 
-#: trialapp/models.py:100
+#: trialapp/models.py:95
 msgid "STEMP"
 msgstr ""
 
-#: trialapp/models.py:101 trialapp/models.py:105
+#: trialapp/models.py:96 trialapp/models.py:100
 msgid "UNDF"
 msgstr ""
 
-#: trialapp/models.py:106
+#: trialapp/models.py:101
 msgid "Clay Soil"
 msgstr ""
 
-#: trialapp/models.py:107
+#: trialapp/models.py:102
 msgid "Clay Loamy"
 msgstr ""
 
-#: trialapp/models.py:108
+#: trialapp/models.py:103
 msgid "Sandy Soil"
 msgstr ""
 
-#: trialapp/models.py:109
+#: trialapp/models.py:104
 msgid "Sandy Clay"
 msgstr ""
 
-#: trialapp/models.py:110
+#: trialapp/models.py:105
 msgid "Sandy Loam"
 msgstr ""
 
-#: trialapp/models.py:111
+#: trialapp/models.py:106
 msgid "Loamy Soil"
 msgstr ""
 
-#: trialapp/models.py:112
+#: trialapp/models.py:107
 msgid "Organic Soil"
 msgstr ""
 
-#: trialapp/models.py:113
+#: trialapp/models.py:108
 msgid "Rocky Soil"
 msgstr ""
 
-#: trialapp/models.py:114
+#: trialapp/models.py:109
 msgid "Saline Soil"
 msgstr ""
 
-#: trialapp/models.py:115
+#: trialapp/models.py:110
 msgid "Alkaline Soil"
 msgstr ""
 
-#: trialapp/models.py:116
+#: trialapp/models.py:111
 msgid "Acidic Soil"
 msgstr ""
 
-#: trialapp/models.py:117
+#: trialapp/models.py:112
 msgid "Peat Soil"
 msgstr ""
 
-#: trialapp/models.py:118
+#: trialapp/models.py:113
 msgid "Lateritic Soil"
 msgstr ""
 
-#: trialapp/models.py:119
+#: trialapp/models.py:114
 msgid "Silt Loam"
 msgstr ""
 
-#: trialapp/models.py:123
+#: trialapp/models.py:118
 msgid "Design Protocol"
 msgstr ""
 
-#: trialapp/models.py:124
+#: trialapp/models.py:119
 msgid "Approving Protocol"
 msgstr ""
 
-#: trialapp/models.py:125
+#: trialapp/models.py:120
 msgid "In Progress"
 msgstr ""
 
-#: trialapp/models.py:126
+#: trialapp/models.py:121
 msgid "Review Results"
 msgstr ""
 
-#: trialapp/models.py:127
+#: trialapp/models.py:122
 msgid "Done"
 msgstr ""
 
-#: trialapp/models.py:134
+#: trialapp/models.py:129
 msgid "Field Trial"
 msgstr ""
 
-#: trialapp/models.py:135
+#: trialapp/models.py:130
 msgid "Lab Trial"
 msgstr ""
 
-#: trialapp/models.py:315 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:309 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:318 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:312 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -684,7 +669,7 @@ msgid "Plants /ha"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:48
-msgid "Blocks"
+msgid "Repetitions"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:49
@@ -878,24 +863,24 @@ msgstr ""
 
 #: trialapp/tests/tests_trial_helper.py:285
 #: trialapp/tests/tests_trial_helper.py:291
-#: trialapp/tests/tests_trial_helper.py:298 trialapp/trial_helper.py:683
+#: trialapp/tests/tests_trial_helper.py:298 trialapp/trial_helper.py:676
 msgid "You do not have permission to access this trial"
 msgstr ""
 
 #: trialapp/tests/tests_trial_helper.py:305
-#: trialapp/tests/tests_trial_helper.py:316 trialapp/trial_helper.py:685
+#: trialapp/tests/tests_trial_helper.py:316 trialapp/trial_helper.py:678
 msgid "You do not have permission to download this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:325 trialapp/trial_helper.py:687
+#: trialapp/tests/tests_trial_helper.py:325 trialapp/trial_helper.py:680
 msgid "You do not have permission to edit this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:329 trialapp/trial_helper.py:688
+#: trialapp/tests/tests_trial_helper.py:329 trialapp/trial_helper.py:681
 msgid "No limitations on permissions"
 msgstr ""
 
-#: trialapp/trial_helper.py:76
+#: trialapp/trial_helper.py:75
 msgid "Soil"
 msgstr ""
 
