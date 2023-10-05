@@ -78,59 +78,10 @@ class Product(ModelHelpers, models.Model):
             return Category.UNKNOWN
 
 
-class ProductVariant(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        return "/product_variant/%i/" % self.id
-
-    @classmethod
-    def getItems(cls, product):
-        return ProductVariant.objects.filter(product=product).order_by('name')
-
-    @classmethod
-    def createDefault(cls, product):
-        return cls.objects.create(
-            product=product, name=DEFAULT + ' variant',
-            description=DEFAULT + 'variant for' + product.name)
-
-
-class Batch(ModelHelpers, models.Model):
-    name = models.CharField(max_length=100, null=True)
-    serial_number = models.CharField(max_length=100, null=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2)
-    rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-    product_variant = models.ForeignKey(ProductVariant,
-                                        on_delete=models.CASCADE)
-
-    @classmethod
-    def getItems(cls, product):
-        return Batch.objects.filter(
-            product_variant__product=product).order_by('name')
-
-    def get_absolute_url(self):
-        return "/batch/%i/" % self.id
-
-    @classmethod
-    def createDefault(cls, variant):
-        name = DEFAULT + ' batch for ' + variant.name
-
-        return cls.objects.create(
-            product_variant=variant, rate=0,
-            rate_unit=RateUnit.getDefault(),
-            name=name)
-
-    def getName(self):
-        return self.name
-
-
 class Treatment(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
 
     @classmethod

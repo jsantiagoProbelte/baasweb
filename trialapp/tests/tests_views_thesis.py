@@ -1,7 +1,6 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from catalogue.models import Product, ProductVariant, Batch, Treatment, \
-    RateUnit, UNTREATED
+from catalogue.models import Product, Treatment, RateUnit, UNTREATED
 from trialapp.models import FieldTrial, Thesis, Replica, \
                             ApplicationMode, TreatmentThesis
 from baaswebapp.tests.tests_helpers import TrialTestData
@@ -85,15 +84,10 @@ class ThesisViewsTest(TestCase):
 
         # Lets add some products
         product = Product.objects.get(id=2)
-        variant = ProductVariant.objects.create(name='A variant',
-                                                product=product)
         rateUnit = RateUnit.objects.create(name='unit')
-        batch = Batch.objects.create(
-            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
-               'rate_unit': rateUnit, 'product_variant': variant})
         treatment = Treatment.objects.create(
             **{"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit,
-                "batch": batch})
+               "product": product})
 
         # TODO: Let;s add some ThesisTreatment
         token = 'treatment_thesis'

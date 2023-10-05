@@ -455,7 +455,7 @@ class Thesis(ModelHelpers, models.Model):
         ttreatements = TreatmentThesis.objects.filter(thesis=self)
 
         for ttreatement in ttreatements:
-            product = ttreatement.treatment.batch.product_variant.product
+            product = ttreatement.treatment.product
             if product.vendor and product.vendor.key_vendor:
                 return product.name
         return None
@@ -547,9 +547,7 @@ class Replica(ModelHelpers, models.Model):
 
     @classmethod
     def getObjects(cls, thesis: Thesis):
-        return cls.objects \
-            .filter(thesis=thesis) \
-            .order_by('number')
+        return cls.objects.filter(thesis=thesis).order_by('number')
 
     def getName(self):
         if self.name:

@@ -4,8 +4,8 @@ from baaswebapp.data_loaders import TrialDbInitialLoader
 TrialDbInitialLoader.loadInitialTrialValues()
 '''
 from baaswebapp.models import ModelHelpers, RateTypeUnit
-from catalogue.models import Product, Vendor, Batch, \
-    ProductVariant, DEFAULT, RateUnit, Treatment, UNTREATED
+from catalogue.models import Product, Vendor, \
+    DEFAULT, RateUnit, Treatment, UNTREATED
 from trialapp.models import TrialType, ApplicationMode, \
                             Objective, Plague, Crop, FieldTrial, \
                             Irrigation, CultivationMethod, CropVariety
@@ -174,15 +174,10 @@ class TrialDbInitialLoader:
                 theObject = modelo(**thisObj)
                 theObject.save(using=location)
 
-        # Created untreated product, batch, etc...
+        # Created untreated product, etc...
         defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
         noproduct = Product.objects.create(name=UNTREATED)
-        novariant = ProductVariant.objects.create(product=noproduct,
-                                                  name=DEFAULT)
-        nobatch = Batch.objects.create(name=DEFAULT,
-                                       rate=0, rate_unit=defaultRateUnit,
-                                       product_variant=novariant)
-        Treatment.objects.create(name=UNTREATED, batch=nobatch,
+        Treatment.objects.create(name=UNTREATED, product=noproduct,
                                  rate=0, rate_unit=defaultRateUnit)
 
 

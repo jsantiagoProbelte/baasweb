@@ -1,7 +1,7 @@
 from django.db import models
 from baaswebapp.models import ModelHelpers
 from trialapp.models import FieldTrial
-from catalogue.models import RateUnit, Batch
+from catalogue.models import RateUnit
 from baaswebapp.models import RateTypeUnit
 from trialapp.data_models import DataModel
 
@@ -31,7 +31,6 @@ class LabDosis(ModelHelpers, models.Model):
 
 class LabThesis(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, null=True)
     trial = models.ForeignKey(FieldTrial, on_delete=models.CASCADE)
 
     @classmethod

@@ -1,18 +1,14 @@
 from django.test import TestCase
 from baaswebapp.models import RateTypeUnit, PType
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from catalogue.models import Product, ProductVariant, RateUnit, \
-    Batch, Treatment, DEFAULT
+from catalogue.models import Product, RateUnit, Treatment
 from trialapp.models import FieldTrial, Thesis, Replica, TreatmentThesis, \
     StatusTrial
 from trialapp.data_models import ThesisData, ReplicaData, Assessment
 from catalogue.product_views import ProductApi, \
     ProductCreateView, ProductUpdateView, ProductDeleteView, \
-    ProductVariantCreateView, ProductVariantUpdateView, \
-    ProductVariantDeleteView, BatchCreateView, BatchUpdateView, \
-    BatchDeleteView, TreatmentCreateView, TreatmentUpdateView, \
-    TreatmentDeleteView, TreatmentApi, BatchApi, \
-    ProductVariantApi
+    TreatmentCreateView, TreatmentUpdateView, \
+    TreatmentDeleteView, TreatmentApi
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import ProductListView, BaaSView
@@ -283,21 +279,6 @@ class ProductViewsTest(TestCase):
         self.assertTrue(response.status_code, 302)
         theItem = theClass.objects.get(name=data['name'])
 
-        if theClass == Product:
-            # Check the default creation of variant and bach
-            variants = ProductVariant.getItems(theItem)
-            self.assertTrue(len(variants) == 1)
-            self.assertTrue(DEFAULT in variants[0].name)
-            batches = Batch.getItems(theItem)
-            self.assertTrue(len(batches) == 1)
-            self.assertTrue(DEFAULT in batches[0].name)
-
-        if theClass == ProductVariant:
-            # Check the default creation of variant and bach
-            items = Batch.objects.filter(product_variant=theItem)
-            self.assertTrue(len(items) == 1)
-            self.assertTrue(DEFAULT in items[0].name)
-
         if theClass == Treatment:
             # Create a thesis and associated with this treatment
             aThesis = self._theses[0]
@@ -340,55 +321,17 @@ class ProductViewsTest(TestCase):
         self.assertTrue(response.status_code, 302)
         self.assertFalse(theClass.objects.filter(id=theItem.id).exists())
 
-    def test_ProductVariant(self):
-        product = Product.objects.create(name='A product')
-        data = {'name': 'vvvvv', 'description': 'description'}
-        self.alltogether(
-            ProductVariant, data, product, 'product_variant',
-            ProductVariantApi,
-            ProductVariantCreateView, ProductVariantUpdateView,
-            ProductVariantDeleteView)
-
-    def test_Batch(self):
-        product = Product.objects.create(name='A product')
-        variant = ProductVariant.objects.create(name='A variant',
-                                                product=product)
-        rateUnit = RateUnit.objects.create(name='unit')
-        data = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
-                'rate_unit': rateUnit.id}
-        self.alltogether(
-            Batch, data, variant, 'batch', BatchApi,
-            BatchCreateView, BatchUpdateView, BatchDeleteView)
-
-        cdata = {'name': 'bbbbbb', 'serial_number': 'serial_number', 'rate': 1,
-                 'rate_unit_id': rateUnit.id, 'product_variant_id': variant.id}
-        created = Batch.objects.create(**cdata)
-        items = Batch.getItems(product)
-        self.assertTrue(len(items) > 0)
-
-        for item in items:
-            if item.id == created.id:
-                self.assertEqual(item.name,
-                                 created.name)
-                self.assertTrue('batch' in
-                                created.get_absolute_url())
-
     def test_Treatment(self):
         product = Product.objects.create(name='A product')
-        variant = ProductVariant.objects.create(name='A variant',
-                                                product=product)
         rateUnit = RateUnit.objects.create(name='unit')
-        batch = Batch.objects.create(
-            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
-               'rate_unit': rateUnit, 'product_variant': variant})
         data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id}
 
         self.alltogether(
-            Treatment, data, batch, 'treatment', TreatmentApi,
+            Treatment, data, product, 'treatment', TreatmentApi,
             TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)
 
         cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id, 'product_id': product.id}
+                 'product_id': product.id}
         treatment = Treatment.objects.create(**cdata)
         treatments = Treatment.getItems(product)
         self.assertTrue(len(treatments) > 0)
@@ -405,21 +348,16 @@ class ProductViewsTest(TestCase):
                                     treatment.get_absolute_url())
 
         cdata = {"name": '', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id, 'product_id': product.id}
+                 'product_id': product.id}
         treatment2 = Treatment.objects.create(**cdata)
         self.assertTrue(product.name in treatment2.getName())
         self.assertFalse(product.name in treatment2.getName(short=True))
 
     def test_ProductApi(self):
         product = Product.objects.create(name='A product')
-        variant = ProductVariant.objects.create(name='A variant',
-                                                product=product)
         rateUnit = RateUnit.objects.create(name='unit')
-        batch = Batch.objects.create(
-            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
-               'rate_unit': rateUnit, 'product_variant': variant})
         cdata = {"name": 'treat', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id, 'product_id': product.id}
+                 'product_id': product.id}
         Treatment.objects.create(**cdata)
 
         # ProductApi

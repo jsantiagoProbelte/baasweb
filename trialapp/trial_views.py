@@ -522,7 +522,7 @@ class TrialContent():
                 treatments = TreatmentThesis.getObjects(thesis)
                 for ttreatment in treatments:
                     if ttreatment.treatment.rate > max_rate:
-                        product = ttreatment.treatment.batch.product_variant.product  # noqa E501
+                        product = ttreatment.treatment.product
                         if product.vendor and product.vendor.key_vendor:
                             self._trial.key_thesis = ttreatment.thesis.id
                             self._trial.save()
@@ -535,7 +535,7 @@ class TrialContent():
             for thesis in self.getThesis():
                 treatments = TreatmentThesis.getObjects(thesis)
                 for ttreatment in treatments:
-                    if ttreatment.treatment.batch.product_variant.product.name == UNTREATED: # noqa E501
+                    if ttreatment.treatment.product.name == UNTREATED: # noqa E501
                         self._trial.control_thesis = ttreatment.thesis.id
                         self._trial.save()
                         break

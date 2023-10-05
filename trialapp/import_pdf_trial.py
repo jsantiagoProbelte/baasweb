@@ -11,7 +11,7 @@ from trialapp.models import FieldTrial, Crop, Objective, Plague, \
     Thesis, Replica, StatusTrial, TrialType, TreatmentThesis, \
     Application  # noqa: E402
 from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
-from catalogue.models import Product, Treatment, Batch, ProductVariant, \
+from catalogue.models import Product, Treatment, \
     UNTREATED, DEFAULT, RateUnit, Vendor  # noqa: E402
 from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
 import glob  # noqa: E402
@@ -912,10 +912,9 @@ class ImportPdfTrial:
 untreated = Treatment.objects.get(name=UNTREATED)
 defaultRateUnit = RateUnit.objects.get(name=DEFAULT)
 rateUnits = {unit.name: unit for unit in RateUnit.objects.all()}
-variants = {v.name: v for v in ProductVariant.objects.all()}
 
 
-def importThesis(thesis, scanInit, product, variant):
+def importThesis(thesis, scanInit, product):
     thesisName = thesis.name
     product = thesis.field_trial.product
 
@@ -923,24 +922,6 @@ def importThesis(thesis, scanInit, product, variant):
     if thesisName[scanInit] in ['A', 'B', 'C' 'D', 'E', 'F', 'G']:
         nameVariant += thesisName[scanInit]
         scanInit += 1
-    variantObject = variants.get(nameVariant, None)
-    batch = None
-    if variantObject is None:
-        # Lets add it, assume it is the main product
-        variantObject = ProductVariant.findOrCreate(
-            name=nameVariant,
-            product=product)
-        variants[nameVariant] = variantObject
-        # let create a default batch
-        batch = Batch.findOrCreate(name=DEFAULT,
-                                   rate=0,
-                                   rate_unit=defaultRateUnit,
-                                   product_variant=variantObject)
-    else:
-        batch = Batch.findOrCreate(name=DEFAULT,
-                                   rate=0,
-                                   rate_unit=defaultRateUnit,
-                                   product_variant=variantObject)
 
     if thesisName[scanInit] != ' ':
         thesisName = thesisName[0:scanInit]+' '+thesisName[scanInit:-1]
@@ -973,14 +954,13 @@ def importThesis(thesis, scanInit, product, variant):
             rateUnits[unitStr] = theRateUnit
 
     # let's create the treatment
-    treatment = Treatment.findOrCreate(batch=batch,
+    treatment = Treatment.findOrCreate(product=product,
                                        rate=dosis,
                                        rate_unit=theRateUnit)
     TreatmentThesis.findOrCreate(thesis=thesis,
                                  treatment=treatment)
-    print('>>>>[Created] {}\n{}\t{}\t{}\t'.format(
+    print('>>>>[Created] {}\n{}\t{}\t'.format(
         product.name,
-        batch.name,
         unitStr,
         treatment.rate))
     return True
@@ -1293,10 +1273,10 @@ def extractData():
     for ttreatment in treatments:
         # filter treatments that are not probelte product
         rate = 0
-        if ttreatment.treatment.batch.product_variant.product.name == UNTREATED:
+        if ttreatment.treatment.product.name == UNTREATED:
             rate = 0
             unit = 'l'
-        elif ttreatment.treatment.batch.product_variant.product.vendor_id == probelte:
+        elif ttreatment.treatment.product.vendor_id == probelte:
             rate = ttreatment.treatment.rate
             unit = ttreatment.treatment.rate_unit.name
         else:
@@ -1340,7 +1320,7 @@ def extractData():
 
 def migrateTreats():
     for treat in Treatment.objects.all():
-        treat.product_id = treat.batch.product_variant.product_id
+        treat.product_id = treat.product_id
         treat.save()
 
 

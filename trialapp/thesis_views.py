@@ -120,7 +120,7 @@ class ThesisForm(forms.ModelForm):
         self.fields['description'].required = False
         self.fields['interval'].label = 'Days between application'
         self.fields['treatment'].queryset =\
-            Treatment.objects.all().order_by('batch__product_variant__product')
+            Treatment.objects.all().order_by('product__name')
 
 
 class ThesisCreateView(LoginRequiredMixin, CreateView):
@@ -317,9 +317,7 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
             productId = ''
 
         treatments = treatments.order_by(
-                'batch__product_variant__product__name',
-                'batch__product_variant__name',
-                'batch__name',
+                'product__name',
                 'rate')
         treats = TreatmentThesis._getSelectList(treatments,
                                                 asDict=True)

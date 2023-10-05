@@ -2,15 +2,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from baaswebapp.models import ModelHelpers
 from django.db.models import Min, Max
-from catalogue.models import Product, Batch, Treatment, ProductVariant, \
-    Vendor
+from catalogue.models import Product, Treatment, Vendor
 from trialapp.models import Crop, Plague, Product_Plague, TreatmentThesis, \
     FieldTrial
 from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.utils.translation import gettext_lazy as _
 from crispy_forms.helper import FormHelper
 from django.urls import reverse_lazy
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML
@@ -128,9 +126,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
             EventLog.track(EventBaas.NEW_PRODUCT,
                            self.request.user.id,
                            item.id)
-            # Let's create default variant and default batch
-            variant = ProductVariant.createDefault(item)
-            Batch.createDefault(variant)
             return HttpResponseRedirect(item.get_absolute_url())
 
 
@@ -259,250 +254,6 @@ class ProductApi(LoginRequiredMixin, View):
 
 
 ##############################
-# BATCH
-class BatchApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
-
-    def get(self, request, *args, **kwargs):
-        itemId = kwargs['pk']
-        template_name = 'catalogue/catalogue_model_show.html'
-        item = get_object_or_404(Batch, pk=itemId)
-        product = item.product_variant.product
-        subtitle = 'batch'
-        values = [{'name': 'name', 'value': item.name},
-                  {'name': 'Variant', 'value': item.product_variant},
-                  {'name': 'Serial Number', 'value': item.serial_number},
-                  {'name': 'rate & unit',
-                   'value': '{} {}'.format(item.rate, item.rate_unit)}]
-
-        return renderCatalogue(
-            request, product, item, values, subtitle,
-            Treatment, 'treatment', 'rate',
-            template_name)
-
-
-class BatchFormLayout(FormHelper):
-    def __init__(self, new=True):
-        super().__init__()
-        title = 'New batch' if new else 'Update batch'
-        submitTxt = 'Create' if new else 'Save'
-        self.add_layout(Layout(Div(
-            HTML(title), css_class="h4 mt-4"),
-            Div(
-                Field('name', css_class='mb-3'),
-                Field('product_variant', css_class='mb-3'),
-                Field('serial_number', css_class='mb-3'),
-                Field('rate', css_class='mb-3'),
-                Field('rate_unit', css_class='mb-3'),
-                FormActions(
-                    Submit('submit', submitTxt, css_class="btn btn-info"),
-                    css_class='text-sm-end'),
-                css_class="card-body-baas mt-2")
-        ))
-
-
-class BatchForm(forms.ModelForm):
-    class Meta:
-        model = Batch
-        fields = ['name', 'serial_number', 'rate', 'rate_unit']
-
-    def __init__(self, *args, **kwargs):
-        super(BatchForm, self).__init__(*args, **kwargs)
-        self.fields['serial_number'].required = False
-
-
-class BatchCreateView(LoginRequiredMixin, CreateView):
-    form_class = BatchForm
-    template_name = 'baaswebapp/model_edit_form.html'
-    model = Batch
-
-    def get_form(self, form_class=BatchForm):
-        form = super().get_form(form_class)
-        form.helper = BatchFormLayout()
-        return form
-
-    def form_valid(self, form):
-        if form.is_valid():
-            item = form.instance
-            item.product_variant_id = self.kwargs["reference_id"]
-            item.save()
-            EventLog.track(
-                EventBaas.NEW_BATCH,
-                self.request.user.id,
-                item.product_variant.product.id)
-            variant = ProductVariant.objects.get(id=item.product_variant_id)
-            return HttpResponseRedirect(variant.get_absolute_url())
-
-
-class BatchUpdateView(LoginRequiredMixin, UpdateView):
-    model = Batch
-    form_class = BatchForm
-    template_name = 'baaswebapp/model_edit_form.html'
-
-    def get_form(self, form_class=BatchForm):
-        form = super().get_form(form_class)
-        form.helper = BatchFormLayout(new=False)
-        return form
-
-    def form_valid(self, form):
-        super().form_valid(form)
-        EventLog.track(EventBaas.UPDATE_BATCH,
-                       self.request.user.id,
-                       form.instance.product_variant.product_id)
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class BatchDeleteView(LoginRequiredMixin, DeleteView):
-    model = Batch
-    template_name = 'catalogue/batch_delete.html'
-
-    def form_valid(self, form):
-        EventLog.track(
-                EventBaas.DELETE_PRODUCT,
-                self.request.user.id,
-                self.get_object().product_variant.product_id)
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse(
-            'product_variant-api',
-            kwargs={'pk': self.get_object().product_variant_id})
-
-
-def prepareChildrenCatalogue(childKey, cls, filter, orderBy):
-    items = cls.objects.filter(**filter).order_by(orderBy)
-    children = [{'id': item.id, 'name': item.getName()} for item in items]
-    return {
-        'children': children,
-        'children_title': _(childKey),
-        'children_url': childKey + '-api',
-        'children_url_add': childKey + '-add'}
-
-
-def renderCatalogue(request, product, item, values, subtitle,
-                    childCls, childType, orderChild,
-                    template_name):
-    childrenInfo = prepareChildrenCatalogue(childType, childCls,
-                                            {subtitle: item},
-                                            orderChild)
-    context = {'product': product, 'item': item,
-               'values': values, 'subtitle': subtitle,
-               'update_url': subtitle + '-update',
-               'delete_url': subtitle + '-delete'}
-
-    return render(request, template_name, {**context, **childrenInfo})
-
-
-##############################
-# ProductVariant
-class ProductVariantApi(APIView):
-    authentication_classes = []
-    permission_classes = []
-    http_method_names = ['get']
-
-    def get(self, request, *args, **kwargs):
-        itemId = kwargs['pk']
-        template_name = 'catalogue/catalogue_model_show.html'
-        item = get_object_or_404(ProductVariant, pk=itemId)
-        product = item.product
-        subtitle = 'product_variant'
-        values = [{'name': 'name', 'value': item.name},
-                  {'name': 'description', 'value': item.description}]
-
-        return renderCatalogue(
-            request, product, item, values, subtitle,
-            Batch, 'batch', 'name',
-            template_name)
-
-
-class ProductVariantFormLayout(FormHelper):
-    def __init__(self, new=True):
-        super().__init__()
-        title = 'New ProductVariant' if new else 'Update ProductVariant'
-        submitTxt = 'Create' if new else 'Save'
-        self.add_layout(Layout(Div(
-            HTML(title), css_class="h4 mt-4"),
-            Div(
-                Field('name', css_class='mb-3'),
-                Field('description', css_class='mb-3'),
-                FormActions(
-                    Submit('submit', submitTxt, css_class="btn btn-info"),
-                    css_class='text-sm-end'),
-                css_class="card-body-baas mt-2")
-        ))
-
-
-class ProductVariantForm(forms.ModelForm):
-    class Meta:
-        model = ProductVariant
-        fields = ['name', 'description']
-
-    def __init__(self, *args, **kwargs):
-        super(ProductVariantForm, self).__init__(*args, **kwargs)
-        self.fields['description'].required = False
-
-
-class ProductVariantCreateView(LoginRequiredMixin, CreateView):
-    model = ProductVariant
-    form_class = ProductVariantForm
-    template_name = 'baaswebapp/model_edit_form.html'
-
-    def get_form(self, form_class=ProductVariantForm):
-        form = super().get_form(form_class)
-        form.helper = ProductVariantFormLayout()
-        return form
-
-    def form_valid(self, form):
-        if form.is_valid():
-            item = form.instance
-            item.product_id = self.kwargs["reference_id"]
-            item.save()
-            EventLog.track(
-                EventBaas.NEW_VARIANT,
-                self.request.user.id,
-                form.instance.product.id)
-            Batch.createDefault(item)
-            return HttpResponseRedirect(item.product.get_absolute_url())
-
-
-class ProductVariantUpdateView(LoginRequiredMixin, UpdateView):
-    model = ProductVariant
-    form_class = ProductVariantForm
-    template_name = 'baaswebapp/model_edit_form.html'
-
-    def get_form(self, form_class=ProductVariantForm):
-        form = super().get_form(form_class)
-        form.helper = ProductVariantFormLayout(new=False)
-        return form
-
-    def form_valid(self, form):
-        super().form_valid(form)
-        EventLog.track(EventBaas.UPDATE_VARIANT,
-                       self.request.user.id,
-                       form.instance.product_id)
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class ProductVariantDeleteView(LoginRequiredMixin, DeleteView):
-    model = ProductVariant
-    template_name = 'catalogue/product_variant_delete.html'
-
-    def get_success_url(self) -> str:
-        return reverse(
-            'product_api',
-            kwargs={'pk': self.get_object().product_id})
-
-    def form_valid(self, form):
-        EventLog.track(
-                EventBaas.DELETE_VARIANT,
-                self.request.user.id,
-                self.get_object().product_id)
-        return super().form_valid(form)
-
-
-##############################
 # Treatment
 class TreatmentApi(APIView):
     authentication_classes = []
@@ -591,7 +342,6 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             item = form.instance
             item.product_id = self.kwargs["reference_id"]
-            item.batch_id = 1
             item.save()
             EventLog.track(
                 EventBaas.NEW_TREATMENT,

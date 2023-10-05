@@ -1,8 +1,7 @@
 from django.test import TestCase
 from baaswebapp.data_loaders import TrialDbInitialLoader
 from baaswebapp.models import PType, RateTypeUnit
-from catalogue.models import Product, Vendor, Batch, Treatment, \
-    ProductVariant, UNTREATED
+from catalogue.models import Product, Vendor, Treatment,  UNTREATED
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis, RateUnit, \
     Application, PartRated
 from trialapp.data_models import Assessment, ReplicaData, Replica
@@ -120,10 +119,8 @@ class TrialViewsTest(TestCase):
         self._untreated = Product.objects.filter(name=UNTREATED)[0]
         self._treatments = {}
         for prod in [self._untreated, self._botribel, self._other]:
-            pv = ProductVariant.createDefault(prod)
-            batch = Batch.createDefault(pv)
             self._treatments[prod.id] = Treatment.objects.create(
-                name=prod.name, rate=33, rate_unit=unit, batch=batch)
+                name=prod.name, rate=33, rate_unit=unit, product=prod)
 
     def createObjects(self):
         self.createCatalogue()

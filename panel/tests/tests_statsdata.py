@@ -5,8 +5,7 @@ from panel.statsdata import StatsDataApi
 from panel.quality_panel import ThesisPanelApi
 from trialapp.models import FieldTrial, Thesis, TreatmentThesis
 from baaswebapp.tests.tests_helpers import TrialTestData
-from catalogue.models import Product, ProductVariant, Batch, Treatment, \
-    RateUnit
+from catalogue.models import Product, Treatment, RateUnit
 
 
 class StatsDataTest(TestCase):
@@ -17,14 +16,10 @@ class StatsDataTest(TestCase):
         self._apiFactory = ApiRequestHelperTest()
         TrialDbInitialLoader.loadInitialTrialValues()
         product = Product.objects.create(name='A product')
-        variant = ProductVariant.objects.create(name='A variant',
-                                                product=product)
         rateUnit = RateUnit.objects.create(name='unit')
-        batch = Batch.objects.create(
-            **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
-               'rate_unit': rateUnit, 'product_variant': variant})
+
         cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id}
+                 'product_id': product.id}
         treat = Treatment.objects.create(**cdata)
         for trialData in TrialTestData.TRIALS:
             FieldTrial.createTrial(**trialData)
