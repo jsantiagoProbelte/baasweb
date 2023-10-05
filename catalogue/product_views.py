@@ -328,9 +328,10 @@ class TreatmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TreatmentForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = False
-        self.fields['product'].required = False
         self.fields['rate'].label = 'Dosis'
         self.fields['rate_unit'].label = 'Dosis Unit'
+        products = Product.objects.all().order_by('name')
+        self.fields['product'].queryset = products
 
 
 class TreatmentCreateView(LoginRequiredMixin, CreateView):

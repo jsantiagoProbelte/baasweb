@@ -324,7 +324,8 @@ class ProductViewsTest(TestCase):
     def test_Treatment(self):
         product = Product.objects.create(name='A product')
         rateUnit = RateUnit.objects.create(name='unit')
-        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id}
+        data = {"name": 'pppp', 'rate': 1, 'rate_unit': rateUnit.id,
+                'product': product.id}
 
         self.alltogether(
             Treatment, data, product, 'treatment', TreatmentApi,
@@ -342,8 +343,8 @@ class ProductViewsTest(TestCase):
         for item in displays:
             for treatment in treatments:
                 if treatment.id == item['id']:
-                    self.assertEqual(item['name'],
-                                     treatment.getName())
+                    self.assertTrue(
+                        item['name'] in treatment.getName())
                     self.assertTrue('treatment' in
                                     treatment.get_absolute_url())
 
@@ -363,4 +364,4 @@ class ProductViewsTest(TestCase):
         # ProductApi
         api = ProductApi()
         tree = api.getProductTree(product)
-        self.assertTrue(tree[0]['name'] == cdata['name'])
+        self.assertTrue(cdata['name'] in tree[0]['name'])

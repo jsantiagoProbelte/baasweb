@@ -86,7 +86,8 @@ class Treatment(ModelHelpers, models.Model):
 
     @classmethod
     def getItems(cls, product):
-        return Treatment.objects.filter(product=product).order_by('rate')
+        return Treatment.objects.filter(product=product).order_by('name',
+                                                                  'rate')
 
     @classmethod
     def displayItems(cls, product):
@@ -100,17 +101,12 @@ class Treatment(ModelHelpers, models.Model):
         return "/treatment/%i/" % self.id
 
     def getName(self, short=False):
-        if self.name:
-            return self.name
-        else:
-            productName = ''
-            if not short:
-                productName = self.product.name
-            rateUnitName = '{} {}'.format(self.rate, self.rate_unit.name)
+        productName = ''
+        if not short:
+            productName = self.product.name
+        rateUnitName = '{} {}'.format(self.rate, self.rate_unit.name)
 
-            return '{} {}'.format(
-                   productName,
-                   rateUnitName)
+        return '{} {} {}'.format(productName, self.name, rateUnitName)
 
     def getDosis(self):
         return {'rate': self.rate, 'unit': self.rate_unit.name}
