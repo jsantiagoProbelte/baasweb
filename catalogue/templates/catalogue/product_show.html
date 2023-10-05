@@ -52,15 +52,22 @@
   {% endif %}
     <div class="row ms-4 product-variant-tabs">
       <ul class="nav flex-column">
-        <p class="title txt-uppercase">{% trans "product variants"%}</p>
+        <p class="title txt-uppercase">{% trans "known treatments"%}</p>
         <li class="nav-item">
           <button class="nav-link product-variant-link active">{{product.name}}</button>
         </li>
-        {% for variant in variants %}
-        <li class="nav-item">
-          <a class="nav-link product-variant-link" href="{% url 'product_variant-api' variant.id %}">{{variant.name}}</a>
-        </li>
+        {% for treat in treatments %}
+          <li class="nav-item">
+            <a class="nav-link product-variant-link" href="{% url 'treatment-api' treat.id %}">{{treat.name}}</a>
+          </li>
         {% endfor %}
+        {% if edit_trial_perm %}
+          <li class="nav-item">
+            <a class="nav-link product-variant-link" href="{% url 'treatment-add' product.id %}">
+              {% trans 'add new' %}
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
     <div class="container">
@@ -72,6 +79,10 @@
         <div id="description" class="card-baas-alt col-5">
           <div class="labels">
             <p class="title">{{ product.name }}
+              {% if edit_trial_perm %}
+                <a href="{{edit_product}}" class="btn btn-outline-baas btn-sm fs-4 ms-2"
+                data-toggle="tooltip" data-placement="top" title='Edit product'>&#10000;</a>
+              {% endif %}
               {% if product.purpose %}
                 <small class="subtitle"><i class="bi bi-bookmark"></i>{% include 'baaswebapp/show_value.html' with value=product.purpose url_fix=edit_product %}</small>
               {% endif %}

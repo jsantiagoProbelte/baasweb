@@ -131,11 +131,11 @@ class Treatment(ModelHelpers, models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     rate_unit = models.ForeignKey(RateUnit, on_delete=models.CASCADE)
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
 
     @classmethod
     def getItems(cls, product):
-        return Treatment.objects.filter(
-            batch__product_variant__product=product).order_by('name')
+        return Treatment.objects.filter(product=product).order_by('rate')
 
     @classmethod
     def displayItems(cls, product):
@@ -154,18 +154,11 @@ class Treatment(ModelHelpers, models.Model):
         else:
             productName = ''
             if not short:
-                productName = self.batch.product_variant.product.name
-            varianName = self.batch.product_variant.name
-            if DEFAULT in varianName:
-                varianName = ''
+                productName = self.product.name
             rateUnitName = '{} {}'.format(self.rate, self.rate_unit.name)
-            batchName = self.batch.name
-            if not short and DEFAULT in batchName:
-                batchName = ''
-            return '{} {} {} {}'.format(
+
+            return '{} {}'.format(
                    productName,
-                   varianName,
-                   batchName,
                    rateUnitName)
 
     def getDosis(self):

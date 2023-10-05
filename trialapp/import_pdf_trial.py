@@ -1338,6 +1338,12 @@ def extractData():
     exportCsvFile('./datapoints', dataPoints)
 
 
+def migrateTreats():
+    for treat in Treatment.objects.all():
+        treat.product_id = treat.batch.product_variant.product_id
+        treat.save()
+
+
 if __name__ == '__main__':
     # cleanPlagues()
     # importConcreateCSV()
@@ -1347,4 +1353,5 @@ if __name__ == '__main__':
     # importOneMapa()
     # discoverReports()
     # testArchive()
-    extractData()
+    # extractData()
+    migrateTreats()

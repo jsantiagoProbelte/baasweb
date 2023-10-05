@@ -4,7 +4,8 @@ from baaswebapp.models import ModelHelpers
 from django.db.models import Min, Max
 from catalogue.models import Product, Batch, Treatment, ProductVariant, \
     Vendor
-from trialapp.models import Crop, Plague, Product_Plague, TreatmentThesis, FieldTrial
+from trialapp.models import Crop, Plague, Product_Plague, TreatmentThesis, \
+    FieldTrial
 from trialapp.filter_helpers import DetailedTrialListView
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -172,11 +173,9 @@ class ProductApi(LoginRequiredMixin, View):
     FILTER_DATA = [TAG_CROPS, TAG_DIMENSIONS, TAG_PLAGUES, TAG_LEVEL]
 
     def getProductTree(self, product):
-        data = []
-        for variant in ProductVariant.getItems(product):
-            variantItem = {'name': variant.name, 'id': variant.id}
-            data.append(variantItem)
-        return data
+        return [
+            {'name': treat.getName(short=True), 'id': treat.id}
+            for treat in Treatment.getItems(product)]
 
     def get_crop_table_data(self, id):
         crops = Crop.objects.filter(fieldtrial__product_id=id).values(
@@ -252,7 +251,7 @@ class ProductApi(LoginRequiredMixin, View):
                 'plagues': Product_Plague.Selectors.getPlagueNamesByProduct(product_id),
                 'edit_trial_perm': self.editPermision(request),
                 'range_efficacy': self.getRangeEfficacy(product),
-                'variants': self.getProductTree(product),
+                'treatments': self.getProductTree(product),
                 'titleView': product.getName(),
                 'crops': self.get_crop_table_data(product_id),
                 'category': product.getCategory(product.type_product).label,
@@ -514,10 +513,9 @@ class TreatmentApi(APIView):
         itemId = kwargs['pk']
         template_name = 'catalogue/catalogue_model_show.html'
         item = get_object_or_404(Treatment, pk=itemId)
-        product = item.batch.product_variant.product
+        product = item.product
         subtitle = 'treatment'
         values = [{'name': 'name', 'value': item.name},
-                  {'name': 'batch', 'value': item.batch},
                   {'name': 'rate & unit',
                    'value': '{} {}'.format(item.rate, item.rate_unit)}]
         thesiss = TreatmentThesis.objects.filter(treatment=item)
@@ -560,6 +558,7 @@ class TreatmentFormLayout(FormHelper):
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
             Div(
+                Field('product', css_class='mb-3') if not new else HTML(''),
                 Field('name', css_class='mb-3'),
                 Field('rate', css_class='mb-3'),
                 Field('rate_unit', css_class='mb-3'),
@@ -573,11 +572,12 @@ class TreatmentFormLayout(FormHelper):
 class TreatmentForm(forms.ModelForm):
     class Meta:
         model = Treatment
-        fields = ['name', 'rate', 'rate_unit']
+        fields = ['name', 'rate', 'rate_unit', 'product']
 
     def __init__(self, *args, **kwargs):
         super(TreatmentForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = False
+        self.fields['product'].required = False
         self.fields['rate'].label = 'Dosis'
         self.fields['rate_unit'].label = 'Dosis Unit'
 
@@ -590,15 +590,16 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         if form.is_valid():
             item = form.instance
-            item.batch_id = self.kwargs["reference_id"]
+            item.product_id = self.kwargs["reference_id"]
+            item.batch_id = 1
             item.save()
-            batch = Batch.objects.get(id=item.batch_id)
             EventLog.track(
                 EventBaas.NEW_TREATMENT,
                 self.request.user.id,
-                batch.product_variant.product.id)
-            return HttpResponseRedirect(
-                batch.get_absolute_url())
+                item.product_id)
+            return HttpResponseRedirect(reverse(
+                'product_api',
+                kwargs={'pk': item.product_id}))
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)
@@ -620,7 +621,7 @@ class TreatmentUpdateView(LoginRequiredMixin, UpdateView):
         super().form_valid(form)
         EventLog.track(EventBaas.UPDATE_TREATMENT,
                        self.request.user.id,
-                       form.instance.batch.product_variant.product.id)
+                       form.instance.product_id)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -630,11 +631,11 @@ class TreatmentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self) -> str:
         return reverse(
-            'batch-api',
-            kwargs={'pk': self.get_object().batch_id})
+            'product_api',
+            kwargs={'pk': self.get_object().product_id})
 
     def form_valid(self, form):
         EventLog.track(EventBaas.DELETE_TREATMENT,
                        self.request.user.id,
-                       self.get_object().batch.product_variant.product_id)
+                       self.get_object().product_id)
         return super().form_valid(form)

@@ -388,7 +388,7 @@ class ProductViewsTest(TestCase):
             TreatmentCreateView, TreatmentUpdateView, TreatmentDeleteView)
 
         cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id}
+                 'batch_id': batch.id, 'product_id': product.id}
         treatment = Treatment.objects.create(**cdata)
         treatments = Treatment.getItems(product)
         self.assertTrue(len(treatments) > 0)
@@ -405,7 +405,7 @@ class ProductViewsTest(TestCase):
                                     treatment.get_absolute_url())
 
         cdata = {"name": '', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id}
+                 'batch_id': batch.id, 'product_id': product.id}
         treatment2 = Treatment.objects.create(**cdata)
         self.assertTrue(product.name in treatment2.getName())
         self.assertFalse(product.name in treatment2.getName(short=True))
@@ -418,11 +418,11 @@ class ProductViewsTest(TestCase):
         batch = Batch.objects.create(
             **{'name': 'bbbbbbb', 'serial_number': 'sn', 'rate': 1,
                'rate_unit': rateUnit, 'product_variant': variant})
-        cdata = {"name": 'pppp', 'rate': 1, 'rate_unit_id': rateUnit.id,
-                 'batch_id': batch.id}
+        cdata = {"name": 'treat', 'rate': 1, 'rate_unit_id': rateUnit.id,
+                 'batch_id': batch.id, 'product_id': product.id}
         Treatment.objects.create(**cdata)
 
         # ProductApi
         api = ProductApi()
         tree = api.getProductTree(product)
-        self.assertTrue(tree[0]['name'] == variant.name)
+        self.assertTrue(tree[0]['name'] == cdata['name'])

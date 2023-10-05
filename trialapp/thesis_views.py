@@ -310,8 +310,7 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
         currentTreatment = ''
         if productId:
             productId = int(productId)
-            treatments = Treatment.objects.filter(
-                batch__product_variant__product_id=productId)
+            treatments = Treatment.objects.filter(product_id=productId)
             currentTreatment = 0
         else:
             treatments = Treatment.objects.all()
