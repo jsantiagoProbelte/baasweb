@@ -353,7 +353,7 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=TreatmentForm):
         form = super().get_form(form_class)
-        # Product is not show on create view, and the product is 
+        # Product is not show on create view, and the product is
         # asigned in the form_valid
         form.fields['product'].required = False
         form.helper = TreatmentFormLayout()
