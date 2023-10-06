@@ -135,6 +135,34 @@ class ThesisViewsTest(TestCase):
         self.assertTrue(response.status_code, 302)
         self.assertFalse(theClass.objects.filter(treatment=treatment).exists())
 
+    def test_addNewTreatmentThesis(self):
+        thesisData = TrialTestData.THESIS[0].copy()
+        thesisData['treatment'] = self._untreated.id
+        thesisData['mode'] = '1'  # not mode_id , so it match the select form
+        request = self._apiFactory.post('thesis-add', thesisData)
+        self._apiFactory.setUser(request)
+        response = ThesisCreateView.as_view()(
+            request, field_trial_id=self._trial.id)
+        self.assertEqual(response.status_code, 302)
+        thesis = Thesis.objects.get(name=thesisData['name'])
+
+        product = Product.objects.get(id=2)
+        rateUnit = RateUnit.objects.create(name='unit')
+        data = {'rate': 5,
+                'add_new': 'blabal',
+                'name': 'tete',
+                'rate_unit': rateUnit.id,
+                'product': product.id}
+        setTreatmentGet = self._apiFactory.get('treatment_thesis-add',
+                                               data=data)
+        self._apiFactory.setUser(setTreatmentGet)
+        response = TreatmentThesisSetView.as_view()(
+            setTreatmentGet, thesis_id=thesis.id)
+        self.assertTrue(response.status_code, 302)
+        treatment = Treatment.objects.get(name=data['name'])
+        theItem = TreatmentThesis.objects.get(treatment=treatment)
+        self.assertEqual(theItem.thesis_id, thesis.id)
+
     def test_thesis_api(self):
         # Creating thesis , but not with all attributres
         thesisData = TrialTestData.THESIS[0].copy()

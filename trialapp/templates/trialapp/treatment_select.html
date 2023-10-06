@@ -12,7 +12,7 @@
 {% include "trialapp/header_page_trial.html" with title=title subtitle='' subheader=fieldTrial.name item=thesis %}
 
 <div class="col-md-6 offset-md-3">
-    <div class="row mb-2">
+    <div class="row mt-3">
         <div class="col-md-4">
             <form id="select-product" action="{% url 'treatment_thesis-add' thesis.id %}" method="GET">
                 {% csrf_token %}
@@ -21,7 +21,8 @@
                 {% include 'baaswebapp/input_select_template.html' with tag='product' item_id='new' currentValue=productId selectOptions=products addNull=False showAsList=True %}
             </form>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 mt-3">
+            {% if treatments %}
             <form id="select-treatment" action="{% url 'treatment_thesis-add' thesis.id %}" method="GET">
                 {% csrf_token %}
                 {{ form|crispy }}
@@ -31,6 +32,29 @@
                     <input type="submit" name="submit" value="Select" class="mt-4 btn btn-primary btn btn-info text-right">
                 </div>
             </form>
+            {% else %}
+                <p>There is not existing treatments for this product. Please create new one</p>
+            {% endif %}
+            {% if selectedProduct %}
+            <hr class="mt-2 mb-2">
+            <p>Create new treatments for {{selectedProduct.name}}</p>
+            <form id="select-treatment" action="{% url 'treatment_thesis-add' thesis.id %}" method="GET">
+                {% csrf_token %}
+                <div id="div_id_name" class="form-group"> 
+                    <label for="id_name" class="control-label ">Name</label>
+                    <div class="controls "> <input type="text" name="name" maxlength="100" class="mb-3 textinput textInput form-control" id="id_name"></div>
+                </div>
+                <div id="div_id_rate" class="form-group"> 
+                    <label for="id_rate" class="control-label  requiredField">Dosis<span class="asteriskField">*</span> </label> 
+                    <div class="controls "> <input type="number" name="rate" step="0.01" class="mb-3 numberinput form-control" required="" id="id_rate"> </div> 
+                </div> 
+                <input type="hidden" name="product" value="{{selectedProduct.id}}"/>
+                {% include 'baaswebapp/input_select_template.html' with tag='rate_unit' item_id='new' currentValue=currentTreatment selectOptions=rate_units addNull=True showAsList=False%}
+                <div class="text-sm-end">
+                    <input type="submit" name="add_new" value="Add New" class="mt-4 btn btn-primary btn btn-info text-right">
+                </div>
+            </form>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -16,7 +16,7 @@ from crispy_forms.layout import Layout, Div, Submit, Field, HTML
 from crispy_forms.bootstrap import FormActions
 from django.http import HttpResponseRedirect
 from django import forms
-from catalogue.models import Treatment, Product
+from catalogue.models import Treatment, Product, RateUnit
 from trialapp.trial_helper import TrialPermission
 from trialapp.trial_views import TrialContent
 from baaswebapp.models import EventBaas, EventLog
@@ -293,8 +293,25 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         theId = kwargs.get('thesis_id', None)
         thesis = get_object_or_404(Thesis, pk=theId)
+        selectedProduct = None
+        productId = request.GET.get('product', None)
+        if productId:
+            productId = int(productId)
 
         treatmentId = request.GET.get('treatment', None)
+
+        if 'add_new' in request.GET:
+            # Creating new treatment
+            name = request.GET.get('name', None)
+            rate = request.GET.get('rate', None)
+            rate_unit = request.GET.get('rate_unit', None)
+            treat = Treatment.objects.create(
+                name=name,
+                rate=rate,
+                rate_unit_id=rate_unit,
+                product_id=productId)
+            treatmentId = treat.id
+
         if treatmentId:
             TreatmentThesis.findOrCreate(
                 thesis=thesis,
@@ -305,13 +322,15 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
                 thesis.field_trial_id)
             return HttpResponseRedirect(thesis.get_absolute_url())
 
-        productId = request.GET.get('product', None)
         products = Product.getSelectList(asDict=True)
         currentTreatment = ''
+        rate_units = None
+
         if productId:
-            productId = int(productId)
+            selectedProduct = Product.objects.get(id=productId)
             treatments = Treatment.objects.filter(product_id=productId)
             currentTreatment = 0
+            rate_units = RateUnit.getSelectList(asDict=True)
         else:
             treatments = Treatment.objects.all()
             productId = ''
@@ -323,6 +342,8 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
                                                 asDict=True)
         return render(request, self.template_name,
                       {'thesis': thesis,
+                       'selectedProduct': selectedProduct,
+                       'rate_units': rate_units,
                        'title': f'Add treatment to [{thesis.name}]',
                        'fieldTrial': thesis.field_trial,
                        'productId': productId,
