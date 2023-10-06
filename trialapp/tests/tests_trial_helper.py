@@ -4,7 +4,7 @@ from trialapp.models import FieldTrial, Thesis, Replica, StatusTrial
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.trial_helper import LayoutTrial, TrialPermission
 from baaswebapp.tests.tests_helpers import ApiRequestHelperTest, UserStub
-from trialapp.thesis_views import SetReplicaPosition
+from trialapp.thesis_views import SetReplicaPosition, SetReplicaName
 from django.utils.translation import gettext_lazy as _
 from trialapp.trial_views import TrialApi
 from trialapp.fieldtrial_views import DownloadTrial
@@ -69,6 +69,20 @@ class TrialHelperTest(TestCase):
                 self.assertNotEqual(
                     item['replica_id'],
                     replicaZ.id)
+
+    def test_settingName(self):
+        #  let's put first replica in position 3,2
+        theReplica1 = Replica.objects.get(pk=self._replicas1[0].id)
+        addData = {'name': '666'}
+        addDataPoint = self._apiFactory.post(
+            'set-replica-name',
+            data=addData)
+        self._apiFactory.setUser(addDataPoint)
+        apiView = SetReplicaName()
+        response = apiView.post(addDataPoint, theReplica1.id)
+        self.assertTrue(response.status_code, 302)
+        theReplica1 = Replica.objects.get(id=theReplica1.id)
+        self.assertEqual(theReplica1.name, addData['name'])
 
     def test_settingPosition(self):
         #  let's put first replica in position 3,2

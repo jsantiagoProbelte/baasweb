@@ -60,6 +60,31 @@
     </div>
   </div>
   <div class="col-md-4">
+    <div class="card card-body-baas mt-3">
+      <div class="card-header-baas h5">
+        <span class='badge bg-light ms-2'>{{fieldTrial.repetitions}}</span> Repetitions
+      </div>
+      <table class="table">
+
+        <thead><th>number</th><th>name</th></thead>
+        {% for repetition in repetitions %}
+          <tr>
+            <td>{{repetition.number}}</td>
+            <td>{% if repetition.name %}
+                  {{repetition.name}}
+                {% else %}
+                  <form action="{% url 'set-replica-name' repetition.id %}" class='flex-inline-form' method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="name" maxlength="10" class="mb-3 textinput textInput form-control">
+                    <input type="submit" name="save" value="save" class="mt-4 btn btn-primary btn btn-info text-right">
+                  </form>
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    
     {% include 'trialapp/thesis_map.html' %}
   </div>
 </div>
@@ -67,5 +92,4 @@
 
 {% block scripts %}
 <script src='/static/baaswebapp/scripts/baas.js'></script>
-
 {% endblock %}

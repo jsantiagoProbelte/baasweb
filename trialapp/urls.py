@@ -78,6 +78,10 @@ urlpatterns = [
         'set_replica_position/<int:x>/<int:y>/<int:oldReplicaId>/',
         thesis_views.SetReplicaPosition.as_view(),
         name='set-replica-position'),
+    path(
+        'set_replica_name/<int:pk>/',
+        thesis_views.SetReplicaName.as_view(),
+        name='set-replica-name'),
     # treatment in thesis
     path('treatment_thesis/add/<int:thesis_id>/',
          thesis_views.TreatmentThesisSetView.as_view(),

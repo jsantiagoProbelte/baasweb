@@ -243,6 +243,7 @@ class ThesisApi(LoginRequiredMixin, DetailView):
                 'treatments': treatments,
                 'rowsReplicaHeader': headerRows,
                 'rowsReplicas': layout,
+                'repetitions': Replica.getObjects(self._thesis),
                 **permisions}
 
     def getThesisVolume(self):
@@ -367,6 +368,22 @@ class TreatmentThesisDeleteView(LoginRequiredMixin, DeleteView):
                 self.request.user.id,
                 self.get_object().thesis.field_trial_id)
         return super().form_valid(form)
+
+
+class SetReplicaName(APIView):
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['post']
+
+    # see generateDataPointId
+    def post(self, request, pk):
+        name = request.POST.get('name', None)
+        replica = get_object_or_404(Replica, pk=pk)
+        if name:
+            replica.name = name
+            replica.save()
+            thesis = replica.thesis
+            return HttpResponseRedirect(thesis.get_absolute_url())
 
 
 class SetReplicaPosition(APIView):
