@@ -51,22 +51,15 @@
   <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="product-tab">
   {% endif %}
     <div class="row ms-4 product-variant-tabs">
-      <ul class="nav flex-column">
-        <p class="title txt-uppercase">{% trans "known treatments"%}</p>
-        <li class="nav-item">
-          <button class="nav-link product-variant-link active">{{product.name}}</button>
-        </li>
+      <ul class="list-group">
+        <a class="list-group-item list-group-item-action txt-encode-16 txt-brand txt-uppercase" href='#'>{% trans "known treatments"%}</a>
         {% for treat in treatments %}
-          <li class="nav-item">
-            <a class="nav-link product-variant-link" href="{% url 'treatment-api' treat.id %}">{{treat.name}}</a>
-          </li>
+            <a class="list-group-item list-group-item-action txt-encode-13 btn-assessment-trial" href="{% url 'treatment-api' treat.id %}">{{treat.name}}</a>
         {% endfor %}
         {% if edit_trial_perm %}
-          <li class="nav-item">
-            <a class="nav-link product-variant-link" href="{% url 'treatment-add' product.id %}">
-              {% trans 'add new' %}
+            <a class="list-group-item list-group-item-action btn-assessment-trial" href="{% url 'treatment-add' product.id %}">
+              <span class="material-symbols-outlined" >add</span>{% trans 'add new' %}
             </a>
-          </li>
         {% endif %}
       </ul>
     </div>
