@@ -224,7 +224,7 @@ class AssessmentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse(
-            'application-list',
+            'assessment-list',
             kwargs={'field_trial_id': self.get_object().field_trial_id})
 
     def form_valid(self, form):
