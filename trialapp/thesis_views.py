@@ -329,16 +329,12 @@ class TreatmentThesisSetView(LoginRequiredMixin, View):
 
         if productId:
             selectedProduct = Product.objects.get(id=productId)
-            treatments = Treatment.objects.filter(product_id=productId)
             currentTreatment = 0
             rate_units = RateUnit.getSelectList(asDict=True)
         else:
-            treatments = Treatment.objects.all()
             productId = ''
 
-        treatments = treatments.order_by(
-                'product__name',
-                'rate')
+        treatments = Treatment.getItems(selectedProduct)
         treats = TreatmentThesis._getSelectList(treatments,
                                                 asDict=True)
         return render(request, self.template_name,
