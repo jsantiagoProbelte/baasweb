@@ -119,7 +119,7 @@ class TrialFilterHelper:
         return self._trials
 
     def getClsObjects(self, cls):
-        if len(self._attributes) > 0:
+        if self._permisions._type != TrialPermission.ADMIN:
             trialIds = [item.id for item in self._trials]
             keyPerCls = TrialFilterHelper.KEY_PER_CLS.get(cls, None)
             if keyPerCls:
@@ -355,6 +355,7 @@ class BaaSView(LoginRequiredMixin, View):
 
         # pagination
         allItems = self.get_context_data()
+        print(list(allItems))
         paginator = Paginator(allItems, BaaSView.paginate_by)
         currentPage = paginator.get_page(page)
 
