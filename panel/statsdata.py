@@ -165,11 +165,14 @@ class StatsDataApi(APIView):
                 if week in dataset[event]:
                     lastValue = dataset[event][week]
                 accValues[event][week] = lastValue
-
-        # prepare data to display
-        return GraphStat(accValues, weeksList, orientation='v',
-                         showLegend=True,
-                         xAxis='week', yAxis='Events', barmode="stack").plot()
+        if weeksList:
+            # prepare data to display
+            return GraphStat(
+                accValues, weeksList, orientation='v',
+                showLegend=True,
+                xAxis='week', yAxis='Events', barmode="stack").plot()
+        else:
+            return ['no data']
 
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
