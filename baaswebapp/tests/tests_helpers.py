@@ -218,9 +218,9 @@ class ApiRequestHelperTest(APIRequestFactory):
     USER = 'Waldo'
     _user = None
 
-    def __init__(self):
+    def __init__(self, is_admin=False):
         super().__init__()
-        self.createUser()
+        self.createUser(is_admin=is_admin)
 
     def login(self):
         client = Client.login(
@@ -228,11 +228,14 @@ class ApiRequestHelperTest(APIRequestFactory):
             password=ApiRequestHelperTest.PASSWORD)
         return auth.get_user(client)
 
-    def createUser(self):
+    def createUser(self, is_admin=False):
         User = auth.get_user_model()
         self._user = User.objects.create_user(
             ApiRequestHelperTest.USER, 'temporary@gmail.com',
             ApiRequestHelperTest.PASSWORD)
+        if is_admin:
+            self._user.is_superuser = True
+            self._user.save()
 
     def setUser(self, request):
         request.user = self._user
