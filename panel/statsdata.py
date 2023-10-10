@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from trialapp.models import FieldTrial
 from baaswebapp.baas_helpers import BaaSHelpers
 from baaswebapp.graphs import GraphStat, PieGraph
-from baaswebapp.models import EventLog
+from baaswebapp.models import EventLog, EventBaas
+from django.db.models.functions import TruncWeek
 
 
 class StatsDataApi(APIView):
@@ -108,7 +109,7 @@ class StatsDataApi(APIView):
         labels = []
         topList = []
         for item in events:
-            datasetKey = item['event']
+            datasetKey = EventBaas.get_label(item['event'])
             datasetKey = 'Unknown' if datasetKey is None else datasetKey
             dataset[datasetKey] = item['id__count']
             labels.append(datasetKey)
@@ -123,9 +124,52 @@ class StatsDataApi(APIView):
                 break
         # prepare data to display
         return GraphStat({'event': dataset}, newlabels,
-                         orientation='v',
+                         orientation='h',
                          showLegend=False, showTitle=False,
                          xAxis='events', yAxis='total events').plot()
+
+    def generateEventWeeklyGraphs(self):
+        events = EventLog.objects.annotate(
+                week=TruncWeek('timestamp')
+            ).values(
+                'week', 'event'
+            ).annotate(
+                count=Count('id')
+            ).order_by('week', 'event')
+        dataset = {}
+        weeks = set()
+        counts = {}
+        for item in events:
+            week = item['week'].strftime("%U")
+            eventKey = EventBaas.get_label(item['event'])
+            weeks.add(week)
+            value = item['count']
+            if eventKey not in dataset:
+                dataset[eventKey] = {}
+            if eventKey not in counts:
+                counts[eventKey] = 0
+            if week not in dataset[eventKey]:
+                dataset[eventKey][week] = 0
+            thisWeekValue = counts[eventKey] + value
+            dataset[eventKey][week] = thisWeekValue
+            counts[eventKey] = thisWeekValue
+
+        # fill the gaps, not all week may have values
+        weeksList = list(weeks)
+        weeksList.sort()
+        accValues = {}
+        for event in dataset:
+            accValues[event] = {}
+            lastValue = 0
+            for week in weeksList:
+                if week in dataset[event]:
+                    lastValue = dataset[event][week]
+                accValues[event][week] = lastValue
+
+        # prepare data to display
+        return GraphStat(accValues, weeksList, orientation='v',
+                         showLegend=True,
+                         xAxis='week', yAxis='Events', barmode="stack").plot()
 
     def get(self, request, *args, **kwargs):
         totalTrials = FieldTrial.objects.count()
@@ -142,5 +186,6 @@ class StatsDataApi(APIView):
         favorGraph = PieGraph.draw(favorables, 'Favorable', totalTrials)
         data = {'stats': stats, 'totalTrials': totalTrials,
                 'publicGraph': publicGraph, 'favorGraph': favorGraph,
-                'eventsGraph': self.generateEventGraphs()}
+                'eventsGraph': self.generateEventGraphs(),
+                'eventsWeeklyGraph': self.generateEventWeeklyGraphs()}
         return render(request, StatsDataApi.TEMPLATE, data)

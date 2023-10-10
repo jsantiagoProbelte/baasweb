@@ -278,6 +278,13 @@ class EventBaas(models.TextChoices):
     DELETE_TREATMENT = 'D_TT', 'delete TREATMENT'
     NEW_DATA = 'N_DT', 'new data'
 
+    @classmethod
+    def get_label(cls, value):
+        for choice in cls.choices:
+            if choice[0] == value:
+                return choice[1]
+        return None
+
 
 class EventLog(ModelHelpers, models.Model):
     event = models.CharField(
