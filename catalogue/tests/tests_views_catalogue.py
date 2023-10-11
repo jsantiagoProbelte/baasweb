@@ -69,7 +69,7 @@ class ProductViewsTest(TestCase):
     _units = []
 
     def setUp(self):
-        self._apiFactory = ApiRequestHelperTest()
+        self._apiFactory = ApiRequestHelperTest(is_admin=True)
         TrialDbInitialLoader.loadInitialTrialValues()
         for fieldTrialInfo in ProductViewsTest.FIELDTRIALS:
             self._fieldTrials.append(FieldTrial.createTrial(**fieldTrialInfo))
@@ -97,6 +97,8 @@ class ProductViewsTest(TestCase):
         request = self._apiFactory.get('product-list')
         self._apiFactory.setUser(request)
         response = ProductListView.as_view()(request)
+        # if user is not admin , it will not see any product because
+        # there is no trials associated with it
         self.assertNotContains(response, 'No Product yet.')
         numberProducts = Product.objects.count()
         self.assertTrue(

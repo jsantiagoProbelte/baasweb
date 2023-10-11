@@ -48,7 +48,7 @@ class TrialFilterTest(TestCase):
         user = None
 
         def __init__(self, attributes, name='Waldo',
-                     superUser='True', is_staff='True'):
+                     superUser=True, is_staff=True):
             self.GET = attributes
             self.user = UserStub(name, superUser, is_staff)
 
@@ -138,7 +138,8 @@ class TrialFilterTest(TestCase):
         filters = [{'name': 'trial2-3'}, {'name': '20030132'}]
         for posibleFilter in filters:
             fHelper = TrialFilterHelper(
-                TrialFilterTest.MockRequest(posibleFilter))
+                TrialFilterTest.MockRequest(posibleFilter,
+                                            superUser=False))
             fHelper.filter()
             objectList = fHelper.getClsObjects(Product)
             self.assertEqual(len(objectList), 1)

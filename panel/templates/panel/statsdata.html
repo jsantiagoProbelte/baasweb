@@ -45,10 +45,21 @@
     {% endfor %}
     </div>
 {% endfor %}
-<div class="card no-border mb-3">
-    <div class="card-header-baas-trial">Events</div>
-    {{eventsGraph|safe}}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card no-border mb-3">
+            <div class="card-header-baas-trial">Events</div>
+            {{eventsGraph|safe}}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card no-border mb-3">
+            <div class="card-header-baas-trial">Events weekly</div>
+            {{eventsWeeklyGraph|safe}}
+        </div>
+    </div>
 </div>
+
 {% endblock %}  
 
 {% block scripts %}
