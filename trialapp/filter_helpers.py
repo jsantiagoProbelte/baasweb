@@ -355,7 +355,6 @@ class BaaSView(LoginRequiredMixin, View):
 
         # pagination
         allItems = self.get_context_data()
-        print(list(allItems))
         paginator = Paginator(allItems, BaaSView.paginate_by)
         currentPage = paginator.get_page(page)
 
