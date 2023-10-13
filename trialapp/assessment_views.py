@@ -111,6 +111,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         rateSets = Assessment.getRateSets(new_list)
         ratedParts = Assessment.getRatedParts(new_list)
         self._thesis = Thesis.getObjects(self._trial, as_dict=True)
+        hasThesis = len(list(Thesis.getObjects(self._trial))) > 0
 
         # Replica data
         graphPlotsR, classGraphR = self.getGraphData(
@@ -132,7 +133,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'fieldTrial': self._trial,
                 'graphPlotsR': graphPlotsR, 'classGraphR': classGraphR,
                 'graphPlotsT': graphPlotsT, 'classGraphT': classGraphT,
-                'weatherGraph': weatherGraph,
+                'weatherGraph': weatherGraph, 'hasThesis': hasThesis,
                 **permisions}
 
 

@@ -437,7 +437,7 @@ class Thesis(ModelHelpers, models.Model):
             for treatment in TreatmentThesis.getObjects(item):
                 if treatments != '':
                     treatments += ' + '
-                treatments += treatment.treatment.getName()
+                treatments += '' if treatment.treatment is None else treatment.treatment.getName()
             if asArray:
                 thesisDisplay.append([
                     item.number, item.name, item.description, treatments])

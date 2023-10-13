@@ -88,7 +88,7 @@ class TrialApi(LoginRequiredMixin, DetailView):
             for treatment in TreatmentThesis.getObjects(thesisObj):
                 if treatments != '':
                     treatments += ' + '
-                treatments += treatment.treatment.getName()
+                    treatments += '' if treatment.treatment is None else treatment.treatment.getName()
             if thesis['id'] == controlThesis:
                 idColor = 'bg-custom-control'
             if thesis['id'] == keyThesis:
