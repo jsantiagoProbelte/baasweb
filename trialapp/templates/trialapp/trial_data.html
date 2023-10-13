@@ -4,7 +4,7 @@
 {% load custom_filter_templates %}
 {% block content %}
 
-{% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id%}
+{% include "trialapp/header_page_trial.html" with title='All plot data' subheader=fieldTrial.name new_href_id='assessment-add' refId=fieldTrial.id showButton=True%}
 {% include "trialapp/trial_data_table.html" %}
 
 

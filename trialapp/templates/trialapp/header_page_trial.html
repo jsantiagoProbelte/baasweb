@@ -14,7 +14,7 @@
                 data-toggle="tooltip" data-placement="top" title='Create new item'>&#43;</a>
         {% endif %}
         
-        {% if new_href_id and edit_trial_perm%}
+        {% if new_href_id and edit_trial_perm and showButton %}
         <a href="{% url new_href_id refId %}" class="btn btn-box-baas btn-sm"
             data-toggle="tooltip" data-placement="top" title='Create new item'>
             <span class="material-symbols-outlined" >add</span></a>

@@ -1,7 +1,7 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name new_href_id="assessment-add" refId=fieldTrial.id %}
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name new_href_id="assessment-add" refId=fieldTrial.id showButton=hasThesis %}
 <div class="row">
     <div class="col-md-4">
         <div class="card card-body-baas">

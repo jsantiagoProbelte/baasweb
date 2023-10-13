@@ -104,7 +104,7 @@ class Treatment(ModelHelpers, models.Model):
     def getName(self, short=False):
         productName = ''
         if not short:
-            productName = self.product.name
+            productName = '' if self.product is None else self.product.name
         rateUnitName = '{} {}'.format(self.rate, self.rate_unit.name)
 
         return '{} {} {}'.format(productName, rateUnitName, self.name)

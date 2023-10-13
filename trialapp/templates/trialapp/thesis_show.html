@@ -1,7 +1,7 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='thesis' edit_href="thesis-update" item=thesis delete_url='thesis-delete'%}
+{% include "trialapp/header_page_trial.html" with title=title subheader=fieldTrial.name subtitle='thesis' edit_href="thesis-update" item=thesis delete_url='thesis-delete' showButton=True%}
 
 <div class="row">
   <div class="col-md-4">

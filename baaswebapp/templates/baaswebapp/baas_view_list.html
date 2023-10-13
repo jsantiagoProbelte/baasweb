@@ -88,8 +88,13 @@
     {
         $('#pk').show();
     }
-    {% include 'check_passkeys.js' %}
-    $(document).ready(check_passkey(true,register_pk))
+
+    try{
+        {% include 'check_passkeys.js' %}
+        $(document).ready(check_passkey(true,register_pk))
+    }catch(error){
+        console.error(error)
+    }
 
     window.addEventListener('load', (event) => {
         [...document.querySelectorAll(".form-control option:first-child")].forEach(option => {
