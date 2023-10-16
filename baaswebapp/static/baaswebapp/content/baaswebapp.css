@@ -1592,3 +1592,16 @@ div.flex-inline-form input:focus{
 .checkbox label input{
   margin-right: 5px;
 }
+
+i.flag{
+  zoom:2;
+  margin: 0px !important;
+}
+
+li:has(a.active):has(i.flag){
+  background-color: var(--custom-baas-alt);
+}
+
+li:has(i.flag){
+  padding: 10px;
+}

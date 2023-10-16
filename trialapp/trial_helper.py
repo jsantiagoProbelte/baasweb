@@ -51,11 +51,20 @@ class TrialModel():
             'description': {
                 'label': "Description", 'required': False,
                 'type': T_T, 'rows': 10},
+            'description_en': {
+                'label': "Description EN", 'required': False,
+                'type': T_T, 'rows': 10},
             'comments_criteria': {
                 'label': "Evaluation Criteria",
                 'required': False, 'type': T_T, 'rows': 5},
+            'comments_criteria_en': {
+                'label': "Evaluation Criteria EN",
+                'required': False, 'type': T_T, 'rows': 5},
             'conclusion': {
                 'label': "Conclusion", 'required': False,
+                'type': T_T, 'rows': 10},
+            'conclusion_en': {
+                'label': "Conclusion EN", 'required': False,
                 'type': T_T, 'rows': 10},
 
         },
@@ -137,7 +146,8 @@ class TrialModel():
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
             'latitude', 'application_volume_unit', 'conclusion', 'soil',
-            'favorable', 'public')
+            'favorable', 'public', 'description_en', 'conclusion_en', 
+            'comments_criteria_en')
 
     @classmethod
     def applyModel(cls, trialForm):

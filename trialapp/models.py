@@ -138,11 +138,14 @@ class FieldTrial(ModelHelpers, models.Model):
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     responsible = models.CharField(max_length=100)
     description = models.TextField(null=True)
+    description_en = models.TextField(null=True)
     conclusion = models.TextField(null=True)
+    conclusion_en = models.TextField(null=True)
 
     ref_to_eppo = models.CharField(max_length=100, null=True)
     ref_to_criteria = models.CharField(max_length=100, null=True)
     comments_criteria = models.TextField(null=True)
+    comments_criteria_en = models.TextField(null=True)
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
