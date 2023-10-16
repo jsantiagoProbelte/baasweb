@@ -146,7 +146,7 @@ class TrialModel():
             'application_volume', 'mode', 'crop_variety', 'cultivation',
             'crop_age', 'seed_date', 'transplant_date', 'longitude',
             'latitude', 'application_volume_unit', 'conclusion', 'soil',
-            'favorable', 'public', 'description_en', 'conclusion_en', 
+            'favorable', 'public', 'description_en', 'conclusion_en',
             'comments_criteria_en')
 
     @classmethod
