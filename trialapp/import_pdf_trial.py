@@ -1393,6 +1393,38 @@ def getCfu(treatment, volume):
     return cfu
 
 
+def saveDataPoint(dataPoint, referenceData, dapa,
+                  weatherData, progress, trial,
+                  ttreatment, assmt):
+    cfu = getCfu(ttreatment.treatment,
+                 trial.application_volume)
+    if not cfu:
+        print(f'No managed unit for {trial.code} - '
+              f'{assmt.assessment_date}')
+    return {
+        'trial_id': trial.id,
+        'thesis_id': ttreatment.thesis_id,
+        'assmt_id': assmt.id,
+        'date': dataPoint.assessment.assessment_date,
+        'repl_id': dataPoint.reference.id,
+        'value': Abbott.do(
+            dataPoint.value,
+            referenceData[dataPoint.reference.number])/100,
+        # treatment values
+        'cfu': cfu,
+        #  unit = ttreatment.treatment.rate_unit.name
+        # value assessments
+        'dapa': dapa,  # days after previous aplication
+        'progress': progress,  # number of the evaluation in %
+        # values trials
+        'irrigation': trial.irrigation.name,
+        'mode': trial.mode.name,
+        'soil': trial.soil,
+        'cultivation': trial.cultivation.name,
+        # weather info
+        **weatherData}
+
+
 def extractDataset():
     probelte = Vendor.objects.get(name='Probelte').id
     trials = FieldTrial.objects.filter(
@@ -1439,35 +1471,9 @@ def extractDataset():
                     assessment=assmt)
 
                 for dataPoint in replicaData:
-                    cfu = getCfu(ttreatment.treatment,
-                                 trial.application_volume)
-                    if not cfu:
-                        print(f'No managed unit for {trial.code} - '
-                              f'{assmt.assessment_date}')
-                    dataPoints.append({
-                        'trial_id': trial.id,
-                        'thesis_id': ttreatment.thesis_id,
-                        'assmt_id': assmt.id,
-                        'date': dataPoint.assessment.assessment_date,
-                        'repl_id': dataPoint.reference.id,
-                        'value': Abbott.do(
-                            dataPoint.value,
-                            referenceData[dataPoint.reference.number])/100,
-                        # treatment values
-                        'cfu': cfu,
-                        #  unit = ttreatment.treatment.rate_unit.name
-                        # value assessments
-                        'dapa': dapa,  # days after previous aplication
-                        'progress': progress,  # number of the evaluation in %
-                        # values trials
-                        'irrigation': trial.irrigation.name,
-                        'mode': trial.mode.name,
-                        'soil': trial.soil,
-                        'cultivation': trial.cultivation.name,
-                        # weather info
-                        **weatherData
-                    })
-
+                    dataPoints.append(saveDataPoint(
+                        dataPoint,  referenceData, dapa, weatherData,
+                        progress, trial, ttreatment, assmt))
     exportCsvFile('./datapoints', dataPoints)
 
 
