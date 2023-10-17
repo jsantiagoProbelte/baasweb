@@ -18,7 +18,8 @@ from catalogue.models import Product, Treatment, \
 from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
 import glob  # noqa: E402
 import csv  # noqa: E402
-from trialapp.trial_analytics import Abbott
+from trialapp.trial_analytics import Abbott  # noqa: E402
+
 
 class TrialTags:
     RATING_UNIT = 'Rating Unit'
