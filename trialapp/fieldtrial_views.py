@@ -8,13 +8,14 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.bootstrap import FormActions, TabHolder, Tab
 from trialapp.models import FieldTrial, StatusTrial
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
 from django.utils.translation import gettext_lazy as _
 from trialapp.filter_helpers import TrialFilterExtended, DetailedTrialListView
 from baaswebapp.models import EventBaas, EventLog
+from django.utils.html import format_html
 
 
 class FieldTrialListView(LoginRequiredMixin, FilterView):
@@ -128,10 +129,20 @@ class FieldTrialFormLayout(FormHelper):
     def showReportInfo(self):
         return Div(
             Div(HTML('Report'), css_class="card-header-baas-trial"),
-            Div(Field('description', css_class='trial-input'),
-                Field('comments_criteria', css_class='trial-input'),
-                Field('conclusion', css_class='trial-input'),
-                css_class="m-3"),
+            TabHolder(
+                Tab(format_html('<i class="flag flag-spain"></i>'),
+                    Div(Field('description', css_class='trial-input'),
+                        Field('comments_criteria', css_class='trial-input'),
+                        Field('conclusion', css_class='trial-input'),
+                        css_class="m-3"),
+                    css_class="fade show"),
+                Tab(
+                    format_html('<i class="flag flag-united-kingdom"></i>'),
+                    Div(Field('description_en', css_class='trial-input'),
+                        Field('comments_criteria_en', css_class='trial-input'),
+                        Field('conclusion_en', css_class='trial-input'),
+                        css_class="m-3"),
+                    css_class="fade")),
             css_class="card no-border mb-3")
 
     def showLayout(self):

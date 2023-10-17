@@ -54,7 +54,11 @@
         <div class="card card-body-baas mt-3">
             <p class="card-title txt-encode-20 capitalize-first">{% trans "recommendations" %}</p>
             <p class="txt-regular-13">
-                {% include 'baaswebapp/show_value.html' with value=trial.conclusion url_fix=edit_trial%}
+                {% if LANGUAGE_CODE == 'es' %}
+                    {% include 'baaswebapp/show_value.html' with value=trial.conclusion url_fix=edit_trial%}
+                {% elif LANGUAGE_CODE == 'en' %}
+                    {% include 'baaswebapp/show_value.html' with value=trial.conclusion_en url_fix=edit_trial%}
+                {% endif %}
             </p>
         </div>
         <div class="card card-body-baas mt-3" >

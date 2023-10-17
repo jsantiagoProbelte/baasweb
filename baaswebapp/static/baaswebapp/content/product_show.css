@@ -1,9 +1,15 @@
 ul.product-primary-tabs{
     border: none
 }
-.tab-pane:not(.active){
+
+.tab-pane#trials:not(.active){
     display: none !important;
 }
+
+.tab-pane#products:not(.active){
+    display: none !important;
+}
+
 ul.product-primary-tabs > li > button.active{
     color: var(--custom-baas) !important;
     background-color: var(--custom-bg-color) !important;

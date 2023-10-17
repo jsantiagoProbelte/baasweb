@@ -8,6 +8,14 @@
             <div class="aux-title no-border gray">{% trans 'Type of trial' %}</div>
             <p class="title">{% include 'baaswebapp/show_value.html' with value=trialInfo.trial_type__name url_fix=edit_trial %}</p>
         </div>
+        <div class="card-baas-alt ml-1 mr-1 mt-1" style="margin: 0 20px">
+            <div class="aux-title no-border gray">{% trans 'Description' %}</div>
+            {% if LANGUAGE_CODE == 'es' %}
+                {% include 'baaswebapp/show_value.html' with value=trial.description url_fix=edit_trial%}
+            {% elif LANGUAGE_CODE == 'en' %}
+                {% include 'baaswebapp/show_value.html' with value=trial.description_en url_fix=edit_trial%}
+            {% endif %}
+        </div>
         <div class="card-section">
             <p class="property larger"><small>{% trans 'Nº of treatments' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.num_treatments url_fix=edit_trial %}</b></p>
             <p class="property larger"><small>{% trans 'Nº repetitions/treatment' %}</small><b>{% include 'baaswebapp/show_value.html' with value=trialInfo.repetitions url_fix=edit_trial %}</b></p>
