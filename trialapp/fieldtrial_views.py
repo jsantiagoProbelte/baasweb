@@ -130,14 +130,14 @@ class FieldTrialFormLayout(FormHelper):
         return Div(
             Div(HTML('Report'), css_class="card-header-baas-trial"),
             TabHolder(
-                Tab(format_html('<i class="flag flag-spain"></i>'),
+                Tab(format_html('Castellano'),
                     Div(Field('description', css_class='trial-input'),
                         Field('comments_criteria', css_class='trial-input'),
                         Field('conclusion', css_class='trial-input'),
                         css_class="m-3"),
                     css_class="fade show"),
                 Tab(
-                    format_html('<i class="flag flag-united-kingdom"></i>'),
+                    format_html('English'),
                     Div(Field('description_en', css_class='trial-input'),
                         Field('comments_criteria_en', css_class='trial-input'),
                         Field('conclusion_en', css_class='trial-input'),
