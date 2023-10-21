@@ -1,11 +1,13 @@
 {% extends "baaswebapp/layout.html" %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 {% block content %}
     {% if errors %}<div class="alert alert-primary" role="alert">{{ errors }}</div>{% endif %}
     
+    <p class="mt-3 mb-3 txt-presicav-50-700 txt-brand">{% trans "Product Recommendation" %}</p>
     <div class="row">
         <div class="col-md-4">
-            <h1 class="mt-3 mb-3">Product Recommender</h1>
+            
             <div class="card card-body-baas mb-3">
                 <div id="map" style="height: 500px" width="100%"></div>
                 <div id="latlong"></div>
@@ -16,7 +18,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            {% include "trialapp/weather_graphs.html" with weatherGraph=weatherGraph %}
+            {% include "trialapp/trial_content_cards.html" with dataContent=weatherGraph %}
         </div>
         <div class="col-md-4">
             {% include 'panel/table_recomender.html' with data_table=daily_weather title='Weather' %}
