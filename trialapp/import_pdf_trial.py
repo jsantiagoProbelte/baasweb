@@ -3,16 +3,18 @@ import django
 import tabula
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
+from django.db.models import Avg
 import shutil
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.remote_prod')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import Weather  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Objective, Plague, \
     Thesis, Replica, StatusTrial, TrialType, TreatmentThesis, \
-    Application  # noqa: E402
-from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
+    Application, PartRated, Sample  # noqa: E402
+from trialapp.data_models import ReplicaData, Assessment, \
+    SampleData  # noqa: E402
 from catalogue.models import Product, Treatment, \
     UNTREATED, DEFAULT, RateUnit, Vendor  # noqa: E402
 from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
@@ -1477,6 +1479,123 @@ def extractDataset():
     exportCsvFile('./datapoints', dataPoints)
 
 
+seriesDates = {
+    'SO': '2022-12-15',
+    'S1': '2022-12-26',
+    'S2': '2023-01-02',
+    'S3': '2023-01-30',
+    'S4': '2023-02-13',
+    'S5': '2023-02-27',
+    'S6': '2023-03-27'}
+
+
+def to_float(value):
+    try:
+        value = value.replace(',', '.')
+        return float(value)
+    except ValueError:
+        return None
+
+
+def importQpcr(trial, fileName):
+    with open(fileName) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        for row in reader:
+            ratio = to_float(row['Ratio   '])
+            cq = to_float(row['Cq   '])
+            if not cq:
+                continue
+
+            gene = row['Gene Name']
+            rateName = gene.replace(' ', '')
+            rate_type_ratio = RateTypeUnit.findOrCreate(
+                name=rateName + ' Ratio Cq',
+                unit='Ratio Cq')
+            rate_type_cq = RateTypeUnit.findOrCreate(
+                name=rateName + ' Cq',
+                unit='Cq')
+            timestamp = row['Sample Name']
+            blocks = timestamp.split(' ')
+            series = blocks[0]
+            dateAss = seriesDates.get(series, None)
+            if not dateAss:
+                continue
+            assmt_cq = Assessment.findOrCreate(
+                name=f'{series} {rateName}',
+                part_rated=PartRated.FRUIT,
+                assessment_date=dateAss,
+                field_trial=trial,
+                crop_stage_majority='-',
+                rate_type=rate_type_cq)
+            assmt_ratio = Assessment.findOrCreate(
+                name=f'{series} {rateName}',
+                part_rated=PartRated.FRUIT,
+                assessment_date=dateAss,
+                field_trial=trial,
+                crop_stage_majority='-',
+                rate_type=rate_type_ratio)
+            replicaName = blocks[1]
+            replicas = Replica.objects.filter(
+                thesis__field_trial_id=trial.id,
+                name=replicaName)
+            if not replicas:
+                print(f'ERROR, replica {replicaName} should exists')
+                break
+            sampleNumber = int(blocks[2][1])
+            sample = Sample.findOrCreate(replica=replicas[0],
+                                         number=sampleNumber)
+            SampleData.findOrCreate(
+                reference=sample, assessment=assmt_cq,
+                value=cq)
+            if ratio:
+                SampleData.findOrCreate(
+                    reference=sample, assessment=assmt_ratio,
+                    value=ratio)
+
+
+def importQpcrFiles():
+    folder_path = '../RawdataqPCR'
+    trial = FieldTrial.objects.get(code='20230502')
+    # Loop through all files in the folder and its subdirectories
+    for foldername, subfolders, filenames in os.walk(folder_path):
+        for filename in filenames:
+            # Get the full path of the file
+            fileName = os.path.join(foldername, filename)
+
+            # Check if the path points to a file (not a directory)
+            if fileName.split('.')[-1] == 'csv':
+                print(f"Import {fileName}")
+                importQpcr(trial, fileName)
+
+
+def calculateReplicaValues():
+    trial = FieldTrial.objects.get(code='20230502')
+    for unit in ['Ratio Cq', 'Cq']:
+        rate_units = RateTypeUnit.objects.filter(unit=unit)
+
+        for rate_unit in rate_units:
+            for asstm in Assessment.objects.filter(
+                    rate_type=rate_unit,
+                    field_trial_id=trial.id):
+                avgValues = SampleData.objects.values(
+                    'reference__replica_id',
+                ).annotate(
+                    value=Avg('value')
+                ).filter(
+                    assessment_id=asstm.id)
+
+                for avgValue in avgValues:
+                    ReplicaData.findOrCreate(
+                        assessment_id=asstm.id,
+                        reference_id=avgValue['reference__replica_id'],
+                        value=avgValue['value'])
+
+
+def importQPCR():
+    importQpcrFiles()
+    calculateReplicaValues()
+
+
 if __name__ == '__main__':
     # cleanPlagues()
     # importConcreateCSV()
@@ -1487,4 +1606,5 @@ if __name__ == '__main__':
     # discoverReports()
     # testArchive()
     # extractData()
-    extractDataset()
+    # extractDataset()
+    importQPCR()
