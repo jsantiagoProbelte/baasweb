@@ -277,7 +277,6 @@ class CloneTrial(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         trial = self.get_object()
         trialP = TrialPermission(trial, self.request.user)
-        error = None
 
         if trialP.canClone():
             cloned_trial = trial.deepclone()

@@ -580,7 +580,7 @@ class TrialPermission:
     DISCOVERABLE = 'discover_trial'
     # Can download status
     DOWNLOADABLE = 'download_trial'
-    #Can clone status
+    # Can clone status
     CLONABLE = 'clone_trial'
 
     # --- Type users

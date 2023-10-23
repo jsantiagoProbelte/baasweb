@@ -8,6 +8,7 @@ from baaswebapp.models import RateTypeUnit
 from django.utils.translation import gettext_lazy as _
 from django.forms.models import model_to_dict
 
+
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     scientific = models.CharField(max_length=100)
