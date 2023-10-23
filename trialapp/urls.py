@@ -54,6 +54,10 @@ urlpatterns = [
         fieldtrial_views.FieldTrialDeleteView.as_view(),
         name='fieldtrial-delete'),
     path(
+        'fieldtrial/clone/<int:pk>/',
+        fieldtrial_views.CloneTrial.as_view(),
+        name='fieldtrial-clone'),
+    path(
         'download_pdf/<int:pk>/',
         fieldtrial_views.DownloadTrial.as_view(),
         name='download_pdf'),

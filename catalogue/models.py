@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import model_to_dict
 from baaswebapp.models import ModelHelpers, PType, Category
 from django.utils.translation import gettext_lazy as _
 
@@ -85,6 +86,17 @@ class Treatment(ModelHelpers, models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
 
     @classmethod
+    def createTreatment(cls, **kwargs):
+        obj = Treatment()
+        obj.name = kwargs["name"]
+        obj.rate = kwargs["rate"]
+        obj.rate_unit = RateUnit.objects.get(id=kwargs["rate_unit"])
+        obj.product = Product.objects.get(id=kwargs["product"]) if kwargs["product"] else None
+
+        if kwargs["commit"]:
+            obj.save()
+
+    @classmethod
     def getItems(cls, product):
         treats = Treatment.objects.filter(product=product) if product \
                  else Treatment.objects.all()
@@ -111,3 +123,6 @@ class Treatment(ModelHelpers, models.Model):
 
     def getDosis(self):
         return {'rate': self.rate, 'unit': self.rate_unit.name}
+
+    def clone(self):
+        return self.createTreatment(**model_to_dict(self), commit=True)

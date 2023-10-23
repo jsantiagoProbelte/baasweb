@@ -1,12 +1,12 @@
 # Create your models here.
-from django.db import models
+from django.db import models, transaction
 import datetime as dt
 from dateutil import relativedelta
 from baaswebapp.models import ModelHelpers
 from catalogue.models import Product, Treatment, RateUnit
 from baaswebapp.models import RateTypeUnit
 from django.utils.translation import gettext_lazy as _
-
+from django.forms.models import model_to_dict
 
 class Crop(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
@@ -128,6 +128,7 @@ class FieldTrial(ModelHelpers, models.Model):
     class TrialMeta(models.TextChoices):
         FIELD_TRIAL = 'FT', _('Field Trial')
         LAB_TRIAL = 'LT', _('Lab Trial')
+
     trial_meta = models.CharField(
         max_length=2,
         choices=TrialMeta.choices,
@@ -337,7 +338,7 @@ class FieldTrial(ModelHelpers, models.Model):
             responsible=kwargs['responsible'],
             product=Product.objects.get(pk=kwargs['product']),
             crop=Crop.objects.get(pk=kwargs['crop']),
-            plague=Plague.objects.get(pk=kwargs['plague']),
+            plague=Plague.objects.get(pk=kwargs['plague']) if kwargs["plague"] else None,
             initiation_date=kwargs['initiation_date'],
             report_filename=kwargs['report_filename'],
             contact=kwargs['contact'],
@@ -369,6 +370,30 @@ class FieldTrial(ModelHelpers, models.Model):
             return "/labtrial/%i/" % self.id
         else:
             return "/fieldtrial_api/%i/" % self.id
+
+    def clone(self):
+        obj = self.createTrial(**model_to_dict(self))
+        return obj
+
+    @transaction.atomic
+    def deepclone(self):
+        try:
+            cloned_trial = None
+            if self.id:
+                cloned_trial = self.clone()
+                cloned_trial.name += ' - CLONADO'
+                cloned_trial.save()
+
+                thesisList = Thesis.objects.all().filter(field_trial=self.id)
+                for thesis in thesisList:
+                    thesis.deepclone(cloned_trial.id)
+            else:
+                raise Exception("This trial has no id.")
+
+            return cloned_trial
+        except Exception as e:
+            transaction.set_rollback(True)
+            print(e)
 
 
 class Thesis(ModelHelpers, models.Model):
@@ -462,6 +487,23 @@ class Thesis(ModelHelpers, models.Model):
             if product.vendor and product.vendor.key_vendor:
                 return product.name
         return None
+
+    def clone(self, trial_id):
+        obj = self.createThesis(**model_to_dict(self), field_trial_id=trial_id)
+        return obj
+
+    def deepclone(self, trial_id):
+        new_thesis = self.clone(trial_id)
+        treatmentThesisList = TreatmentThesis.objects.filter(thesis=self.id)
+
+        for treatmentThesis in treatmentThesisList:
+            treatmentThesisObj = treatmentThesis
+            treatmentThesis.thesis = new_thesis
+
+            treatment = Treatment.objects.get(id=treatmentThesisObj.treatment.id).clone()
+            treatmentThesis.treatment = treatment
+
+        return new_thesis
 
 
 class Application(ModelHelpers, models.Model):
