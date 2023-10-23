@@ -1523,7 +1523,7 @@ def test_trimMean():
     return trimMean, mean
 
 
-def importQpcr(trial, fileName):
+def importQpcr(trial, fileName, part_rated):
     with open(fileName) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
@@ -1548,14 +1548,14 @@ def importQpcr(trial, fileName):
                 continue
             assmt_cq = Assessment.findOrCreate(
                 name=f'{series} {rateName}',
-                part_rated=PartRated.FRUIT,
+                part_rated=part_rated,
                 assessment_date=dateAss,
                 field_trial=trial,
                 crop_stage_majority='-',
                 rate_type=rate_type_cq)
             assmt_ratio = Assessment.findOrCreate(
                 name=f'{series} {rateName}',
-                part_rated=PartRated.FRUIT,
+                part_rated=part_rated,
                 assessment_date=dateAss,
                 field_trial=trial,
                 crop_stage_majority='-',
@@ -1591,7 +1591,15 @@ def importQpcrFiles():
             # Check if the path points to a file (not a directory)
             if fileName.split('.')[-1] == 'csv':
                 print(f"Import {fileName}")
-                importQpcr(trial, fileName)
+                part_rated = None
+                if 'Fresa' in filename:
+                    part_rated = PartRated.FRUIT
+                    continue
+                elif 'Hoja' in filename:
+                    part_rated = PartRated.LEAF
+                else:
+                    continue
+                importQpcr(trial, fileName, part_rated)
 
 
 def calculateReplicaValues():
