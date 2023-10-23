@@ -70,15 +70,19 @@
         {% for repetition in repetitions %}
           <tr>
             <td>{{repetition.number}}</td>
-            <td>{% if repetition.name %}
-                  {{repetition.name}}
-                {% else %}
+            <td>
                   <form action="{% url 'set-replica-name' repetition.id %}" class='flex-inline-form' method="POST">
                     {% csrf_token %}
-                    <input type="text" name="name" maxlength="10" class="mb-3 textinput textInput form-control">
-                    <input type="submit" name="save" value="save" class="mt-4 btn btn-primary btn btn-info text-right">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <input type="text" name="name" maxlength="10" value='{{repetition.name}}' class="mb-3 textinput textInput form-control">
+                      </div>
+                      <div class="col-md-4">
+                        <input type="submit" name="save" value="save" class="mt-4 btn btn-info">
+                      </div>
+                    </div>
                   </form>
-                {% endif %}
+
             </td>
           </tr>
         {% endfor %}
