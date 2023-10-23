@@ -1,21 +1,26 @@
 import os
 import django
 import tabula
+from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
+from django.db.models import Avg
 import shutil
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
+from baaswebapp.models import Weather  # noqa: E402
 from baaswebapp.models import ModelHelpers, RateTypeUnit  # noqa: E402
 from trialapp.models import FieldTrial, Crop, Objective, Plague, \
     Thesis, Replica, StatusTrial, TrialType, TreatmentThesis, \
-    Application  # noqa: E402
-from trialapp.data_models import ReplicaData, Assessment  # noqa: E402
+    Application, PartRated, Sample  # noqa: E402
+from trialapp.data_models import ReplicaData, Assessment, \
+    SampleData  # noqa: E402
 from catalogue.models import Product, Treatment, \
     UNTREATED, DEFAULT, RateUnit, Vendor  # noqa: E402
 from trialapp.trial_helper import TrialFile, PdfTrial  # noqa: E402
 import glob  # noqa: E402
 import csv  # noqa: E402
+from trialapp.trial_analytics import Abbott  # noqa: E402
 
 
 class TrialTags:
@@ -1258,12 +1263,13 @@ def extractData():
     trialFields = [
         'id', 'irrigation', 'mode', 'soil', 'cultivation',
         'application_volume', 'avg_temperature', 'avg_humidity',
-        'avg_precipitation']
+        'avg_precipitation', 'latitude', 'longitude']
 
     trials = FieldTrial.objects.filter(
         plague=Plague.objects.get(other='Botrytis'),
         crop=Crop.objects.get(name='Strawberry')).values(*trialFields)
     trialIds = [item['id'] for item in trials]
+
     exportCsvFile('./trials_data', trials)
     treatments = TreatmentThesis.objects.filter(
         thesis__field_trial_id__in=trialIds)
@@ -1317,11 +1323,277 @@ def extractData():
         })
     exportCsvFile('./datapoints', dataPoints)
 
+    weatherData = []
+    for trial in trials:
+        weatherInfo = Weather.objects.filter(
+                latitude=trial['latitude'],
+                longitude=trial['longitude']
+            ).values(
+                'date',
+                'max_temp', 'min_temp', 'mean_temp',
+                'soil_temp_0_to_7cm', 'soil_moist_0_to_7cm',
+                'dew_point', 'relative_humidity', 'precipitation',
+                'precipitation_hours', 'max_wind_speed'
+            ).order_by('date')
+        for weatherInfoDate in weatherInfo:
+            weatherInfoDate['trial_id'] = trial['id']
+            weatherData.append(weatherInfoDate)
+    exportCsvFile('./weather_data', weatherData)
 
-def migrateTreats():
-    for treat in Treatment.objects.all():
-        treat.product_id = treat.product_id
-        treat.save()
+
+def weatherInfo(trial, assdate):
+    dimensions = [
+        'max_temp', 'min_temp', 'mean_temp',
+        'soil_temp_0_to_7cm', 'soil_moist_0_to_7cm',
+        'dew_point', 'relative_humidity', 'precipitation',
+        'precipitation_hours', 'max_wind_speed']
+
+    assLastDate = assdate - relativedelta(days=1)
+    weatherInfo = Weather.objects.filter(
+            date__range=(assdate - relativedelta(days=8),
+                         assLastDate),
+            latitude=trial.latitude,
+            longitude=trial.longitude
+        ).values('date', *dimensions).order_by('date')
+
+    toReturn = {}
+    toAvg = {3: {}, 5: {}, 7: {}}
+    for wItem in weatherInfo:
+        for dimension in dimensions:
+            diffDays = (assLastDate - wItem['date']).days
+            value = wItem[dimension]
+            if wItem['date'] == assLastDate:
+                toReturn[dimension] = value
+            for days in toAvg:
+                if diffDays < days:
+                    if dimension not in toAvg[days]:
+                        toAvg[days][dimension] = 0
+                    toAvg[days][dimension] += value
+    for days in toAvg:
+        for dimension in toAvg[days]:
+            avg = round(toAvg[days][dimension]/days, 2)
+            toReturn[f'{dimension}_{days}'] = avg
+    return toReturn
+
+
+def getCfu(treatment, volume):
+    cfuLiquido = 1  # 10E11 CFU/L
+    cfuSolido = 10  # 10E10 CFU/g
+    rate = 0
+    if treatment.rate_unit.name == 'mL/L':
+        rate = treatment.rate / 1000
+        cfuP = cfuLiquido
+    elif treatment.rate_unit.name == 'L/ha':
+        rate = treatment.rate / volume
+        cfuP = cfuLiquido
+    elif treatment.rate_unit.name == 'Kg/ha':
+        rate = treatment.rate / volume
+        cfuP = cfuSolido
+    else:
+        return None
+    cfu = rate * cfuP
+    return cfu
+
+
+def saveDataPoint(dataPoint, referenceData, dapa,
+                  weatherData, progress, trial,
+                  ttreatment, assmt):
+    cfu = getCfu(ttreatment.treatment,
+                 trial.application_volume)
+    if not cfu:
+        print(f'No managed unit for {trial.code} - '
+              f'{assmt.assessment_date}')
+    return {
+        'trial_id': trial.id,
+        'thesis_id': ttreatment.thesis_id,
+        'assmt_id': assmt.id,
+        'date': dataPoint.assessment.assessment_date,
+        'repl_id': dataPoint.reference.id,
+        'value': Abbott.do(
+            dataPoint.value,
+            referenceData[dataPoint.reference.number])/100,
+        # treatment values
+        'cfu': cfu,
+        #  unit = ttreatment.treatment.rate_unit.name
+        # value assessments
+        'dapa': dapa,  # days after previous aplication
+        'progress': progress,  # number of the evaluation in %
+        # values trials
+        'irrigation': trial.irrigation.name,
+        'mode': trial.mode.name,
+        'soil': trial.soil,
+        'cultivation': trial.cultivation.name,
+        # weather info
+        **weatherData}
+
+
+def extractDataset():
+    probelte = Vendor.objects.get(name='Probelte').id
+    trials = FieldTrial.objects.filter(
+        plague=Plague.objects.get(other='Botrytis'),
+        crop=Crop.objects.get(name='Strawberry'))
+    dataPoints = []
+    for trial in trials:
+        applications = Application.getObjects(trial).order_by('app_date')
+        treatments = TreatmentThesis.objects.filter(
+            thesis__field_trial_id=trial.id)
+        assmts = Assessment.getObjects(trial).order_by('assessment_date')
+        numAss = len(assmts)
+        countAss = 0
+        for assmt in assmts:
+            if assmt.rate_type.name != 'PESINC':
+                continue
+
+            # Days after previous application
+            dapa = 0
+            for app in applications:
+                check = (assmt.assessment_date - app.app_date).days
+                if check <= 0:
+                    break
+                dapa = check
+
+            # Progress evaluation
+            progress = round(countAss / numAss, 2)
+            countAss += 1
+            weatherData = weatherInfo(trial, assmt.assessment_date)
+
+            referenceData = {
+                item.reference.number: item.value
+                for item in ReplicaData.objects.filter(
+                    reference__thesis_id=trial.control_thesis,
+                    assessment=assmt)}
+
+            for ttreatment in treatments:
+                if ttreatment.thesis_id == trial.control_thesis:
+                    continue
+                if ttreatment.treatment.product.vendor_id != probelte:
+                    continue
+                replicaData = ReplicaData.objects.filter(
+                    reference__thesis_id=ttreatment.thesis_id,
+                    assessment=assmt)
+
+                for dataPoint in replicaData:
+                    dataPoints.append(saveDataPoint(
+                        dataPoint,  referenceData, dapa, weatherData,
+                        progress, trial, ttreatment, assmt))
+    exportCsvFile('./datapoints', dataPoints)
+
+
+seriesDates = {
+    'SO': '2022-12-15',
+    'S1': '2022-12-26',
+    'S2': '2023-01-02',
+    'S3': '2023-01-30',
+    'S4': '2023-02-13',
+    'S5': '2023-02-27',
+    'S6': '2023-03-27'}
+
+
+def to_float(value):
+    try:
+        value = value.replace(',', '.')
+        return float(value)
+    except ValueError:
+        return None
+
+
+def importQpcr(trial, fileName):
+    with open(fileName) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        for row in reader:
+            ratio = to_float(row['Ratio   '])
+            cq = to_float(row['Cq   '])
+            if not cq:
+                continue
+
+            gene = row['Gene Name']
+            rateName = gene.replace(' ', '')
+            rate_type_ratio = RateTypeUnit.findOrCreate(
+                name=rateName + ' Ratio Cq',
+                unit='Ratio Cq')
+            rate_type_cq = RateTypeUnit.findOrCreate(
+                name=rateName + ' Cq',
+                unit='Cq')
+            timestamp = row['Sample Name']
+            blocks = timestamp.split(' ')
+            series = blocks[0]
+            dateAss = seriesDates.get(series, None)
+            if not dateAss:
+                continue
+            assmt_cq = Assessment.findOrCreate(
+                name=f'{series} {rateName}',
+                part_rated=PartRated.FRUIT,
+                assessment_date=dateAss,
+                field_trial=trial,
+                crop_stage_majority='-',
+                rate_type=rate_type_cq)
+            assmt_ratio = Assessment.findOrCreate(
+                name=f'{series} {rateName}',
+                part_rated=PartRated.FRUIT,
+                assessment_date=dateAss,
+                field_trial=trial,
+                crop_stage_majority='-',
+                rate_type=rate_type_ratio)
+            replicaName = blocks[1]
+            replicas = Replica.objects.filter(
+                thesis__field_trial_id=trial.id,
+                name=replicaName)
+            if not replicas:
+                print(f'ERROR, replica {replicaName} should exists')
+                break
+            sampleNumber = int(blocks[2][1])
+            sample = Sample.findOrCreate(replica=replicas[0],
+                                         number=sampleNumber)
+            SampleData.findOrCreate(
+                reference=sample, assessment=assmt_cq,
+                value=cq)
+            if ratio:
+                SampleData.findOrCreate(
+                    reference=sample, assessment=assmt_ratio,
+                    value=ratio)
+
+
+def importQpcrFiles():
+    folder_path = '../RawdataqPCR'
+    trial = FieldTrial.objects.get(code='20230502')
+    # Loop through all files in the folder and its subdirectories
+    for foldername, subfolders, filenames in os.walk(folder_path):
+        for filename in filenames:
+            # Get the full path of the file
+            fileName = os.path.join(foldername, filename)
+
+            # Check if the path points to a file (not a directory)
+            if fileName.split('.')[-1] == 'csv':
+                print(f"Import {fileName}")
+                importQpcr(trial, fileName)
+
+
+def calculateReplicaValues():
+    trial = FieldTrial.objects.get(code='20230502')
+    for unit in ['Ratio Cq', 'Cq']:
+        rate_units = RateTypeUnit.objects.filter(unit=unit)
+
+        for rate_unit in rate_units:
+            for asstm in Assessment.objects.filter(
+                    rate_type=rate_unit,
+                    field_trial_id=trial.id):
+                avgValues = SampleData.objects.values(
+                    'reference__replica_id',
+                ).annotate(
+                    value=Avg('value')
+                ).filter(
+                    assessment_id=asstm.id)
+
+                for avgValue in avgValues:
+                    ReplicaData.findOrCreate(
+                        assessment_id=asstm.id,
+                        reference_id=avgValue['reference__replica_id'],
+                        value=avgValue['value'])
+
+
+def importQPCR():
+    importQpcrFiles()
+    calculateReplicaValues()
 
 
 if __name__ == '__main__':
@@ -1334,4 +1606,5 @@ if __name__ == '__main__':
     # discoverReports()
     # testArchive()
     # extractData()
-    migrateTreats()
+    # extractDataset()
+    importQPCR()

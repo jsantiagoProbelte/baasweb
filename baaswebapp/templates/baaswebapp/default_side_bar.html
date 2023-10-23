@@ -52,12 +52,14 @@
             </ul>
           </div>
         </li>
+        <li class="mb-1"><a class="d-inline-flex align-items-center sidebar-item" href="{% url 'recomender' %}">{% trans "Product Recommendation" %}</a></li>
         <li class="mb-1">
           <form class="d-flex" action="{% url 'fieldtrial-list' %}" method="GET">
             <input class="form-control me-sm-2" type="text" placeholder="{% trans 'name, code, responsible'%}" name="name">
             <button class="btn btn-baas" type="submit">{% trans "Search" %}</button>
           </form>
         </li>
+
       </ul>
       </div>
 </div>

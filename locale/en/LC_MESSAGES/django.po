@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-04 18:15+0200\n"
+"POT-Creation-Date: 2023-10-21 02:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,13 +22,13 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:142
+#: baaswebapp/graphs.py:123 catalogue/templates/catalogue/product_show.html:146
 msgid "weather"
 msgstr ""
 
 #: baaswebapp/graphs.py:151 baaswebapp/graphs.py:154 baaswebapp/graphs.py:159
 #: baaswebapp/graphs.py:161 baaswebapp/graphs.py:164 baaswebapp/graphs.py:287
-#: trialapp/templates/trialapp/trial_conclusions.html:115
+#: trialapp/templates/trialapp/trial_conclusions.html:119
 msgid "precipitation"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "hours"
 msgstr ""
 
 #: baaswebapp/graphs.py:180 baaswebapp/graphs.py:181 baaswebapp/graphs.py:285
-#: trialapp/templates/trialapp/trial_conclusions.html:107
+#: trialapp/templates/trialapp/trial_conclusions.html:111
 msgid "temperature"
 msgstr ""
 
@@ -67,8 +67,8 @@ msgstr ""
 
 #: baaswebapp/graphs.py:657
 #: trialapp/templates/trialapp/trial_assessment_view.html:14
-#: trialapp/templates/trialapp/trial_conclusions.html:61
-#: trialapp/templates/trialapp/trial_conclusions.html:72
+#: trialapp/templates/trialapp/trial_conclusions.html:65
+#: trialapp/templates/trialapp/trial_conclusions.html:76
 #: trialapp/templates/trialapp/trial_show.html:33 trialapp/trial_views.py:451
 msgid "efficacy"
 msgstr ""
@@ -204,11 +204,16 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
-#: baaswebapp/templates/baaswebapp/default_side_bar.html:57
-msgid "name, code, responsible"
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:55
+#: panel/templates/panel/recomender.html:7
+msgid "Product Recommendation"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/default_side_bar.html:58
+msgid "name, code, responsible"
+msgstr ""
+
+#: baaswebapp/templates/baaswebapp/default_side_bar.html:59
 msgid "Search"
 msgstr ""
 
@@ -266,7 +271,7 @@ msgid "Login using BaaS user and password:"
 msgstr ""
 
 #: baaswebapp/templates/baaswebapp/model_delete.html:8
-#: catalogue/tests/tests_views_catalogue.py:141
+#: catalogue/tests/tests_views_catalogue.py:139
 msgid "Are you sure to delete"
 msgstr ""
 
@@ -291,15 +296,15 @@ msgid "product type"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:5
-#: catalogue/templates/catalogue/product_show.html:87
-#: trialapp/templates/trialapp/trial_conclusions.html:143
+#: catalogue/templates/catalogue/product_show.html:91
+#: trialapp/templates/trialapp/trial_conclusions.html:147
 #: trialapp/templates/trialapp/trials_list_header.html:6
 msgid "active substance"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_list_header.html:6
 #: catalogue/templates/catalogue/product_show.html:12
-#: catalogue/templates/catalogue/product_show.html:94
+#: catalogue/templates/catalogue/product_show.html:98
 #: trialapp/templates/trialapp/crop_list_header.html:5
 #: trialapp/templates/trialapp/plagues_list_header.html:5
 #: trialapp/templates/trialapp/trials_list_header.html:7
@@ -326,71 +331,75 @@ msgid "Download Product Info"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:55
-msgid "product variants"
+msgid "known treatments"
+msgstr ""
+
+#: catalogue/templates/catalogue/product_show.html:61
+msgid "add new"
 msgstr ""
 
 #: catalogue/templates/catalogue/product_show.html:70
 msgid "Product Image"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:95
+#: catalogue/templates/catalogue/product_show.html:99
 msgid "*All products trials efficacy range"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:104
-#: catalogue/templates/catalogue/product_show.html:165
+#: catalogue/templates/catalogue/product_show.html:108
+#: catalogue/templates/catalogue/product_show.html:169
 msgid "target"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:112
+#: catalogue/templates/catalogue/product_show.html:116
 msgid "Product Basics"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:116
+#: catalogue/templates/catalogue/product_show.html:120
 msgid "concentration"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:126
+#: catalogue/templates/catalogue/product_show.html:130
 msgid "presentation"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:134
 #: catalogue/templates/catalogue/product_show.html:138
+#: catalogue/templates/catalogue/product_show.html:142
 msgid "Application"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:149
+#: catalogue/templates/catalogue/product_show.html:153
 msgid "Security period"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:153
+#: catalogue/templates/catalogue/product_show.html:157
 msgid "Mixes"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:164
+#: catalogue/templates/catalogue/product_show.html:168
 #: trialapp/filter_helpers.py:21 trialapp/filter_helpers.py:54
 #: trialapp/filter_helpers.py:319
 #: trialapp/templates/trialapp/crop_list_header.html:3
-#: trialapp/templates/trialapp/trial_conclusions.html:85
+#: trialapp/templates/trialapp/trial_conclusions.html:89
 msgid "crop"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:166
+#: catalogue/templates/catalogue/product_show.html:170
 #: trialapp/templates/trialapp/trial_conclusions.html:17
 msgid "dosis"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:167
+#: catalogue/templates/catalogue/product_show.html:171
 #: trialapp/templates/trialapp/trial_conclusions.html:29
 msgid "solution volume"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:168
+#: catalogue/templates/catalogue/product_show.html:172
 #: trialapp/templates/trialapp/trial_conclusions.html:39
 msgid "number applications"
 msgstr ""
 
-#: catalogue/templates/catalogue/product_show.html:169
+#: catalogue/templates/catalogue/product_show.html:173
 #: trialapp/templates/trialapp/trial_conclusions.html:47
 msgid "day intervals"
 msgstr ""
@@ -403,14 +412,14 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: trialapp/fieldtrial_views.py:265
+#: trialapp/fieldtrial_views.py:276
 msgid "Fail on generating download"
 msgstr ""
 
 #: trialapp/filter_helpers.py:24 trialapp/filter_helpers.py:57
 #: trialapp/filter_helpers.py:320
 #: trialapp/templates/trialapp/plagues_list_header.html:3
-#: trialapp/templates/trialapp/trial_conclusions.html:82
+#: trialapp/templates/trialapp/trial_conclusions.html:86
 msgid "pest / disease"
 msgstr ""
 
@@ -558,12 +567,12 @@ msgstr ""
 msgid "Lab Trial"
 msgstr ""
 
-#: trialapp/models.py:309 trialapp/tests/tests_models.py:248
+#: trialapp/models.py:312 trialapp/tests/tests_models.py:248
 #: trialapp/tests/tests_models.py:251
 msgid "Undefined Location"
 msgstr ""
 
-#: trialapp/models.py:312 trialapp/tests/tests_models.py:246
+#: trialapp/models.py:315 trialapp/tests/tests_models.py:246
 msgid "Undefined period"
 msgstr ""
 
@@ -584,7 +593,7 @@ msgid "Thesis Name"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:10
-msgid "Product"
+msgid "Treatments"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_design.html:24
@@ -617,82 +626,86 @@ msgid "Type of trial"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:12
-msgid "Nº of treatments"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:13
-msgid "Nº repetitions/treatment"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:17
-msgid "Copy All"
+msgid "Description"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:20
-msgid "Latitude"
+msgid "Nº of treatments"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:21
+msgid "Nº repetitions/treatment"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:25
-msgid "Longitude"
+msgid "Copy All"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:28
+msgid "Latitude"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:33
-msgid "Plantation"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:35
-msgid "Crop"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:36
-msgid "Previous Crop"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:37
-msgid "Variety"
-msgstr ""
-
-#: trialapp/templates/trialapp/fieldtrial_info.html:38
-msgid "Scientifict Name"
+msgid "Longitude"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:41
-msgid "Crop Age"
+msgid "Plantation"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:42
-msgid "Transplant Date"
+#: trialapp/templates/trialapp/fieldtrial_info.html:43
+msgid "Crop"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:44
+msgid "Previous Crop"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:45
-msgid "Plants /ha"
+msgid "Variety"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:48
-msgid "Repetitions"
+#: trialapp/templates/trialapp/fieldtrial_info.html:46
+msgid "Scientifict Name"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:49
-msgid "Plants Separation"
+msgid "Crop Age"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:50
-msgid "Rows Separation"
+msgid "Transplant Date"
 msgstr ""
 
-#: trialapp/templates/trialapp/fieldtrial_info.html:54
-msgid "Trial Owners"
+#: trialapp/templates/trialapp/fieldtrial_info.html:53
+msgid "Plants /ha"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:56
-msgid "Farmer"
+msgid "Repetitions"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:57
-msgid "CRO"
+msgid "Plants Separation"
 msgstr ""
 
 #: trialapp/templates/trialapp/fieldtrial_info.html:58
+msgid "Rows Separation"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:62
+msgid "Trial Owners"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:64
+msgid "Farmer"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:65
+msgid "CRO"
+msgstr ""
+
+#: trialapp/templates/trialapp/fieldtrial_info.html:66
 msgid "Responsible"
 msgstr ""
 
@@ -751,7 +764,7 @@ msgid "name"
 msgstr ""
 
 #: trialapp/templates/trialapp/trial_assessment_view.html:113
-#: trialapp/templates/trialapp/trial_conclusions.html:87
+#: trialapp/templates/trialapp/trial_conclusions.html:91
 msgid "date"
 msgstr ""
 
@@ -783,36 +796,36 @@ msgstr ""
 msgid "recommendations"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:91
+#: trialapp/templates/trialapp/trial_conclusions.html:95
 msgid "location"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:102
+#: trialapp/templates/trialapp/trial_conclusions.html:106
 #: trialapp/trial_views.py:390
 msgid "weather conditions"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:111
+#: trialapp/templates/trialapp/trial_conclusions.html:115
 msgid "humidity"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:123
+#: trialapp/templates/trialapp/trial_conclusions.html:127
 msgid "cultivation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:127
+#: trialapp/templates/trialapp/trial_conclusions.html:131
 msgid "cultivation mode"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:132
+#: trialapp/templates/trialapp/trial_conclusions.html:136
 msgid "irrigation"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:136
+#: trialapp/templates/trialapp/trial_conclusions.html:140
 msgid "texture"
 msgstr ""
 
-#: trialapp/templates/trialapp/trial_conclusions.html:147
+#: trialapp/templates/trialapp/trial_conclusions.html:151
 msgid "benefit"
 msgstr ""
 
@@ -861,26 +874,26 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:285
-#: trialapp/tests/tests_trial_helper.py:291
-#: trialapp/tests/tests_trial_helper.py:298 trialapp/trial_helper.py:676
+#: trialapp/tests/tests_trial_helper.py:299
+#: trialapp/tests/tests_trial_helper.py:305
+#: trialapp/tests/tests_trial_helper.py:312 trialapp/trial_helper.py:686
 msgid "You do not have permission to access this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:305
-#: trialapp/tests/tests_trial_helper.py:316 trialapp/trial_helper.py:678
+#: trialapp/tests/tests_trial_helper.py:319
+#: trialapp/tests/tests_trial_helper.py:330 trialapp/trial_helper.py:688
 msgid "You do not have permission to download this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:325 trialapp/trial_helper.py:680
+#: trialapp/tests/tests_trial_helper.py:339 trialapp/trial_helper.py:690
 msgid "You do not have permission to edit this trial"
 msgstr ""
 
-#: trialapp/tests/tests_trial_helper.py:329 trialapp/trial_helper.py:681
+#: trialapp/tests/tests_trial_helper.py:343 trialapp/trial_helper.py:691
 msgid "No limitations on permissions"
 msgstr ""
 
-#: trialapp/trial_helper.py:75
+#: trialapp/trial_helper.py:84
 msgid "Soil"
 msgstr ""
 
