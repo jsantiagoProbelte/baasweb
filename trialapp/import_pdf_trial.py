@@ -3,10 +3,8 @@ import django
 import tabula
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
-from django.db.models import Avg
 import shutil
 import numpy as np
-from scipy.stats import mstats
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
@@ -1508,7 +1506,7 @@ def trimMeanStdDev(data, threshold=2):
     # Calculate the z-scores for each data point
     z_scores = [(x - mean) / std_dev for x in data]
 
-    # Define the threshold for outliers 
+    # Define the threshold for outliers
     # (e.g., more than 2 standard deviations away)
 
     # Remove outliers
@@ -1623,7 +1621,7 @@ def calculateReplicaValues():
 
 
 def importQPCR():
-    #importQpcrFiles()
+    importQpcrFiles()
     calculateReplicaValues()
 
 
