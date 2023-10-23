@@ -1536,10 +1536,10 @@ def importQpcr(trial, fileName):
             rateName = gene.replace(' ', '')
             rate_type_ratio = RateTypeUnit.findOrCreate(
                 name=rateName + ' Ratio Cq',
-                unit='TRatio Cq')
+                unit='Ratio Cq')
             rate_type_cq = RateTypeUnit.findOrCreate(
                 name=rateName + ' Cq',
-                unit='TCq')
+                unit='Cq')
             timestamp = row['Sample Name']
             blocks = timestamp.split(' ')
             series = blocks[0]
@@ -1597,7 +1597,7 @@ def importQpcrFiles():
 def calculateReplicaValues():
     trial = FieldTrial.objects.get(code='20230502')
     replicas = Replica.getFieldTrialObjects(trial)
-    for unit in ['TRatio Cq', 'TCq']:
+    for unit in ['Ratio Cq', 'Cq']:
         rate_units = RateTypeUnit.objects.filter(unit=unit)
 
         for rate_unit in rate_units:
