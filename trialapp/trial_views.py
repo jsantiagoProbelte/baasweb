@@ -350,6 +350,8 @@ class TrialContent():
                 graphs.append(
                     {'title': graphF.getTitle(),
                      'extra_title': extra_title,
+                     'id': f"{rateSet.id}-{ratedPart}",
+                     'collapse': 'collapse' if rateSet.unit == 'Cq' else '',
                      'content': graphF.draw(type_graph=type_graph)})
         return graphs
 

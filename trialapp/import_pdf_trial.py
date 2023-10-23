@@ -1517,7 +1517,7 @@ def trimMeanStdDev(data, threshold=2):
 
 
 def test_trimMean():
-    data = [10, 15, 20, 25, 50, 100, 200, 500, 1000]
+    data = [277, 245, 109000, 1530]
     trimMean = trimMeanStdDev(data)
     mean = np.mean(data)
     return trimMean, mean
@@ -1643,4 +1643,5 @@ if __name__ == '__main__':
     # testArchive()
     # extractData()
     # extractDataset()
-    importQPCR()
+    test_trimMean()
+    # importQPCR()

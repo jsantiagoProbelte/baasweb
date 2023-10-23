@@ -3,7 +3,8 @@
 {% for item in dataContent %}
     <div class="card card-body-baas graph-container {{item.backgroundClass}} mt-3">
         <p class="card-title txt-encode-14 capitalize-first">
-            <span><button class="btn btn-outline-light btn-sm dropdown-toggle ms-3" type="button" data-toggle="collapse" data-target="#card-{{item.id}}" aria-expanded="false" aria-controls="card-{{item.id}}"></button></span>
+            <span><button class="btn btn-outline-light btn-sm dropdown-toggle ms-3" type="button" 
+                data-bs-toggle="collapse" data-bs-target="#card-{{item.id}}" aria-expanded="false" aria-controls="card-{{item.id}}"> </button></span>
             <span class='txt-uppercase'>{{item.extra_title}}</span>
             {{item.title}}</p>
         <div class="{{item.collapse}}" id="card-{{item.id}}">
