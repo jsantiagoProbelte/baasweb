@@ -1594,7 +1594,6 @@ def importQpcrFiles():
                 part_rated = None
                 if 'Fresa' in filename:
                     part_rated = PartRated.FRUIT
-                    continue
                 elif 'Hoja' in filename:
                     part_rated = PartRated.LEAF
                 else:
