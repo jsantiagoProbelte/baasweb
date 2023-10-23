@@ -283,7 +283,12 @@ class AssessmentView(LoginRequiredMixin, DetailView):
             self.request.user)
         dataHelper = DataHelper(assessment,
                                 trialPermision.canEdit())
-        return {**context, **dataHelper.showDataAssessment(),
+        dataContent = {**context, **dataHelper.showDataAssessment(),
+                       'rateunitpart': assessment.getUnitPartTitle()}
+        return {'title': assessment.getTitle(),
+                'assessment': assessment,
+                'fieldTrial': assessment.field_trial,
+                'dataContent': dataContent,
                 **trialPermision.getPermisions()}
 
 

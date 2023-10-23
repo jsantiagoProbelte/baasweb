@@ -4,8 +4,11 @@
 {% else %}
 <div class="card-body-baas">
   <p class="txt-encode-20 capitalize-first">{% trans "assessment results" %}
+    
+    <span class="txt-open-bold-24 ms-3">{{dataContent.rateunitpart}}</span>
     <span class="material-symbols-outlined ms-4">calendar_month</span>
-    <span class="txt-encode-16">{{dataContent.assessment.assessment_date}}</span>
+    <span class="txt-encode-16">{{dataContent.assessment.assessment_date}} </span>
+    
   </p>
 </div>
 <div class="row mt-3">
@@ -32,9 +35,7 @@
         <tr><th class="col-md-2">Thesis</th>
             {% if dataContent.level != 'thesis' %}
               <th class="col-md-1">avg</th>
-              {% if dataContent.level == 'sample' %}
-                <th></th>
-              {% endif %}
+
               <th class="col-md-1">{% trans 'plots' %}</th>
             {% endif %}
             <th class="text-right col-md-1">value</th>

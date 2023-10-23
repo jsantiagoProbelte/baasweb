@@ -203,8 +203,7 @@ class DataHelper:
             return GraphTrial.L_THESIS
 
     def showDataAssessment(self):
-        common = {'title': self._assessment.getTitle(),
-                  'fieldTrial': self._trial}
+        common = {}
 
         level = self.whatLevelToShow()
         if level == GraphTrial.L_THESIS:
@@ -212,14 +211,18 @@ class DataHelper:
         elif level == GraphTrial.L_REPLICA:
             showData = self.prepareReplicaBasedData()
         else:
-            samplesNums = [i+1 for i in
-                           range(self._trial.samples_per_replica)]
-            common['sampleNums'] = samplesNums
             showReplicaInput = True
             if level == GraphTrial.L_SAMPLE:
                 showReplicaInput = False
-            showData = self.prepareSampleBasedData(samplesNums,
-                                                   showReplicaInput)
+            samplesPerReplica = self._trial.samples_per_replica
+            showData = self.prepareSampleBasedData(showReplicaInput,
+                                                   samplesPerReplica)
+            if samplesPerReplica == 0:
+                # Maybe somehow data is imported and the value in trial is not
+                # defined
+                samplesPerReplica = len(showData['dataRows'][0]['sampleCols'])
+
+            common['sampleNums'] = [i+1 for i in range(samplesPerReplica)]
 
         if showData:
             return {**showData, **common}
@@ -377,11 +380,16 @@ class DataHelper:
                  'sampleCols': sampleCols})
         return lastThesis
 
-    def genSampleColums(self, sampleNums, existingSamplesInReplica,
-                        samplePointsDict, replicaId):
+    def genSampleColums(self, existingSamplesInReplica,
+                        samplePointsDict, replicaId,
+                        samplesPerReplica):
         sampleCols = []
         rValueAgg = 0
         rValueCount = 0
+        sampleNums = list(existingSamplesInReplica.keys())
+        sampleNums.sort()
+        if samplesPerReplica > len(sampleNums):
+            sampleNums = [i+1 for i in range(samplesPerReplica)]
         for sampleNum in sampleNums:
             sValue = ''
             sampleId = None
@@ -402,7 +410,7 @@ class DataHelper:
             rValue = round(rValueAgg / rValueCount, 2)
         return sampleCols, rValue
 
-    def prepareSampleBasedData(self, sampleNums, showReplicaInput):
+    def prepareSampleBasedData(self, showReplicaInput, samplesPerReplica):
         samplePoints = SampleData.dataPointsAssess([self._assessment.id])
         # We need to use reference__id because referece__number is not unique
         samplePointsDict = self.referencePointsDict(samplePoints,
@@ -430,8 +438,9 @@ class DataHelper:
                 existingSamplesInReplica = replicaSampleDict[replicaId]
 
             sampleCols, rValue = self.genSampleColums(
-                sampleNums, existingSamplesInReplica,
-                samplePointsDict, replicaId)
+                existingSamplesInReplica,
+                samplePointsDict, replicaId,
+                samplesPerReplica)
 
             genReplicaId = False
             if not rValue:
