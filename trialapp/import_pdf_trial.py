@@ -5,6 +5,8 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 from django.db.models import Avg
 import shutil
+import numpy as np
+from scipy.stats import mstats
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
@@ -1497,6 +1499,32 @@ def to_float(value):
         return None
 
 
+def trimMeanStdDev(data, threshold=2):
+    mean = np.mean(data)
+    std_dev = np.std(data)
+    if std_dev == 0:
+        return mean
+
+    # Calculate the z-scores for each data point
+    z_scores = [(x - mean) / std_dev for x in data]
+
+    # Define the threshold for outliers 
+    # (e.g., more than 2 standard deviations away)
+
+    # Remove outliers
+    filtered_data = [x for x, z in zip(data, z_scores) if abs(z) <= threshold]
+
+    # Calculate the average of the filtered data
+    return np.mean(filtered_data)
+
+
+def test_trimMean():
+    data = [10, 15, 20, 25, 50, 100, 200, 500, 1000]
+    trimMean = trimMeanStdDev(data)
+    mean = np.mean(data)
+    return trimMean, mean
+
+
 def importQpcr(trial, fileName):
     with open(fileName) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
@@ -1510,10 +1538,10 @@ def importQpcr(trial, fileName):
             rateName = gene.replace(' ', '')
             rate_type_ratio = RateTypeUnit.findOrCreate(
                 name=rateName + ' Ratio Cq',
-                unit='Ratio Cq')
+                unit='TRatio Cq')
             rate_type_cq = RateTypeUnit.findOrCreate(
                 name=rateName + ' Cq',
-                unit='Cq')
+                unit='TCq')
             timestamp = row['Sample Name']
             blocks = timestamp.split(' ')
             series = blocks[0]
@@ -1570,29 +1598,32 @@ def importQpcrFiles():
 
 def calculateReplicaValues():
     trial = FieldTrial.objects.get(code='20230502')
-    for unit in ['Ratio Cq', 'Cq']:
+    replicas = Replica.getFieldTrialObjects(trial)
+    for unit in ['TRatio Cq', 'TCq']:
         rate_units = RateTypeUnit.objects.filter(unit=unit)
 
         for rate_unit in rate_units:
             for asstm in Assessment.objects.filter(
                     rate_type=rate_unit,
                     field_trial_id=trial.id):
-                avgValues = SampleData.objects.values(
-                    'reference__replica_id',
-                ).annotate(
-                    value=Avg('value')
-                ).filter(
-                    assessment_id=asstm.id)
+                for replica in replicas:
+                    values = SampleData.objects.values(
+                        'value'
+                    ).filter(
+                        reference__replica_id=replica.id,
+                        assessment_id=asstm.id)
+                    if values:
+                        data = [v['value'] for v in values]
+                        trimMean = trimMeanStdDev(data)
 
-                for avgValue in avgValues:
-                    ReplicaData.findOrCreate(
-                        assessment_id=asstm.id,
-                        reference_id=avgValue['reference__replica_id'],
-                        value=avgValue['value'])
+                        ReplicaData.findOrCreate(
+                            assessment_id=asstm.id,
+                            reference_id=replica.id,
+                            value=trimMean)
 
 
 def importQPCR():
-    importQpcrFiles()
+    #importQpcrFiles()
     calculateReplicaValues()
 
 
