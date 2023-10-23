@@ -323,7 +323,12 @@ class TrialContent():
 
                 if level != GraphTrial.L_REPLICA:
                     continue
-                dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
+
+                dataPoints = None
+                if 'Ratio Cq' in rateSet.unit:
+                    dataPoints = ReplicaData.dataPointsAssess(assIds)
+                else:
+                    dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
 
                 if not dataPoints:
                     continue
@@ -340,6 +345,8 @@ class TrialContent():
                     xAxis=xAxis, references=self._thesis)
                 if type_graph == GraphTrial.LINE and len(assmts) == 1:
                     type_graph = GraphTrial.COLUMN
+                if 'Ratio Cq' in rateSet.unit:
+                    type_graph = GraphTrial.BOX
                 graphs.append(
                     {'title': graphF.getTitle(),
                      'extra_title': extra_title,

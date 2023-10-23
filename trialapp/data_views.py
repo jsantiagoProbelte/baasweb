@@ -269,7 +269,10 @@ class DataHelper:
                 level, [self._assessment], points,
                 showLegend=False,
                 references=self._thesisTrial)
-            graph = graphHelper.draw()
+            type_graph = GraphTrial.VIOLIN
+            if 'Ratio Cq' in self._assessment.rate_type.unit:
+                type_graph = GraphTrial.BOX
+            graph = graphHelper.draw(type_graph=type_graph)
         if efficacyData:
             graphEfficacy = self.efficacyGraph(efficacyData)
         return {'dataRows': rows,
@@ -405,9 +408,16 @@ class DataHelper:
             sampleCols.append({
                 'value': sValue,
                 'item_id': itemId})
+        # For the Ratio Cq values, the mean has been calculated.
         rValue = None
-        if rValueCount > 1:
-            rValue = round(rValueAgg / rValueCount, 2)
+        rValueDb = ReplicaData.objects.filter(
+            assessment_id=self._assessment.id,
+            reference_id=replicaId)
+        if rValueDb:
+            rValue = rValueDb[0].value
+        else:
+            if rValueCount > 1:
+                rValue = round(rValueAgg / rValueCount, 2)
         return sampleCols, rValue
 
     def prepareSampleBasedData(self, showReplicaInput, samplesPerReplica):
