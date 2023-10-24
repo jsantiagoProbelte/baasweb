@@ -580,6 +580,8 @@ class TrialPermission:
     DISCOVERABLE = 'discover_trial'
     # Can download status
     DOWNLOADABLE = 'download_trial'
+    # Can clone status
+    CLONABLE = 'clone_trial'
 
     # --- Type users
     EXTERNAL = 'ext'
@@ -613,11 +615,13 @@ class TrialPermission:
             TrialPermission.EDITABLE: False,
             TrialPermission.READIBLE: False,
             TrialPermission.DISCOVERABLE: False,
-            TrialPermission.DOWNLOADABLE: False}
+            TrialPermission.DOWNLOADABLE: False,
+            TrialPermission.CLONABLE: False}
         if self.setDiscover():
             if self.setRead():
                 self.setDownload()
                 self.setEdit()
+                self.setClone()
 
     def canDiscover(self):
         return self._permissions[TrialPermission.DISCOVERABLE]
@@ -665,6 +669,20 @@ class TrialPermission:
         self._permissions[TrialPermission.DOWNLOADABLE] = permit
         return permit
 
+    def setClone(self):
+        permit = False
+        if self._type == TrialPermission.ADMIN:
+            permit = True
+        elif self._owner:
+            permit = True
+
+        self._permissions[TrialPermission.CLONABLE] = permit
+        print(f"Is Clonable = {self._permissions[TrialPermission.CLONABLE]}")
+        return permit
+
+    def canClone(self):
+        return self._permissions[TrialPermission.CLONABLE]
+
     def canEdit(self):
         return self._permissions[TrialPermission.EDITABLE]
 
@@ -688,6 +706,8 @@ class TrialPermission:
             return _('You do not have permission to download this trial')
         elif not self._permissions[TrialPermission.EDITABLE]:
             return _('You do not have permission to edit this trial')
+        elif not self._permissions[TrialPermission.CLONABLE]:
+            return _('You do not have permissions to clone this trial')
         return _('No limitations on permissions')
 
     def renderError(self, request, error=None):

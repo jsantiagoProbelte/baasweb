@@ -265,6 +265,24 @@ class FieldTrialDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'trialapp/fieldtrial_delete.html'
 
 
+class FieldTrialCloneView(LoginRequiredMixin):
+    model = FieldTrial
+    success_url = reverse_lazy('fieldtrial-list')
+    template_name = 'trialapp/fieldtrial_delete.html'
+
+
+class CloneTrial(LoginRequiredMixin, DetailView):
+    model = FieldTrial
+
+    def get(self, request, *args, **kwargs):
+        trial = self.get_object()
+        trialP = TrialPermission(trial, self.request.user)
+
+        if trialP.canClone():
+            cloned_trial = trial.deepclone()
+            return HttpResponseRedirect(f'/fieldtrial_api/{cloned_trial.id}/')
+
+
 class DownloadTrial(LoginRequiredMixin, DetailView):
     model = FieldTrial
 
