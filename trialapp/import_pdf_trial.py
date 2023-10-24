@@ -1518,6 +1518,7 @@ def trimMeanStdDev(data, threshold=2):
 
 def test_trimMean():
     data = [277, 245, 109000, 1530]
+    data = [26900, 270, 41, 250]
     trimMean = trimMeanStdDev(data)
     mean = np.mean(data)
     return trimMean, mean

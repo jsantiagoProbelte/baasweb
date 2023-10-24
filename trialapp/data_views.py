@@ -29,7 +29,7 @@ class SetDataAssessment(APIView):
         theIds = request.POST['data_point_id'].split('-')
         level = theIds[-4]
         assessment = get_object_or_404(Assessment, pk=theIds[-3])
-        value = request.POST['data-point']
+        value = request.POST['data-point'].replace(',', '.')
         refereceId = theIds[-2]
         # try to find if exists:
         if level == GraphTrial.L_THESIS:
