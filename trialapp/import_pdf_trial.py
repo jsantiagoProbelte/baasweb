@@ -3,8 +3,8 @@ import django
 import tabula
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
-from django.db.models import Avg
 import shutil
+import numpy as np
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
@@ -1497,7 +1497,33 @@ def to_float(value):
         return None
 
 
-def importQpcr(trial, fileName):
+def trimMeanStdDev(data, threshold=2):
+    mean = np.mean(data)
+    std_dev = np.std(data)
+    if std_dev == 0:
+        return mean
+
+    # Calculate the z-scores for each data point
+    z_scores = [(x - mean) / std_dev for x in data]
+
+    # Define the threshold for outliers
+    # (e.g., more than 2 standard deviations away)
+
+    # Remove outliers
+    filtered_data = [x for x, z in zip(data, z_scores) if abs(z) <= threshold]
+
+    # Calculate the average of the filtered data
+    return np.mean(filtered_data)
+
+
+def test_trimMean():
+    data = [277, 245, 109000, 1530]
+    trimMean = trimMeanStdDev(data)
+    mean = np.mean(data)
+    return trimMean, mean
+
+
+def importQpcr(trial, fileName, part_rated):
     with open(fileName) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
@@ -1522,14 +1548,14 @@ def importQpcr(trial, fileName):
                 continue
             assmt_cq = Assessment.findOrCreate(
                 name=f'{series} {rateName}',
-                part_rated=PartRated.FRUIT,
+                part_rated=part_rated,
                 assessment_date=dateAss,
                 field_trial=trial,
                 crop_stage_majority='-',
                 rate_type=rate_type_cq)
             assmt_ratio = Assessment.findOrCreate(
                 name=f'{series} {rateName}',
-                part_rated=PartRated.FRUIT,
+                part_rated=part_rated,
                 assessment_date=dateAss,
                 field_trial=trial,
                 crop_stage_majority='-',
@@ -1565,11 +1591,19 @@ def importQpcrFiles():
             # Check if the path points to a file (not a directory)
             if fileName.split('.')[-1] == 'csv':
                 print(f"Import {fileName}")
-                importQpcr(trial, fileName)
+                part_rated = None
+                if 'Fresa' in filename:
+                    part_rated = PartRated.FRUIT
+                elif 'Hoja' in filename:
+                    part_rated = PartRated.LEAF
+                else:
+                    continue
+                importQpcr(trial, fileName, part_rated)
 
 
 def calculateReplicaValues():
     trial = FieldTrial.objects.get(code='20230502')
+    replicas = Replica.getFieldTrialObjects(trial)
     for unit in ['Ratio Cq', 'Cq']:
         rate_units = RateTypeUnit.objects.filter(unit=unit)
 
@@ -1577,18 +1611,20 @@ def calculateReplicaValues():
             for asstm in Assessment.objects.filter(
                     rate_type=rate_unit,
                     field_trial_id=trial.id):
-                avgValues = SampleData.objects.values(
-                    'reference__replica_id',
-                ).annotate(
-                    value=Avg('value')
-                ).filter(
-                    assessment_id=asstm.id)
+                for replica in replicas:
+                    values = SampleData.objects.values(
+                        'value'
+                    ).filter(
+                        reference__replica_id=replica.id,
+                        assessment_id=asstm.id)
+                    if values:
+                        data = [v['value'] for v in values]
+                        trimMean = trimMeanStdDev(data)
 
-                for avgValue in avgValues:
-                    ReplicaData.findOrCreate(
-                        assessment_id=asstm.id,
-                        reference_id=avgValue['reference__replica_id'],
-                        value=avgValue['value'])
+                        ReplicaData.findOrCreate(
+                            assessment_id=asstm.id,
+                            reference_id=replica.id,
+                            value=trimMean)
 
 
 def importQPCR():
@@ -1607,4 +1643,5 @@ if __name__ == '__main__':
     # testArchive()
     # extractData()
     # extractDataset()
-    importQPCR()
+    test_trimMean()
+    # importQPCR()

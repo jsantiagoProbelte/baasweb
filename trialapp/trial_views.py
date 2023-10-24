@@ -88,7 +88,8 @@ class TrialApi(LoginRequiredMixin, DetailView):
             for treatment in TreatmentThesis.getObjects(thesisObj):
                 if treatments != '':
                     treatments += ' + '
-                    treatments += '' if treatment.treatment is None else treatment.treatment.getName()
+                    treatments += '' if treatment.treatment is None \
+                                  else treatment.treatment.getName()
             if thesis['id'] == controlThesis:
                 idColor = 'bg-custom-control'
             if thesis['id'] == keyThesis:
@@ -322,7 +323,12 @@ class TrialContent():
 
                 if level != GraphTrial.L_REPLICA:
                     continue
-                dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
+
+                dataPoints = None
+                if 'Ratio Cq' in rateSet.unit:
+                    dataPoints = ReplicaData.dataPointsAssess(assIds)
+                else:
+                    dataPoints = ReplicaData.dataPointsAssessAvg(assIds)
 
                 if not dataPoints:
                     continue
@@ -339,9 +345,13 @@ class TrialContent():
                     xAxis=xAxis, references=self._thesis)
                 if type_graph == GraphTrial.LINE and len(assmts) == 1:
                     type_graph = GraphTrial.COLUMN
+                if 'Ratio Cq' in rateSet.unit:
+                    type_graph = GraphTrial.BOX
                 graphs.append(
                     {'title': graphF.getTitle(),
                      'extra_title': extra_title,
+                     'id': f"{rateSet.id}-{ratedPart}",
+                     'collapse': 'collapse' if rateSet.unit == 'Cq' else '',
                      'content': graphF.draw(type_graph=type_graph)})
         return graphs
 

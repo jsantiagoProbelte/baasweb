@@ -303,6 +303,7 @@ class GraphTrial:
     BAR = 'bar'
     COLUMN = 'column'
     VIOLIN = 'violin'
+    BOX = 'box'
     LINE = 'line'
 
     DEFAULT_HEIGHT = 275
@@ -389,12 +390,16 @@ class GraphTrial:
     def violin(self):
         return self.preparePlots(typeFigure=GraphTrial.VIOLIN)
 
+    def box(self):
+        return self.preparePlots(typeFigure=GraphTrial.BOX)
+
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
 
     DRAW_TYPE = {LINE: line,
                  BAR: bar,
                  SCATTER: scatter,
+                 BOX: box,
                  VIOLIN: violin,
                  COLUMN: column}
     DRAW_LEVEL = {L_DOSIS: line,
@@ -440,6 +445,9 @@ class GraphTrial:
         if typeFigure == GraphTrial.BAR:
             fig.update_traces(textfont_size=20)
 
+        if typeFigure == GraphTrial.BOX:
+            fig.update_layout(boxmode='group', boxgroupgap=0.8, boxgap=0.5,)
+
         if num_x == 1 and self._xAxis == GraphTrial.L_DATE:
             if orientation == 'v':
                 fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
@@ -465,58 +473,67 @@ class GraphTrial:
                       x=xValues, y=yValues)
         return data
 
+    def doTrace(self, traceData, typeFigure, orientation):
+        trace = None
+        name = traceData['name']
+        color = traceData['trace_color']
+        marker_symbol = traceData.get('marker_symbol', 'circle')
+        marker_size = traceData.get('marker_size', 10)
+        marker = {'color': color, 'symbol': marker_symbol,
+                  'size': marker_size}
+        if orientation == 'v':
+            x = traceData['x']
+            y = traceData['y']
+        else:
+            x = traceData['y']
+            y = traceData['x']
+        lenX = len(x)
+        if typeFigure == GraphTrial.BAR:
+            trace = self.applyBar(x, y, orientation, name, color)
+        elif typeFigure == GraphTrial.LINE:
+            marker = {}
+            line = {'color': color, 'width': 3}
+            if 'dash' in traceData:
+                line['dash'] = traceData['dash']
+            if 'marker' in traceData:
+                markerMode = 'lines+markers'
+                marker = marker
+            else:
+                markerMode = 'lines'
+            trace = go.Scatter(name=name, x=x, y=y,
+                               line=line, mode=markerMode,
+                               marker=marker)
+        elif typeFigure == GraphTrial.SCATTER:
+            if self._xAxis == GraphTrial.L_DATE:
+                markerMode = 'lines+markers'
+            else:
+                markerMode = 'markers'
+            trace = go.Scatter(name=name, x=x, y=y,
+                               marker=marker,
+                               mode=markerMode, marker_size=15)
+        elif typeFigure == GraphTrial.VIOLIN:
+            trace = go.Violin(name=name, x=x, y=y,
+                              box_visible=True,
+                              meanline_visible=True,
+                              line_color=color)
+        elif typeFigure == GraphTrial.BOX:
+            trace = go.Box(name=name, x=x, y=y,
+                           boxpoints='outliers',
+                           line_color=color)
+        return trace, lenX
+
     def figure(self, thisGraph,
                typeFigure=SCATTER, orientation='v'):
-        data = None
         fig = go.Figure()
-
+        lenX = 0
         for traceKey in thisGraph['traces']:
-            trace = thisGraph['traces'][traceKey]
-            name = trace['name']
-            color = trace['trace_color']
-            marker_symbol = trace.get('marker_symbol', 'circle')
-            marker_size = trace.get('marker_size', 10)
-            marker = {'color': color, 'symbol': marker_symbol,
-                      'size': marker_size}
-            if orientation == 'v':
-                x = trace['x']
-                y = trace['y']
-            else:
-                x = trace['y']
-                y = trace['x']
-
-            if typeFigure == GraphTrial.BAR:
-                data = self.applyBar(x, y, orientation, name, color)
-            elif typeFigure == GraphTrial.LINE:
-                marker = {}
-                line = {'color': color, 'width': 3}
-                if 'dash' in trace:
-                    line['dash'] = trace['dash']
-                if 'marker' in trace:
-                    markerMode = 'lines+markers'
-                    marker = marker
-                else:
-                    markerMode = 'lines'
-                data = go.Scatter(name=name, x=x, y=y,
-                                  line=line, mode=markerMode,
-                                  marker=marker)
-            elif typeFigure == GraphTrial.SCATTER:
-                if self._xAxis == GraphTrial.L_DATE:
-                    markerMode = 'lines+markers'
-                else:
-                    markerMode = 'markers'
-                data = go.Scatter(name=name, x=x, y=y,
-                                  marker=marker,
-                                  mode=markerMode, marker_size=15)
-            elif typeFigure == GraphTrial.VIOLIN:
-                data = go.Violin(name=name, x=x, y=y,
-                                 box_visible=True,
-                                 meanline_visible=True,
-                                 line_color=color)
-            fig.add_trace(data)
+            trace, lenX = self.doTrace(
+                thisGraph['traces'][traceKey],
+                typeFigure, orientation)
+            fig.add_trace(trace)
 
         self.formatFigure(fig, thisGraph, orientation,
-                          typeFigure, len(x))
+                          typeFigure, lenX)
         return fig
 
     def plot(self, fig):
