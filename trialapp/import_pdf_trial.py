@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 import shutil
 import numpy as np
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'baaswebapp.remote_prod')
 django.setup()
 from baaswebapp.baas_archive import BaaSArchive  # noqa: E402
 from baaswebapp.models import Weather  # noqa: E402
@@ -1633,6 +1633,20 @@ def importQPCR():
     calculateReplicaValues()
 
 
+def recoverdata():
+    with open('../dumps/replicadata.csv') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=',')
+        for row in reader:
+            assessment_id = row["assessment_id"]
+            replica_id = row["assessment_id"]
+            if Replica.objects.filter(id=replica_id).exists() and \
+               Assessment.objects.filter(id=replica_id).exists():
+                ReplicaData.objects.create(
+                    value=row['value'],
+                    assessment_id=assessment_id,
+                    reference_id=replica_id)
+
+
 if __name__ == '__main__':
     # cleanPlagues()
     # importConcreateCSV()
@@ -1644,5 +1658,6 @@ if __name__ == '__main__':
     # testArchive()
     # extractData()
     # extractDataset()
-    test_trimMean()
+    # test_trimMean()
     # importQPCR()
+    recoverdata()
