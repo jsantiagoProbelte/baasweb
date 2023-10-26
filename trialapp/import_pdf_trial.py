@@ -1636,15 +1636,26 @@ def importQPCR():
 def recoverdata():
     with open('../dumps/replicadata.csv') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',')
+        count = 0
+        donotexist = 0
         for row in reader:
+            count += 1
             assessment_id = row["assessment_id"]
-            replica_id = row["assessment_id"]
+            replica_id = row["reference_id"]
             if Replica.objects.filter(id=replica_id).exists() and \
-               Assessment.objects.filter(id=replica_id).exists():
-                ReplicaData.objects.create(
-                    value=row['value'],
-                    assessment_id=assessment_id,
-                    reference_id=replica_id)
+               Assessment.objects.filter(id=assessment_id).exists():
+                if not ReplicaData.objects.filter(
+                        assessment_id=assessment_id,
+                        reference_id=replica_id).exists():
+                    ReplicaData.objects.create(
+                        value=row['value'],
+                        assessment_id=assessment_id,
+                        reference_id=replica_id)
+            else:
+                donotexist += 1
+            if count % 1000 == 0:
+                print(f"{donotexist}/{count} counters")
+        print(f"{donotexist} donotexist")
 
 
 if __name__ == '__main__':
