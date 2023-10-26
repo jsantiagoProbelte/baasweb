@@ -116,10 +116,6 @@ urlpatterns = [
         'assessment_api',
         assessment_views.AssessmentApi.as_view(),
         name='assessment_api'),
-    path(
-        'assessment-trial-view/<int:pk>',
-        assessment_views.AssessmentTrialViewRendered.as_view(),
-        name='assessment-trial-view'),
     # Data & measurements apis
     path(
         'set_data_point',

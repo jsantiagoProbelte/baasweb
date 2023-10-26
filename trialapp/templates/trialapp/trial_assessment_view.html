@@ -117,5 +117,12 @@
     </table>
     {{dataContent.stats|safe}}
   </div>
+  <div class="terrain mt-2">
+    {% for row in dataContent.layoutInfo %}
+        {% include "trialapp/data_row_replica_template.html" with row=row %}
+    {% empty %}
+        <p>Terrain layout is not defined yet.</p>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}

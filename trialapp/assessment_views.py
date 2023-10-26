@@ -6,9 +6,9 @@ from baaswebapp.models import RateTypeUnit, Weather
 from trialapp.models import FieldTrial, Thesis
 from trialapp.data_models import ThesisData, ReplicaData, SampleData, \
     Assessment
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from baaswebapp.graphs import GraphTrial, WeatherGraphFactory
-from trialapp.data_views import DataHelper, DataGraphFactory
+from trialapp.data_views import DataGraphFactory
 from django.views.generic import DetailView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,6 +21,8 @@ from django.http import HttpResponseRedirect
 from django import forms
 from trialapp.trial_helper import TrialPermission
 from baaswebapp.models import EventBaas, EventLog
+from trialapp.trial_views import TrialContent
+
 
 CLASS_DATA_LEVEL = {
     GraphTrial.L_REPLICA: ReplicaData,
@@ -277,36 +279,12 @@ class AssessmentView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         assessment = self.get_object()
-        # Add additional data to the context
-        trialPermision = TrialPermission(
-            assessment.field_trial,
-            self.request.user)
-        dataHelper = DataHelper(assessment,
-                                trialPermision.canEdit())
-        dataContent = {**context, **dataHelper.showDataAssessment(),
-                       'rateunitpart': assessment.getUnitPartTitle()}
+        trialContent = TrialContent(assessment.field_trial_id,
+                                    TrialContent.ASSESSMENT_VIEW,
+                                    self.request.user,
+                                    trial=assessment.field_trial,
+                                    extra_id=assessment.id)
         return {'title': assessment.getTitle(),
-                'assessment': assessment,
+                **context,
                 'fieldTrial': assessment.field_trial,
-                'dataContent': dataContent,
-                **trialPermision.getPermisions()}
-
-
-class AssessmentTrialViewRendered(LoginRequiredMixin, DetailView):
-    model = Assessment
-    template_name = 'trialapp/trial_assessment_view.html'
-    context_object_name = 'assessment'
-
-    def get(self, request, pk):
-        assessment = self.get_object()
-        # Add additional data to the context
-        trialPermision = TrialPermission(
-            assessment.field_trial,
-            self.request.user)
-        dataHelper = DataHelper(assessment,
-                                trialPermision.canEdit())
-
-        return render(request, self.template_name, {
-            **dataHelper.showDataAssessment(),
-            **trialPermision.getPermisions(),
-            'assessment': assessment})
+                'dataContent': trialContent.fetchAssessment()}

@@ -810,6 +810,18 @@ div[class*="bg-custom-"]{
   height: fit-content;
 }
 
+.card-plot {
+  background-color:var(--custom-bg-color-cards);
+  border-radius: 2px !important;
+  padding:20px 5px;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  border: 1px solid #E7E7E7 !important;
+  box-shadow: 0px 0px 4px 0px #00000015;
+  height: fit-content;
+  text-align: center;
+}
+
 .card-baas-alt {
   background-color: var(--custom-card-bg-light-violet);
   border-radius:2px !important;
@@ -1390,6 +1402,13 @@ div.flex-inline-form input:focus{
   font-size: 22px;
   font-family: 'Open Sans', serif;
   font-weight: bold;
+}
+
+.txt-open-bold-22-no_margin {
+  font-size: 22px;
+  font-family: 'Open Sans', serif;
+  font-weight: bold;
+  margin-bottom: 0rem !important;
 }
 
 .txt-open-bold-24 {

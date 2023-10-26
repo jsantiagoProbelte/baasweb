@@ -63,7 +63,7 @@ class ThesisListView(LoginRequiredMixin, ListView):
             'rowsReplicaHeader': headerRows,
             'replicas': replicas,
             'rowsReplicas': LayoutTrial.showLayout(
-                trial, None, allThesis)}
+                trial, allThesis)}
 
     def get_context_data(self, **kwargs):
         field_trial_id = self.kwargs['field_trial_id']
@@ -230,7 +230,7 @@ class ThesisApi(LoginRequiredMixin, DetailView):
         trial = self._thesis.field_trial
         headerRows = LayoutTrial.headerLayout(trial)
         layout = LayoutTrial.showLayout(
-            self._thesis.field_trial, None,
+            self._thesis.field_trial,
             Thesis.getObjects(trial),
             onlyThis=self._thesis.id)
         treatments = [{'name': tt.getName(), 'id': tt.id}

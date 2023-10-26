@@ -177,7 +177,6 @@ class TrialApi(LoginRequiredMixin, DetailView):
             showData['rowsReplicaHeader'] = LayoutTrial.headerLayout(
                 trial)
             showData['rowsReplicas'] = LayoutTrial.showLayout(trial,
-                                                              None,
                                                               allThesis)
         return {**context, **showData, **tpermisions, **keyTrialData}
 
@@ -445,7 +444,17 @@ class TrialContent():
             self._user)
         dataHelper = DataHelper(assessment,
                                 trialPermision.canEdit())
+        dataAssessment = dataHelper.showDataAssessment()
+        valuesReplica = {}
+        for dataThesis in dataAssessment['dataRows']:
+            valuesReplica[dataThesis['replica']] = dataThesis['value']
+        layoutInfo = LayoutTrial.showLayout(
+            assessment.field_trial,
+            Thesis.getObjects(assessment.field_trial),
+            valuesReplica=valuesReplica)
+
         return {'assessment': assessment,
+                'layoutInfo': layoutInfo,
                 'rateunitpart': assessment.getUnitPartTitle(),
                 **dataHelper.showDataAssessment(),
                 **trialPermision.getPermisions()}

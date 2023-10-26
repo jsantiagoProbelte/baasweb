@@ -239,13 +239,14 @@ class LayoutTrial:
     def computeInitialLayout(cls, fieldTrial, numberThesis):
         columns, rows = LayoutTrial.calculateLayoutDim(
             fieldTrial, numberThesis)
-        deck = [[LayoutTrial.setDeckCell(None, None, x=i+1, y=j+1)
+        deck = [[LayoutTrial.setDeckCell(None, x=i+1, y=j+1)
                  for i in range(0, columns)] for j in range(0, rows)]
         return deck, (columns, rows)
 
     @classmethod
-    def setDeckCell(cls, replica: Replica, assessment,
+    def setDeckCell(cls, replica: Replica,
                     x=0, y=0,
+                    value=None,
                     onlyThis=None):
         if replica is None:
             return {'name': '-',
@@ -262,7 +263,7 @@ class LayoutTrial:
                     'number': number,
                     'x': replica.pos_x,
                     'y': replica.pos_y,
-                    'id': replica.generateReplicaDataSetId(assessment)}
+                    'value': value}
 
     @classmethod
     def headerLayout(cls, fieldTrial: FieldTrial):
@@ -276,9 +277,8 @@ class LayoutTrial:
         return header
 
     @classmethod
-    def showLayout(cls, fieldTrial: FieldTrial,
-                   assessment: Assessment, thesisTrial,
-                   onlyThis=None):
+    def showLayout(cls, fieldTrial: FieldTrial, thesisTrial,
+                   onlyThis=None, valuesReplica=None):
         deck, (rows, columns) = LayoutTrial.computeInitialLayout(
             fieldTrial, len(thesisTrial))
         # Place the thesis in the deck
@@ -286,9 +286,12 @@ class LayoutTrial:
             for replica in Replica.getObjects(thesis):
                 if (replica.pos_x > 0) and (replica.pos_y > 0) and\
                    (replica.pos_x <= rows) and (replica.pos_y <= columns):
+                    value = valuesReplica.get(replica.name, None) \
+                        if valuesReplica else None
                     deck[replica.pos_y-1][replica.pos_x-1] =\
                         LayoutTrial.setDeckCell(
-                            replica, assessment,
+                            replica,
+                            value=value,
                             onlyThis=onlyThis)
         return deck
 

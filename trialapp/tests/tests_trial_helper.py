@@ -35,7 +35,7 @@ class TrialHelperTest(TestCase):
 
     def test_distributeLayout(self):
         # let´s mess it and arrange it
-        deck = LayoutTrial.showLayout(self._trial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, self._theses)
 
         replicaM = Replica.objects.get(pk=self._replicas1[0].id)
         self.assertEqual(replicaM.pos_x, 0)
@@ -44,8 +44,7 @@ class TrialHelperTest(TestCase):
         replicaM.pos_y = 0
         replicaM.save()
 
-        deck = LayoutTrial.showLayout(
-            self._trial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, self._theses)
 
         for row in deck:
             for item in row:
@@ -62,8 +61,7 @@ class TrialHelperTest(TestCase):
         replicaZ.pos_x = rows+1
         replicaZ.pos_y = columns+1
         replicaZ.save()
-        deck = LayoutTrial.showLayout(
-            self._trial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, self._theses)
         for row in deck:
             for item in row:
                 self.assertNotEqual(
@@ -146,7 +144,7 @@ class TrialHelperTest(TestCase):
         theReplica2.pos_x = x1
         theReplica2.pos_y = y1
         theReplica2.save()
-        deck = LayoutTrial.showLayout(self._trial, None, self._theses)
+        deck = LayoutTrial.showLayout(self._trial, self._theses)
         replica2 = deck[theReplica2.pos_y-1][theReplica2.pos_x-1]
         self.assertEqual(theReplica2.id, replica2['replica_id'])
 
