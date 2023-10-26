@@ -305,7 +305,6 @@ class GraphTrial:
     VIOLIN = 'violin'
     BOX = 'box'
     LINE = 'line'
-    COLUMN_VAR = 'column_var'
     _showXticklabels = True
 
     DEFAULT_HEIGHT = 275
@@ -399,9 +398,6 @@ class GraphTrial:
 
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
-    
-    def column_var(self):
-        return self.preparePlots(typeFigure=GraphTrial.COLUMN_VAR)
 
     DRAW_TYPE = {LINE: line,
                  BAR: bar,
