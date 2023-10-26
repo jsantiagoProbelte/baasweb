@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from catalogue.models import UNTREATED
 from baaswebapp.graphs import GraphTrial, EfficacyGraph, \
-    COLOR_KEY_THESIS, COLOR_CONTROL
+    COLOR_KEY_THESIS, COLOR_CONTROL, ColumnVariance
 from trialapp.trial_analytics import AssessmentAnalytics, Abbott
 from trialapp.trial_helper import TrialPermission
 from baaswebapp.models import EventBaas, EventLog
@@ -261,18 +261,20 @@ class DataHelper:
         else:
             return 'Cannot calculate efficacy.'
 
-    def buildOutput(self, level, points, stats, efficacyData, rows):
+    def buildOutput(self, level, points, stats, efficacyData, rows, snk):
         graph = GraphTrial.NO_DATA_AVAILABLE
         graphEfficacy = ''
         if points:
             graphHelper = DataGraphFactory(
                 level, [self._assessment], points,
-                showLegend=False,
+                showLegend=False, showXticklabels=False,
                 references=self._thesisTrial)
-            type_graph = GraphTrial.VIOLIN
             if 'Ratio Cq' in self._assessment.rate_type.unit:
-                type_graph = GraphTrial.BOX
-            graph = graphHelper.draw(type_graph=type_graph)
+                labels = {t.number: t.name
+                          for t in list(self._thesisTrial.values())}
+                graph = ColumnVariance.draw(snk, labels)
+            else:
+                graph = graphHelper.draw(type_graph=GraphTrial.VIOLIN)
         if efficacyData:
             graphEfficacy = self.efficacyGraph(efficacyData)
         return {'dataRows': rows,
@@ -313,7 +315,7 @@ class DataHelper:
         return self.buildOutput(GraphTrial.L_THESIS,
                                 thesisPoints, None,
                                 efficacyData,
-                                rows)
+                                rows, None)
 
     def prepareReplicaBasedData(self):
         replicaPoints = ReplicaData.dataPointsAssess([self._assessment.id])
@@ -345,7 +347,7 @@ class DataHelper:
                                 replicaPoints,
                                 stats['stats'] if stats else None,
                                 efficacyData,
-                                rows)
+                                rows, snk)
 
     def addReplicaInfo(self, replicaNumberDict, value, replicaId, lastThesis,
                        snk, efficacyData, rows, rowNumber, columnNumber,
@@ -473,7 +475,7 @@ class DataHelper:
                                 samplePoints,
                                 stats['stats'] if stats else None,
                                 efficacyData,
-                                rows)
+                                rows, snk)
 
 
 class DataGraphFactory():
@@ -487,7 +489,7 @@ class DataGraphFactory():
     def __init__(self, level, assessments,
                  dataPoints, xAxis=GraphTrial.L_DATE,
                  controlNumber=None, keyThesisNumber=None,
-                 showLegend=True,
+                 showLegend=True, showXticklabels=True,
                  showTitle=False, references=None):
         self._level = level
         self._showLegend = showLegend
@@ -501,6 +503,7 @@ class DataGraphFactory():
             self._graph = GraphTrial(level, assessments[0].rate_type,
                                      assessments[0].getPartRated(),
                                      traces, xAxis=xAxis,
+                                     showXticklabels=showXticklabels,
                                      showLegend=showLegend,
                                      showTitle=showTitle)
         else:

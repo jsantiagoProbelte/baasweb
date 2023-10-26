@@ -442,8 +442,7 @@ class TrialContent():
         trialPermision = TrialPermission(
             assessment.field_trial,
             self._user)
-        dataHelper = DataHelper(assessment,
-                                trialPermision.canEdit())
+        dataHelper = DataHelper(assessment, trialPermision.canEdit())
         dataAssessment = dataHelper.showDataAssessment()
         valuesReplica = {}
         for dataThesis in dataAssessment['dataRows']:
@@ -456,7 +455,7 @@ class TrialContent():
         return {'assessment': assessment,
                 'layoutInfo': layoutInfo,
                 'rateunitpart': assessment.getUnitPartTitle(),
-                **dataHelper.showDataAssessment(),
+                **dataAssessment,
                 **trialPermision.getPermisions()}
 
     def fetchAssessmentsGraphs(self):

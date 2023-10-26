@@ -680,7 +680,6 @@ class TrialPermission:
             permit = True
 
         self._permissions[TrialPermission.CLONABLE] = permit
-        print(f"Is Clonable = {self._permissions[TrialPermission.CLONABLE]}")
         return permit
 
     def canClone(self):

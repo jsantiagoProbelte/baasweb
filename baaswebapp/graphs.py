@@ -305,6 +305,8 @@ class GraphTrial:
     VIOLIN = 'violin'
     BOX = 'box'
     LINE = 'line'
+    COLUMN_VAR = 'column_var'
+    _showXticklabels = True
 
     DEFAULT_HEIGHT = 275
 
@@ -340,6 +342,7 @@ class GraphTrial:
 
     def __init__(self, level, rateType, ratedPart,
                  traces, xAxis=L_DATE,
+                 showXticklabels=True,
                  showLegend=True,
                  showTitle=False):
         self._level = level
@@ -347,6 +350,7 @@ class GraphTrial:
         self._showLegend = showLegend
         self._xAxis = xAxis
         self._title = self.getTitle(rateType, ratedPart)
+        self._showXticklabels = showXticklabels
         self._graphData = {
                 'title': self._title,
                 'x_axis': xAxis,
@@ -395,6 +399,9 @@ class GraphTrial:
 
     def line(self):
         return self.preparePlots(typeFigure=GraphTrial.LINE)
+    
+    def column_var(self):
+        return self.preparePlots(typeFigure=GraphTrial.COLUMN_VAR)
 
     DRAW_TYPE = {LINE: line,
                  BAR: bar,
@@ -434,8 +441,8 @@ class GraphTrial:
                 t=0,  # Adjust this value to reduce the top margin
                 r=20,  # Right margin
                 b=20,  # Bottom margin
-                l=20   # Left margin
-            ),
+                l=20),   # Left margin
+            xaxis=dict(showticklabels=self._showXticklabels),
             height=GraphTrial.DEFAULT_HEIGHT,
             yaxis_title=yaxis_title)
 
@@ -452,7 +459,8 @@ class GraphTrial:
             if orientation == 'v':
                 fig.update_layout(xaxis=dict(tickformat='%d %b %Y'))
             else:
-                fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
+                if self._showXticklabels:
+                    fig.update_layout(yaxis=dict(tickformat='%d %b %Y'))
 
         if typeFigure == GraphTrial.VIOLIN:
             fig.update_layout(violinmode='group')
@@ -672,28 +680,23 @@ class EfficacyGraph:
     @staticmethod
     def draw(numNameDict, numValueDict,
              title_text=_('efficacy') + '(%)', showLegend=False,
-             yaxis_title='Abbott (%)', xaxis_title='thesis',
+             yaxis_title='Abbott (%)', xaxis_title=None,
              showTitle=False,
              barmode='group'):
 
-        colors = []
-        values = []
-        labels = []
+        figure = go.Figure()
         for key in numNameDict:
             if key in numValueDict:
-                values.append(numValueDict[key])
-                colors.append(GraphTrial.COLOR_LIST[key])
-                labels.append(numNameDict[key])
-
-        # Create a bar trace
-        trace = go.Bar(
-            x=labels,
-            y=values,
-            text=values,
-            marker=dict(color=colors))
+                value = numValueDict[key]
+                color = GraphTrial.COLOR_LIST[key]
+                figure.add_trace(
+                    go.Bar(y=[value], x=[key],
+                           name=numNameDict[key],
+                           text=[f"{value} %"],
+                           orientation='v',
+                           marker={'color': color}))
 
         # Create the figure
-        figure = go.Figure(data=[trace])
         figure.update_layout(
             paper_bgcolor=COLOR_bg_color_cards,
             title_font_color=COLOR_TEXT,
@@ -715,11 +718,80 @@ class EfficacyGraph:
                 x=0),
             xaxis_title=xaxis_title,
             yaxis_title=yaxis_title,
+            xaxis=dict(showticklabels=False),
             height=GraphTrial.DEFAULT_HEIGHT,
             barmode=barmode)
-        figure.update_traces(textfont_size=20)
+        figure.update_traces(textfont_size=18)
         figure.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
         plotly_plot_obj = plot({'data': figure}, output_type='div')
+        return plotly_plot_obj
+
+
+class ColumnVariance:
+    @staticmethod
+    def draw(valuesDict, labelNames,
+             title_text=None, showLegend=False,
+             yaxis_title=None, xaxis_title=None,
+             showTitle=False,
+             barmode='group'):
+
+        # Create a box plot
+
+        fig = go.Figure()
+        for key in valuesDict:
+            mean = valuesDict[key]['mean']
+            std = valuesDict[key]['std']
+            color = GraphTrial.COLOR_LIST[key]
+            fig.add_trace(go.Bar(y=[mean],
+                                 x=[key],
+                                 name=labelNames[key],
+                                 orientation='v',
+                                 marker={'color': color}))
+            # Add the mean as a bar
+            fig.add_shape(
+                type='line',
+                x0=key,
+                x1=key,
+                y0=mean,
+                y1=mean + std,
+                line=dict(color=color, width=2, dash='dash'))
+
+            fig.add_shape(
+                type='line',
+                x0=key - 0.1,
+                x1=key + 0.1,
+                y0=mean + std,
+                y1=mean + std,
+                line=dict(color=color, width=2))
+
+        # Create the figure
+        fig.update_layout(
+            paper_bgcolor=COLOR_bg_color_cards,
+            title_font_color=COLOR_TEXT,
+            plot_bgcolor=COLOR_bg_color_cards,
+            font_color=COLOR_TEXT,
+            title_text=title_text if showTitle else '',
+            showlegend=showLegend,
+            margin=dict(
+                t=20,  # Adjust this value to reduce the top margin
+                r=20,  # Right margin
+                b=20,  # Bottom margin
+                l=20   # Left margin
+            ),
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=0,
+                xanchor="left",
+                x=0),
+            xaxis_title=xaxis_title,
+            yaxis_title=yaxis_title,
+            xaxis=dict(showticklabels=False),
+            height=GraphTrial.DEFAULT_HEIGHT,
+            barmode=barmode)
+        # figure.update_traces(textfont_size=20)
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor=COLOR_grid)
+        plotly_plot_obj = plot({'data': fig}, output_type='div')
         return plotly_plot_obj
 
 
