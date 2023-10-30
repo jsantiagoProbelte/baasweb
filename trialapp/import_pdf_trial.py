@@ -1581,7 +1581,7 @@ def importQpcr(trial, fileName, part_rated):
 
 
 def importQpcrFiles():
-    folder_path = '../RawdataqPCR'
+    folder_path = '../RawdataqPCR/nuevos'
     trial = FieldTrial.objects.get(code='20230502')
     # Loop through all files in the folder and its subdirectories
     for foldername, subfolders, filenames in os.walk(folder_path):
@@ -1633,6 +1633,21 @@ def importQPCR():
     calculateReplicaValues()
 
 
+def createMissingReplicas():
+    replicas = {1: '406', 2: '401', 3: '404', 4: '405',
+                5: '402', 6: '403'}
+    code = '20160201'
+    trial = FieldTrial.objects.get(code=code)
+    replicaNumber = 4
+    for thesis in Thesis.getObjects(trial):
+        if thesis.number in replicas:
+            replicaName = replicas[thesis.number]
+            Replica.objects.create(
+                name=replicaName,
+                number=replicaNumber,
+                thesis=thesis)
+
+
 def recoverdata():
     with open('../dumps/replicadata.csv') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',')
@@ -1671,4 +1686,5 @@ if __name__ == '__main__':
     # extractDataset()
     # test_trimMean()
     # importQPCR()
-    recoverdata()
+    createMissingReplicas()
+    # recoverdata()
