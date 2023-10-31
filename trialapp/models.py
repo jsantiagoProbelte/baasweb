@@ -226,7 +226,10 @@ class FieldTrial(ModelHelpers, models.Model):
 
     def keyThesis(self):
         if self.key_thesis:
-            return Thesis.objects.get(id=self.key_thesis)
+            try:
+                return Thesis.objects.get(id=self.key_thesis)
+            except Exception:
+                return None
         else:
             return None
 
