@@ -438,8 +438,13 @@ class Thesis(ModelHelpers, models.Model):
             interval=kwargs['interval'],
             first_application=kwargs['first_application'])
         if 'mode' in kwargs:
-            thesis.mode = kwargs['mode']
-            thesis.save()
+            try:
+                thesis.mode = kwargs['mode']
+                thesis.save()
+            except Exception:
+                thesis.mode = ApplicationMode.objects.get(id=kwargs['mode'])
+                thesis.save()
+
         return thesis
 
     @classmethod
