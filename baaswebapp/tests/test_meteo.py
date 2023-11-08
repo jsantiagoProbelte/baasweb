@@ -15,8 +15,8 @@ class TestAssessment():
 
 class TestFieldTrial():
     def __init__(self):
-        self.longitude = "1"
-        self.latitude = "1"
+        self.longitude = "1.0193322"
+        self.latitude = "0.99212605"
 
 
 class MeteoApiTest(TestCase):
@@ -33,9 +33,9 @@ class MeteoApiTest(TestCase):
         test_fieldtrial = TestFieldTrial()
         res = meteo_api.enrich_assessment(test_assessment, test_fieldtrial)
         assert (not res.recent)
-        assert (res.max_temp == 28.1)
-        assert (res.soil_temp_100_to_255cm == 29.01666666666668)
-        assert (res.precipitation_hours == 3)
+        assert (res.max_temp == 28.0)
+        assert (res.soil_temp_100_to_255cm == 29.058333333333334)
+        assert (res.precipitation_hours == 0.0)
 
     def test_existing(self):
         meteo_api = MeteoApi()

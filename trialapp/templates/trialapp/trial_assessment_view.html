@@ -30,7 +30,7 @@
   <div class="col-md-8">
     <div class="card-body-baas">
     <div class="table-container-long">
-    <table class="baas-data-table">
+    <table class="baas-data-table" id="trial-data">
       <thead>
         <tr><th class="col-md-2">Thesis</th>
             {% if dataContent.level != 'thesis' %}
@@ -65,7 +65,7 @@
           {% if level != 'thesis' %}
             <td>{{dataRow.replica}}</td>
           {% endif %}
-          <td class="text-right">
+          <td class="text-right" id="cell-{{ forloop.counter0 }}-0">
             {% if dataRow.item_id %}
               <form id="form-data-input-template-{{dataRow.item_id}}" 
                 class='form-data-input-template' method="POST">

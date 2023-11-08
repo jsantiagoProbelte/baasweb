@@ -161,8 +161,6 @@ function pasteData(event, setDataPointAPI) {
                     input.val(updatedValue);
                     // Perform AJAX update
                     setDataPoint(input, setDataPointAPI);
-                
-                    
                 }
             }
         }
