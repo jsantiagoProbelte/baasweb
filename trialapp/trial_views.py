@@ -652,8 +652,8 @@ class TrialContent():
 
     def computeOnKeyAssessment(self, dataPoints):
         keyAssId = self._trial.key_assessment
-        valueK = -1.0
-        valueC = -1.0
+        valueK = None
+        valueC = None
         ddate = None
         for assm in self._assmts:
             if assm.id == keyAssId:
@@ -669,7 +669,7 @@ class TrialContent():
                 if valueK and valueC:
                     break
 
-        if valueK >= 0.0 and valueC >= 0.0:
+        if valueK and valueC:
             bestEfficacy = self.calculateEfficacy(valueC, valueK)
             if self._trial.best_efficacy != bestEfficacy:
                 self._trial.best_efficacy = bestEfficacy

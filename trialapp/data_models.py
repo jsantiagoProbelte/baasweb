@@ -180,7 +180,8 @@ class ReplicaData(DataModel, models.Model):
                                keyThesis, untreatedThesis):
         return cls.objects.values(
                 'reference__thesis__id', 'assessment__id',
-                'reference__thesis__number'
+                'reference__thesis__number', 'assessment__name',
+                "reference__thesis__name"
             ).annotate(
                 value=Avg('value')
             ).filter(
