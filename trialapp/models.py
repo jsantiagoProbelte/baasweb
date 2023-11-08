@@ -95,6 +95,7 @@ class PartRated(models.TextChoices):
     SPOT = 'SPOT', _('SPOT')
     STEMP = 'STEMP', _('STEMP')
     UNDF = 'UNDF', _('UNDF')
+    STAINS = 'Manchas', _('Manchas')
 
 
 class SoilType(models.TextChoices):
