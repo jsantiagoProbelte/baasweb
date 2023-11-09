@@ -284,7 +284,11 @@ class AssessmentView(LoginRequiredMixin, DetailView):
                                     self.request.user,
                                     trial=assessment.field_trial,
                                     extra_id=assessment.id)
+        permisions = TrialPermission(
+            assessment.field_trial, self.request.user).getPermisions()
+
         return {'title': assessment.getTitle(),
                 **context,
                 'fieldTrial': assessment.field_trial,
-                'dataContent': trialContent.fetchAssessment()}
+                'dataContent': trialContent.fetchAssessment(),
+                **permisions}
