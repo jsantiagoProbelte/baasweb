@@ -231,6 +231,8 @@ class FieldTrialCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             fieldTrial = form.instance
             fieldTrial.trial_meta = FieldTrial.TrialMeta.FIELD_TRIAL
+            fieldTrial.latitude = fieldTrial.latitude.replace(",", ".")
+            fieldTrial.longitude = fieldTrial.longitude.replace(",", ".")
             fieldTrial.save()
             EventLog.track(
                 EventBaas.NEW_TRIAL,
@@ -253,6 +255,10 @@ class FieldTrialUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         super().form_valid(form)
         TrialFile().createTrialFolder(self.get_object().code)
+        fieldTrial = form.instance
+        fieldTrial.latitude = fieldTrial.latitude.replace(",", ".")
+        fieldTrial.longitude = fieldTrial.longitude.replace(",", ".")
+        fieldTrial.save()
         EventLog.track(EventBaas.UPDATE_TRIAL,
                        self.request.user.id,
                        form.instance.id)
