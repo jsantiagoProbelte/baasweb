@@ -86,7 +86,8 @@ class ThesisFormLayout(FormHelper):
         submitTxt = 'Create' if new else 'Save'
         self.add_layout(Layout(Div(
             HTML(title), css_class="h4 mt-4"),
-            Div(Field('name', css_class='mb-3'),
+            Div(Field('number', css_class='mb-3'),
+                Field('name', css_class='mb-3'),
                 Field('treatment', css_class='mb-3'),
                 Field('number_applications', css_class='mb-3'),
                 Field('interval', css_class='mb-3'),
@@ -167,7 +168,7 @@ class ThesisFormUpdate(forms.ModelForm):
     class Meta:
         model = Thesis
         fields = ('name', 'number_applications', 'interval', 'mode',
-                  'description', 'first_application')
+                  'description', 'first_application', 'number')
 
     def __init__(self, *args, **kwargs):
         super(ThesisFormUpdate, self).__init__(*args, **kwargs)
@@ -176,6 +177,7 @@ class ThesisFormUpdate(forms.ModelForm):
             format=('%Y-%m-%d'),
             attrs={'class': 'form-control',
                    'type': 'date'})
+        self.fields['number'].widget = forms.NumberInput()
         self.fields['first_application'].show_hidden_initial = True
         self.fields['mode'].required = False
         self.fields['interval'].required = False
