@@ -30,6 +30,7 @@ class TrialTestData:
     ]
 
     THESIS = [{
+        'number': 1,
         'name': 'thesis 666',
         'description': 'Thesis 666 for product 1',
         'field_trial_id': 1,
