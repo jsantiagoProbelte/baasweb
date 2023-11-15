@@ -1,5 +1,6 @@
 {% extends "baaswebapp/layout.html" %}
 {% load widget_tweaks %}
+{% csrf_token %}
 
 {% block topbaastitle %}
 <div class="nav-item vertical-line-right vertical-line-left">
@@ -119,46 +120,64 @@
 <script src='/static/baaswebapp/scripts/baas.js'></script>
 
 <script>  
-var latitude={{trial.latitude}};
-var longitude={{trial.longitude}};  
-
 $(document).ready(function() {
-    loadTrialContent(); 
-});
-$('.btn-assessment-trial').on('click', function() {
-    var element = $(this)
-    loadAssessment(element);
-});
+    try{
+        loadTrialContent();
+    }catch(error){
+        console.log("Error loading trial content")
+    }
 
-var setDataPointAPI = '/set_data_point';
-$('.data-input-template').on('blur', function(){
-    var element=$(this);
-    return setDataPoint(element, setDataPointAPI);
-});
+    setTimeout(() => {
+        $('.btn-assessment-trial').on('click', function() {
+            var element = $(this)
+            loadAssessment(element);
+        });
 
-$('.data-input-template').on('keypress', function(event) {
-    var element = $(this);
-    return processEnter(event, element, setDataPointAPI, 'data-input-template');
-});
+        const dataInputTemplate = $('.data-input-template')
+        var setDataPointAPI = '/set_data_point';
+        dataInputTemplate.on('blur', function(){
+            try{
+                var element=$(this);
+                return setDataPoint(element, setDataPointAPI);
+            }catch(error){
+                console.log(error)
+            }
+        });
 
-var assessmentInfoUpdateAPI = '/assessment_api';
-$('.assessment-input-form').on('blur', function(){
-    var element=$(this);
-    return setDataPoint(element, assessmentInfoUpdateAPI);
-});
+        dataInputTemplate.on('keypress', function(event) {
+            var element = $(this);
+            return processEnter(event, element, setDataPointAPI, 'data-input-template');
+        });
 
-$('.assessment-input-form').on('keypress', function(event) {
-    var element = $(this);
-    return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
-});
+        const assessmentInput = $('.assessment-input-form')
+        var assessmentInfoUpdateAPI = '/assessment_api';
+        assessmentInput.on('blur', function(){
+            try{
+                var element=$(this);
+                return setDataPoint(element, assessmentInfoUpdateAPI);
+            }catch(error){
+                console.log(error)
+            }
+        });
 
+        assessmentInput.on('keypress', function(event) {
+            var element = $(this);
+            return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
+        });
 
-$('#trial-data').on('paste', function(event){
-  return pasteData(event, setDataPointAPI);
+        const trialData = $('#trial-data')
+        trialData.on('paste', function(event){
+            return pasteData(event, setDataPointAPI);
+        });
+    }, 20000)
+
 });
+var latitude={{trial.latitude}};
+var longitude={{trial.longitude}};
+
 
 </script>
 <script src='/static/baaswebapp/scripts/clipboard_utils.js'></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
 <script src='/static/baaswebapp/scripts/mapbaas.js'></script>
-{% endblock %}  
+{% endblock %}
