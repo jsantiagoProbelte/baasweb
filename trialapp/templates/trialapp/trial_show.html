@@ -127,50 +127,71 @@ $(document).ready(function() {
         console.log("Error loading trial content")
     }
 
-    setTimeout(() => {
-        $('.btn-assessment-trial').on('click', function() {
-            var element = $(this)
-            loadAssessment(element);
-        });
+    $('.btn-assessment-trial').on('click', function() {
+        var element = $(this)
+        loadAssessment(element);
+    });
 
-        const dataInputTemplate = $('.data-input-template')
-        var setDataPointAPI = '/set_data_point';
-        dataInputTemplate.on('blur', function(){
-            try{
-                var element=$(this);
-                return setDataPoint(element, setDataPointAPI);
-            }catch(error){
-                console.log(error)
+    const dataObserver = new MutationObserver(
+        (mutations, observer) => {
+            console.warn("Change in data")
+            mutations.forEach(
+                mutation => {
+                        const dataInputTemplate = $('#nav-data .data-input-template')
+                        var setDataPointAPI = '/set_data_point';
+                        dataInputTemplate.on('blur', function(){
+                            try{
+                                var element=$(this);
+                                return setDataPoint(element, setDataPointAPI);
+                            }catch(error){
+                                console.log(error)
+                            }
+                        });
+                        dataInputTemplate.on('keypress', function(event) {
+                            var element = $(this);
+                            return processEnter(event, element, setDataPointAPI, 'data-input-template');
+                        });
+                    }
+                )
+                observer.disconnect()
             }
-        });
+    )
+    const dataTable = document.querySelector("#nav-data .trial-dynamic-content")
+    dataObserver.observe(dataTable, {attributes:true, childList:true})
 
-        dataInputTemplate.on('keypress', function(event) {
-            var element = $(this);
-            return processEnter(event, element, setDataPointAPI, 'data-input-template');
-        });
+    const assesmentObserver = new MutationObserver(
+        (mutations, observer) => {
+            console.warn("Change in assessment")
+            mutations.forEach(
+                mutation => {
+                        const assessmentInput = $('#nav-assessment .data-input-template')
+                        var assessmentInfoUpdateAPI = '/assessment_api';
+                        assessmentInput.on('blur', function(){
+                            try{
+                                var element=$(this);
+                                return setDataPoint(element, assessmentInfoUpdateAPI);
+                            }catch(error){
+                                console.log(error)
+                            }
+                        });
 
-        const assessmentInput = $('.assessment-input-form')
-        var assessmentInfoUpdateAPI = '/assessment_api';
-        assessmentInput.on('blur', function(){
-            try{
-                var element=$(this);
-                return setDataPoint(element, assessmentInfoUpdateAPI);
-            }catch(error){
-                console.log(error)
+                        assessmentInput.on('keypress', function(event) {
+                            var element = $(this);
+                            return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
+                        });
+
+                        const trialData = $('#trial-data')
+                        trialData.on('paste', function(event){
+                            return pasteData(event, setDataPointAPI);
+                        });
+                    }
+                )
+                observer.disconnect()
             }
-        });
+    )
 
-        assessmentInput.on('keypress', function(event) {
-            var element = $(this);
-            return processEnter(event, element, assessmentInfoUpdateAPI, 'data-input-template');
-        });
-
-        const trialData = $('#trial-data')
-        trialData.on('paste', function(event){
-            return pasteData(event, setDataPointAPI);
-        });
-    }, 20000)
-
+    const assesmentTable = document.querySelector("#nav-assessment .trial-dynamic-content")
+    assesmentObserver.observe(assesmentTable, {attributes:true, childList:true})
 });
 var latitude={{trial.latitude}};
 var longitude={{trial.longitude}};
