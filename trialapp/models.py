@@ -97,6 +97,7 @@ class PartRated(models.TextChoices):
     UNDF = 'UNDF', _('UNDF')
     STAINS = 'Manchas', _('Manchas')
     BERRIES = 'Berries', _('Berries')
+    CAPSULES = 'Cápsulas', _('Cápsulas')
 
 
 class SoilType(models.TextChoices):
