@@ -427,8 +427,8 @@ class FieldTrial(ModelHelpers, models.Model):
                 for thesis in thesisList:
                     thesis.deepclone(cloned_trial.id)
 
-                assessmentList = Assessment.cloneAll(self, cloned_trial)
-                applicationList = Application.cloneAll(self, cloned_trial)
+                Assessment.cloneAll(self, cloned_trial)
+                Application.cloneAll(self, cloned_trial)
 
             else:
                 raise Exception("This trial has no id.")
