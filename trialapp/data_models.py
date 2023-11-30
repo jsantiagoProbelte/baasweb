@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Avg
+from django.forms import model_to_dict
 from baaswebapp.models import ModelHelpers, RateTypeUnit
 from trialapp.models import FieldTrial, Thesis, Sample, Replica, PartRated
 
@@ -92,6 +93,35 @@ class Assessment(ModelHelpers, models.Model):
                 item.daf = (item.assessment_date -
                             firstItem.assessment_date).days
             item.save()
+
+    def create(self, fieldTrial, **attributes):
+        assessment = Assessment.objects.create(
+                        name=attributes['name'],
+                        assessment_date=attributes['assessment_date'],
+                        part_rated=attributes['part_rated'],
+                        field_trial=FieldTrial.objects.get(pk=fieldTrial.id) if fieldTrial else None,
+                        crop_stage_majority=attributes['crop_stage_majority'],
+                        rate_type=RateTypeUnit.objects.get(pk=attributes['rate_type']) if 'rate_type' else None,
+                        daf=attributes['daf']
+                    )
+
+        return assessment
+
+    def clone(self, fieldtrial):
+        assessment = self.create(fieldtrial, **model_to_dict(self))
+
+        assessment.save()
+        return assessment
+
+    @classmethod
+    def cloneAll(cls, oldFieldTrial, newFieldTrial):
+        assessmentList = cls.objects.all().filter(field_trial=oldFieldTrial.id)
+        cloned_list = list()
+
+        for assessment in assessmentList:
+            cloned_list.append(assessment.clone(newFieldTrial))
+
+        return cloned_list
 
 
 class DataModel(ModelHelpers):
