@@ -380,7 +380,9 @@ class FieldTrial(ModelHelpers, models.Model):
             gross_surface=kwargs['gross_surface'],
             report_filename=kwargs['report_filename'],
             application_volume=kwargs['application_volume'],
-            application_volume_unit=RateUnit.objects.get(pk=kwargs['application_volume_unit']) if kwargs['application_volume_unit'] else None,
+            application_volume_unit=RateUnit.objects.get(
+                pk=kwargs['application_volume_unit']
+                ) if kwargs['application_volume_unit'] else None,
             mode=ApplicationMode.objects.get(pk=kwargs['mode']) if kwargs['mode'] else None
         )
 
