@@ -2,7 +2,7 @@ from django.test import Client
 from django.contrib import auth
 from baaswebapp.models import Weather
 from baaswebapp.data_loaders import TrialDbInitialLoader
-from trialapp.models import FieldTrial, Thesis, Replica, StatusTrial
+from trialapp.models import FieldTrial, SoilType, Thesis, Replica, StatusTrial
 from trialapp.data_models import ReplicaData, Assessment, ThesisData
 from rest_framework.test import APIRequestFactory
 
@@ -26,7 +26,8 @@ class TrialTestData:
             'latitude': 38.2796,
             'longitude': -0.7914,
             'type': 1,
-            'status': 1}
+            'status': 1,
+            'soil': SoilType.UNDF}
     ]
 
     THESIS = [{
@@ -71,7 +72,7 @@ class TrialTestData:
         'name': 'Primera aplication',
         'assessment_date': '2022-07-01',
         'crop_stage_majority': 66,
-        'rate_type': 2,
+        'rate_type': 2
     }]
 
     APPLICATION = [{

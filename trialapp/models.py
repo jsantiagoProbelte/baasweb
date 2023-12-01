@@ -339,20 +339,53 @@ class FieldTrial(ModelHelpers, models.Model):
     def createTrial(cls, **kwargs):
         trial = cls.objects.create(
             name=kwargs['name'],
-            trial_type=TrialType.objects.get(pk=kwargs['trial_type']),
+            trial_type=TrialType.objects.get(pk=kwargs['trial_type']) if kwargs['trial_type'] else None,
             status_trial=kwargs['status_trial'],
-            objective=Objective.objects.get(pk=kwargs['objective']),
-            responsible=kwargs['responsible'],
-            product=Product.objects.get(pk=kwargs['product']),
-            crop=Crop.objects.get(pk=kwargs['crop']),
-            plague=Plague.objects.get(pk=kwargs['plague']) if kwargs["plague"] else None,
+            objective=Objective.objects.get(pk=kwargs['objective']) if kwargs['objective'] else None,
+            responsible=kwargs.get('responsible', ''),
+            description=kwargs.get('description', ''),
+            description_en=kwargs.get('description_en', ''),
+            conclusion=kwargs.get('conclusion', ''),
+            conclusion_en=kwargs.get('conclusion_en', ''),
+            ref_to_eppo=kwargs.get('ref_to_eppo', ''),
+            ref_to_criteria=kwargs.get('ref_to_criteria', ''),
+            comments_criteria=kwargs.get('comments_criteria', ''),
+            comments_criteria_en=kwargs.get('comments_criteria_en', ''),
+            product=Product.objects.get(pk=kwargs['product']) if 'product' in kwargs else None,
+            crop=Crop.objects.get(pk=kwargs['crop']) if 'crop' in kwargs else None,
+            crop_variety=CropVariety.objects.get(pk=kwargs['crop_variety']) if 'crop_variety' in kwargs else None,
+            plague=Plague.objects.get(pk=kwargs['plague']) if kwargs['plague'] else None,
             initiation_date=kwargs['initiation_date'],
-            report_filename=kwargs['report_filename'],
-            contact=kwargs['contact'],
-            location=kwargs['location'],
-            repetitions=kwargs['repetitions'],
+            completion_date=kwargs.get('completion_date', None),
+            created=kwargs['created'] if 'created' in kwargs else None,
+            contact=kwargs.get('contact', None),
+            cro=kwargs.get('cro', None),
+            location=kwargs.get('location', None),
             latitude=kwargs['latitude'] if 'latitude' in kwargs else None,
-            longitude=kwargs['longitude'] if 'longitude' in kwargs else None)
+            longitude=kwargs['longitude'] if 'longitude' in kwargs else None,
+            altitude=kwargs['altitude'] if 'altitude' in kwargs else None,
+            irrigation=Irrigation.objects.get(pk=kwargs['irrigation']) if 'irrigation' in kwargs else None,
+            cultivation=CultivationMethod.objects.get(pk=kwargs['cultivation']) if 'cultivation' in kwargs else None,
+            crop_age=kwargs.get('crop_age', None),
+            seed_date=kwargs.get('seed_date', None),
+            transplant_date=kwargs.get('transplant_date', None),
+            soil=kwargs.get('soil', SoilType.UNDF),
+            repetitions=kwargs.get('repetitions', None),
+            samples_per_replica=kwargs.get('samples_per_replica', 0),
+            distance_between_plants=kwargs.get('distance_between_plants', None),
+            distance_between_rows=kwargs.get('distance_between_rows', None),
+            number_rows=kwargs.get('number_rows', None),
+            lenght_row=kwargs.get('lenght_row', None),
+            net_surface=kwargs.get('net_surface', None),
+            gross_surface=kwargs.get('gross_surface', None),
+            report_filename=kwargs.get('report_filename', None),
+            application_volume=kwargs.get('application_volume', None),
+            application_volume_unit=RateUnit.objects.get(
+                pk=kwargs['application_volume_unit']
+                ) if 'application_volume_unit' in kwargs else None,
+            mode=ApplicationMode.objects.get(pk=kwargs['mode']) if 'mode' in kwargs else None
+        )
+
         if 'code' in kwargs:
             trial.code = kwargs['code']
             trial.save()
@@ -384,6 +417,7 @@ class FieldTrial(ModelHelpers, models.Model):
 
     @transaction.atomic
     def deepclone(self):
+        from trialapp.data_models import Assessment
         try:
             cloned_trial = None
             if self.id:
@@ -394,6 +428,10 @@ class FieldTrial(ModelHelpers, models.Model):
                 thesisList = Thesis.objects.all().filter(field_trial=self.id)
                 for thesis in thesisList:
                     thesis.deepclone(cloned_trial.id)
+
+                Assessment.cloneAll(self, cloned_trial)
+                Application.cloneAll(self, cloned_trial)
+
             else:
                 raise Exception("This trial has no id.")
 
@@ -505,8 +543,12 @@ class Thesis(ModelHelpers, models.Model):
         return obj
 
     def deepclone(self, trial_id):
-        new_thesis = self.clone(trial_id)
+        fieldTrial = FieldTrial.objects.get(id=trial_id)
+
+        new_thesis = self.clone(fieldTrial.id)
         treatmentThesisList = TreatmentThesis.objects.filter(thesis=self.id)
+
+        Replica.cloneAll(self, new_thesis)
 
         for treatmentThesis in treatmentThesisList:
             treatmentThesisObj = treatmentThesis
@@ -568,6 +610,33 @@ class Application(ModelHelpers, models.Model):
 
     def get_success_url(self):
         return "/applicationlist/%i/" % self.field_trial.id
+
+    @classmethod
+    def create(cls, fieldtrial, **kwargs):
+        return cls.objects.create(
+            app_date=kwargs['app_date'],
+            daa=kwargs['daa'] if 'daa' in kwargs else None,
+            daf=kwargs['daf'] if 'daf' in kwargs else None,
+            field_trial=FieldTrial.objects.get(id=fieldtrial.id),
+            comment=kwargs['comment'] if 'comment' in kwargs else None,
+            bbch=kwargs['bbch']
+        )
+
+    def clone(self, fieldtrial):
+        application = self.create(fieldtrial, **model_to_dict(self))
+
+        application.save()
+        return application
+
+    @classmethod
+    def cloneAll(cls, oldFieldTrial, newFieldTrial):
+        applicationList = cls.objects.all().filter(field_trial=oldFieldTrial.id)
+        cloned_list = list()
+
+        for application in applicationList:
+            cloned_list.append(application.clone(newFieldTrial))
+
+        return cloned_list
 
 
 class TreatmentThesis(ModelHelpers, models.Model):
@@ -663,6 +732,29 @@ class Replica(ModelHelpers, models.Model):
                 rict[thesisId] = []
             rict[thesisId].append(replica.id)
         return rict
+
+    def create(self, new_thesis, **attributes):
+        Replica.objects.create(
+            number=attributes['number'],
+            name=attributes['name'] if 'name' in attributes else None,
+            thesis=new_thesis,
+            pos_x=attributes['pos_x'] if 'pos_x' in attributes else 0,
+            pos_y=attributes['pos_y'] if 'pos_y' in attributes else 0
+        )
+
+    def clone(self, new_thesis):
+        self.create(new_thesis, **model_to_dict(self))
+
+    @classmethod
+    def cloneAll(cls, oldThesis, new_thesis):
+        replicas = cls.objects.all().filter(thesis=oldThesis.id)
+
+        new_replicas = list()
+
+        for replica in replicas:
+            new_replicas.append(replica.clone(new_thesis))
+
+        return new_replicas
 
 
 class Sample(ModelHelpers, models.Model):
