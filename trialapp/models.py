@@ -551,11 +551,10 @@ class Thesis(ModelHelpers, models.Model):
         Replica.cloneAll(self, new_thesis)
 
         for treatmentThesis in treatmentThesisList:
-            treatmentThesisObj = treatmentThesis
-            treatmentThesis.thesis = new_thesis
-
-            treatment = Treatment.objects.get(id=treatmentThesisObj.treatment.id).clone()
-            treatmentThesis.treatment = treatment
+            TreatmentThesis.objects.create(
+                thesis=new_thesis,
+                treatment=treatmentThesis.treatment
+            )
 
         return new_thesis
 
