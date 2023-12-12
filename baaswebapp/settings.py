@@ -78,6 +78,8 @@ CUSTOM_APPS = [
 
 INSTALLED_APPS = BASE_APPS + EXTENDED_APPS + CUSTOM_APPS
 
+ROOT_URLCONF = 'baaswebapp.urls'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -89,8 +91,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
 ]
-
-ROOT_URLCONF = 'baaswebapp.urls'
 
 TEMPLATES = [
     {
