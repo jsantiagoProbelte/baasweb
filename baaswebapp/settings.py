@@ -39,6 +39,8 @@ SENDGRID_KEY = keymanager.get_secret("SENDGRID-KEY")
 
 ALLOWED_HOSTS = ['*']
 
+ROOT_URLCONF = 'baaswebapp.urls'
+
 # Application definition
 BASE_APPS = [
     'django.contrib.admin',
@@ -77,8 +79,6 @@ CUSTOM_APPS = [
 ]
 
 INSTALLED_APPS = BASE_APPS + EXTENDED_APPS + CUSTOM_APPS
-
-ROOT_URLCONF = 'baaswebapp.urls'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
