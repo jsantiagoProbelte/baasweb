@@ -12,5 +12,5 @@ ADD requirements.txt /code/
 RUN pip3 install -r requirements.txt
 ADD . /code/
 
-EXPOSE 8000
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "baaswebapp.wsgi:application"]
+EXPOSE 8081
+CMD ["gunicorn", "--bind", ":8081", "--workers", "3", "baaswebapp.wsgi:application"]
