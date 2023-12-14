@@ -1,6 +1,6 @@
 
 # Django related
-django==4.2.4
+django==4.2
 applicationinsights
 django-crispy-forms==1.14.0
 psycopg2-binary
