@@ -98,6 +98,7 @@ class PartRated(models.TextChoices):
     STAINS = 'Manchas', _('Manchas')
     BERRIES = 'Berries', _('Berries')
     CAPSULES = 'Cápsulas', _('Cápsulas')
+    SHOOT = 'Shoot', _('Shoot')
 
 
 class SoilType(models.TextChoices):
