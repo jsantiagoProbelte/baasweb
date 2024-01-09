@@ -80,7 +80,9 @@ class DataTrialHelper:
         header = self.prepareHeader()
         rows = self.preparaRows()
         columnRows = set(map(lambda row: len(row["values"]), rows))
-        lastColumn = max(columnRows) - 1
+        lastColumn = 0
+        if columnRows:
+            lastColumn = max(columnRows) - 1
 
         showData = {'header': header, 'dataRows': rows,
                     'last_column': lastColumn,
