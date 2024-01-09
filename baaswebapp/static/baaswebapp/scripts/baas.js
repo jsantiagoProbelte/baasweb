@@ -167,4 +167,32 @@ function pasteData(event, setDataPointAPI) {
     }
 };
 
+function copyColumnData(event){
+    const target = event.currentTarget
+    const column = target.dataset.column
+    let rowCounter = 0
+    let rowCell = document.querySelector(`#cell-${rowCounter}-${column}`)
+    let string = ""
+
+    while(rowCell){
+        let value = rowCell.querySelector("input[type='text']").value
+        value = value == "" ? "0.0" : value
+        string += value
+        string += "\n"
+
+        rowCounter++
+        rowCell = document.querySelector(`#cell-${rowCounter}-${column}`)
+    }
+
+    navigator.clipboard.writeText(string)
+    const previousText = target.innerText
+    target.innerText = "¡COPIADO!"
+    target.classList.toggle("btn-danger")
+    target.classList.toggle("btn-primary")
+    setTimeout(() => {
+        target.innerText = previousText
+        target.classList.toggle("btn-danger")
+        target.classList.toggle("btn-primary")
+    }, 1000);
+}
 

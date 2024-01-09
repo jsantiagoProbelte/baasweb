@@ -78,7 +78,12 @@ class DataTrialHelper:
         self._assessments = Assessment.getObjects(
             self._trial, date_order=False)
         header = self.prepareHeader()
-        showData = {'header': header, 'dataRows': self.preparaRows(),
+        rows = self.preparaRows()
+        columnRows = set(map(lambda row: len(row["values"]), rows))
+        lastColumn = max(columnRows) - 1
+
+        showData = {'header': header, 'dataRows': rows,
+                    'last_column': lastColumn,
                     'trialId': self._trial.id,
                     'ratedparts': [{'name':  _(item[1]), 'value': item[0]}
                                    for item in PartRated.choices],
@@ -264,6 +269,7 @@ class DataHelper:
     def buildOutput(self, level, points, stats, efficacyData, rows, snk):
         graph = GraphTrial.NO_DATA_AVAILABLE
         graphEfficacy = ''
+
         if points:
             graphHelper = DataGraphFactory(
                 level, [self._assessment], points,
@@ -282,7 +288,8 @@ class DataHelper:
                 'efficacy': graphEfficacy,
                 'stats': stats,
                 'level': level,
-                'points': len(points)}
+                'points': len(points)
+                }
 
     def prepareThesisBasedData(self):
         thesisPoints = ThesisData.dataPointsAssess([self._assessment.id])
