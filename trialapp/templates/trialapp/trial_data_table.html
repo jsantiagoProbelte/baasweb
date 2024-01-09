@@ -1,5 +1,6 @@
 {% load i18n %}
 {% block content %}
+{% load custom_filter_templates %}
 <div class="card card-body-baas mt-2">
   <div class="table-container-long">
   <table class="data-table-longer baas-data-table table table-borderless" id="trial-data">
@@ -22,14 +23,26 @@
       {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.bbch title='BBCH' type='text' %}
       {% include "trialapp/trial_data_header_edit_select.html" with headerRowClass=dataContent.header.partRated title='Part Rated' selectOptions=dataContent.ratedparts %}
       {% include "trialapp/trial_data_header_edit.html" with headerRowClass=dataContent.header.names title='Name/Interval' type='text' %}
+      <tr>
+        <td colspan="2"></td>
+        {% for i in 0|range_to:dataContent.last_column %}
+        <td style="text-align: right">
+          <a data-column="{{ i }}" onclick="copyColumnData(event)" class="btn btn-primary">
+            COPIAR COLUMNA
+          </a>
+        </td>
+        {% endfor %}
+      </tr>
     </thead>
     <tbody>
     {% for dataRow in dataContent.dataRows %}
         <tr class="border-custom-{{dataRow.color}}">
             {% if dataRow.rowspan > 0 %}
-              <td rowspan="{{dataRow.rowspan}}">{{dataRow.thesis}}</td>
+              <td rowspan="{{dataRow.rowspan}}">
+                {{dataRow.thesis}}
+              </td>
             {% endif %}
-            <td class=" text-right">{{dataRow.replica}}</td>
+              <td class=" text-right">{{dataRow.replica}}</td>
         {% for dataPointValue in dataRow.values %}
           <td id="cell-{{dataPointValue.row}}-{{dataPointValue.column}}">
             {% if edit_trial_perm %}
