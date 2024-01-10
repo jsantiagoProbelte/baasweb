@@ -63,6 +63,7 @@
   --custom-color-17: #CDDC39;
   --custom-color-18: #F44336;
   --product-image-wh: 150px;
+  --processed-bg-color: #cfc9ff;
 }
 
 .no-gutters{
@@ -1623,4 +1624,9 @@ li:has(a.active):has(i.flag){
 
 li:has(i.flag){
   padding: 10px;
+}
+
+.processed-cell{
+  background-color: var(--processed-bg-color) !important;
+  transition: background-color 0.3s ease-in;
 }

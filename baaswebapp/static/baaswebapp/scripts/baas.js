@@ -167,14 +167,19 @@ function pasteData(event, setDataPointAPI) {
     }
 };
 
+let lastProcessedCells = []
 function copyColumnData(event){
+    if (lastProcessedCells.length > 0) {
+        toggleProcessedOnCells(lastProcessedCells)
+    }
     const target = event.currentTarget
     const column = target.dataset.column
     let rowCounter = 0
     let rowCell = document.querySelector(`#cell-${rowCounter}-${column}`)
     let string = ""
-
+    let rowCellList = []
     while(rowCell){
+        rowCellList.push(rowCell)
         let value = rowCell.querySelector("input[type='text']").value
         value = value == "" ? "0.0" : value
         string += value
@@ -185,6 +190,13 @@ function copyColumnData(event){
     }
 
     navigator.clipboard.writeText(string)
+
+    lastProcessedCells = rowCellList
+    toggleCopyColumnButton(target)
+    toggleProcessedOnCells(rowCellList)
+}
+
+function toggleCopyColumnButton(target){
     const previousText = target.innerText
     target.innerText = "¡COPIADO!"
     target.classList.toggle("btn-danger")
@@ -194,5 +206,9 @@ function copyColumnData(event){
         target.classList.toggle("btn-danger")
         target.classList.toggle("btn-primary")
     }, 1000);
+}
+
+function toggleProcessedOnCells(cells) {
+    cells.forEach(cell => cell.classList.toggle('processed-cell'))
 }
 
