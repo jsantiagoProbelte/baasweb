@@ -87,12 +87,17 @@
                 {% for item in trial_list %}
                 <tr class="trial-tab-lines" id="item-{{item.id}}" key="{{ item.id }}">
                     <!--NAME-->
-                    <td><p class="txt-open-semibold-14">{{item.description}}</p>
-                        <p class="txt-regular-13">{{item.location}}</p>
-                        {% if show_status %}
-                        <span class="badge rounded-pill bg-light txt-regular-11">{{item.code}}</span>
-                        <span class="badge rounded-pill bg-light txt-regular-11">{{item.status_trial}}</span>
-                        {% endif %}
+                    <td>
+                    <p class="txt-open-semibold-14">
+                        <span>{{item.description}}</span>
+                        <span class="badge rounded-pill bg-product txt-regular-12" style="margin-left: 10px">{{item.product}}</span>
+                    </p>
+                    <p class="txt-regular-13">{{item.location}}</p>
+                    {% if show_status %}
+                    <span class="badge rounded-pill bg-light txt-regular-11">{{item.code}}</span>
+                    <span class="badge rounded-pill bg-light txt-regular-11">{{item.status_trial}}</span>
+                    
+                    {% endif %}
                     </td>
                     <!--EFFICACY-->
                     <td>
