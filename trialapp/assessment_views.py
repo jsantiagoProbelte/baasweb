@@ -138,7 +138,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
             'hum_avg': int(weather_assess[ass.id].relative_humidity) if weather_assess.get(ass.id, None) else None,
             'prep_avg': f"{ int(weather_assess[ass.id].precipitation) }" if weather_assess.get(ass.id, None) else None,
             'id': ass.id,
-            'hasWeather': weather_assess.get(ass.id, None)
+            'hasWeather': weather_assess.get(ass.id, None),
+            'name': ass.name
             }, new_list))
         weatherGraph = self.graphWeatherData(weatherData)
         permisions = TrialPermission(
