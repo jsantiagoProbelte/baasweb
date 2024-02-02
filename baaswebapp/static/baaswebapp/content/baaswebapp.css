@@ -344,7 +344,6 @@
   background-color: var(--bs-warning);
 }
 
-
 .dot-bio {
   width: 20px;
   height: 20px;
@@ -1629,4 +1628,16 @@ li:has(i.flag){
 .processed-cell{
   background-color: var(--processed-bg-color) !important;
   transition: background-color 0.3s ease-in;
+}
+
+@media (max-width:1586px) {
+  .dynamic-table{
+    zoom: 85%;
+  }
+}
+
+@media (max-width: 1388px){
+  .dynamic-table{
+    zoom: 53%;
+  }
 }

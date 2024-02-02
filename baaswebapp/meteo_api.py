@@ -6,6 +6,8 @@ from baaswebapp.models import Weather
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 
+from trialapp.trial_views import TrialContent
+
 
 class MeteoApi(APIView):
     authentication_classes = []
@@ -38,4 +40,6 @@ class MeteoApi(APIView):
         assessments = Assessment.getObjects(field_trial_id)
         for assessment in assessments:
             self.enrich_assessment(assessment, field_trial)
+        TrialContent(field_trial_id, TrialContent.ASSESSMENT_VIEW,
+                     request.user).getMeteorology()
         return redirect('/assessment_list/' + str(field_trial_id) + '/')

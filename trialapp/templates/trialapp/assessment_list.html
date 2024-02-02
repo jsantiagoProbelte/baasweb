@@ -5,9 +5,9 @@
 <div class="row">
     <div class="col-md-4">
         <div class="card card-body-baas">
-        <table class="table">
+        <table class="table dynamic-table">
         <thead><tr><th>Date</th><th>Name</th><th>Crop Stage</th>
-            <th>Rate type (unit)</th><th>Part Rated</th></tr></thead>
+            <th>Rate type (unit)</th><th>Part Rated</th> <th><a class="btn btn-baas" href="/meteo_api/{{ fieldTrial.id }}/">Forzar</a> Clima </th></tr></thead>
         <tbody>
         {% for item in object_list %}
             <tr id="item-{{ item.id }}">
@@ -15,7 +15,9 @@
                 <td>{{ item.name }}</td>
                 <td>{{ item.crop_stage_majority }} BBCH</td>
                 <td>{{ item.rate_type }}</td>
-                <td>{{ item.part_rated }}</td></tr>
+                <td>{{ item.part_rated }}</td>
+                <td>{% include 'trialapp/assessment_weather.html'%}</td>
+            </tr>
         {% empty %}
             <p>No assessments yet.</p>
         {% endfor %}
