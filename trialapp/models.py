@@ -426,7 +426,8 @@ class FieldTrial(ModelHelpers, models.Model):
                 cloned_trial.name += ' - CLONADO'
                 cloned_trial.save()
 
-                thesisList = Thesis.objects.all().filter(field_trial=self.id)
+                thesisList = Thesis.objects.all().filter(field_trial=self.id).order_by('number')
+
                 for thesis in thesisList:
                     thesis.deepclone(cloned_trial.id)
 

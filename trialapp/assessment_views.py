@@ -70,13 +70,15 @@ class AssessmentListView(LoginRequiredMixin, ListView):
     def getWeatherData(self):
         assessments = Assessment.getObjects(self._trial)
         weather_data = []
+        weather_assess_dict = {}
         for assessment in assessments:
             weather = Weather.objects.filter(
                 date=assessment.assessment_date, latitude=self._trial.latitude,
                 longitude=self._trial.longitude)
             if weather:
                 weather_data.append(weather.first())
-        return weather_data
+                weather_assess_dict[assessment.id] = weather.first()
+        return weather_data, weather_assess_dict
 
     def graphWeatherData(self, weather_data):
         dates = [o.date for o in weather_data]
@@ -126,7 +128,18 @@ class AssessmentListView(LoginRequiredMixin, ListView):
         # TODO: Sample data
         # graphPlotsS, classGraphS = self.getGraphData(
         #     GraphTrial.L_SAMPLE, rateSets, ratedParts)
-        weatherData = self.getWeatherData()
+        (weatherData, weather_assess) = self.getWeatherData()
+        new_list = list(map(lambda ass: {
+            'assessment_date': ass.assessment_date,
+            'part_rated': ass.part_rated,
+            'crop_stage_majority': ass.crop_stage_majority,
+            'rate_type': ass.rate_type,
+            'temp_avg': int(weather_assess[ass.id].mean_temp) if weather_assess.get(ass.id, None) else None,
+            'hum_avg': int(weather_assess[ass.id].relative_humidity) if weather_assess.get(ass.id, None) else None,
+            'prep_avg': f"{ int(weather_assess[ass.id].precipitation) }" if weather_assess.get(ass.id, None) else None,
+            'id': ass.id,
+            'hasWeather': weather_assess.get(ass.id, None)
+            }, new_list))
         weatherGraph = self.graphWeatherData(weatherData)
         permisions = TrialPermission(
             self._trial, self.request.user).getPermisions()
