@@ -98,8 +98,8 @@ class FieldTrialFormLayout(FormHelper):
             Div(Field('contact', css_class='trial-input'),
                 Field('cro', css_class='trial-input'),
                 Field('location', css_class='trial-input'),
-                Field('latitude', css_class='trial-input'),
-                Field('longitude', css_class='trial-input'),
+                Field('latitude', css_class='trial-input', maxlength="15"),
+                Field('longitude', css_class='trial-input', maxlength="15"),
                 css_class="m-3"),
             css_class="card no-border mb-3")
 

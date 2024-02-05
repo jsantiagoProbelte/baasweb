@@ -88,7 +88,7 @@ class DataTrialHelper:
                     'last_column': lastColumn,
                     'trialId': self._trial.id,
                     'ratedparts': [{'name':  _(item[1]), 'value': item[0]}
-                                   for item in PartRated.choices],
+                                   for item in sorted(PartRated.choices)],
                     'ratings': RateTypeUnit.getSelectList(asDict=True)}
         return showData
 

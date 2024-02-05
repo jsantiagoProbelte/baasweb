@@ -1630,6 +1630,15 @@ li:has(i.flag){
   transition: background-color 0.3s ease-in;
 }
 
+.form-control:has(.selectize-input), .form-select:has(.selectize-input){
+  padding: 0;
+  border: 0;
+}
+
+.selectize-input{
+  background: white !important;
+}
+
 @media (max-width:1586px) {
   .dynamic-table{
     zoom: 85%;

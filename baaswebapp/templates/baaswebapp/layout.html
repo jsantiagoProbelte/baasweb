@@ -6,6 +6,13 @@
     <title>{{ title }} - BaaS Copilot</title>
     {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'baaswebapp/img/probelte.png' %}"/>
+        <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+      integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     {% load bootstrap5 %}
     {# Load CSS and JavaScript #}
     {% bootstrap_css %}
@@ -95,11 +102,17 @@
       {% endblock %}
     </div>
   </div>
-
+  
   <script src="{% static 'baaswebapp/scripts/jquery-1.10.2.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/bootstrap.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/respond.js' %}"></script>
   <script src="{% static 'baaswebapp/scripts/chart.min.js' %}"></script>
+  <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+      integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   {% block scripts %}{% endblock %}
 <br/>
 <br/>
