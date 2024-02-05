@@ -6,3 +6,14 @@
 {% endif %}
 {% crispy form %}
 {% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    $("document").ready(() => {
+        try{
+            $("select").selectize()
+        }catch(error){
+            console.error(error);
+        }
+    })
+</script>
+{% endblock %}

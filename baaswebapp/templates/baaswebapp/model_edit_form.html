@@ -10,4 +10,15 @@
 <div class="col-md-6 offset-md-3">
     {% crispy form %}
 </div>
-{% endblock %}  
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    $("document").ready(() => {
+        try{
+            $("select").selectize()
+        }catch(error){
+            console.error(error);
+        }
+    })
+</script>
+{% endblock %}
