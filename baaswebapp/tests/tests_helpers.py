@@ -72,7 +72,8 @@ class TrialTestData:
         'name': 'Primera aplication',
         'assessment_date': '2022-07-01',
         'crop_stage_majority': 66,
-        'rate_type': 2
+        'rate_type': 2,
+        'unit': 100
     }]
 
     APPLICATION = [{

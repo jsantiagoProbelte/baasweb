@@ -16,6 +16,7 @@ class Assessment(ModelHelpers, models.Model):
     crop_stage_majority = models.CharField(max_length=25)
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
     daf = models.IntegerField(null=True)
+    unit = models.IntegerField(null=True)
 
     @classmethod
     def getObjects(cls, field_trial, date_order=True):
