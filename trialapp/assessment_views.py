@@ -140,7 +140,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'prep_avg': f"{ int(weather_assess[ass.id].precipitation) }" if weather_assess.get(ass.id, None) else None,
                 'id': ass.id,
                 'hasWeather': weather_assess.get(ass.id, None),
-                'name': ass.name
+                'name': ass.name,
+                'unit': ass.unit
                 }, new_list))
         except Exception as error:
             print(error)
@@ -168,6 +169,7 @@ class AssessmentFormLayout(FormHelper):
                 Field('crop_stage_majority', css_class='mb-3'),
                 Field('rate_type', css_class='mb-3'),
                 Field('part_rated', css_class='mb-3'),
+                Field('unit', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -178,7 +180,7 @@ class AssessmentForm(forms.ModelForm):
     class Meta:
         model = Assessment
         fields = ('name', 'crop_stage_majority', 'assessment_date',
-                  'rate_type', 'part_rated')
+                  'rate_type', 'part_rated', 'unit')
 
     def __init__(self, *args, **kwargs):
         super(AssessmentForm, self).__init__(*args, **kwargs)
