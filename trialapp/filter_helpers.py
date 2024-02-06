@@ -408,8 +408,12 @@ class PlaguesListView(BaaSView):
     login_url = '/login'
     template_name = 'baaswebapp/baas_view_list.html'
 
+    def getSizeOfTrials(self, trialObj):
+        return trialObj["trials"] if trialObj["trials"] is not None else 0
+
     def get_context_data(self, **kwargs):
-        return self._fHelper.getClsObjects(Plague).order_by('name')
+        return self._fHelper.getClsObjects(Plague)\
+            .annotate(trials=Count('fieldtrial')).order_by('-trials')
 
     def prepareItems(self, objectList):
         new_list = []
@@ -426,6 +430,8 @@ class PlaguesListView(BaaSView):
                 'efficacies': self._fHelper.getRangeEfficacy({'plague': item}),
                 'date_range': self._fHelper.getMinMaxYears({'plague': item})
                 })
+        new_list.sort(reverse=True,
+                      key=self.getSizeOfTrials)
         return {'object_list': new_list,
                 'num_products': totalProducts}
 
@@ -434,8 +440,12 @@ class CropListView(BaaSView):
     _groupbyTag = TrialFilterHelper.CROP
 
     def get_context_data(self, **kwargs):
-        return self._fHelper.getClsObjects(Crop).order_by('name')
-
+        return self._fHelper.getClsObjects(Crop)\
+            .annotate(trials=Count('fieldtrial')).order_by('-trials')
+    
+    def getSizeOfTrials(self, trialObj):
+        return trialObj["trials"] if trialObj["trials"] is not None else 0
+    
     def prepareItems(self, objectList):
         new_list = []
         trialsPerCrop = self._fHelper.countBy('crop__name')
@@ -450,6 +460,8 @@ class CropListView(BaaSView):
                 'products': tProduct,
                 'bar_values': barValues,
                 'id': item.id})
+        new_list.sort(reverse=True,
+                      key=self.getSizeOfTrials)
         return {'object_list': new_list,
                 'num_products': totalProducts}
 
@@ -458,8 +470,11 @@ class ProductListView(BaaSView):
     _groupbyTag = TrialFilterHelper.PRODUCT
 
     def get_context_data(self, **kwargs):
-        return self._fHelper.getClsObjects(Product).order_by(
-            'vendor__id', 'name')
+        return self._fHelper.getClsObjects(Product)\
+            .annotate(trials=Count('fieldtrial')).order_by('-trials')
+
+    def getSizeOfTrials(self, trialObj):
+        return trialObj["trials"] if trialObj["trials"] is not None else 0
 
     def prepareItems(self, objectList):
         new_list = []
@@ -477,6 +492,8 @@ class ProductListView(BaaSView):
                 'date_range': self._fHelper.getMinMaxYears({'product': item}),
                 'trials': trialsPerProduct.get(item.name, None),
                 'id': item.id})
+        new_list.sort(reverse=True,
+                      key=self.getSizeOfTrials)
         return {'object_list': new_list,
                 'num_products': len(objectList)}
 
