@@ -442,10 +442,10 @@ class CropListView(BaaSView):
     def get_context_data(self, **kwargs):
         return self._fHelper.getClsObjects(Crop)\
             .annotate(trials=Count('fieldtrial')).order_by('-trials')
-    
+
     def getSizeOfTrials(self, trialObj):
         return trialObj["trials"] if trialObj["trials"] is not None else 0
-    
+
     def prepareItems(self, objectList):
         new_list = []
         trialsPerCrop = self._fHelper.countBy('crop__name')
