@@ -103,7 +103,8 @@ class Assessment(ModelHelpers, models.Model):
                         field_trial=FieldTrial.objects.get(pk=fieldTrial.id) if fieldTrial else None,
                         crop_stage_majority=attributes['crop_stage_majority'],
                         rate_type=RateTypeUnit.objects.get(pk=attributes['rate_type']) if 'rate_type' else None,
-                        daf=attributes.get('daf', 0)
+                        daf=attributes.get('daf', 0),
+                        unit=attributes.get('unit', None)
                     )
 
         return assessment
