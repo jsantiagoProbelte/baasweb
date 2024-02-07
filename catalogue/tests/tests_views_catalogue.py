@@ -12,6 +12,7 @@ from catalogue.product_views import ProductApi, \
 from baaswebapp.tests.test_views import ApiRequestHelperTest
 from baaswebapp.tests.tests_helpers import TrialTestData
 from trialapp.filter_helpers import ProductListView, BaaSView
+from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
 
@@ -104,7 +105,8 @@ class ProductViewsTest(TestCase):
         self.assertTrue(
             response,
             'analytics</span> {}</p>'.format(numberProducts))
-        products = Product.objects.all().order_by('name')
+        products = Product.objects.all().order_by('name')\
+            .annotate(trials=Count('fieldtrial')).order_by('-trials')
         # take into account pagination
         max_products = BaaSView.paginate_by
         itemN = 1
