@@ -478,7 +478,6 @@ class ProductListView(BaaSView):
 
     def prepareItems(self, objectList):
         new_list = []
-        trialsPerProduct = self._fHelper.countBy('product__name')
         for item in objectList:
             new_list.append({
                 'name': item.name,
@@ -490,7 +489,7 @@ class ProductListView(BaaSView):
                 'efficacies': self._fHelper.getRangeEfficacy(
                     {'product': item}),
                 'date_range': self._fHelper.getMinMaxYears({'product': item}),
-                'trials': trialsPerProduct.get(item.name, None),
+                'trials': item.trials,
                 'id': item.id})
         new_list.sort(reverse=True,
                       key=self.getSizeOfTrials)
