@@ -39,27 +39,39 @@ class TrialFilterExtended(django_filters.FilterSet):
         choices=StatusTrial.choices,
         field_name='status_trial',
         label='status',
-        empty_label=_('status').capitalize())
+        empty_label=_('Status').capitalize())
     trial_type = django_filters.ModelChoiceFilter(
         queryset=TrialType.objects.all().order_by('name'),
+        label=_("type").capitalize(),
         empty_label=_("type").capitalize())
     objective = django_filters.ModelChoiceFilter(
         queryset=Objective.objects.all().order_by('name'),
+        label=_("objective").capitalize(),
         empty_label=_("objective").capitalize())
     product = django_filters.ModelChoiceFilter(
         queryset=Product.objects.all().order_by('name'),
+        label=_("product").capitalize(),
         empty_label=_("product").capitalize())
     crop = django_filters.ModelChoiceFilter(
         queryset=Crop.objects.all().order_by('name'),
+        label=_("crop").capitalize(),
         empty_label=_("crop").capitalize())
     plague = django_filters.ModelChoiceFilter(
         queryset=Plague.objects.all().order_by('name'),
-        empty_label=_("pest / disease").capitalize())
+        label=_("pest / disease").capitalize(),
+        empty_label=_("pest / disease").capitalize()
+        )
+    product__type_product = django_filters.ChoiceFilter(
+        field_name="product__type_product",
+        choices=PType.choices,
+        label=_("Product Type"),
+        empty_label=_("Product Type")
+    )
 
     class Meta:
         model = FieldTrial
         fields = ['name', 'status_trial', 'trial_type', 'objective',
-                  'crop', 'plague', 'product']
+                  'crop', 'plague', 'product', 'product__type_product']
 
 
 class TrialFilterHelper:
@@ -208,7 +220,7 @@ class TrialFilterHelper:
         return bios.get(True, 0)
 
     def countBy(self, param, isDistinct=False):
-        counts = self._trials.values(
+        counts = self.getTrials().values(
             param
         ).annotate(
             total=Count('id', distinct=isDistinct)
@@ -541,9 +553,16 @@ class DetailedTrialListView:
             'id': trial.id,
             'initiation_date': trial.initiation_date}
 
+    def getGraph(self):
+        return self._trialFilter.graphProductCategories()
+
     def getTrials(self):
         page = self._request.GET.get('page', 1)
         allTrials = self.filterTrials()
+        products = set()
+        for trial in allTrials:
+            products.add(trial.product.id)
+
         paginator = Paginator(allTrials, self._paginate_by)
         pageTrials = [self.displayTrial(trial) for trial in
                       paginator.get_page(page).object_list]
@@ -553,4 +572,6 @@ class DetailedTrialListView:
             'show_status': True if self._request.user.is_staff else False,
             'filter': TrialFilterExtended(self._request.GET),
             'paginator': paginator,
-            'page': paginator.get_page(page)}
+            'page': paginator.get_page(page),
+            'num_products': len(products),
+            'num_trials': len(allTrials)}

@@ -27,7 +27,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         helperView = DetailedTrialListView(self.request)
-        return helperView.getTrials()
+        # 'graph': helper.graphProductCategories()
+        return {**helperView.getTrials(),
+                'graph': helperView.getGraph()}
 
 
 class FieldTrialApi(LoginRequiredMixin, DetailView):

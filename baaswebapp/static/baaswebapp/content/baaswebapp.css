@@ -1137,10 +1137,17 @@ input[type='checkbox'], input[type="radio"] {
 .baas-data-table tfoot a:not(.chevron){
   color: #000;
   font-size: 1em;
-  width: 1.2em;
+  width: 1.3em;
   line-height: 1.2em;
 }
 
+.selectize-input{
+  z-index: 0;
+}
+
+.mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-top-right, .mapboxgl-ctrl-top-right, .mapboxgl-ctrl-top-left{
+  z-index: 0 !important;
+}
 
 table.data-table-longer tbody td {
   width: 20rem;
@@ -1637,6 +1644,47 @@ li:has(i.flag){
 
 .selectize-input{
   background: white !important;
+}
+
+.form-group:has(.trial-filter) label{
+  color: black;
+  text-align: center;
+  text-wrap: nowrap;
+  overflow: hidden;
+  font-size: 0.8em;
+  text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group:has(.trial-filter){
+  text-overflow: ellipsis;
+  font-size: 0.8em;
+
+}
+
+.form-group:has(.btn-baas){
+  display: flex;
+  align-items: center;
+}
+
+.form-group.col-sm-2:has(.trial-filter){
+  width: 10% !important;
+}
+
+.flex{
+  display: flex;
+}
+
+.flex.column{
+  flex-direction: column;
+}
+
+.flex.gap-10{
+  gap: 10px
+}
+.reset-margin-true{
+  margin: 0 !important;
 }
 
 @media (max-width:1586px) {

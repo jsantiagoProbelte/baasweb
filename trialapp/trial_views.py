@@ -669,7 +669,7 @@ class TrialContent():
                 if valueK and valueC:
                     break
 
-        if valueK and valueC:
+        if (valueK or valueK >= 0) and (valueC or valueC >= 0):
             bestEfficacy = self.calculateEfficacy(valueC, valueK)
             if self._trial.best_efficacy != bestEfficacy:
                 self._trial.best_efficacy = bestEfficacy
