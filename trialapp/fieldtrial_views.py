@@ -9,6 +9,7 @@ from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions, TabHolder, Tab
+from baaswebapp.graphs import ProductCategoryGraph
 from trialapp.models import FieldTrial, StatusTrial
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
@@ -27,7 +28,9 @@ class FieldTrialListView(LoginRequiredMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         helperView = DetailedTrialListView(self.request)
-        return helperView.getTrials()
+        # 'graph': helper.graphProductCategories()
+        return {**helperView.getTrials(),
+                'graph': helperView.getGraph()}
 
 
 class FieldTrialApi(LoginRequiredMixin, DetailView):

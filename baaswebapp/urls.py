@@ -19,13 +19,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from baaswebapp import views
 from django.conf.urls.static import static
 from django.conf import settings
-from trialapp import filter_helpers
+from trialapp import fieldtrial_views
 from sesame.views import LoginView
 
 admin.autodiscover()
 
 urlpatterns = [
-    path('', filter_helpers.ProductListView.as_view(), name='home'),
+    path('', fieldtrial_views.FieldTrialListView.as_view(), name='home'),
     path('hidden_home', views.home, name='hidden-home'),
     path("sesame/login/", LoginView.as_view(), name="sesame-login"),
     path('baaswebapp_index', views.baaswebapp_index, name='baaswebapp_index'),

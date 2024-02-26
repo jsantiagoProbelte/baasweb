@@ -4,13 +4,6 @@
 {% load custom_filter_templates %}
 {% csrf_token %}
 <script>
-    window.addEventListener('load', (event) => {
-        [...document.querySelectorAll(".form-control option:first-child")].forEach(option => {
-            option.disabled = true
-            //option.hidden = true
-        });
-    })
-
     document.addEventListener('DOMContentLoaded', (event) => {
         [...document.querySelectorAll('.page-number-links a')].forEach(link => {
             pageNumber = link.dataset.pageNumber
@@ -26,42 +19,53 @@
         });
     })
 </script>
+<div id="map" class='mt-3 mb-3 card card-body-baas' width="100%" style='height:400px; margin-top: 0px !important'></div>
 <div class='mt-2 mb-1 bg-custom-transparent'>
     <form method="get" class="">
-        <div class="row mb-3" style="display: flex-inline" >
-            <div class="col-sm-2 col-md-3 flex-inline-form baas-box-shadow">
+        <div class="row mb-3" style="width: 100%; display: inline-flex; margin-left: 2px;" >
+            <div class="col-sm-2 col-md-2 flex-inline-form baas-box-shadow">
                 <span class="input-group-text txt-regular-11 material-symbols-outlined" id="basic-addon2">search</span>
                 <div class="form-group">
                     {% render_field filter.form.name class="form-control" placeholder="i.e. product, active substance" aria-describedby="basic-addon2"%}
                 </div>
             </div>
-            <div class="form-group col-sm-1 ">
-                {% render_field filter.form.crop class="form-control form-select baas-box-shadow" %}
+            <div class="form-group col-sm-2 ">
+                {{ filter.form.crop.label_tag }}
+                {% render_field filter.form.crop class="form-control form-select baas-box-shadow trial-filter" %}
             </div>
 
-            <div class="form-group col-sm-1 ">
-                {% render_field filter.form.plague class="form-control form-select baas-box-shadow" %}
+            <div class="form-group col-sm-2 ">
+                {{ filter.form.plague.label_tag }}
+                {% render_field filter.form.plague class="form-control form-select baas-box-shadow trial-filter" %}
             </div>
 
-            <div class="form-group col-sm-1 col-md-1">
-                {% render_field filter.form.status_trial class="form-control form-select baas-box-shadow" %}
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.status_trial.label_tag }}
+                {% render_field filter.form.status_trial class="form-control form-select baas-box-shadow trial-filter" %}
             </div>
 
             {% if filter.form.product %}
-                <div class="form-group col-sm-1 ">
-                    {% render_field filter.form.product class="form-control form-select baas-box-shadow" %}
+                <div class="form-group col-sm-2 ">
+                    {{ filter.form.product.label_tag }}
+                    {% render_field filter.form.product class="form-control form-select baas-box-shadow trial-filter" %}
                 </div>
             {% endif %}
 
-            <div class="form-group col-sm-1 col-md-1">
-                {% render_field filter.form.trial_type class="form-control form-select baas-box-shadow" %}
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.trial_type.label_tag }}
+                {% render_field filter.form.trial_type class="form-control form-select baas-box-shadow trial-filter" %}
+            </div>
+
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.objective.label_tag }}
+                {% render_field filter.form.objective class="form-control form-select baas-box-shadow trial-filter" %}
+            </div>
+            <div class="form-group col-sm-2 col-md-2">
+                {{ filter.form.product__type_product.label_tag }}
+                {% render_field filter.form.product__type_product class="form-control form-select baas-box-shadow trial-filter" %}
             </div>
 
             <div class="form-group col-sm-1 col-md-1">
-                {% render_field filter.form.objective class="form-control form-select baas-box-shadow" %}
-            </div>
-
-            <div class="form-group col-sm-1 col-md-3">
                 <button type="submit" class="btn btn-baas capitalize-first" style="margin-top:0px !important">{% trans 'search' %}</button>
             </div>
         </div>
@@ -164,11 +168,14 @@
             </table>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 flex column gap-10">
         <!-- <div class="card card-body-baas">
             {% include "baaswebapp/header_page.html" with title=titleList new_href=add_url %}
         </div> -->
-
-        <div id="map" class='mt-3 mb-3 card card-body-baas' width="100%" style='height:650px; margin-top: 0px !important'></div>
+        {% translate "products" as products_txt %}
+        {% translate "trials" as trials_txt %}
+        {% include "baaswebapp/two_boxes.html" with left_text=products_txt right_text=trials_txt left_number=num_products right_rumber=num_trials reset_margin="true" %}
+        {{ graph|safe }}
     </div>
+
 </div>
