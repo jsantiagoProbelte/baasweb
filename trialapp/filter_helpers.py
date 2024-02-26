@@ -1,4 +1,3 @@
-from django import forms
 from django.db.models import Q, Count, Min, Max
 import django_filters
 from baaswebapp.models import Category, PType, ModelHelpers
@@ -553,7 +552,7 @@ class DetailedTrialListView:
             'longitude': trial.longitude,
             'id': trial.id,
             'initiation_date': trial.initiation_date}
-    
+
     def getGraph(self):
         return self._trialFilter.graphProductCategories()
 

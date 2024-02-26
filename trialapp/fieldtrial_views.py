@@ -9,7 +9,6 @@ from django.views.generic import DetailView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Field, HTML, Row
 from crispy_forms.bootstrap import FormActions, TabHolder, Tab
-from baaswebapp.graphs import ProductCategoryGraph
 from trialapp.models import FieldTrial, StatusTrial
 from trialapp.trial_helper import TrialFile, TrialModel, \
     PdfTrial, TrialPermission
