@@ -17,6 +17,11 @@ class Assessment(ModelHelpers, models.Model):
     rate_type = models.ForeignKey(RateTypeUnit, on_delete=models.CASCADE)
     daf = models.IntegerField(null=True)
     unit = models.IntegerField(null=True)
+    part_rated_unit = models.CharField(
+        max_length=10,
+        choices=PartRated.choices,
+        default=PartRated.UNDF
+    )
 
     @classmethod
     def getObjects(cls, field_trial, date_order=True):
@@ -104,7 +109,8 @@ class Assessment(ModelHelpers, models.Model):
                         crop_stage_majority=attributes['crop_stage_majority'],
                         rate_type=RateTypeUnit.objects.get(pk=attributes['rate_type']) if 'rate_type' else None,
                         daf=attributes.get('daf', 0),
-                        unit=attributes.get('unit', None)
+                        unit=attributes.get('unit', None),
+                        part_rated_unit=attributes.get('part_rated_unit', None)
                     )
 
         return assessment
