@@ -15,7 +15,7 @@
                 <td>{{ item.name }}</td>
                 <td>{{ item.crop_stage_majority }} BBCH</td>
                 <td>{{ item.rate_type }}</td>
-                <td>{{ item.unit }} {{ item.part_rated }}</td>
+                <td>{{ item.part_rated }} {{ item.unit }} {{item.part_rated_unit}}</td>
                 <td>{% include 'trialapp/assessment_weather.html'%}</td>
             </tr>
         {% empty %}

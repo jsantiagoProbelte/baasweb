@@ -141,7 +141,8 @@ class AssessmentListView(LoginRequiredMixin, ListView):
                 'id': ass.id,
                 'hasWeather': weather_assess.get(ass.id, None),
                 'name': ass.name,
-                'unit': ass.unit
+                'unit': ass.unit,
+                'part_rated_unit': ass.part_rated_unit
                 }, new_list))
         except Exception as error:
             print(error)
@@ -170,6 +171,7 @@ class AssessmentFormLayout(FormHelper):
                 Field('rate_type', css_class='mb-3'),
                 Field('part_rated', css_class='mb-3'),
                 Field('unit', css_class='mb-3'),
+                Field('part_rated_unit', css_class='mb-3'),
                 FormActions(
                     Submit('submit', submitTxt, css_class="btn btn-info"),
                     css_class='text-sm-end'),
@@ -180,7 +182,7 @@ class AssessmentForm(forms.ModelForm):
     class Meta:
         model = Assessment
         fields = ('name', 'crop_stage_majority', 'assessment_date',
-                  'rate_type', 'part_rated', 'unit')
+                  'rate_type', 'part_rated', 'unit', 'part_rated_unit')
 
     def __init__(self, *args, **kwargs):
         super(AssessmentForm, self).__init__(*args, **kwargs)
@@ -193,6 +195,8 @@ class AssessmentForm(forms.ModelForm):
         self.fields['rate_type'].queryset =\
             RateTypeUnit.objects.all().order_by('name', 'unit')
         self.fields['part_rated'].required = False
+        self.fields['unit'].required = False
+        self.fields['part_rated_unit'].required = False
 
 
 class AssessmentCreateView(LoginRequiredMixin, CreateView):
