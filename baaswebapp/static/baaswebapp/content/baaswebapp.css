@@ -1168,6 +1168,10 @@ div.flex-inline-form:has(input:focus){
   box-shadow: 0px 0px 4px 0px #aa4ae4;
 }
 
+.self-end{
+  align-self: end;
+}
+
 div.flex-inline-form span{
   margin-right: 10px;
   font-weight: 600;
