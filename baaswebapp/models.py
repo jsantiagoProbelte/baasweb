@@ -98,6 +98,7 @@ class RateTypeUnit(ModelHelpers, models.Model):
     name = models.CharField(max_length=100)
     unit = models.CharField(max_length=100)
     description = models.CharField(max_length=100, null=True)
+    display_order = models.IntegerField(blank=True, null=True, default=0)
 
     def getName(self):
         return '{} ({})'.format(self.name, self.unit)
