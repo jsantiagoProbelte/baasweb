@@ -193,7 +193,7 @@ class AssessmentForm(forms.ModelForm):
         self.fields['assessment_date'].show_hidden_initial = True
         self.fields['crop_stage_majority'].label = 'Crop Stage Majority (BBCH)'
         self.fields['rate_type'].queryset =\
-            RateTypeUnit.objects.all().order_by('name', 'unit')
+            RateTypeUnit.objects.all().order_by('-display_order', 'name')
         self.fields['part_rated'].required = False
         self.fields['unit'].required = False
         self.fields['part_rated_unit'].required = False
